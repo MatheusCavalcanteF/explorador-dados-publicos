@@ -1,0 +1,23 @@
+# Origem: Dados-Hospitalares-SUS, commit 52edc79, com o leitor em JavaScript acrescentado.
+version: 2
+updates:
+  - package-ecosystem: pip
+    directory: "/"
+    schedule:
+      interval: weekly
+    groups:
+      pip-minor-e-patch:
+        update-types: [minor, patch]
+
+  - package-ecosystem: npm
+    directory: "/ferramentas/leitor"
+    schedule:
+      interval: weekly
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+    groups:
+      actions-minor-e-patch:
+        update-types: [minor, patch]

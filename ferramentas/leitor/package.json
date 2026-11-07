@@ -1,0 +1,8 @@
+{
+  "name": "conferencia-do-leitor",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "hyparquet": "1.32.0"
+  }
+}

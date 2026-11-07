@@ -1,0 +1,74 @@
+# Catálogo: de onde vem cada número, a que tema pertence e o que a tela precisa dizer junto.
+# Hash e data da coleta não ficam aqui: vêm do manifesto de cada execução.
+versao: 1
+
+temas:
+  populacao: População
+  saude: Saúde
+  educacao: Educação
+  economia: Economia
+  trabalho: Trabalho
+  financas_publicas: Finanças públicas
+  agropecuaria: Agropecuária
+  assistencia_social: Assistência social
+  saneamento: Saneamento
+  meio_ambiente: Meio ambiente
+  eleicoes: Eleições
+  seguranca: Segurança
+
+bases:
+  ibge_localidades:
+    nome: Municípios do IBGE
+    orgao: IBGE
+    licenca: { id: nao-declarada-na-origem, atribuicao: "IBGE" }
+    coleta:
+      origem: "https://servicodados.ibge.gov.br/api/v1/localidades/municipios"
+  ibge_estimativa:
+    nome: Estimativas de População
+    orgao: IBGE
+    licenca: { id: nao-declarada-na-origem, atribuicao: "IBGE, Estimativas de População" }
+    coleta:
+      origem: "https://apisidra.ibge.gov.br/values/t/6579/n6/all/v/9324/p/last%201"
+      periodos: "https://servicodados.ibge.gov.br/api/v3/agregados/6579/periodos"
+    supressao: { aplica: false }   # população não é contagem de atendimentos
+  ibge_censo_2022:
+    nome: Censo Demográfico 2022
+    orgao: IBGE
+    licenca: { id: nao-declarada-na-origem, atribuicao: "IBGE, Censo Demográfico 2022" }
+    coleta:
+      origem: "https://apisidra.ibge.gov.br/values/t/4714/n6/all/v/93/p/2022"
+      periodos: "https://servicodados.ibge.gov.br/api/v3/agregados/4714/periodos"
+    particao_fechada: { release: ibge-censo-2022, arquivo: censo-2022.json }
+    supressao: { aplica: false }
+
+metricas:
+  populacao_estimada:
+    tema: populacao
+    etiquetas: []
+    base: ibge_estimativa
+    rotulo: População estimada
+    unidade: pessoas
+    fonte:
+      orgao: IBGE
+      pesquisa: "Estimativas de População, tabela 6579 da SIDRA, variável 9324 (População residente estimada)"
+      acesso:
+        tipo: exato
+        url: "https://apisidra.ibge.gov.br/values/t/6579/n6/{municipio}/v/9324/p/{periodo}"
+      tabela: "https://sidra.ibge.gov.br/tabela/6579"
+    ressalvas:
+      - "É estimativa do IBGE, não contagem. A contagem mais recente é a do Censo 2022, logo abaixo."
+  populacao_censo:
+    tema: populacao
+    etiquetas: []
+    base: ibge_censo_2022
+    rotulo: População no Censo 2022
+    unidade: pessoas
+    fonte:
+      orgao: IBGE
+      pesquisa: "Censo Demográfico 2022, tabela 4714 da SIDRA, variável 93 (População residente)"
+      acesso:
+        tipo: exato
+        url: "https://apisidra.ibge.gov.br/values/t/4714/n6/{municipio}/v/93/p/2022"
+      tabela: "https://sidra.ibge.gov.br/tabela/4714"
+    ressalvas:
+      - "Contagem feita em 2022. Um município da lista atual do IBGE sem dado no Censo aparece como ausente, nunca como zero."

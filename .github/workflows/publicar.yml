@@ -1,0 +1,156 @@
+# Coleta do IBGE, alcance das fontes, publicação no GitHub Pages e conferências no site publicado.
+# Se a coleta ou o contrato falharem, nada é publicado e o site anterior continua no ar.
+name: Publicar
+
+on:
+  schedule:
+    # Semanal, em minuto quebrado: na virada da hora o agendamento atrasa ou é descartado.
+    - cron: "47 0 * * 0"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publicar
+  cancel-in-progress: false
+
+env:
+  EXECUCAO: ${{ github.run_id }}-${{ github.run_attempt }}
+
+jobs:
+  construir:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.14"
+          cache: pip
+
+      - name: Instalar dependências
+        run: pip install -r requirements.txt
+
+      - name: Testes (sem rede)
+        run: python -m pytest
+
+      - name: Partição fechada do Censo 2022, se já estiver na Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p build/release
+          if gh release view ibge-censo-2022 > /dev/null 2>&1; then
+            gh release download ibge-censo-2022 --pattern censo-2022.json --dir build/release
+          fi
+
+      - name: Coleta do IBGE
+        run: python -m pipeline coletar --saida build/coleta --censo-release build/release/censo-2022.json
+
+      - name: Alcance das outras fontes
+        run: python -m pipeline alcance --saida build/coleta
+
+      - name: Site
+        run: |
+          python -m pipeline construir --coleta build/coleta --saida build/site --links manifesto/links.json --execucao "$EXECUCAO"
+          # Os arquivos que a conferência compara byte a byte com o que o site servir
+          mkdir -p build/coleta/site/dados/ibge build/coleta/site/municipio/3548500
+          cp build/site/dados/ibge/populacao.parquet build/coleta/site/dados/ibge/
+          cp build/site/municipio/3548500/index.html build/coleta/site/municipio/3548500/
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: build/site
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: coleta
+          path: build/coleta
+          retention-days: 7
+
+  publicar:
+    needs: construir
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    outputs:
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v5
+
+  conferir:
+    needs: publicar
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.14"
+          cache: pip
+
+      - name: Instalar dependências
+        run: pip install -r requirements.txt
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: ferramentas/leitor/package-lock.json
+
+      - name: Instalar o leitor em JavaScript
+        run: npm ci --prefix ferramentas/leitor
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: coleta
+          path: build/coleta
+
+      - name: Hospedagem no site publicado (gzip, Range, HEAD, página)
+        continue-on-error: true
+        run: python -m pipeline hospedagem --coleta build/coleta --site build/coleta/site --url "${{ needs.publicar.outputs.url }}" --execucao "$EXECUCAO"
+
+      - name: Leitor em JavaScript no site publicado
+        continue-on-error: true
+        run: node ferramentas/leitor/conferir.mjs "${{ needs.publicar.outputs.url }}dados/ibge/populacao.parquet?conferencia=$EXECUCAO" build/coleta/ibge.json build/coleta/leitor.json
+
+      # Separada dos testes, que não usam rede. Link quebrado fica marcado no manifesto e não impede a publicação.
+      - name: Links oficiais
+        continue-on-error: true
+        run: python -m pipeline links --coleta build/coleta
+
+      - name: Release do Censo 2022, na primeira coleta
+        if: hashFiles('build/coleta/censo-2022.json') != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >
+          gh release create ibge-censo-2022 build/coleta/censo-2022.json
+          --title "IBGE, Censo 2022: população por município"
+          --notes "Partição fechada: população residente do Censo 2022 (SIDRA, tabela 4714, variável 93), como coletada pelo pipeline. As execuções seguintes leem este arquivo e só o conferem com a fonte; se a fonte mudar, o pipeline para em vez de substituí-lo."
+
+      - name: Manifesto no git
+        run: |
+          python -m pipeline manifesto --coleta build/coleta --saida manifesto
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add manifesto
+          if git diff --cached --quiet; then
+            echo "Manifesto sem mudança"
+            exit 0
+          fi
+          git commit -m "dados: manifesto da coleta de $(date -u +%Y-%m-%d)"
+          git pull --rebase origin main
+          git push origin HEAD:main
+
+      - name: Falhas de alcance, hospedagem ou leitor
+        run: python -m pipeline exigir --coleta build/coleta
