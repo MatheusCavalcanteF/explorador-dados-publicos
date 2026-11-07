@@ -1,0 +1,435 @@
+{
+ "fatos": {
+  "linhas": {
+   "mov": 51386117,
+   "for": 713271,
+   "exc": 101235
+  },
+  "municipios_mov": 5567,
+  "codigos_estranhos": [
+   [
+    "999999",
+    6250
+   ]
+  ],
+  "saldo_mov_por_mes": [
+   [
+    "202501",
+    137303,
+    4405919
+   ],
+   [
+    "202502",
+    431995,
+    4726389
+   ],
+   [
+    "202503",
+    71576,
+    4397748
+   ],
+   [
+    "202504",
+    257528,
+    4306846
+   ],
+   [
+    "202505",
+    148992,
+    4363458
+   ],
+   [
+    "202506",
+    166621,
+    4111743
+   ],
+   [
+    "202507",
+    129775,
+    4373105
+   ],
+   [
+    "202508",
+    147358,
+    4332432
+   ],
+   [
+    "202509",
+    213002,
+    4371982
+   ],
+   [
+    "202510",
+    85147,
+    4457773
+   ],
+   [
+    "202511",
+    85864,
+    3873940
+   ],
+   [
+    "202512",
+    -618164,
+    3664782
+   ]
+  ],
+  "defasagem_for_meses": [
+   [
+    1,
+    454368
+   ],
+   [
+    2,
+    70616
+   ],
+   [
+    3,
+    40041
+   ],
+   [
+    4,
+    27716
+   ],
+   [
+    5,
+    22645
+   ],
+   [
+    6,
+    19249
+   ],
+   [
+    7,
+    16570
+   ],
+   [
+    8,
+    12294
+   ],
+   [
+    9,
+    11137
+   ],
+   [
+    10,
+    9844
+   ],
+   [
+    11,
+    16869
+   ],
+   [
+    12,
+    11922
+   ]
+  ],
+  "defasagem_exc_meses": [
+   [
+    0,
+    87270
+   ],
+   [
+    1,
+    4537
+   ],
+   [
+    2,
+    1855
+   ],
+   [
+    3,
+    1285
+   ],
+   [
+    4,
+    923
+   ],
+   [
+    5,
+    938
+   ],
+   [
+    6,
+    681
+   ],
+   [
+    7,
+    526
+   ],
+   [
+    8,
+    609
+   ],
+   [
+    9,
+    581
+   ],
+   [
+    10,
+    457
+   ],
+   [
+    11,
+    1014
+   ],
+   [
+    12,
+    559
+   ]
+  ],
+  "comp_for_min_max": [
+   "202401",
+   "202511",
+   "202501",
+   "202512"
+  ],
+  "saldo_2025_com_ajustes": 1279498,
+  "saldo_2025_so_mov": 1256997,
+  "base_das_tabelas": "Só MOV de 2025, sem FOR nem EXC e sem o código de município ignorado. FOR e EXC entram apenas no saldo nacional saldo_2025_com_ajustes.",
+  "arquivos_mov": [
+   {
+    "competencia": "202501",
+    "comprimido_mb": 55.7,
+    "aberto_mb": 459.4
+   },
+   {
+    "competencia": "202502",
+    "comprimido_mb": 60.0,
+    "aberto_mb": 492.6
+   },
+   {
+    "competencia": "202503",
+    "comprimido_mb": 55.7,
+    "aberto_mb": 458.6
+   },
+   {
+    "competencia": "202504",
+    "comprimido_mb": 54.6,
+    "aberto_mb": 449.1
+   },
+   {
+    "competencia": "202505",
+    "comprimido_mb": 53.8,
+    "aberto_mb": 455.0
+   },
+   {
+    "competencia": "202506",
+    "comprimido_mb": 50.8,
+    "aberto_mb": 428.8
+   },
+   {
+    "competencia": "202507",
+    "comprimido_mb": 54.1,
+    "aberto_mb": 456.1
+   },
+   {
+    "competencia": "202508",
+    "comprimido_mb": 53.7,
+    "aberto_mb": 451.8
+   },
+   {
+    "competencia": "202509",
+    "comprimido_mb": 54.0,
+    "aberto_mb": 456.0
+   },
+   {
+    "competencia": "202510",
+    "comprimido_mb": 55.0,
+    "aberto_mb": 465.0
+   },
+   {
+    "competencia": "202511",
+    "comprimido_mb": 47.6,
+    "aberto_mb": 404.1
+   },
+   {
+    "competencia": "202512",
+    "comprimido_mb": 44.9,
+    "aberto_mb": 382.5
+   }
+  ]
+ },
+ "tabelas": [
+  {
+   "tabela": "mun_mes",
+   "linhas": 65721,
+   "regra_antiga_visiveis_adm_ou_des_1a4": 7390,
+   "regra_antiga_pct_celulas_ocultas": 7.3,
+   "pct_celulas_primarias": 18.5,
+   "pct_celulas_ocultas": 19.0,
+   "pct_mov_ocultos": 0.19,
+   "linhas_dedutiveis_depois": 0,
+   "voltas": 3,
+   "convergiu": true,
+   "municipios": 5566,
+   "parquet_mb": 0.3,
+   "segundos": 0.7
+  },
+  {
+   "tabela": "mun_mes_sexo",
+   "linhas": 127354,
+   "regra_antiga_visiveis_adm_ou_des_1a4": 14248,
+   "regra_antiga_pct_celulas_ocultas": 21.5,
+   "pct_celulas_primarias": 30.4,
+   "pct_celulas_ocultas": 39.2,
+   "pct_mov_ocultos": 1.14,
+   "linhas_dedutiveis_depois": 0,
+   "voltas": 3,
+   "convergiu": true,
+   "municipios": 5566,
+   "parquet_mb": 0.42,
+   "segundos": 0.9
+  },
+  {
+   "tabela": "mun_mes_faixa",
+   "linhas": 303271,
+   "regra_antiga_visiveis_adm_ou_des_1a4": 37232,
+   "regra_antiga_pct_celulas_ocultas": 40.3,
+   "pct_celulas_primarias": 49.3,
+   "pct_celulas_ocultas": 59.3,
+   "pct_mov_ocultos": 3.15,
+   "linhas_dedutiveis_depois": 0,
+   "voltas": 5,
+   "convergiu": true,
+   "municipios": 5566,
+   "parquet_mb": 0.74,
+   "segundos": 2.1
+  },
+  {
+   "tabela": "mun_mes_cbo1",
+   "linhas": 441539,
+   "regra_antiga_visiveis_adm_ou_des_1a4": 73711,
+   "regra_antiga_pct_celulas_ocultas": 40.8,
+   "pct_celulas_primarias": 57.1,
+   "pct_celulas_ocultas": 59.9,
+   "pct_mov_ocultos": 2.75,
+   "linhas_dedutiveis_depois": 0,
+   "voltas": 5,
+   "convergiu": true,
+   "municipios": 5566,
+   "parquet_mb": 1.01,
+   "segundos": 2.0
+  },
+  {
+   "tabela": "mun_mes_secao",
+   "linhas": 578672,
+   "regra_antiga_visiveis_adm_ou_des_1a4": 100131,
+   "regra_antiga_pct_celulas_ocultas": 44.9,
+   "pct_celulas_primarias": 61.8,
+   "pct_celulas_ocultas": 64.0,
+   "pct_mov_ocultos": 3.6,
+   "linhas_dedutiveis_depois": 0,
+   "voltas": 9,
+   "convergiu": true,
+   "municipios": 5566,
+   "parquet_mb": 1.35,
+   "segundos": 2.7
+  },
+  {
+   "tabela": "mun_mes_instrucao",
+   "linhas": 456746,
+   "regra_antiga_visiveis_adm_ou_des_1a4": 72558,
+   "regra_antiga_pct_celulas_ocultas": 46.9,
+   "pct_celulas_primarias": 61.9,
+   "pct_celulas_ocultas": 66.0,
+   "pct_mov_ocultos": 3.15,
+   "linhas_dedutiveis_depois": 0,
+   "voltas": 8,
+   "convergiu": true,
+   "municipios": 5566,
+   "parquet_mb": 0.97,
+   "segundos": 2.1
+  },
+  {
+   "tabela": "mun_ano_secao",
+   "linhas": 70903,
+   "regra_antiga_visiveis_adm_ou_des_1a4": 8560,
+   "regra_antiga_pct_celulas_ocultas": 24.3,
+   "pct_celulas_primarias": 35.7,
+   "pct_celulas_ocultas": 38.0,
+   "pct_mov_ocultos": 0.31,
+   "linhas_dedutiveis_depois": 0,
+   "voltas": 4,
+   "convergiu": true,
+   "municipios": 5566,
+   "parquet_mb": 0.31,
+   "segundos": 0.9
+  },
+  {
+   "tabela": "mun_ano_subclasse",
+   "linhas": 588508,
+   "regra_antiga_visiveis_adm_ou_des_1a4": 111504,
+   "regra_antiga_pct_celulas_ocultas": 38.3,
+   "pct_celulas_primarias": 57.2,
+   "pct_celulas_ocultas": 58.1,
+   "pct_mov_ocultos": 3.34,
+   "linhas_dedutiveis_depois": 0,
+   "voltas": 5,
+   "convergiu": true,
+   "municipios": 5566,
+   "parquet_mb": 1.9,
+   "segundos": 2.7
+  },
+  {
+   "tabela": "mun_mes_divisao",
+   "linhas": 1194336,
+   "regra_antiga_visiveis_adm_ou_des_1a4": 225434,
+   "regra_antiga_pct_celulas_ocultas": 50.9,
+   "pct_celulas_primarias": 69.7,
+   "pct_celulas_ocultas": 70.8,
+   "pct_mov_ocultos": 7.15,
+   "linhas_dedutiveis_depois": 0,
+   "voltas": 9,
+   "convergiu": true,
+   "municipios": 5566,
+   "parquet_mb": 2.5,
+   "segundos": 4.6
+  },
+  {
+   "tabela": "mun_ano_cbo",
+   "linhas": 994623,
+   "regra_antiga_visiveis_adm_ou_des_1a4": 179075,
+   "regra_antiga_pct_celulas_ocultas": 54.2,
+   "pct_celulas_primarias": 72.2,
+   "pct_celulas_ocultas": 72.8,
+   "pct_mov_ocultos": 5.18,
+   "linhas_dedutiveis_depois": 0,
+   "voltas": 10,
+   "convergiu": true,
+   "municipios": 5566,
+   "parquet_mb": 2.56,
+   "segundos": 4.2
+  },
+  {
+   "tabela": "mun_mes_secao_sexo",
+   "linhas": 932445,
+   "regra_antiga_visiveis_adm_ou_des_1a4": 98564,
+   "regra_antiga_pct_celulas_ocultas": 62.4,
+   "pct_celulas_primarias": 68.0,
+   "pct_celulas_ocultas": 78.8,
+   "pct_mov_ocultos": 11.38,
+   "linhas_dedutiveis_depois": 0,
+   "voltas": 5,
+   "convergiu": true,
+   "municipios": 5566,
+   "parquet_mb": 1.58,
+   "segundos": 4.0
+  },
+  {
+   "tabela": "mun_ano_secao_sexo_faixa",
+   "linhas": 441455,
+   "regra_antiga_visiveis_adm_ou_des_1a4": 26158,
+   "regra_antiga_pct_celulas_ocultas": 65.8,
+   "pct_celulas_primarias": 60.7,
+   "pct_celulas_ocultas": 78.4,
+   "pct_mov_ocultos": 9.13,
+   "linhas_dedutiveis_depois": 0,
+   "voltas": 5,
+   "convergiu": true,
+   "municipios": 5566,
+   "parquet_mb": 0.85,
+   "segundos": 3.3
+  }
+ ]
+}

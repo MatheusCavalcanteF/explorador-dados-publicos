@@ -1,0 +1,1606 @@
+{
+ "fatos": {
+  "linhas_total": 14648508,
+  "internacoes": 14513295,
+  "mun_hosp": 3146,
+  "mun_hosp_com_alta_em_2025": 3145,
+  "mun_res": 5570,
+  "res_fora_hosp_pct": 36.4,
+  "amplitude_mes": [
+   "202408",
+   "202512",
+   17,
+   645089
+  ],
+  "categorias_sem_capitulo_na_cid10": [
+   [
+    "U10",
+    24
+   ],
+   [
+    "U09",
+    6
+   ]
+  ],
+  "defasagem_saida_competencia": [
+   {
+    "meses": 0,
+    "linhas": 9719463,
+    "acumulado_pct": 66.351
+   },
+   {
+    "meses": 1,
+    "linhas": 2901499,
+    "acumulado_pct": 86.159
+   },
+   {
+    "meses": 2,
+    "linhas": 1210367,
+    "acumulado_pct": 94.421
+   },
+   {
+    "meses": 3,
+    "linhas": 778126,
+    "acumulado_pct": 99.733
+   },
+   {
+    "meses": 4,
+    "linhas": 30946,
+    "acumulado_pct": 99.945
+   },
+   {
+    "meses": 5,
+    "linhas": 8107,
+    "acumulado_pct": 100.0
+   }
+  ]
+ },
+ "publicar": [
+  "res_mes",
+  "hosp_mes",
+  "res_ano",
+  "hosp_ano",
+  "res_mes_sexo",
+  "res_mes_urgencia",
+  "res_ano_capitulo",
+  "res_ano_faixa12_sexo",
+  "res_ano_raca",
+  "hosp_ano_espec",
+  "res_mes_faixa5",
+  "res_tri_capitulo",
+  "hosp_tri_capitulo",
+  "hosp_mes_carater",
+  "fluxo_res_hosp_ano"
+ ],
+ "mb_publicaveis_por_ano": 10.64,
+ "tabelas": [
+  {
+   "tabela": "res_mes",
+   "dims": [
+    "mun_res",
+    "mes"
+   ],
+   "linhas": 66828,
+   "regra_antiga_visiveis_internacoes_1a4": 5,
+   "regra_antiga_pct_celulas_ocultas": 0.6,
+   "pct_celulas_primarias": 0.4,
+   "pct_celulas_ocultas": 0.7,
+   "pct_internacoes_ocultas": 0.02,
+   "pct_aihs_ocultas": 0.02,
+   "visiveis_internacoes_1a4": 0,
+   "linhas_dedutiveis_depois": 0,
+   "linhas_dedutiveis_por_margem": {
+    "mes": 0,
+    "mun_res": 0,
+    "mes+uf": 0
+   },
+   "voltas": 5,
+   "convergiu": true,
+   "celulas_herdadas_da_mae": 0,
+   "hash_oculto": "e84d0f1a6f4ba7b6",
+   "por_porte": {
+    "ate_5mil": {
+     "pct_celulas_ocultas": 2.8,
+     "pct_internacoes_ocultas": 0.61
+    },
+    "5_a_20mil": {
+     "pct_celulas_ocultas": 0.2,
+     "pct_internacoes_ocultas": 0.02
+    },
+    "20_a_100mil": {
+     "pct_celulas_ocultas": 0.0,
+     "pct_internacoes_ocultas": 0.0
+    },
+    "100_a_500mil": {
+     "pct_celulas_ocultas": 0.0,
+     "pct_internacoes_ocultas": 0.0
+    },
+    "mais_500mil": {
+     "pct_celulas_ocultas": 0.0,
+     "pct_internacoes_ocultas": 0.0
+    }
+   },
+   "parquet_mb": 0.55,
+   "segundos": 0.3
+  },
+  {
+   "tabela": "hosp_mes",
+   "dims": [
+    "mun_hosp",
+    "mes"
+   ],
+   "linhas": 36862,
+   "regra_antiga_visiveis_internacoes_1a4": 0,
+   "regra_antiga_pct_celulas_ocultas": 3.8,
+   "pct_celulas_primarias": 3.3,
+   "pct_celulas_ocultas": 4.0,
+   "pct_internacoes_ocultas": 0.05,
+   "pct_aihs_ocultas": 0.05,
+   "visiveis_internacoes_1a4": 0,
+   "linhas_dedutiveis_depois": 0,
+   "linhas_dedutiveis_por_margem": {
+    "mes": 0,
+    "mun_hosp": 0,
+    "mes+uf": 0
+   },
+   "voltas": 4,
+   "convergiu": true,
+   "celulas_herdadas_da_mae": 0,
+   "hash_oculto": "99eeb8a6ab0b1024",
+   "por_porte": {
+    "ate_5mil": {
+     "pct_celulas_ocultas": 20.2,
+     "pct_internacoes_ocultas": 3.13
+    },
+    "5_a_20mil": {
+     "pct_celulas_ocultas": 5.7,
+     "pct_internacoes_ocultas": 0.41
+    },
+    "20_a_100mil": {
+     "pct_celulas_ocultas": 1.3,
+     "pct_internacoes_ocultas": 0.05
+    },
+    "100_a_500mil": {
+     "pct_celulas_ocultas": 0.1,
+     "pct_internacoes_ocultas": 0.0
+    },
+    "mais_500mil": {
+     "pct_celulas_ocultas": 0.0,
+     "pct_internacoes_ocultas": 0.0
+    }
+   },
+   "parquet_mb": 0.31,
+   "segundos": 0.2
+  },
+  {
+   "tabela": "res_ano",
+   "dims": [
+    "mun_res",
+    "ano"
+   ],
+   "linhas": 5570,
+   "regra_antiga_visiveis_internacoes_1a4": 0,
+   "regra_antiga_pct_celulas_ocultas": 0.0,
+   "pct_celulas_primarias": 0.0,
+   "pct_celulas_ocultas": 0.0,
+   "pct_internacoes_ocultas": 0.0,
+   "pct_aihs_ocultas": 0.0,
+   "visiveis_internacoes_1a4": 0,
+   "linhas_dedutiveis_depois": 0,
+   "linhas_dedutiveis_por_margem": {
+    "ano": 0,
+    "mun_res": 0,
+    "ano+uf": 0
+   },
+   "voltas": 1,
+   "convergiu": true,
+   "celulas_herdadas_da_mae": 0,
+   "hash_oculto": "f19a003c44e4ff0f",
+   "por_porte": {
+    "ate_5mil": {
+     "pct_celulas_ocultas": 0.0,
+     "pct_internacoes_ocultas": 0.0
+    },
+    "5_a_20mil": {
+     "pct_celulas_ocultas": 0.0,
+     "pct_internacoes_ocultas": 0.0
+    },
+    "20_a_100mil": {
+     "pct_celulas_ocultas": 0.0,
+     "pct_internacoes_ocultas": 0.0
+    },
+    "100_a_500mil": {
+     "pct_celulas_ocultas": 0.0,
+     "pct_internacoes_ocultas": 0.0
+    },
+    "mais_500mil": {
+     "pct_celulas_ocultas": 0.0,
+     "pct_internacoes_ocultas": 0.0
+    }
+   },
+   "parquet_mb": 0.06,
+   "segundos": 0.1
+  },
+  {
+   "tabela": "hosp_ano",
+   "dims": [
+    "mun_hosp",
+    "ano"
+   ],
+   "linhas": 3145,
+   "regra_antiga_visiveis_internacoes_1a4": 0,
+   "regra_antiga_pct_celulas_ocultas": 0.1,
+   "pct_celulas_primarias": 0.1,
+   "pct_celulas_ocultas": 0.1,
+   "pct_internacoes_ocultas": 0.0,
+   "pct_aihs_ocultas": 0.0,
+   "visiveis_internacoes_1a4": 0,
+   "linhas_dedutiveis_depois": 0,
+   "linhas_dedutiveis_por_margem": {
+    "ano": 0,
+    "mun_hosp": 0,
+    "ano+uf": 0
+   },
+   "voltas": 2,
+   "convergiu": true,
+   "celulas_herdadas_da_mae": 0,
+   "hash_oculto": "a6a81f52e75db2b5",
+   "por_porte": {
+    "ate_5mil": {
+     "pct_celulas_ocultas": 0.6,
+     "pct_internacoes_ocultas": 0.03
+    },
+    "5_a_20mil": {
+     "pct_celulas_ocultas": 0.2,
+     "pct_internacoes_ocultas": 0.0
+    },
+    "20_a_100mil": {
+     "pct_celulas_ocultas": 0.0,
+     "pct_internacoes_ocultas": 0.0
+    },
+    "100_a_500mil": {
+     "pct_celulas_ocultas": 0.0,
+     "pct_internacoes_ocultas": 0.0
+    },
+    "mais_500mil": {
+     "pct_celulas_ocultas": 0.0,
+     "pct_internacoes_ocultas": 0.0
+    }
+   },
+   "parquet_mb": 0.04,
+   "segundos": 0.1
+  },
+  {
+   "tabela": "hosp_cnes_mes",
+   "dims": [
+    "cnes",
+    "mes"
+   ],
+   "linhas": 55870,
+   "regra_antiga_visiveis_internacoes_1a4": 114,
+   "regra_antiga_pct_celulas_ocultas": 4.2,
+   "pct_celulas_primarias": 4.3,
+   "pct_celulas_ocultas": 5.8,
+   "pct_internacoes_ocultas": 1.07,
+   "pct_aihs_ocultas": 1.17,
+   "visiveis_internacoes_1a4": 0,
+   "linhas_dedutiveis_depois": 6,
+   "linhas_dedutiveis_por_margem": {
+    "mes": 0,
+    "cnes": 6,
+    "mes+mun_hosp": 0
+   },
+   "voltas": 4,
+   "convergiu": true,
+   "celulas_herdadas_da_mae": 264,
+   "hash_oculto": "62289dd60c5a596e",
+   "parquet_mb": 0.48,
+   "segundos": 0.3
+  },
+  {
+   "tabela": "res_mes_sexo",
+   "dims": [
+    "mun_res",
+    "mes",
+    "sexo"
+   ],
+   "linhas": 133505,
+   "regra_antiga_visiveis_internacoes_1a4": 67,
+   "regra_antiga_pct_celulas_ocultas": 6.2,
+   "pct_celulas_primarias": 3.3,
+   "pct_celulas_ocultas": 6.5,
+   "pct_internacoes_ocultas": 0.39,
+   "pct_aihs_ocultas": 0.39,
+   "visiveis_internacoes_1a4": 0,
+   "linhas_dedutiveis_depois": 0,
+   "linhas_dedutiveis_por_margem": {
+    "mes+sexo": 0,
+    "mun_res+sexo": 0,
+    "mun_res+mes": 0,
+    "mes+sexo+uf": 0
+   },
+   "voltas": 4,
+   "convergiu": true,
+   "celulas_herdadas_da_mae": 167,
+   "hash_oculto": "9d852c0914372df9",
+   "por_porte": {
+    "ate_5mil": {
+     "pct_celulas_ocultas": 22.4,
+     "pct_internacoes_ocultas": 10.56
+    },
+    "5_a_20mil": {
+     "pct_celulas_ocultas": 2.9,
+     "pct_internacoes_ocultas": 0.74
+    },
+    "20_a_100mil": {
+     "pct_celulas_ocultas": 0.1,
+     "pct_internacoes_ocultas": 0.02
+    },
+    "100_a_500mil": {
+     "pct_celulas_ocultas": 0.0,
+     "pct_internacoes_ocultas": 0.0
+    },
+    "mais_500mil": {
+     "pct_celulas_ocultas": 0.0,
+     "pct_internacoes_ocultas": 0.0
+    }
+   },
+   "parquet_mb": 0.97,
+   "segundos": 0.5
+  },
+  {
+   "tabela": "res_mes_urgencia",
+   "dims": [
+    "mun_res",
+    "mes",
+    "urgencia"
+   ],
+   "linhas": 133018,
+   "regra_antiga_visiveis_internacoes_1a4": 122,
+   "regra_antiga_pct_celulas_ocultas": 13.2,
+   "pct_celulas_primarias": 6.6,
+   "pct_celulas_ocultas": 13.4,
+   "pct_internacoes_ocultas": 1.6,
+   "pct_aihs_ocultas": 1.59,
+   "visiveis_internacoes_1a4": 0,
+   "linhas_dedutiveis_depois": 0,
+   "linhas_dedutiveis_por_margem": {
+    "mes+urgencia": 0,
+    "mun_res+urgencia": 0,
+    "mun_res+mes": 0,
+    "mes+urgencia+uf": 0
+   },
+   "voltas": 3,
+   "convergiu": true,
+   "celulas_herdadas_da_mae": 181,
+   "hash_oculto": "fe96338e3bc20b61",
+   "por_porte": {
+    "ate_5mil": {
+     "pct_celulas_ocultas": 36.8,
+     "pct_internacoes_ocultas": 24.09
+    },
+    "5_a_20mil": {
+     "pct_celulas_ocultas": 10.5,
+     "pct_internacoes_ocultas": 5.56
+    },
+    "20_a_100mil": {
+     "pct_celulas_ocultas": 0.9,
+     "pct_internacoes_ocultas": 0.39
+    },
+    "100_a_500mil": {
+     "pct_celulas_ocultas": 0.0,
+     "pct_internacoes_ocultas": 0.0
+    },
+    "mais_500mil": {
+     "pct_celulas_ocultas": 0.0,
+     "pct_internacoes_ocultas": 0.0
+    }
+   },
+   "parquet_mb": 0.92,
+   "segundos": 0.5
+  },
+  {
+   "tabela": "res_ano_capitulo",
+   "dims": [
+    "mun_res",
+    "ano",
+    "capitulo"
+   ],
+   "linhas": 106957,
+   "regra_antiga_visiveis_internacoes_1a4": 272,
+   "regra_antiga_pct_celulas_ocultas": 16.0,
+   "pct_celulas_primarias": 14.8,
+   "pct_celulas_ocultas": 16.3,
+   "pct_internacoes_ocultas": 0.37,
+   "pct_aihs_ocultas": 0.38,
+   "visiveis_internacoes_1a4": 0,
+   "linhas_dedutiveis_depois": 0,
+   "linhas_dedutiveis_por_margem": {
+    "ano+capitulo": 0,
+    "mun_res+capitulo": 0,
+    "mun_res+ano": 0,
+    "ano+capitulo+uf": 0
+   },
+   "voltas": 2,
+   "convergiu": true,
+   "celulas_herdadas_da_mae": 0,
+   "hash_oculto": "a413d2e4150677f2",
+   "por_porte": {
+    "ate_5mil": {
+     "pct_celulas_ocultas": 31.5,
+     "pct_internacoes_ocultas": 4.67
+    },
+    "5_a_20mil": {
+     "pct_celulas_ocultas": 16.6,
+     "pct_internacoes_ocultas": 1.08
+    },
+    "20_a_100mil": {
+     "pct_celulas_ocultas": 6.6,
+     "pct_internacoes_ocultas": 0.22
+    },
+    "100_a_500mil": {
+     "pct_celulas_ocultas": 1.6,
+     "pct_internacoes_ocultas": 0.04
+    },
+    "mais_500mil": {
+     "pct_celulas_ocultas": 2.4,
+     "pct_internacoes_ocultas": 0.03
+    }
+   },
+   "parquet_mb": 0.77,
+   "segundos": 0.4
+  },
+  {
+   "tabela": "res_ano_faixa12_sexo",
+   "dims": [
+    "mun_res",
+    "ano",
+    "faixa12",
+    "sexo"
+   ],
+   "linhas": 131936,
+   "regra_antiga_visiveis_internacoes_1a4": 31,
+   "regra_antiga_pct_celulas_ocultas": 15.8,
+   "pct_celulas_primarias": 9.6,
+   "pct_celulas_ocultas": 16.0,
+   "pct_internacoes_ocultas": 0.85,
+   "pct_aihs_ocultas": 0.84,
+   "visiveis_internacoes_1a4": 0,
+   "linhas_dedutiveis_depois": 0,
+   "linhas_dedutiveis_por_margem": {
+    "ano+faixa12+sexo": 0,
+    "mun_res+faixa12+sexo": 0,
+    "mun_res+ano+sexo": 0,
+    "mun_res+ano+faixa12": 0,
+    "ano+faixa12+sexo+uf": 0
+   },
+   "voltas": 4,
+   "convergiu": true,
+   "celulas_herdadas_da_mae": 0,
+   "hash_oculto": "ea8a38a8e6ce98bf",
+   "por_porte": {
+    "ate_5mil": {
+     "pct_celulas_ocultas": 41.4,
+     "pct_internacoes_ocultas": 15.59
+    },
+    "5_a_20mil": {
+     "pct_celulas_ocultas": 14.6,
+     "pct_internacoes_ocultas": 2.79
+    },
+    "20_a_100mil": {
+     "pct_celulas_ocultas": 0.4,
+     "pct_internacoes_ocultas": 0.04
+    },
+    "100_a_500mil": {
+     "pct_celulas_ocultas": 0.0,
+     "pct_internacoes_ocultas": 0.0
+    },
+    "mais_500mil": {
+     "pct_celulas_ocultas": 0.0,
+     "pct_internacoes_ocultas": 0.0
+    }
+   },
+   "parquet_mb": 0.89,
+   "segundos": 0.7
+  },
+  {
+   "tabela": "res_ano_raca",
+   "dims": [
+    "mun_res",
+    "ano",
+    "raca"
+   ],
+   "linhas": 22483,
+   "regra_antiga_visiveis_internacoes_1a4": 19,
+   "regra_antiga_pct_celulas_ocultas": 25.5,
+   "pct_celulas_primarias": 15.0,
+   "pct_celulas_ocultas": 25.7,
+   "pct_internacoes_ocultas": 0.72,
+   "pct_aihs_ocultas": 0.73,
+   "visiveis_internacoes_1a4": 0,
+   "linhas_dedutiveis_depois": 0,
+   "linhas_dedutiveis_por_margem": {
+    "ano+raca": 0,
+    "mun_res+raca": 0,
+    "mun_res+ano": 0,
+    "ano+raca+uf": 0
+   },
+   "voltas": 3,
+   "convergiu": true,
+   "celulas_herdadas_da_mae": 0,
+   "hash_oculto": "da69aff4945a9864",
+   "por_porte": {
+    "ate_5mil": {
+     "pct_celulas_ocultas": 40.5,
+     "pct_internacoes_ocultas": 6.0
+    },
+    "5_a_20mil": {
+     "pct_celulas_ocultas": 27.3,
+     "pct_internacoes_ocultas": 1.69
+    },
+    "20_a_100mil": {
+     "pct_celulas_ocultas": 14.0,
+     "pct_internacoes_ocultas": 0.44
+    },
+    "100_a_500mil": {
+     "pct_celulas_ocultas": 16.9,
+     "pct_internacoes_ocultas": 0.44
+    },
+    "mais_500mil": {
+     "pct_celulas_ocultas": 15.7,
+     "pct_internacoes_ocultas": 0.23
+    }
+   },
+   "parquet_mb": 0.17,
+   "segundos": 0.2
+  },
+  {
+   "tabela": "hosp_cnes_ano_capitulo",
+   "dims": [
+    "cnes",
+    "ano",
+    "capitulo"
+   ],
+   "linhas": 70323,
+   "regra_antiga_visiveis_internacoes_1a4": 53,
+   "regra_antiga_pct_celulas_ocultas": 21.6,
+   "pct_celulas_primarias": 19.6,
+   "pct_celulas_ocultas": 24.7,
+   "pct_internacoes_ocultas": 4.06,
+   "pct_aihs_ocultas": 4.16,
+   "visiveis_internacoes_1a4": 0,
+   "linhas_dedutiveis_depois": 0,
+   "linhas_dedutiveis_por_margem": {
+    "ano+capitulo": 0,
+    "cnes+capitulo": 0,
+    "cnes+ano": 0,
+    "ano+capitulo+mun_hosp": 0
+   },
+   "voltas": 4,
+   "convergiu": true,
+   "celulas_herdadas_da_mae": 1,
+   "hash_oculto": "fbbc380de8f11dbe",
+   "parquet_mb": 0.53,
+   "segundos": 0.4
+  },
+  {
+   "tabela": "hosp_ano_espec",
+   "dims": [
+    "mun_hosp",
+    "ano",
+    "espec"
+   ],
+   "linhas": 10984,
+   "regra_antiga_visiveis_internacoes_1a4": 5,
+   "regra_antiga_pct_celulas_ocultas": 10.1,
+   "pct_celulas_primarias": 5.5,
+   "pct_celulas_ocultas": 11.0,
+   "pct_internacoes_ocultas": 0.7,
+   "pct_aihs_ocultas": 0.75,
+   "visiveis_internacoes_1a4": 0,
+   "linhas_dedutiveis_depois": 0,
+   "linhas_dedutiveis_por_margem": {
+    "ano+espec": 0,
+    "mun_hosp+espec": 0,
+    "mun_hosp+ano": 0,
+    "ano+espec+uf": 0
+   },
+   "voltas": 4,
+   "convergiu": true,
+   "celulas_herdadas_da_mae": 2,
+   "hash_oculto": "0d6537dad7eed13a",
+   "por_porte": {
+    "ate_5mil": {
+     "pct_celulas_ocultas": 27.9,
+     "pct_internacoes_ocultas": 9.44
+    },
+    "5_a_20mil": {
+     "pct_celulas_ocultas": 18.1,
+     "pct_internacoes_ocultas": 3.47
+    },
+    "20_a_100mil": {
+     "pct_celulas_ocultas": 5.5,
+     "pct_internacoes_ocultas": 0.77
+    },
+    "100_a_500mil": {
+     "pct_celulas_ocultas": 6.2,
+     "pct_internacoes_ocultas": 0.62
+    },
+    "mais_500mil": {
+     "pct_celulas_ocultas": 9.8,
+     "pct_internacoes_ocultas": 0.17
+    }
+   },
+   "parquet_mb": 0.1,
+   "segundos": 0.2
+  },
+  {
+   "tabela": "hosp_mes_espec",
+   "dims": [
+    "mun_hosp",
+    "mes",
+    "espec"
+   ],
+   "linhas": 116828,
+   "regra_antiga_visiveis_internacoes_1a4": 149,
+   "regra_antiga_pct_celulas_ocultas": 25.5,
+   "pct_celulas_primarias": 14.6,
+   "pct_celulas_ocultas": 26.3,
+   "pct_internacoes_ocultas": 2.55,
+   "pct_aihs_ocultas": 2.68,
+   "visiveis_internacoes_1a4": 0,
+   "linhas_dedutiveis_depois": 36,
+   "linhas_dedutiveis_por_margem": {
+    "mes+espec": 0,
+    "mun_hosp+espec": 36,
+    "mun_hosp+mes": 0,
+    "mes+espec+uf": 0
+   },
+   "voltas": 5,
+   "convergiu": true,
+   "celulas_herdadas_da_mae": 283,
+   "hash_oculto": "73f1148749a391ce",
+   "por_porte": {
+    "ate_5mil": {
+     "pct_celulas_ocultas": 55.0,
+     "pct_internacoes_ocultas": 28.9
+    },
+    "5_a_20mil": {
+     "pct_celulas_ocultas": 42.4,
+     "pct_internacoes_ocultas": 14.96
+    },
+    "20_a_100mil": {
+     "pct_celulas_ocultas": 19.2,
+     "pct_internacoes_ocultas": 3.56
+    },
+    "100_a_500mil": {
+     "pct_celulas_ocultas": 9.2,
+     "pct_internacoes_ocultas": 1.39
+    },
+    "mais_500mil": {
+     "pct_celulas_ocultas": 15.4,
+     "pct_internacoes_ocultas": 0.44
+    }
+   },
+   "parquet_mb": 0.75,
+   "segundos": 0.5
+  },
+  {
+   "tabela": "res_mes_faixa5",
+   "dims": [
+    "mun_res",
+    "mes",
+    "faixa5"
+   ],
+   "linhas": 326761,
+   "regra_antiga_visiveis_internacoes_1a4": 308,
+   "regra_antiga_pct_celulas_ocultas": 23.4,
+   "pct_celulas_primarias": 18.4,
+   "pct_celulas_ocultas": 23.6,
+   "pct_internacoes_ocultas": 2.05,
+   "pct_aihs_ocultas": 2.04,
+   "visiveis_internacoes_1a4": 0,
+   "linhas_dedutiveis_depois": 0,
+   "linhas_dedutiveis_por_margem": {
+    "mes+faixa5": 0,
+    "mun_res+faixa5": 0,
+    "mun_res+mes": 0,
+    "mes+faixa5+uf": 0
+   },
+   "voltas": 5,
+   "convergiu": true,
+   "celulas_herdadas_da_mae": 82,
+   "hash_oculto": "e4e1e492516102cd",
+   "por_porte": {
+    "ate_5mil": {
+     "pct_celulas_ocultas": 60.4,
+     "pct_internacoes_ocultas": 33.58
+    },
+    "5_a_20mil": {
+     "pct_celulas_ocultas": 21.7,
+     "pct_internacoes_ocultas": 6.89
+    },
+    "20_a_100mil": {
+     "pct_celulas_ocultas": 1.8,
+     "pct_internacoes_ocultas": 0.37
+    },
+    "100_a_500mil": {
+     "pct_celulas_ocultas": 0.1,
+     "pct_internacoes_ocultas": 0.01
+    },
+    "mais_500mil": {
+     "pct_celulas_ocultas": 0.0,
+     "pct_internacoes_ocultas": 0.0
+    }
+   },
+   "parquet_mb": 1.88,
+   "segundos": 1.0
+  },
+  {
+   "tabela": "res_tri_capitulo",
+   "dims": [
+    "mun_res",
+    "tri",
+    "capitulo"
+   ],
+   "linhas": 380845,
+   "regra_antiga_visiveis_internacoes_1a4": 1337,
+   "regra_antiga_pct_celulas_ocultas": 37.8,
+   "pct_celulas_primarias": 34.3,
+   "pct_celulas_ocultas": 38.5,
+   "pct_internacoes_ocultas": 2.95,
+   "pct_aihs_ocultas": 3.0,
+   "visiveis_internacoes_1a4": 0,
+   "linhas_dedutiveis_depois": 0,
+   "linhas_dedutiveis_por_margem": {
+    "tri+capitulo": 0,
+    "mun_res+capitulo": 0,
+    "mun_res+tri": 0,
+    "tri+capitulo+uf": 0
+   },
+   "voltas": 5,
+   "convergiu": true,
+   "celulas_herdadas_da_mae": 1265,
+   "hash_oculto": "787d353aad810600",
+   "por_porte": {
+    "ate_5mil": {
+     "pct_celulas_ocultas": 65.9,
+     "pct_internacoes_ocultas": 31.69
+    },
+    "5_a_20mil": {
+     "pct_celulas_ocultas": 43.2,
+     "pct_internacoes_ocultas": 9.24
+    },
+    "20_a_100mil": {
+     "pct_celulas_ocultas": 20.8,
+     "pct_internacoes_ocultas": 1.84
+    },
+    "100_a_500mil": {
+     "pct_celulas_ocultas": 7.6,
+     "pct_internacoes_ocultas": 0.41
+    },
+    "mais_500mil": {
+     "pct_celulas_ocultas": 3.4,
+     "pct_internacoes_ocultas": 0.17
+    }
+   },
+   "parquet_mb": 1.93,
+   "segundos": 1.2
+  },
+  {
+   "tabela": "hosp_tri_capitulo",
+   "dims": [
+    "mun_hosp",
+    "tri",
+    "capitulo"
+   ],
+   "linhas": 171984,
+   "regra_antiga_visiveis_internacoes_1a4": 58,
+   "regra_antiga_pct_celulas_ocultas": 34.5,
+   "pct_celulas_primarias": 30.8,
+   "pct_celulas_ocultas": 35.4,
+   "pct_internacoes_ocultas": 1.5,
+   "pct_aihs_ocultas": 1.5,
+   "visiveis_internacoes_1a4": 0,
+   "linhas_dedutiveis_depois": 0,
+   "linhas_dedutiveis_por_margem": {
+    "tri+capitulo": 0,
+    "mun_hosp+capitulo": 0,
+    "mun_hosp+tri": 0,
+    "tri+capitulo+uf": 0
+   },
+   "voltas": 5,
+   "convergiu": true,
+   "celulas_herdadas_da_mae": 1489,
+   "hash_oculto": "9c8644b9829078a6",
+   "por_porte": {
+    "ate_5mil": {
+     "pct_celulas_ocultas": 72.6,
+     "pct_internacoes_ocultas": 27.01
+    },
+    "5_a_20mil": {
+     "pct_celulas_ocultas": 50.1,
+     "pct_internacoes_ocultas": 9.65
+    },
+    "20_a_100mil": {
+     "pct_celulas_ocultas": 28.7,
+     "pct_internacoes_ocultas": 2.26
+    },
+    "100_a_500mil": {
+     "pct_celulas_ocultas": 13.1,
+     "pct_internacoes_ocultas": 0.46
+    },
+    "mais_500mil": {
+     "pct_celulas_ocultas": 4.8,
+     "pct_internacoes_ocultas": 0.2
+    }
+   },
+   "parquet_mb": 0.98,
+   "segundos": 0.6
+  },
+  {
+   "tabela": "hosp_mes_capitulo",
+   "dims": [
+    "mun_hosp",
+    "mes",
+    "capitulo"
+   ],
+   "linhas": 429330,
+   "regra_antiga_visiveis_internacoes_1a4": 241,
+   "regra_antiga_pct_celulas_ocultas": 44.4,
+   "pct_celulas_primarias": 42.8,
+   "pct_celulas_ocultas": 44.6,
+   "pct_internacoes_ocultas": 3.23,
+   "pct_aihs_ocultas": 3.25,
+   "visiveis_internacoes_1a4": 0,
+   "linhas_dedutiveis_depois": 3,
+   "linhas_dedutiveis_por_margem": {
+    "mes+capitulo": 0,
+    "mun_hosp+capitulo": 3,
+    "mun_hosp+mes": 0,
+    "mes+capitulo+uf": 0
+   },
+   "voltas": 4,
+   "convergiu": true,
+   "celulas_herdadas_da_mae": 160,
+   "hash_oculto": "26f1ee8542721db5",
+   "por_porte": {
+    "ate_5mil": {
+     "pct_celulas_ocultas": 83.3,
+     "pct_internacoes_ocultas": 44.45
+    },
+    "5_a_20mil": {
+     "pct_celulas_ocultas": 63.8,
+     "pct_internacoes_ocultas": 20.74
+    },
+    "20_a_100mil": {
+     "pct_celulas_ocultas": 39.4,
+     "pct_internacoes_ocultas": 5.38
+    },
+    "100_a_500mil": {
+     "pct_celulas_ocultas": 18.1,
+     "pct_internacoes_ocultas": 0.93
+    },
+    "mais_500mil": {
+     "pct_celulas_ocultas": 6.1,
+     "pct_internacoes_ocultas": 0.25
+    }
+   },
+   "parquet_mb": 2.02,
+   "segundos": 1.2
+  },
+  {
+   "tabela": "hosp_mes_carater",
+   "dims": [
+    "mun_hosp",
+    "mes",
+    "carater"
+   ],
+   "linhas": 58540,
+   "regra_antiga_visiveis_internacoes_1a4": 1,
+   "regra_antiga_pct_celulas_ocultas": 13.6,
+   "pct_celulas_primarias": 7.4,
+   "pct_celulas_ocultas": 13.9,
+   "pct_internacoes_ocultas": 4.53,
+   "pct_aihs_ocultas": 4.52,
+   "visiveis_internacoes_1a4": 0,
+   "linhas_dedutiveis_depois": 156,
+   "linhas_dedutiveis_por_margem": {
+    "mes+carater": 0,
+    "mun_hosp+carater": 156,
+    "mun_hosp+mes": 0,
+    "mes+carater+uf": 0
+   },
+   "voltas": 4,
+   "convergiu": true,
+   "celulas_herdadas_da_mae": 266,
+   "hash_oculto": "09b58cbfaf795642",
+   "por_porte": {
+    "ate_5mil": {
+     "pct_celulas_ocultas": 34.5,
+     "pct_internacoes_ocultas": 15.58
+    },
+    "5_a_20mil": {
+     "pct_celulas_ocultas": 18.4,
+     "pct_internacoes_ocultas": 8.95
+    },
+    "20_a_100mil": {
+     "pct_celulas_ocultas": 10.6,
+     "pct_internacoes_ocultas": 4.87
+    },
+    "100_a_500mil": {
+     "pct_celulas_ocultas": 6.8,
+     "pct_internacoes_ocultas": 3.37
+    },
+    "mais_500mil": {
+     "pct_celulas_ocultas": 8.9,
+     "pct_internacoes_ocultas": 4.39
+    }
+   },
+   "parquet_mb": 0.45,
+   "segundos": 0.4
+  },
+  {
+   "tabela": "fluxo_res_hosp_ano",
+   "dims": [
+    "mun_res",
+    "mun_hosp",
+    "ano"
+   ],
+   "linhas": 117068,
+   "regra_antiga_visiveis_internacoes_1a4": 720,
+   "regra_antiga_pct_celulas_ocultas": 60.1,
+   "pct_celulas_primarias": 59.9,
+   "pct_celulas_ocultas": 61.1,
+   "pct_internacoes_ocultas": 2.75,
+   "pct_aihs_ocultas": 2.77,
+   "visiveis_internacoes_1a4": 0,
+   "linhas_dedutiveis_depois": 0,
+   "linhas_dedutiveis_por_margem": {
+    "mun_hosp+ano": 0,
+    "mun_res+ano": 0,
+    "mun_res+mun_hosp": 0,
+    "mun_hosp+ano+uf": 0
+   },
+   "voltas": 2,
+   "convergiu": true,
+   "celulas_herdadas_da_mae": 0,
+   "hash_oculto": "176279d1b03bb312",
+   "por_porte": {
+    "ate_5mil": {
+     "pct_celulas_ocultas": 57.9,
+     "pct_internacoes_ocultas": 7.16
+    },
+    "5_a_20mil": {
+     "pct_celulas_ocultas": 55.8,
+     "pct_internacoes_ocultas": 7.48
+    },
+    "20_a_100mil": {
+     "pct_celulas_ocultas": 61.4,
+     "pct_internacoes_ocultas": 4.04
+    },
+    "100_a_500mil": {
+     "pct_celulas_ocultas": 71.0,
+     "pct_internacoes_ocultas": 0.57
+    },
+    "mais_500mil": {
+     "pct_celulas_ocultas": 74.1,
+     "pct_internacoes_ocultas": 0.24
+    }
+   },
+   "parquet_mb": 0.62,
+   "segundos": 0.5
+  },
+  {
+   "tabela": "res_mes_carater",
+   "dims": [
+    "mun_res",
+    "mes",
+    "carater"
+   ],
+   "linhas": 142840,
+   "regra_antiga_visiveis_internacoes_1a4": 111,
+   "regra_antiga_pct_celulas_ocultas": 23.1,
+   "pct_celulas_primarias": 11.1,
+   "pct_celulas_ocultas": 23.3,
+   "pct_internacoes_ocultas": 8.06,
+   "pct_aihs_ocultas": 8.09,
+   "visiveis_internacoes_1a4": 0,
+   "linhas_dedutiveis_depois": 0,
+   "linhas_dedutiveis_por_margem": {
+    "mes+carater": 0,
+    "mun_res+carater": 0,
+    "mun_res+mes": 0,
+    "mes+carater+uf": 0
+   },
+   "voltas": 5,
+   "convergiu": true,
+   "celulas_herdadas_da_mae": 180,
+   "hash_oculto": "5f16a8b41ef58321",
+   "por_porte": {
+    "ate_5mil": {
+     "pct_celulas_ocultas": 40.8,
+     "pct_internacoes_ocultas": 26.35
+    },
+    "5_a_20mil": {
+     "pct_celulas_ocultas": 20.2,
+     "pct_internacoes_ocultas": 9.68
+    },
+    "20_a_100mil": {
+     "pct_celulas_ocultas": 15.3,
+     "pct_internacoes_ocultas": 6.15
+    },
+    "100_a_500mil": {
+     "pct_celulas_ocultas": 18.7,
+     "pct_internacoes_ocultas": 7.46
+    },
+    "mais_500mil": {
+     "pct_celulas_ocultas": 23.1,
+     "pct_internacoes_ocultas": 8.04
+    }
+   },
+   "parquet_mb": 0.91,
+   "segundos": 0.6
+  },
+  {
+   "tabela": "res_mes_capitulo",
+   "dims": [
+    "mun_res",
+    "mes",
+    "capitulo"
+   ],
+   "linhas": 942679,
+   "regra_antiga_visiveis_internacoes_1a4": 3015,
+   "regra_antiga_pct_celulas_ocultas": 53.8,
+   "pct_celulas_primarias": 53.2,
+   "pct_celulas_ocultas": 54.1,
+   "pct_internacoes_ocultas": 7.75,
+   "pct_aihs_ocultas": 7.88,
+   "visiveis_internacoes_1a4": 0,
+   "linhas_dedutiveis_depois": 0,
+   "linhas_dedutiveis_por_margem": {
+    "mes+capitulo": 0,
+    "mun_res+capitulo": 0,
+    "mun_res+mes": 0,
+    "mes+capitulo+uf": 0
+   },
+   "voltas": 4,
+   "convergiu": true,
+   "celulas_herdadas_da_mae": 30,
+   "hash_oculto": "14cb95cbf234a359",
+   "por_porte": {
+    "ate_5mil": {
+     "pct_celulas_ocultas": 87.4,
+     "pct_internacoes_ocultas": 65.59
+    },
+    "5_a_20mil": {
+     "pct_celulas_ocultas": 62.9,
+     "pct_internacoes_ocultas": 25.38
+    },
+    "20_a_100mil": {
+     "pct_celulas_ocultas": 36.5,
+     "pct_internacoes_ocultas": 6.21
+    },
+    "100_a_500mil": {
+     "pct_celulas_ocultas": 13.7,
+     "pct_internacoes_ocultas": 0.97
+    },
+    "mais_500mil": {
+     "pct_celulas_ocultas": 4.0,
+     "pct_internacoes_ocultas": 0.13
+    }
+   },
+   "parquet_mb": 3.61,
+   "segundos": 2.3
+  },
+  {
+   "tabela": "fluxo_res_hosp_mes",
+   "dims": [
+    "mun_res",
+    "mun_hosp",
+    "mes"
+   ],
+   "linhas": 524048,
+   "regra_antiga_visiveis_internacoes_1a4": 1814,
+   "regra_antiga_pct_celulas_ocultas": 66.4,
+   "pct_celulas_primarias": 61.3,
+   "pct_celulas_ocultas": 67.0,
+   "pct_internacoes_ocultas": 9.5,
+   "pct_aihs_ocultas": 9.6,
+   "visiveis_internacoes_1a4": 0,
+   "linhas_dedutiveis_depois": 0,
+   "linhas_dedutiveis_por_margem": {
+    "mun_hosp+mes": 0,
+    "mun_res+mes": 0,
+    "mun_res+mun_hosp": 0,
+    "mun_hosp+mes+uf": 0
+   },
+   "voltas": 5,
+   "convergiu": true,
+   "celulas_herdadas_da_mae": 0,
+   "hash_oculto": "0d89705f59a2a6b2",
+   "por_porte": {
+    "ate_5mil": {
+     "pct_celulas_ocultas": 77.0,
+     "pct_internacoes_ocultas": 43.53
+    },
+    "5_a_20mil": {
+     "pct_celulas_ocultas": 66.4,
+     "pct_internacoes_ocultas": 24.42
+    },
+    "20_a_100mil": {
+     "pct_celulas_ocultas": 61.8,
+     "pct_internacoes_ocultas": 12.59
+    },
+    "100_a_500mil": {
+     "pct_celulas_ocultas": 67.6,
+     "pct_internacoes_ocultas": 2.5
+    },
+    "mais_500mil": {
+     "pct_celulas_ocultas": 78.9,
+     "pct_internacoes_ocultas": 0.78
+    }
+   },
+   "parquet_mb": 1.9,
+   "segundos": 1.5
+  },
+  {
+   "tabela": "res_ano_proc",
+   "dims": [
+    "mun_res",
+    "ano",
+    "proc"
+   ],
+   "linhas": 1217371,
+   "regra_antiga_visiveis_internacoes_1a4": 1246,
+   "regra_antiga_pct_celulas_ocultas": 71.3,
+   "pct_celulas_primarias": 71.5,
+   "pct_celulas_ocultas": 71.5,
+   "pct_internacoes_ocultas": 10.55,
+   "pct_aihs_ocultas": 10.53,
+   "visiveis_internacoes_1a4": 0,
+   "linhas_dedutiveis_depois": 0,
+   "linhas_dedutiveis_por_margem": {
+    "ano+proc": 0,
+    "mun_res+proc": 0,
+    "mun_res+ano": 0,
+    "ano+proc+uf": 0
+   },
+   "voltas": 6,
+   "convergiu": true,
+   "celulas_herdadas_da_mae": 0,
+   "hash_oculto": "6e933b7ab53a0041",
+   "por_porte": {
+    "ate_5mil": {
+     "pct_celulas_ocultas": 86.3,
+     "pct_internacoes_ocultas": 48.98
+    },
+    "5_a_20mil": {
+     "pct_celulas_ocultas": 77.5,
+     "pct_internacoes_ocultas": 26.12
+    },
+    "20_a_100mil": {
+     "pct_celulas_ocultas": 68.3,
+     "pct_internacoes_ocultas": 12.09
+    },
+    "100_a_500mil": {
+     "pct_celulas_ocultas": 59.6,
+     "pct_internacoes_ocultas": 5.08
+    },
+    "mais_500mil": {
+     "pct_celulas_ocultas": 46.9,
+     "pct_internacoes_ocultas": 1.3
+    }
+   },
+   "parquet_mb": 4.31,
+   "segundos": 3.6
+  },
+  {
+   "tabela": "res_ano_cid3",
+   "dims": [
+    "mun_res",
+    "ano",
+    "cid3"
+   ],
+   "linhas": 1485310,
+   "regra_antiga_visiveis_internacoes_1a4": 2946,
+   "regra_antiga_pct_celulas_ocultas": 72.9,
+   "pct_celulas_primarias": 73.1,
+   "pct_celulas_ocultas": 73.1,
+   "pct_internacoes_ocultas": 13.24,
+   "pct_aihs_ocultas": 13.31,
+   "visiveis_internacoes_1a4": 0,
+   "linhas_dedutiveis_depois": 0,
+   "linhas_dedutiveis_por_margem": {
+    "ano+cid3": 0,
+    "mun_res+cid3": 0,
+    "mun_res+ano": 0,
+    "ano+cid3+uf": 0
+   },
+   "voltas": 2,
+   "convergiu": true,
+   "celulas_herdadas_da_mae": 0,
+   "hash_oculto": "e519a44034e76f63",
+   "por_porte": {
+    "ate_5mil": {
+     "pct_celulas_ocultas": 88.6,
+     "pct_internacoes_ocultas": 56.61
+    },
+    "5_a_20mil": {
+     "pct_celulas_ocultas": 80.6,
+     "pct_internacoes_ocultas": 32.79
+    },
+    "20_a_100mil": {
+     "pct_celulas_ocultas": 70.8,
+     "pct_internacoes_ocultas": 16.14
+    },
+    "100_a_500mil": {
+     "pct_celulas_ocultas": 57.1,
+     "pct_internacoes_ocultas": 6.15
+    },
+    "mais_500mil": {
+     "pct_celulas_ocultas": 39.8,
+     "pct_internacoes_ocultas": 1.22
+    }
+   },
+   "parquet_mb": 5.09,
+   "segundos": 3.5
+  },
+  {
+   "tabela": "res_ano_capitulo_faixa5_sexo",
+   "dims": [
+    "mun_res",
+    "ano",
+    "capitulo",
+    "faixa5",
+    "sexo"
+   ],
+   "linhas": 678619,
+   "regra_antiga_visiveis_internacoes_1a4": 546,
+   "regra_antiga_pct_celulas_ocultas": 68.3,
+   "pct_celulas_primarias": 50.3,
+   "pct_celulas_ocultas": 68.5,
+   "pct_internacoes_ocultas": 21.87,
+   "pct_aihs_ocultas": 21.92,
+   "visiveis_internacoes_1a4": 0,
+   "linhas_dedutiveis_depois": 0,
+   "linhas_dedutiveis_por_margem": {
+    "ano+capitulo+faixa5+sexo": 0,
+    "mun_res+capitulo+faixa5+sexo": 0,
+    "mun_res+ano+faixa5+sexo": 0,
+    "mun_res+ano+capitulo+sexo": 0,
+    "mun_res+ano+capitulo+faixa5": 0,
+    "ano+capitulo+faixa5+sexo+uf": 0
+   },
+   "voltas": 5,
+   "convergiu": true,
+   "celulas_herdadas_da_mae": 0,
+   "hash_oculto": "c79fb5199271bc1a",
+   "por_porte": {
+    "ate_5mil": {
+     "pct_celulas_ocultas": 91.7,
+     "pct_internacoes_ocultas": 73.08
+    },
+    "5_a_20mil": {
+     "pct_celulas_ocultas": 77.9,
+     "pct_internacoes_ocultas": 44.05
+    },
+    "20_a_100mil": {
+     "pct_celulas_ocultas": 56.0,
+     "pct_internacoes_ocultas": 22.85
+    },
+    "100_a_500mil": {
+     "pct_celulas_ocultas": 30.3,
+     "pct_internacoes_ocultas": 11.49
+    },
+    "mais_500mil": {
+     "pct_celulas_ocultas": 16.5,
+     "pct_internacoes_ocultas": 12.9
+    }
+   },
+   "parquet_mb": 2.08,
+   "segundos": 3.0
+  },
+  {
+   "tabela": "res_mes_cid3",
+   "dims": [
+    "mun_res",
+    "mes",
+    "cid3"
+   ],
+   "linhas": 4612115,
+   "regra_antiga_visiveis_internacoes_1a4": 4016,
+   "regra_antiga_pct_celulas_ocultas": 88.6,
+   "pct_celulas_primarias": 88.4,
+   "pct_celulas_ocultas": 88.8,
+   "pct_internacoes_ocultas": 44.09,
+   "pct_aihs_ocultas": 44.22,
+   "visiveis_internacoes_1a4": 0,
+   "linhas_dedutiveis_depois": 0,
+   "linhas_dedutiveis_por_margem": {
+    "mes+cid3": 0,
+    "mun_res+cid3": 0,
+    "mun_res+mes": 0,
+    "mes+cid3+uf": 0
+   },
+   "voltas": 8,
+   "convergiu": true,
+   "celulas_herdadas_da_mae": 3,
+   "hash_oculto": "4db3f9a347461fda",
+   "por_porte": {
+    "ate_5mil": {
+     "pct_celulas_ocultas": 99.2,
+     "pct_internacoes_ocultas": 95.77
+    },
+    "5_a_20mil": {
+     "pct_celulas_ocultas": 96.2,
+     "pct_internacoes_ocultas": 80.77
+    },
+    "20_a_100mil": {
+     "pct_celulas_ocultas": 89.9,
+     "pct_internacoes_ocultas": 58.43
+    },
+    "100_a_500mil": {
+     "pct_celulas_ocultas": 80.7,
+     "pct_internacoes_ocultas": 33.91
+    },
+    "mais_500mil": {
+     "pct_celulas_ocultas": 65.8,
+     "pct_internacoes_ocultas": 11.38
+    }
+   },
+   "parquet_mb": 12.16,
+   "segundos": 12.9
+  },
+  {
+   "tabela": "res_mes_capitulo_faixa5_sexo",
+   "dims": [
+    "mun_res",
+    "mes",
+    "capitulo",
+    "faixa5",
+    "sexo"
+   ],
+   "linhas": 3296997,
+   "regra_antiga_visiveis_internacoes_1a4": 933,
+   "regra_antiga_pct_celulas_ocultas": 92.2,
+   "pct_celulas_primarias": 82.6,
+   "pct_celulas_ocultas": 92.3,
+   "pct_internacoes_ocultas": 54.42,
+   "pct_aihs_ocultas": 54.5,
+   "visiveis_internacoes_1a4": 0,
+   "linhas_dedutiveis_depois": 0,
+   "linhas_dedutiveis_por_margem": {
+    "mes+capitulo+faixa5+sexo": 0,
+    "mun_res+capitulo+faixa5+sexo": 0,
+    "mun_res+mes+faixa5+sexo": 0,
+    "mun_res+mes+capitulo+sexo": 0,
+    "mun_res+mes+capitulo+faixa5": 0,
+    "mes+capitulo+faixa5+sexo+uf": 0
+   },
+   "voltas": 5,
+   "convergiu": true,
+   "celulas_herdadas_da_mae": 7,
+   "hash_oculto": "997592f3008d9fd3",
+   "por_porte": {
+    "ate_5mil": {
+     "pct_celulas_ocultas": 99.9,
+     "pct_internacoes_ocultas": 99.7
+    },
+    "5_a_20mil": {
+     "pct_celulas_ocultas": 99.0,
+     "pct_internacoes_ocultas": 95.33
+    },
+    "20_a_100mil": {
+     "pct_celulas_ocultas": 93.5,
+     "pct_internacoes_ocultas": 74.67
+    },
+    "100_a_500mil": {
+     "pct_celulas_ocultas": 76.9,
+     "pct_internacoes_ocultas": 42.27
+    },
+    "mais_500mil": {
+     "pct_celulas_ocultas": 47.3,
+     "pct_internacoes_ocultas": 15.09
+    }
+   },
+   "parquet_mb": 5.44,
+   "segundos": 13.3
+  }
+ ],
+ "ataque_entre_tabelas": {
+  "residencia_mes": {
+   "res_mes_sexo": {
+    "chaves_com_uma_oculta_e_total_conhecido": 0,
+    "valor_deduzido_1a4": 0,
+    "segunda_ordem": {
+     "deduzidas": 0,
+     "deduzidas_de_1a4": 0
+    },
+    "segunda_ordem_margens_publicadas": {
+     "deduzidas": 0,
+     "deduzidas_de_1a4": 0
+    }
+   },
+   "res_mes_urgencia": {
+    "chaves_com_uma_oculta_e_total_conhecido": 0,
+    "valor_deduzido_1a4": 0,
+    "segunda_ordem": {
+     "deduzidas": 0,
+     "deduzidas_de_1a4": 0
+    },
+    "segunda_ordem_margens_publicadas": {
+     "deduzidas": 0,
+     "deduzidas_de_1a4": 0
+    }
+   },
+   "res_mes_faixa5": {
+    "chaves_com_uma_oculta_e_total_conhecido": 0,
+    "valor_deduzido_1a4": 0,
+    "segunda_ordem": {
+     "deduzidas": 0,
+     "deduzidas_de_1a4": 0
+    },
+    "segunda_ordem_margens_publicadas": {
+     "deduzidas": 0,
+     "deduzidas_de_1a4": 0
+    }
+   },
+   "mae_oculta_revelada_por_filha": {
+    "chaves": 0,
+    "valor_1a4": 0
+   },
+   "segunda_ordem_na_mae": {
+    "deduzidas": 0,
+    "deduzidas_de_1a4": 0
+   }
+  },
+  "residencia_ano": {
+   "res_ano_capitulo": {
+    "chaves_com_uma_oculta_e_total_conhecido": 0,
+    "valor_deduzido_1a4": 0,
+    "segunda_ordem": {
+     "deduzidas": 0,
+     "deduzidas_de_1a4": 0
+    },
+    "segunda_ordem_margens_publicadas": {
+     "deduzidas": 0,
+     "deduzidas_de_1a4": 0
+    }
+   },
+   "res_ano_faixa12_sexo": {
+    "chaves_com_uma_oculta_e_total_conhecido": 0,
+    "valor_deduzido_1a4": 0,
+    "segunda_ordem": {
+     "deduzidas": 0,
+     "deduzidas_de_1a4": 0
+    },
+    "segunda_ordem_margens_publicadas": {
+     "deduzidas": 0,
+     "deduzidas_de_1a4": 0
+    }
+   },
+   "res_ano_raca": {
+    "chaves_com_uma_oculta_e_total_conhecido": 0,
+    "valor_deduzido_1a4": 0,
+    "segunda_ordem": {
+     "deduzidas": 0,
+     "deduzidas_de_1a4": 0
+    },
+    "segunda_ordem_margens_publicadas": {
+     "deduzidas": 0,
+     "deduzidas_de_1a4": 0
+    }
+   },
+   "mae_oculta_revelada_por_filha": {
+    "chaves": 0,
+    "valor_1a4": 0
+   },
+   "segunda_ordem_na_mae": {
+    "deduzidas": 0,
+    "deduzidas_de_1a4": 0
+   }
+  },
+  "hospital_mes": {
+   "hosp_mes_espec": {
+    "chaves_com_uma_oculta_e_total_conhecido": 0,
+    "valor_deduzido_1a4": 0,
+    "segunda_ordem": {
+     "deduzidas": 72,
+     "deduzidas_de_1a4": 37
+    },
+    "segunda_ordem_margens_publicadas": {
+     "deduzidas": 72,
+     "deduzidas_de_1a4": 37
+    }
+   },
+   "hosp_mes_capitulo": {
+    "chaves_com_uma_oculta_e_total_conhecido": 0,
+    "valor_deduzido_1a4": 0,
+    "segunda_ordem": {
+     "deduzidas": 5,
+     "deduzidas_de_1a4": 3
+    },
+    "segunda_ordem_margens_publicadas": {
+     "deduzidas": 0,
+     "deduzidas_de_1a4": 0
+    }
+   },
+   "hosp_mes_carater": {
+    "chaves_com_uma_oculta_e_total_conhecido": 0,
+    "valor_deduzido_1a4": 0,
+    "segunda_ordem": {
+     "deduzidas": 312,
+     "deduzidas_de_1a4": 157
+    },
+    "segunda_ordem_margens_publicadas": {
+     "deduzidas": 0,
+     "deduzidas_de_1a4": 0
+    }
+   },
+   "mae_oculta_revelada_por_filha": {
+    "chaves": 0,
+    "valor_1a4": 0
+   },
+   "segunda_ordem_na_mae": {
+    "deduzidas": 0,
+    "deduzidas_de_1a4": 0
+   }
+  },
+  "hospital_ano": {
+   "hosp_ano_espec": {
+    "chaves_com_uma_oculta_e_total_conhecido": 0,
+    "valor_deduzido_1a4": 0,
+    "segunda_ordem": {
+     "deduzidas": 0,
+     "deduzidas_de_1a4": 0
+    },
+    "segunda_ordem_margens_publicadas": {
+     "deduzidas": 0,
+     "deduzidas_de_1a4": 0
+    }
+   },
+   "mae_oculta_revelada_por_filha": {
+    "chaves": 0,
+    "valor_1a4": 0
+   },
+   "segunda_ordem_na_mae": {
+    "deduzidas": 0,
+    "deduzidas_de_1a4": 0
+   }
+  },
+  "residencia_capitulo": {
+   "res_tri_capitulo": {
+    "chaves_com_uma_oculta_e_total_conhecido": 0,
+    "valor_deduzido_1a4": 0,
+    "segunda_ordem": {
+     "deduzidas": 0,
+     "deduzidas_de_1a4": 0
+    },
+    "segunda_ordem_margens_publicadas": {
+     "deduzidas": 0,
+     "deduzidas_de_1a4": 0
+    }
+   },
+   "mae_oculta_revelada_por_filha": {
+    "chaves": 0,
+    "valor_1a4": 0
+   },
+   "segunda_ordem_na_mae": {
+    "deduzidas": 0,
+    "deduzidas_de_1a4": 0
+   }
+  }
+ },
+ "ataque_trimestre_mes": {
+  "res_tri_capitulo": {
+   "mes_oculto_deduzido": 0,
+   "valor_1a4": 0
+  },
+  "hosp_tri_capitulo": {
+   "mes_oculto_deduzido": 0,
+   "valor_1a4": 0
+  }
+ },
+ "dedutiveis_publicaveis": 0
+}

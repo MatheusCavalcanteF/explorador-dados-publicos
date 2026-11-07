@@ -1,0 +1,52 @@
+{
+ "url": "https://idl.uw.edu/mosaic-datasets/data/flights-200k.parquet",
+ "navegador": "Chrome",
+ "opcao": "forceFullHTTPReads: false",
+ "consultas": [
+  {
+   "consulta": "SELECT count(*) c FROM read_parquet('<url>')",
+   "primeira_linha": {
+    "c": 231083
+   },
+   "ms": 679,
+   "requisicoes": 4,
+   "bytes_no_corpo": 17936,
+   "detalhe": [
+    "HEAD 200 []",
+    "GET 206 [bytes=0-0]",
+    "HEAD 200 [bytes=0-]",
+    "GET 206 [bytes=1114112-1129930]"
+   ]
+  },
+  {
+   "consulta": "SELECT avg(delay) d FROM read_parquet('<url>')",
+   "primeira_linha": {
+    "d": 7.933508739284154
+   },
+   "ms": 107,
+   "requisicoes": 7,
+   "bytes_no_corpo": 692263,
+   "detalhe": [
+    "HEAD 200 []",
+    "GET 206 [bytes=0-16383]",
+    "GET 206 [bytes=16384-81919]",
+    "GET 206 [bytes=81920-344063]",
+    "GET 206 [bytes=606208-622591]",
+    "GET 206 [bytes=622592-688127]"
+   ]
+  },
+  {
+   "consulta": "SELECT row_group_id, count(*) n FROM parquet_metadata('<url>') GROUP BY 1 LIMIT 3",
+   "primeira_linha": {
+    "row_group_id": 0,
+    "n": 3
+   },
+   "ms": 22,
+   "requisicoes": 1,
+   "bytes_no_corpo": 521,
+   "detalhe": [
+    "HEAD 200 []"
+   ]
+  }
+ ]
+}

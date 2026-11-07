@@ -1,0 +1,50 @@
+{
+ "descricao": "Tempo da mesma carga, na thread principal e em um worker, com cada forma de limitar a CPU",
+ "calculo": "Mediana de 3 execuções; vezes = tempo com limite / tempo sem limite",
+ "ferramentas_do_navegador": [
+  {
+   "fator": 1,
+   "principal_ms": 8570,
+   "worker_ms": 8616,
+   "principal_vezes": 1,
+   "worker_vezes": 1
+  },
+  {
+   "fator": 4,
+   "principal_ms": 38148,
+   "worker_ms": 8693,
+   "principal_vezes": 4.5,
+   "worker_vezes": 1
+  },
+  {
+   "fator": 6,
+   "principal_ms": 59742,
+   "worker_ms": 8700,
+   "principal_vezes": 7,
+   "worker_vezes": 1
+  }
+ ],
+ "job_object": [
+  {
+   "fator": 1,
+   "principal_ms": 8608,
+   "worker_ms": 8705,
+   "principal_vezes": 1,
+   "worker_vezes": 1
+  },
+  {
+   "fator": 4,
+   "principal_ms": 33866,
+   "worker_ms": 33941,
+   "principal_vezes": 3.9,
+   "worker_vezes": 3.9
+  },
+  {
+   "fator": 6,
+   "principal_ms": 50505,
+   "worker_ms": 51081,
+   "principal_vezes": 5.9,
+   "worker_vezes": 5.9
+  }
+ ]
+}

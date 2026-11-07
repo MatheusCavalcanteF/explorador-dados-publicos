@@ -1,0 +1,516 @@
+{
+ "versoes_ftp": [
+  "20261016203006",
+  "20261016203007",
+  "20261016203008",
+  "20261016203009"
+ ],
+ "competencias": [
+  "2509",
+  "2510",
+  "2511",
+  "2512",
+  "2601",
+  "2602",
+  "2603",
+  "2604",
+  "2605",
+  "2606",
+  "2607"
+ ],
+ "visoes": {
+  "hospital": {
+   "pares": 3555,
+   "pares_que_mudaram": 21,
+   "por_competencia": [
+    [
+     "2509",
+     0,
+     246477,
+     246477
+    ],
+    [
+     "2510",
+     0,
+     252202,
+     252202
+    ],
+    [
+     "2511",
+     0,
+     235155,
+     235155
+    ],
+    [
+     "2512",
+     0,
+     226259,
+     226259
+    ],
+    [
+     "2601",
+     0,
+     233364,
+     233364
+    ],
+    [
+     "2602",
+     0,
+     226456,
+     226456
+    ],
+    [
+     "2603",
+     1,
+     251117,
+     251151
+    ],
+    [
+     "2604",
+     3,
+     247008,
+     247147
+    ],
+    [
+     "2605",
+     5,
+     252980,
+     251287
+    ],
+    [
+     "2606",
+     4,
+     246723,
+     244551
+    ],
+    [
+     "2607",
+     8,
+     249712,
+     247816
+    ]
+   ],
+   "acionados_por_limite": {
+    "base100_queda30": 3,
+    "base100_queda50": 3,
+    "base50_queda30": 3,
+    "base50_queda50": 3,
+    "base20_queda30": 3,
+    "base20_queda50": 3
+   },
+   "acionados_base100_queda30": [
+    {
+     "comp": "2606",
+     "municipio": "354780",
+     "antes": 4021,
+     "depois": 1401,
+     "pct": -65.2,
+     "mediana_2501_2508": 3841.5,
+     "classe": "alarme verdadeiro: valor novo abaixo do historico"
+    },
+    {
+     "comp": "2605",
+     "municipio": "354780",
+     "antes": 3616,
+     "depois": 1269,
+     "pct": -64.9,
+     "mediana_2501_2508": 3841.5,
+     "classe": "alarme verdadeiro: valor novo abaixo do historico"
+    },
+    {
+     "comp": "2607",
+     "municipio": "354780",
+     "antes": 3719,
+     "depois": 1333,
+     "pct": -64.2,
+     "mediana_2501_2508": 3841.5,
+     "classe": "alarme verdadeiro: valor novo abaixo do historico"
+    }
+   ],
+   "classes": {
+    "alarme verdadeiro: valor novo abaixo do historico": 3
+   },
+   "altas_acima_30pct_base100": 0,
+   "altas_exemplos": [],
+   "pares_inalterados_abaixo_de_70pct_da_mediana": 36,
+   "subtracao_pares_visiveis_dif_1a4": 0,
+   "subtracao_municipios": 0,
+   "subtracao_entrou_ou_saiu_de_oculto": 0,
+   "variacao_total_sp_por_competencia": [
+    [
+     "2606",
+     246723,
+     244551,
+     -0.88
+    ],
+    [
+     "2607",
+     249712,
+     247816,
+     -0.76
+    ],
+    [
+     "2605",
+     252980,
+     251287,
+     -0.67
+    ],
+    [
+     "2510",
+     252202,
+     252202,
+     0.0
+    ],
+    [
+     "2602",
+     226456,
+     226456,
+     0.0
+    ],
+    [
+     "2512",
+     226259,
+     226259,
+     0.0
+    ],
+    [
+     "2509",
+     246477,
+     246477,
+     0.0
+    ],
+    [
+     "2601",
+     233364,
+     233364,
+     0.0
+    ],
+    [
+     "2511",
+     235155,
+     235155,
+     0.0
+    ],
+    [
+     "2603",
+     251117,
+     251151,
+     0.01
+    ],
+    [
+     "2604",
+     247008,
+     247147,
+     0.06
+    ]
+   ]
+  },
+  "residencia": {
+   "pares": 14989,
+   "pares_que_mudaram": 100,
+   "por_competencia": [
+    [
+     "2509",
+     0,
+     246477,
+     246477
+    ],
+    [
+     "2510",
+     0,
+     252202,
+     252202
+    ],
+    [
+     "2511",
+     0,
+     235155,
+     235155
+    ],
+    [
+     "2512",
+     0,
+     226259,
+     226259
+    ],
+    [
+     "2601",
+     0,
+     233364,
+     233364
+    ],
+    [
+     "2602",
+     0,
+     226456,
+     226456
+    ],
+    [
+     "2603",
+     1,
+     251117,
+     251151
+    ],
+    [
+     "2604",
+     6,
+     247008,
+     247147
+    ],
+    [
+     "2605",
+     31,
+     252980,
+     251287
+    ],
+    [
+     "2606",
+     27,
+     246723,
+     244551
+    ],
+    [
+     "2607",
+     35,
+     249712,
+     247816
+    ]
+   ],
+   "acionados_por_limite": {
+    "base100_queda30": 3,
+    "base100_queda50": 3,
+    "base50_queda30": 3,
+    "base50_queda50": 3,
+    "base20_queda30": 3,
+    "base20_queda50": 3
+   },
+   "acionados_base100_queda30": [
+    {
+     "comp": "2606",
+     "municipio": "354780",
+     "antes": 3324,
+     "depois": 882,
+     "pct": -73.5,
+     "mediana_2501_2508": 3065.0,
+     "classe": "alarme verdadeiro: valor novo abaixo do historico"
+    },
+    {
+     "comp": "2607",
+     "municipio": "354780",
+     "antes": 3073,
+     "depois": 852,
+     "pct": -72.3,
+     "mediana_2501_2508": 3065.0,
+     "classe": "alarme verdadeiro: valor novo abaixo do historico"
+    },
+    {
+     "comp": "2605",
+     "municipio": "354780",
+     "antes": 3081,
+     "depois": 899,
+     "pct": -70.8,
+     "mediana_2501_2508": 3065.0,
+     "classe": "alarme verdadeiro: valor novo abaixo do historico"
+    }
+   ],
+   "classes": {
+    "alarme verdadeiro: valor novo abaixo do historico": 3
+   },
+   "altas_acima_30pct_base100": 3,
+   "altas_exemplos": [
+    [
+     "2605",
+     "353650",
+     111,
+     507,
+     356.8,
+     580.5
+    ],
+    [
+     "2606",
+     "353650",
+     121,
+     422,
+     248.8,
+     580.5
+    ],
+    [
+     "2607",
+     "353670",
+     156,
+     302,
+     93.6,
+     306.5
+    ]
+   ],
+   "pares_inalterados_abaixo_de_70pct_da_mediana": 22,
+   "subtracao_pares_visiveis_dif_1a4": 49,
+   "subtracao_municipios": 41,
+   "subtracao_entrou_ou_saiu_de_oculto": 0,
+   "variacao_total_sp_por_competencia": [
+    [
+     "2606",
+     246723,
+     244551,
+     -0.88
+    ],
+    [
+     "2607",
+     249712,
+     247816,
+     -0.76
+    ],
+    [
+     "2605",
+     252980,
+     251287,
+     -0.67
+    ],
+    [
+     "2601",
+     233364,
+     233364,
+     0.0
+    ],
+    [
+     "2602",
+     226456,
+     226456,
+     0.0
+    ],
+    [
+     "2512",
+     226259,
+     226259,
+     0.0
+    ],
+    [
+     "2509",
+     246477,
+     246477,
+     0.0
+    ],
+    [
+     "2510",
+     252202,
+     252202,
+     0.0
+    ],
+    [
+     "2511",
+     235155,
+     235155,
+     0.0
+    ],
+    [
+     "2603",
+     251117,
+     251151,
+     0.01
+    ],
+    [
+     "2604",
+     247008,
+     247147,
+     0.06
+    ]
+   ]
+  }
+ },
+ "eixo_mes_de_saida": {
+  "hospital": {
+   "pares": 4014,
+   "pares_que_mudaram": 36,
+   "acionados": [
+    [
+     "202604",
+     "354780",
+     3657,
+     2247,
+     -38.6
+    ],
+    [
+     "202605",
+     "354780",
+     3605,
+     1276,
+     -64.6
+    ],
+    [
+     "202606",
+     "354780",
+     3375,
+     1356,
+     -59.8
+    ],
+    [
+     "202607",
+     "354780",
+     2301,
+     1295,
+     -43.7
+    ]
+   ],
+   "subtracao_pares_visiveis_dif_1a4": 7,
+   "subtracao_municipios": 7,
+   "entrou_ou_saiu_de_oculto": 0
+  },
+  "residencia": {
+   "pares": 16676,
+   "pares_que_mudaram": 141,
+   "acionados": [
+    [
+     "202604",
+     "354780",
+     3099,
+     1792,
+     -42.2
+    ],
+    [
+     "202605",
+     "354780",
+     3055,
+     876,
+     -71.3
+    ],
+    [
+     "202606",
+     "354780",
+     2729,
+     839,
+     -69.3
+    ],
+    [
+     "202607",
+     "354780",
+     1688,
+     748,
+     -55.7
+    ]
+   ],
+   "subtracao_pares_visiveis_dif_1a4": 77,
+   "subtracao_municipios": 56,
+   "entrou_ou_saiu_de_oculto": 0
+  }
+ },
+ "hospitais_que_sumiram": [
+  [
+   "2605",
+   "354780",
+   6,
+   2353
+  ],
+  [
+   "2606",
+   "354780",
+   6,
+   2627
+  ],
+  [
+   "2607",
+   "354780",
+   6,
+   2393
+  ]
+ ]
+}

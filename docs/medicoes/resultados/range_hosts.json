@@ -1,0 +1,323 @@
+{
+ "chromium": {
+  "versao": "157.0.8103.38",
+  "alvos": {
+   "GitHub Pages (sqlite)": {
+    "arquivo": "https://phiresky.github.io/world-development-indicators-sqlite/split-db/db.sqlite3.000",
+    "tamanho_real": 10485760,
+    "respostas": [
+     {
+      "faixa": "bytes=0-1023",
+      "status": 206,
+      "bytes": 1024,
+      "contentRange": "bytes 0-1023/10485760",
+      "encoding": null,
+      "acceptRanges": "bytes",
+      "comprimento": "1024",
+      "inicio": "53514c69"
+     },
+     {
+      "faixa": "bytes=2048-3071",
+      "status": 206,
+      "bytes": 1024,
+      "contentRange": "bytes 2048-3071/10485760",
+      "encoding": null,
+      "acceptRanges": "bytes",
+      "comprimento": "1024",
+      "inicio": "0d000000"
+     },
+     {
+      "faixa": "HEAD",
+      "status": 200,
+      "comprimento": "1484389",
+      "encoding": "gzip",
+      "acceptRanges": "bytes"
+     }
+    ],
+    "accept_encoding_enviado": "identity"
+   },
+   "GitHub Pages (wasm)": {
+    "arquivo": "https://kripken.github.io/sql.js/dist/sql-wasm.wasm",
+    "tamanho_real": 1450157,
+    "respostas": [
+     {
+      "faixa": "bytes=0-1023",
+      "status": 206,
+      "bytes": 1024,
+      "contentRange": "bytes 0-1023/1450157",
+      "encoding": null,
+      "acceptRanges": "bytes",
+      "comprimento": "1024",
+      "inicio": "0061736d"
+     },
+     {
+      "faixa": "bytes=2048-3071",
+      "status": 206,
+      "bytes": 1024,
+      "contentRange": "bytes 2048-3071/1450157",
+      "encoding": null,
+      "acceptRanges": "bytes",
+      "comprimento": "1024",
+      "inicio": "0f0f0f0f"
+     },
+     {
+      "faixa": "HEAD",
+      "status": 200,
+      "comprimento": "508708",
+      "encoding": "gzip",
+      "acceptRanges": "bytes"
+     }
+    ],
+    "accept_encoding_enviado": "identity"
+   },
+   "Cloudflare Pages (zip)": {
+    "arquivo": "https://nodeget.pages.dev/NodeGet-StatusShow.zip",
+    "tamanho_real": 1248531,
+    "respostas": [
+     {
+      "faixa": "bytes=0-1023",
+      "status": 200,
+      "bytes": 1248531,
+      "contentRange": null,
+      "encoding": null,
+      "acceptRanges": null,
+      "comprimento": "1248531",
+      "inicio": "504b0304"
+     },
+     {
+      "faixa": "bytes=2048-3071",
+      "status": 200,
+      "bytes": 1248531,
+      "contentRange": null,
+      "encoding": null,
+      "acceptRanges": null,
+      "comprimento": "1248531",
+      "inicio": "504b0304"
+     },
+     {
+      "faixa": "HEAD",
+      "status": 200,
+      "comprimento": null,
+      "encoding": null,
+      "acceptRanges": null
+     }
+    ],
+    "accept_encoding_enviado": "identity"
+   }
+  }
+ },
+ "firefox": {
+  "versao": "159.0",
+  "alvos": {
+   "GitHub Pages (sqlite)": {
+    "arquivo": "https://phiresky.github.io/world-development-indicators-sqlite/split-db/db.sqlite3.000",
+    "tamanho_real": 10485760,
+    "respostas": [
+     {
+      "faixa": "bytes=0-1023",
+      "status": 206,
+      "bytes": 1024,
+      "contentRange": "bytes 0-1023/10485760",
+      "encoding": null,
+      "acceptRanges": "bytes",
+      "comprimento": "1024",
+      "inicio": "53514c69"
+     },
+     {
+      "faixa": "bytes=2048-3071",
+      "status": 206,
+      "bytes": 1024,
+      "contentRange": "bytes 2048-3071/10485760",
+      "encoding": null,
+      "acceptRanges": "bytes",
+      "comprimento": "1024",
+      "inicio": "0d000000"
+     },
+     {
+      "faixa": "HEAD",
+      "status": 200,
+      "comprimento": "1484389",
+      "encoding": "gzip",
+      "acceptRanges": "bytes"
+     }
+    ],
+    "accept_encoding_enviado": "gzip, deflate, br, zstd"
+   },
+   "GitHub Pages (wasm)": {
+    "arquivo": "https://kripken.github.io/sql.js/dist/sql-wasm.wasm",
+    "tamanho_real": 1450157,
+    "respostas": [
+     {
+      "faixa": "bytes=0-1023",
+      "status": 206,
+      "bytes": 1024,
+      "contentRange": "bytes 0-1023/1450157",
+      "encoding": null,
+      "acceptRanges": "bytes",
+      "comprimento": "1024",
+      "inicio": "0061736d"
+     },
+     {
+      "faixa": "bytes=2048-3071",
+      "status": 206,
+      "bytes": 1024,
+      "contentRange": "bytes 2048-3071/1450157",
+      "encoding": null,
+      "acceptRanges": "bytes",
+      "comprimento": "1024",
+      "inicio": "0f0f0f0f"
+     },
+     {
+      "faixa": "HEAD",
+      "status": 200,
+      "comprimento": "508708",
+      "encoding": "gzip",
+      "acceptRanges": "bytes"
+     }
+    ],
+    "accept_encoding_enviado": "gzip, deflate, br, zstd"
+   },
+   "Cloudflare Pages (zip)": {
+    "arquivo": "https://nodeget.pages.dev/NodeGet-StatusShow.zip",
+    "tamanho_real": 1248531,
+    "respostas": [
+     {
+      "faixa": "bytes=0-1023",
+      "status": 200,
+      "bytes": 1248531,
+      "contentRange": null,
+      "encoding": null,
+      "acceptRanges": null,
+      "comprimento": "1248531",
+      "inicio": "504b0304"
+     },
+     {
+      "faixa": "bytes=2048-3071",
+      "status": 200,
+      "bytes": 1248531,
+      "contentRange": null,
+      "encoding": null,
+      "acceptRanges": null,
+      "comprimento": "1248531",
+      "inicio": "504b0304"
+     },
+     {
+      "faixa": "HEAD",
+      "status": 200,
+      "comprimento": null,
+      "encoding": null,
+      "acceptRanges": null
+     }
+    ],
+    "accept_encoding_enviado": "gzip, deflate, br, zstd"
+   }
+  }
+ },
+ "webkit": {
+  "versao": "27.2",
+  "alvos": {
+   "GitHub Pages (sqlite)": {
+    "arquivo": "https://phiresky.github.io/world-development-indicators-sqlite/split-db/db.sqlite3.000",
+    "tamanho_real": 10485760,
+    "respostas": [
+     {
+      "faixa": "bytes=0-1023",
+      "status": 206,
+      "bytes": 1024,
+      "contentRange": "bytes 0-1023/10485760",
+      "encoding": null,
+      "acceptRanges": "bytes",
+      "comprimento": "1024",
+      "inicio": "53514c69"
+     },
+     {
+      "faixa": "bytes=2048-3071",
+      "status": 206,
+      "bytes": 1024,
+      "contentRange": "bytes 2048-3071/10485760",
+      "encoding": null,
+      "acceptRanges": "bytes",
+      "comprimento": "1024",
+      "inicio": "0d000000"
+     },
+     {
+      "faixa": "HEAD",
+      "status": 200,
+      "comprimento": "1484389",
+      "encoding": "gzip",
+      "acceptRanges": "bytes"
+     }
+    ],
+    "accept_encoding_enviado": "identity"
+   },
+   "GitHub Pages (wasm)": {
+    "arquivo": "https://kripken.github.io/sql.js/dist/sql-wasm.wasm",
+    "tamanho_real": 1450157,
+    "respostas": [
+     {
+      "faixa": "bytes=0-1023",
+      "status": 206,
+      "bytes": 1024,
+      "contentRange": "bytes 0-1023/1450157",
+      "encoding": null,
+      "acceptRanges": "bytes",
+      "comprimento": "1024",
+      "inicio": "0061736d"
+     },
+     {
+      "faixa": "bytes=2048-3071",
+      "status": 206,
+      "bytes": 1024,
+      "contentRange": "bytes 2048-3071/1450157",
+      "encoding": null,
+      "acceptRanges": "bytes",
+      "comprimento": "1024",
+      "inicio": "0f0f0f0f"
+     },
+     {
+      "faixa": "HEAD",
+      "status": 200,
+      "comprimento": "508708",
+      "encoding": "gzip",
+      "acceptRanges": "bytes"
+     }
+    ],
+    "accept_encoding_enviado": "identity"
+   },
+   "Cloudflare Pages (zip)": {
+    "arquivo": "https://nodeget.pages.dev/NodeGet-StatusShow.zip",
+    "tamanho_real": 1248531,
+    "respostas": [
+     {
+      "faixa": "bytes=0-1023",
+      "status": 200,
+      "bytes": 1248531,
+      "contentRange": null,
+      "encoding": null,
+      "acceptRanges": null,
+      "comprimento": "1248531",
+      "inicio": "504b0304"
+     },
+     {
+      "faixa": "bytes=2048-3071",
+      "status": 200,
+      "bytes": 1248531,
+      "contentRange": null,
+      "encoding": null,
+      "acceptRanges": null,
+      "comprimento": "1248531",
+      "inicio": "504b0304"
+     },
+     {
+      "faixa": "HEAD",
+      "status": 200,
+      "comprimento": null,
+      "encoding": null,
+      "acceptRanges": null
+     }
+    ],
+    "accept_encoding_enviado": "identity"
+   }
+  }
+ }
+}

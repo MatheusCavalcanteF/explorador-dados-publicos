@@ -1,0 +1,140 @@
+{
+ "navegador": "Chrome",
+ "origem_da_pagina": "servidor local, fora da origem do arquivo",
+ "consulta": "count(*)",
+ "cenarios": [
+  {
+   "url": "https://idl.uw.edu/mosaic-datasets/data/flights-200k.parquet",
+   "host": "idl.uw.edu",
+   "cenario": "padrão",
+   "resultado": {
+    "ok": true,
+    "linhas": 231083,
+    "ms": 1270
+   },
+   "requisicoes": 2,
+   "bytes_no_corpo": 800249,
+   "detalhe": [
+    "HEAD 200 [] ae=gzip, de enc=gzip cl=798756 cr=-",
+    "GET 200 [] ae=gzip, de enc=gzip cl=798756 cr=-"
+   ]
+  },
+  {
+   "url": "https://idl.uw.edu/mosaic-datasets/data/flights-200k.parquet",
+   "host": "idl.uw.edu",
+   "cenario": "forceFull=false",
+   "resultado": {
+    "ok": true,
+    "linhas": 231083,
+    "ms": 1019
+   },
+   "requisicoes": 4,
+   "bytes_no_corpo": 17934,
+   "detalhe": [
+    "HEAD 200 [] ae=gzip, de enc=gzip cl=798756 cr=-",
+    "GET 206 [bytes=0-0] ae=identity enc=- cl=1 cr=bytes 0-0/1129931",
+    "HEAD 200 [bytes=0-] ae=identity enc=- cl=1129931 cr=-",
+    "GET 206 [bytes=1114112-1129930] ae=identity enc=- cl=15819 cr=bytes 1114112-1129930/1129931"
+   ]
+  },
+  {
+   "url": "https://idl.uw.edu/mosaic-datasets/data/flights-200k.parquet",
+   "host": "idl.uw.edu",
+   "cenario": "forceFull=false + registro",
+   "resultado": {
+    "ok": true,
+    "linhas": 231083,
+    "ms": 698
+   },
+   "requisicoes": 3,
+   "bytes_no_corpo": 17412,
+   "detalhe": [
+    "GET 206 [bytes=0-0] ae=identity enc=- cl=1 cr=bytes 0-0/1129931",
+    "HEAD 200 [bytes=0-] ae=identity enc=- cl=1129931 cr=-",
+    "GET 206 [bytes=1114112-1129930] ae=identity enc=- cl=15819 cr=bytes 1114112-1129930/1129931"
+   ]
+  },
+  {
+   "url": "https://idl.uw.edu/mosaic-datasets/data/flights-200k.parquet",
+   "host": "idl.uw.edu",
+   "cenario": "forceFull=false + reliable=false + registro",
+   "resultado": {
+    "ok": true,
+    "linhas": 231083,
+    "ms": 712
+   },
+   "requisicoes": 3,
+   "bytes_no_corpo": 17412,
+   "detalhe": [
+    "GET 206 [bytes=0-0] ae=identity enc=- cl=1 cr=bytes 0-0/1129931",
+    "HEAD 200 [bytes=0-] ae=identity enc=- cl=1129931 cr=-",
+    "GET 206 [bytes=1114112-1129930] ae=identity enc=- cl=15819 cr=bytes 1114112-1129930/1129931"
+   ]
+  },
+  {
+   "url": "https://shell.duckdb.org/data/tpch/0_01/parquet/lineitem.parquet",
+   "host": "shell.duckdb.org",
+   "cenario": "padrão",
+   "resultado": {
+    "ok": true,
+    "linhas": 60175,
+    "ms": 1016
+   },
+   "requisicoes": 2,
+   "bytes_no_corpo": 1687292,
+   "detalhe": [
+    "HEAD 200 [] ae=gzip, de enc=gzip cl=1683745 cr=-",
+    "GET 200 [] ae=gzip, de enc=gzip cl=1683745 cr=-"
+   ]
+  },
+  {
+   "url": "https://shell.duckdb.org/data/tpch/0_01/parquet/lineitem.parquet",
+   "host": "shell.duckdb.org",
+   "cenario": "forceFull=false",
+   "resultado": {
+    "ok": false,
+    "erro": "Error: page.evaluate: Error: Invalid Input Error: No magic bytes found at end of file 'https://shell.duckdb.org/data/tpch/0_01/parquet/lineitem.parquet' LINE 1:"
+   },
+   "requisicoes": 4,
+   "bytes_no_corpo": 1690427,
+   "detalhe": [
+    "HEAD 200 [] ae=gzip, de enc=gzip cl=1683745 cr=-",
+    "GET 206 [bytes=0-0] ae=identity enc=- cl=1 cr=bytes 0-0/1683745",
+    "HEAD 206 [bytes=0-] ae=identity enc=- cl=- cr=bytes 0-1683744/1683745",
+    "GET 200 [bytes=0-0] ae=gzip, de enc=- cl=- cr=-"
+   ]
+  },
+  {
+   "url": "https://shell.duckdb.org/data/tpch/0_01/parquet/lineitem.parquet",
+   "host": "shell.duckdb.org",
+   "cenario": "forceFull=false + registro",
+   "resultado": {
+    "ok": false,
+    "erro": "Error: page.evaluate: Error: Invalid Input Error: No magic bytes found at end of file 'a.parquet' LINE 1: SELECT count(*) c FROM read_parquet('a.parquet') ^ at "
+   },
+   "requisicoes": 3,
+   "bytes_no_corpo": 1689471,
+   "detalhe": [
+    "GET 206 [bytes=0-0] ae=identity enc=- cl=1 cr=bytes 0-0/1683745",
+    "HEAD 206 [bytes=0-] ae=identity enc=- cl=- cr=bytes 0-1683744/1683745",
+    "GET 200 [bytes=0-0] ae=gzip, de enc=- cl=- cr=-"
+   ]
+  },
+  {
+   "url": "https://shell.duckdb.org/data/tpch/0_01/parquet/lineitem.parquet",
+   "host": "shell.duckdb.org",
+   "cenario": "forceFull=false + reliable=false + registro",
+   "resultado": {
+    "ok": false,
+    "erro": "Error: page.evaluate: Error: Invalid Input Error: No magic bytes found at end of file 'a.parquet' LINE 1: SELECT count(*) c FROM read_parquet('a.parquet') ^ at "
+   },
+   "requisicoes": 3,
+   "bytes_no_corpo": 1689487,
+   "detalhe": [
+    "GET 206 [bytes=0-0] ae=identity enc=- cl=1 cr=bytes 0-0/1683745",
+    "HEAD 206 [bytes=0-] ae=identity enc=- cl=- cr=bytes 0-1683744/1683745",
+    "GET 200 [bytes=0-0] ae=gzip, de enc=- cl=- cr=-"
+   ]
+  }
+ ]
+}

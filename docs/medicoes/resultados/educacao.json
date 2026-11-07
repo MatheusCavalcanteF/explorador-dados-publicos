@@ -1,0 +1,77 @@
+{
+ "censo": {
+  "linhas": 45072,
+  "municipios": 5570,
+  "pct_celulas_primarias": 0.7,
+  "pct_celulas_ocultas": 4.7,
+  "pct_matriculas_ocultas": 2.111,
+  "convergiu": true,
+  "linhas_dedutiveis_depois": 0,
+  "parquet_mb": 0.138
+ },
+ "conferencia": {
+  "periodo": "Censo Escolar 2024",
+  "colunas": 426,
+  "linhas_do_arquivo": 215545,
+  "escolas_com_matricula": 179286,
+  "matriculas_qt_mat_bas": 47088922,
+  "divulgado": {
+   "matriculas": "47,1 milhões",
+   "escolas": "179,3 mil",
+   "fonte": "https://www.gov.br/mec/pt-br/centrais-de-conteudo/infograficos/censo-escolar/documentos/censo-escolar-2024.pdf"
+  },
+  "soma_etapas_sem_sobreposicao": 45675965,
+  "qt_mat_esp": 2076825,
+  "qt_mat_prof": 2576293,
+  "soma_com_especial_e_profissional": 50329083,
+  "md5_calculado": "04d691fe6d8d744de65f21ed65068ad6",
+  "md5_confere_com_o_declarado_no_zip": true
+ },
+ "geral": {
+  "matriculas": {
+   "linhas": 14951,
+   "pct_ocultas": 0.2,
+   "pct_valor_oculto": 0.016
+  },
+  "docentes": {
+   "linhas": 14951,
+   "pct_ocultas": 3.1,
+   "pct_valor_oculto": 0.453
+  },
+  "turmas": {
+   "linhas": 14951,
+   "pct_ocultas": 4.8,
+   "pct_valor_oculto": 0.78
+  },
+  "parquet_mb": 0.103
+ },
+ "ideb": {
+  "anos_iniciais": {
+   "linhas": 14497,
+   "municipios": 5567,
+   "com_nota_2023": 5432,
+   "colunas_serie": 10,
+   "valores_nao_numericos": {
+    "-": 21545
+   }
+  },
+  "anos_finais": {
+   "linhas": 14401,
+   "municipios": 5568,
+   "com_nota_2023": 5384,
+   "colunas_serie": 10,
+   "valores_nao_numericos": {
+    "-": 20262
+   }
+  },
+  "ensino_medio": {
+   "linhas": 11721,
+   "municipios": 5559,
+   "com_nota_2023": 5076,
+   "colunas_serie": 4,
+   "valores_nao_numericos": {
+    "-": 9088
+   }
+  }
+ }
+}

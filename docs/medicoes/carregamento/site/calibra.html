@@ -1,0 +1,4 @@
+<!doctype html><meta charset="utf-8"><title>calibra</title><script>
+function carga(){const t=performance.now();let x=0;for(let i=0;i<4e8;i++){x=(x+i*i)%1000003}return performance.now()-t}
+window.medir=async()=>{const principal=carga();const w=new Worker(URL.createObjectURL(new Blob([`function carga(){const t=performance.now();let x=0;for(let i=0;i<4e8;i++){x=(x+i*i)%1000003}return performance.now()-t};postMessage(carga())`])));const noWorker=await new Promise(r=>w.onmessage=e=>r(e.data));return{principal,noWorker}}
+</script>

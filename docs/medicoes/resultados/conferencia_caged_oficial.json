@@ -1,0 +1,69 @@
+{
+ "fontes": {
+  "comunicado": {
+   "url": "https://www.gov.br/trabalho-e-emprego/pt-br/noticias-e-conteudo/2026/janeiro/novo-caged-brasil-encerra-2025-com-saldo-positivo-de-1-27-milhao-de-empregos-formais",
+   "bytes": 197500,
+   "encontrados": {
+    "saldo": true,
+    "admissoes": false,
+    "desligamentos": false,
+    "saldo_dezembro": true,
+    "admissoes_sumario": false,
+    "desligamentos_sumario": false
+   },
+   "trecho": "strado em dezembro, de –618.164 postos de trabalho, reduziu o resultado acumulado do ano, que encerrou 2025 com saldo positivo de 1.279.498 empregos formais no país. Ainda assim, o estoque de trabalhadores com carteira assinada apresentou crescimento ao longo do ano, passando de ",
+   "saldo_1278498_no_texto": false
+  },
+  "apresentacao": {
+   "url": "https://www.gov.br/trabalho-e-emprego/pt-br/acesso-a-informacao/acoes-e-programas/programas-projetos-acoes-obras-e-atividades/estatisticas-trabalho/novo-caged/2025/dezembro/apresentacao-dezembro-de-2025-1.pdf",
+   "bytes": 1497600,
+   "encontrados": {
+    "saldo": true,
+    "admissoes": true,
+    "desligamentos": true,
+    "saldo_dezembro": true,
+    "admissoes_sumario": false,
+    "desligamentos_sumario": false
+   },
+   "trecho": " (DADOS COM AJUSTES) 10 Tipo de vínculo Admissões Desligamentos Saldo acumulado 2025 Total de movimentações 26.599.777 25.320.279 1.279.498 Típicos 22.901.723 21.899.028 1.002.695 Não típicos* 3.698.054 3.421.251 276.803 Fonte: Novo Caged. * São considerados não típicos os trabal",
+   "saldo_1278498_no_texto": false
+  },
+  "sumario_executivo": {
+   "url": "https://www.gov.br/trabalho-e-emprego/pt-br/acesso-a-informacao/acoes-e-programas/programas-projetos-acoes-obras-e-atividades/estatisticas-trabalho/novo-caged/2025/dezembro/sumario-executivo_-acumulado-e-dezembro-2025.pdf",
+   "bytes": 1181717,
+   "encontrados": {
+    "saldo": true,
+    "admissoes": true,
+    "desligamentos": true,
+    "saldo_dezembro": true,
+    "admissoes_sumario": true,
+    "desligamentos_sumario": true
+   },
+   "trecho": "pregados e Desempregados), o emprego celetista no Brasil apresentou expansão de Janeiro a Dezembro de 2025, registrando saldo de +1.279.498 postos de trabalho. Esse resultado decorreu de 26.599.698 admissões e de 25.320.179 desligamentos. Figura 1 – Principais resultados do acumu",
+   "saldo_1278498_no_texto": true
+  }
+ },
+ "calculado": {
+  "admissoes": 26599777,
+  "desligamentos": 25320279,
+  "saldo": 1279498,
+  "regra": "MOV + FOR - EXC, competências de 2025, arquivos publicados até 202512"
+ },
+ "oficial": {
+  "admissoes": 26599777,
+  "desligamentos": 25320279,
+  "saldo": 1279498,
+  "fonte": "apresentacao"
+ },
+ "iguais": {
+  "admissoes": true,
+  "desligamentos": true,
+  "saldo": true
+ },
+ "sumario_executivo": {
+  "admissoes": 26599698,
+  "desligamentos": 25320179,
+  "diferenca_entre_eles": 1279519,
+  "nota": "não fecha com o saldo de 1.279.498 que o próprio documento informa"
+ }
+}

@@ -1,0 +1,420 @@
+{
+ "coletado_em": "2026-11-07 05:07 UTC",
+ "sih_ftp": {
+  "raiz": [
+   "199201_200712",
+   "2008",
+   "200801_",
+   "2009",
+   "2010",
+   "2011",
+   "2012",
+   "2013",
+   "2014",
+   "Arquivos_MTBR",
+   "base_aih1.duck",
+   "CSV",
+   "DBF",
+   "MHJ_14_16",
+   "XML"
+  ],
+  "arquivo_duck": {
+   "nome": "base_aih1.duck",
+   "data": "2026-06-07",
+   "bytes": 12000440320
+  },
+  "competencias": 224,
+  "primeira": "0801",
+  "ultima": "2608",
+  "ufs_no_rd": 27,
+  "ufs_na_ultima": 25,
+  "ufs_ausentes_na_ultima": [
+   "AC",
+   "RR"
+  ],
+  "data_da_ultima": "2026-10-16",
+  "pastas": {
+   "CSV": {
+    "itens": 1,
+    "data_mais_recente": "2015-09-25",
+    "ano_mais_recente_nos_nomes": null,
+    "primeiros": [
+     "LEIA-ME Arquivos CSV.txt"
+    ],
+    "aviso": {
+     "arquivo": "LEIA-ME Arquivos CSV.txt",
+     "data": "2015-09-25",
+     "diz_temporariamente": true
+    }
+   },
+   "DBF": {
+    "itens": 2078,
+    "data_mais_recente": "2014-09-03",
+    "ano_mais_recente_nos_nomes": 2014,
+    "primeiros": [
+     "RDAC0801.dbf",
+     "RDAC0802.dbf",
+     "RDAC0803.dbf",
+     "RDAC0804.dbf"
+    ]
+   },
+   "XML": {
+    "itens": 2076,
+    "data_mais_recente": "2014-12-18",
+    "ano_mais_recente_nos_nomes": 2014,
+    "primeiros": [
+     "RDAC0801.xml",
+     "RDAC0802.xml",
+     "RDAC0803.xml",
+     "RDAC0804.xml"
+    ]
+   }
+  }
+ },
+ "caged_ftp": {
+  "ultima_competencia": "202609",
+  "data": "2026-11-04",
+  "arquivos": [
+   {
+    "nome": "CAGEDEXC202609.7z",
+    "data": "2026-11-04",
+    "bytes": 53017
+   },
+   {
+    "nome": "CAGEDFOR202609.7z",
+    "data": "2026-11-04",
+    "bytes": 1056240
+   },
+   {
+    "nome": "CAGEDMOV202609.7z",
+    "data": "2026-11-04",
+    "bytes": 49478375
+   }
+  ]
+ },
+ "inep": {
+  "censo_2025": {
+   "head": {
+    "erro": "URLError: [WinError 10054] Foi forçado o cancelamento de uma conexão existente pelo host remoto"
+   },
+   "get_1kb": {
+    "status": 404,
+    "last_modified": "Thu, 22 Nov 2018 18:48:29 GMT",
+    "content_length": "3050",
+    "content_range": null
+   }
+  },
+  "censo_2024": {
+   "head": {
+    "status": 200,
+    "last_modified": "Wed, 08 Jul 2026 12:22:27 GMT",
+    "content_length": "33829396",
+    "content_range": null
+   },
+   "get_1kb": {
+    "status": 206,
+    "last_modified": "Wed, 08 Jul 2026 12:22:27 GMT",
+    "content_length": "1024",
+    "content_range": "bytes 0-1023/33829396"
+   }
+  },
+  "ideb_iniciais_2023": {
+   "head": {
+    "status": 200,
+    "last_modified": "Tue, 13 Aug 2024 21:41:00 GMT",
+    "content_length": "11249038",
+    "content_range": null
+   },
+   "get_1kb": {
+    "status": 206,
+    "last_modified": "Tue, 13 Aug 2024 21:41:00 GMT",
+    "content_length": "1024",
+    "content_range": "bytes 0-1023/11249038"
+   }
+  },
+  "ideb_finais_2023": {
+   "head": {
+    "status": 200,
+    "last_modified": "Tue, 13 Aug 2024 21:40:00 GMT",
+    "content_length": "10731967",
+    "content_range": null
+   },
+   "get_1kb": {
+    "status": 206,
+    "last_modified": "Tue, 13 Aug 2024 21:40:00 GMT",
+    "content_length": "1024",
+    "content_range": "bytes 0-1023/10731967"
+   }
+  },
+  "ideb_medio_2023": {
+   "head": {
+    "status": 200,
+    "last_modified": "Tue, 13 Aug 2024 21:41:00 GMT",
+    "content_length": "3362082",
+    "content_range": null
+   },
+   "get_1kb": {
+    "status": 206,
+    "last_modified": "Tue, 13 Aug 2024 21:41:00 GMT",
+    "content_length": "1024",
+    "content_range": "bytes 0-1023/3362082"
+   }
+  },
+  "ideb_iniciais_2025": {
+   "head": {
+    "status": 404,
+    "last_modified": "Thu, 22 Nov 2018 18:48:29 GMT",
+    "content_length": "3050",
+    "content_range": null
+   },
+   "get_1kb": {
+    "status": 404,
+    "last_modified": "Thu, 22 Nov 2018 18:48:29 GMT",
+    "content_length": "3050",
+    "content_range": null
+   }
+  }
+ },
+ "ibge": {
+  "localidades": {
+   "municipios": 5571,
+   "cache_control": "max-age=2592000",
+   "cors": "*",
+   "prefixos_de_6_digitos_unicos": 5571
+  },
+  "periodos_sidra": {
+   "censo_2022": {
+    "tabela": 4714,
+    "periodos": [
+     {
+      "id": "2022",
+      "modificacao": "07/05/2026"
+     }
+    ]
+   },
+   "estimativa": {
+    "tabela": 6579,
+    "periodos": [
+     {
+      "id": "2001",
+      "modificacao": "30/08/2017"
+     },
+     {
+      "id": "2002",
+      "modificacao": "30/08/2017"
+     },
+     {
+      "id": "2003",
+      "modificacao": "30/08/2017"
+     },
+     {
+      "id": "2004",
+      "modificacao": "30/08/2017"
+     },
+     {
+      "id": "2005",
+      "modificacao": "30/08/2017"
+     },
+     {
+      "id": "2006",
+      "modificacao": "30/08/2017"
+     },
+     {
+      "id": "2008",
+      "modificacao": "30/08/2017"
+     },
+     {
+      "id": "2009",
+      "modificacao": "30/08/2017"
+     },
+     {
+      "id": "2011",
+      "modificacao": "30/08/2017"
+     },
+     {
+      "id": "2012",
+      "modificacao": "30/08/2017"
+     },
+     {
+      "id": "2013",
+      "modificacao": "30/08/2017"
+     },
+     {
+      "id": "2014",
+      "modificacao": "30/08/2017"
+     },
+     {
+      "id": "2015",
+      "modificacao": "30/08/2017"
+     },
+     {
+      "id": "2016",
+      "modificacao": "30/08/2017"
+     },
+     {
+      "id": "2017",
+      "modificacao": "05/09/2022"
+     },
+     {
+      "id": "2018",
+      "modificacao": "05/09/2022"
+     },
+     {
+      "id": "2019",
+      "modificacao": "05/09/2022"
+     },
+     {
+      "id": "2020",
+      "modificacao": "05/09/2022"
+     },
+     {
+      "id": "2021",
+      "modificacao": "24/06/2024"
+     },
+     {
+      "id": "2024",
+      "modificacao": "30/12/2024"
+     },
+     {
+      "id": "2025",
+      "modificacao": "28/08/2026"
+     },
+     {
+      "id": "2026",
+      "modificacao": "28/08/2026"
+     }
+    ]
+   },
+   "pib": {
+    "tabela": 5938,
+    "periodos": [
+     {
+      "id": "2002",
+      "modificacao": "14/12/2016"
+     },
+     {
+      "id": "2003",
+      "modificacao": "14/12/2016"
+     },
+     {
+      "id": "2004",
+      "modificacao": "14/12/2016"
+     },
+     {
+      "id": "2005",
+      "modificacao": "14/12/2016"
+     },
+     {
+      "id": "2006",
+      "modificacao": "14/12/2016"
+     },
+     {
+      "id": "2007",
+      "modificacao": "14/12/2016"
+     },
+     {
+      "id": "2008",
+      "modificacao": "14/12/2016"
+     },
+     {
+      "id": "2009",
+      "modificacao": "14/12/2016"
+     },
+     {
+      "id": "2010",
+      "modificacao": "14/12/2016"
+     },
+     {
+      "id": "2011",
+      "modificacao": "14/12/2016"
+     },
+     {
+      "id": "2012",
+      "modificacao": "14/12/2016"
+     },
+     {
+      "id": "2013",
+      "modificacao": "14/12/2016"
+     },
+     {
+      "id": "2014",
+      "modificacao": "14/12/2017"
+     },
+     {
+      "id": "2015",
+      "modificacao": "10/01/2019"
+     },
+     {
+      "id": "2016",
+      "modificacao": "13/12/2019"
+     },
+     {
+      "id": "2017",
+      "modificacao": "17/12/2021"
+     },
+     {
+      "id": "2018",
+      "modificacao": "16/12/2022"
+     },
+     {
+      "id": "2019",
+      "modificacao": "15/12/2023"
+     },
+     {
+      "id": "2020",
+      "modificacao": "15/12/2023"
+     },
+     {
+      "id": "2021",
+      "modificacao": "19/12/2025"
+     },
+     {
+      "id": "2022",
+      "modificacao": "19/12/2025"
+     },
+     {
+      "id": "2023",
+      "modificacao": "19/12/2025"
+     }
+    ]
+   }
+  },
+  "pesquisas_na_api": 94,
+  "municipios_por_lista": {
+   "censo_2022": 5570,
+   "estimativa_2026": 5571,
+   "pib": 5570
+  },
+  "fora_do_censo_2022": [
+   "5101837"
+  ],
+  "fora_do_pib": [
+   "5101837"
+  ],
+  "fora_da_estimativa": [],
+  "municipios_por_porte_estimativa_2026": {
+   "ate_5mil": 1286,
+   "5_a_20mil": 2530,
+   "20_a_100mil": 1417,
+   "100_a_500mil": 289,
+   "mais_500mil": 49
+  }
+ },
+ "siconfi": {
+  "amostra": 60,
+  "sem_rreo_no_6o_bimestre_2025": 25,
+  "com_rreo_simplificado": 24,
+  "falhas_de_consulta": 0,
+  "rajada_de_15_sem_espera": {
+   "200": 15
+  },
+  "dca_anexo_i_e_santos_2023_cod_conta": {
+   "TotalDespesas": 298
+  },
+  "kb_medios_de_dca_por_municipio": {
+   "2023": 338,
+   "2024": 345,
+   "2025": 332
+  }
+ }
+}

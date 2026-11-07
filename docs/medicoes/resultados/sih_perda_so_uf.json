@@ -1,0 +1,13 @@
+{
+ "descricao": "Internações de moradores de SP que somem ao ler só o arquivo de SP, em vez dos arquivos das 27 UFs",
+ "populacao": "AIHs com IDENT=1 e município de residência em SP",
+ "periodo": "Competências de 2025 (RD??25*), por competência, não por data da alta",
+ "calculo": "perda_pct = (internacoes_27_ufs - internacoes_so_rdsp) / internacoes_27_ufs; pior_municipio_pct é o mesmo cálculo por município; o município não é identificado aqui",
+ "internacoes_so_rdsp": 2872005,
+ "internacoes_27_ufs": 2881179,
+ "internados_fora_de_sp": 9174,
+ "perda_pct": 0.32,
+ "pior_municipio_pct": 20.9,
+ "municipios_afetados": 506,
+ "municipios_com_residentes": 645
+}

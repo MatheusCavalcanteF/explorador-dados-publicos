@@ -1,0 +1,259 @@
+{
+ "versao_navegador": "157.0.8103.38",
+ "cenarios": [
+  {
+   "contexto": "anonimo",
+   "acao": "recarregar (reload)",
+   "documento": [
+    304
+   ],
+   "arquivos": [
+    {
+     "arquivo": "duckdb-eh.wasm",
+     "status": 200,
+     "bytes": 8128896,
+     "condicional": false
+    }
+   ],
+   "bytes": 8128896
+  },
+  {
+   "contexto": "anonimo",
+   "acao": "navegacao nova na mesma aba",
+   "documento": [
+    200
+   ],
+   "arquivos": [
+    {
+     "arquivo": "duckdb-eh.wasm",
+     "status": 200,
+     "bytes": 8128896,
+     "condicional": false
+    }
+   ],
+   "bytes": 8128896
+  },
+  {
+   "contexto": "anonimo",
+   "acao": "aba nova",
+   "documento": [
+    200
+   ],
+   "arquivos": [
+    {
+     "arquivo": "duckdb-eh.wasm",
+     "status": 200,
+     "bytes": 8128896,
+     "condicional": false
+    }
+   ],
+   "bytes": 8128896
+  },
+  {
+   "contexto": "perfil em disco",
+   "acao": "recarregar (reload)",
+   "documento": [
+    304
+   ],
+   "arquivos": [],
+   "bytes": 0
+  },
+  {
+   "contexto": "perfil em disco",
+   "acao": "navegacao nova na mesma aba",
+   "documento": [
+    200
+   ],
+   "arquivos": [],
+   "bytes": 0
+  },
+  {
+   "contexto": "perfil em disco",
+   "acao": "aba nova",
+   "documento": [
+    200
+   ],
+   "arquivos": [],
+   "bytes": 0
+  },
+  {
+   "contexto": "perfil em disco",
+   "acao": "navegador reaberto",
+   "documento": [
+    200
+   ],
+   "arquivos": [],
+   "bytes": 0
+  }
+ ],
+ "tamanhos": [
+  {
+   "contexto": "anonimo",
+   "kb": 256,
+   "primeira_ida": [
+    200
+   ],
+   "segunda_ida": [],
+   "reaproveitou_cache": true
+  },
+  {
+   "contexto": "anonimo",
+   "kb": 512,
+   "primeira_ida": [
+    200
+   ],
+   "segunda_ida": [],
+   "reaproveitou_cache": true
+  },
+  {
+   "contexto": "anonimo",
+   "kb": 1024,
+   "primeira_ida": [
+    200
+   ],
+   "segunda_ida": [],
+   "reaproveitou_cache": true
+  },
+  {
+   "contexto": "anonimo",
+   "kb": 1536,
+   "primeira_ida": [
+    200
+   ],
+   "segunda_ida": [],
+   "reaproveitou_cache": true
+  },
+  {
+   "contexto": "anonimo",
+   "kb": 2048,
+   "primeira_ida": [
+    200
+   ],
+   "segunda_ida": [],
+   "reaproveitou_cache": true
+  },
+  {
+   "contexto": "anonimo",
+   "kb": 4096,
+   "primeira_ida": [
+    200
+   ],
+   "segunda_ida": [],
+   "reaproveitou_cache": true
+  },
+  {
+   "contexto": "anonimo",
+   "kb": 8192,
+   "primeira_ida": [
+    200
+   ],
+   "segunda_ida": [
+    200
+   ],
+   "reaproveitou_cache": false
+  },
+  {
+   "contexto": "anonimo",
+   "kb": 16384,
+   "primeira_ida": [
+    200
+   ],
+   "segunda_ida": [
+    200
+   ],
+   "reaproveitou_cache": false
+  },
+  {
+   "contexto": "anonimo",
+   "kb": 32768,
+   "primeira_ida": [
+    200
+   ],
+   "segunda_ida": [
+    200
+   ],
+   "reaproveitou_cache": false
+  },
+  {
+   "contexto": "perfil em disco",
+   "kb": 256,
+   "primeira_ida": [
+    200
+   ],
+   "segunda_ida": [],
+   "reaproveitou_cache": true
+  },
+  {
+   "contexto": "perfil em disco",
+   "kb": 512,
+   "primeira_ida": [
+    200
+   ],
+   "segunda_ida": [],
+   "reaproveitou_cache": true
+  },
+  {
+   "contexto": "perfil em disco",
+   "kb": 1024,
+   "primeira_ida": [
+    200
+   ],
+   "segunda_ida": [],
+   "reaproveitou_cache": true
+  },
+  {
+   "contexto": "perfil em disco",
+   "kb": 1536,
+   "primeira_ida": [
+    200
+   ],
+   "segunda_ida": [],
+   "reaproveitou_cache": true
+  },
+  {
+   "contexto": "perfil em disco",
+   "kb": 2048,
+   "primeira_ida": [
+    200
+   ],
+   "segunda_ida": [],
+   "reaproveitou_cache": true
+  },
+  {
+   "contexto": "perfil em disco",
+   "kb": 4096,
+   "primeira_ida": [
+    200
+   ],
+   "segunda_ida": [],
+   "reaproveitou_cache": true
+  },
+  {
+   "contexto": "perfil em disco",
+   "kb": 8192,
+   "primeira_ida": [
+    200
+   ],
+   "segunda_ida": [],
+   "reaproveitou_cache": true
+  },
+  {
+   "contexto": "perfil em disco",
+   "kb": 16384,
+   "primeira_ida": [
+    200
+   ],
+   "segunda_ida": [],
+   "reaproveitou_cache": true
+  },
+  {
+   "contexto": "perfil em disco",
+   "kb": 32768,
+   "primeira_ida": [
+    200
+   ],
+   "segunda_ida": [],
+   "reaproveitou_cache": true
+  }
+ ]
+}

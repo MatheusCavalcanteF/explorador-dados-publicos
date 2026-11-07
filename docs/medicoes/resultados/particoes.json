@@ -1,0 +1,184 @@
+{
+ "tabelas": {
+  "res_mes": {
+   "soma_mb": 0.61,
+   "maior_uf": "31",
+   "maior_kb": 89,
+   "menor_kb": 1
+  },
+  "hosp_mes": {
+   "soma_mb": 0.35,
+   "maior_uf": "31",
+   "maior_kb": 39,
+   "menor_kb": 1
+  },
+  "res_ano": {
+   "soma_mb": 0.09,
+   "maior_uf": "31",
+   "maior_kb": 10,
+   "menor_kb": 1
+  },
+  "hosp_ano": {
+   "soma_mb": 0.07,
+   "maior_uf": "31",
+   "maior_kb": 5,
+   "menor_kb": 1
+  },
+  "res_mes_sexo": {
+   "soma_mb": 1.05,
+   "maior_uf": "31",
+   "maior_kb": 149,
+   "menor_kb": 2
+  },
+  "res_mes_urgencia": {
+   "soma_mb": 1.0,
+   "maior_uf": "31",
+   "maior_kb": 142,
+   "menor_kb": 2
+  },
+  "res_ano_capitulo": {
+   "soma_mb": 0.85,
+   "maior_uf": "31",
+   "maior_kb": 121,
+   "menor_kb": 2
+  },
+  "res_ano_faixa12_sexo": {
+   "soma_mb": 0.99,
+   "maior_uf": "31",
+   "maior_kb": 134,
+   "menor_kb": 2
+  },
+  "res_ano_raca": {
+   "soma_mb": 0.21,
+   "maior_uf": "31",
+   "maior_kb": 27,
+   "menor_kb": 1
+  },
+  "hosp_ano_espec": {
+   "soma_mb": 0.14,
+   "maior_uf": "35",
+   "maior_kb": 14,
+   "menor_kb": 1
+  },
+  "res_mes_faixa5": {
+   "soma_mb": 1.96,
+   "maior_uf": "31",
+   "maior_kb": 272,
+   "menor_kb": 2
+  },
+  "res_tri_capitulo": {
+   "soma_mb": 2.01,
+   "maior_uf": "31",
+   "maior_kb": 279,
+   "menor_kb": 2
+  },
+  "hosp_tri_capitulo": {
+   "soma_mb": 1.07,
+   "maior_uf": "35",
+   "maior_kb": 144,
+   "menor_kb": 2
+  },
+  "hosp_mes_carater": {
+   "soma_mb": 0.51,
+   "maior_uf": "35",
+   "maior_kb": 63,
+   "menor_kb": 2
+  },
+  "fluxo_res_hosp_ano": {
+   "soma_mb": 0.7,
+   "maior_uf": "35",
+   "maior_kb": 92,
+   "menor_kb": 3
+  }
+ },
+ "soma_por_uf_mb": 11.62,
+ "maior_arquivo_por_uf": {
+  "kb": 279,
+  "tabela": "res_tri_capitulo",
+  "uf": "31"
+ },
+ "formatos_sp": {
+  "zstd": {
+   "arquivo_kb": 260.3,
+   "transferencia_gzip_kb": 259.9
+  },
+  "snappy": {
+   "arquivo_kb": 340.4,
+   "transferencia_gzip_kb": 298.6
+  },
+  "sem": {
+   "arquivo_kb": 445.2,
+   "transferencia_gzip_kb": 268.6
+  }
+ },
+ "sem_compressao": {
+  "soma_por_uf_mb": 22.91,
+  "soma_gzip_mb": 11.93,
+  "maior_arquivo_kb": 488,
+  "maior_arquivo_gzip_kb": 280,
+  "maior_tabela": "res_mes_faixa5",
+  "maior_uf": "31",
+  "tabelas": {
+   "res_mes": {
+    "soma_mb": 1.44,
+    "soma_gzip_mb": 0.65
+   },
+   "hosp_mes": {
+    "soma_mb": 0.94,
+    "soma_gzip_mb": 0.37
+   },
+   "res_ano": {
+    "soma_mb": 0.21,
+    "soma_gzip_mb": 0.09
+   },
+   "hosp_ano": {
+    "soma_mb": 0.13,
+    "soma_gzip_mb": 0.06
+   },
+   "res_mes_sexo": {
+    "soma_mb": 2.08,
+    "soma_gzip_mb": 1.09
+   },
+   "res_mes_urgencia": {
+    "soma_mb": 1.98,
+    "soma_gzip_mb": 1.04
+   },
+   "res_ano_capitulo": {
+    "soma_mb": 1.75,
+    "soma_gzip_mb": 0.88
+   },
+   "res_ano_faixa12_sexo": {
+    "soma_mb": 1.94,
+    "soma_gzip_mb": 1.03
+   },
+   "res_ano_raca": {
+    "soma_mb": 0.68,
+    "soma_gzip_mb": 0.22
+   },
+   "hosp_ano_espec": {
+    "soma_mb": 0.39,
+    "soma_gzip_mb": 0.14
+   },
+   "res_mes_faixa5": {
+    "soma_mb": 3.57,
+    "soma_gzip_mb": 2.0
+   },
+   "res_tri_capitulo": {
+    "soma_mb": 3.47,
+    "soma_gzip_mb": 2.03
+   },
+   "hosp_tri_capitulo": {
+    "soma_mb": 1.89,
+    "soma_gzip_mb": 1.08
+   },
+   "hosp_mes_carater": {
+    "soma_mb": 1.21,
+    "soma_gzip_mb": 0.53
+   },
+   "fluxo_res_hosp_ano": {
+    "soma_mb": 1.23,
+    "soma_gzip_mb": 0.71
+   }
+  }
+ }
+}

@@ -1,0 +1,29 @@
+{
+ "santo_andre_por_competencia": {
+  "2605": {
+   "tabnet": 1269,
+   "setembro": 3616,
+   "outubro": 1269,
+   "coincide_com": "outubro"
+  },
+  "2606": {
+   "tabnet": 1401,
+   "setembro": 4021,
+   "outubro": 1401,
+   "coincide_com": "outubro"
+  },
+  "2607": {
+   "tabnet": 1333,
+   "setembro": 3719,
+   "outubro": 1333,
+   "coincide_com": "outubro"
+  }
+ },
+ "nota_tecnica": {
+  "paginas": 35,
+  "trechos": [
+   "jeitada em algum processamento anterior;  AIH apresentada com atraso;  AIH referentes a internações de longa permanência; são apresentadas, neste caso, várias AIH para uma mesma internação em meses consecutivos. Ano e mês de atendimento Período correspondente à data de internação do paciente na unidade hospitalar. Local de Internação Local (região, unidade da federação, município, capital, região de saúde (CIR), macrorregião de saúde, divisão administrativa estadual, microrregião IBGE, região metropolitana – RIDE, território da cidadania, m esorregiã",
+   "IH apresentada com atraso;  AIH referentes a internações de longa permanência; são apresentadas, neste caso, várias AIH para uma mesma internação em meses consecutivos. Ano e mês de atendimento Período correspondente à data de internação do paciente na unidade hospitalar. Local de Internação Local (região, unidade da federação, município, capital, região de saúde (CIR), macrorregião de saúde, divisão administrativa estadual, microrregião IBGE, região metropolitana – RIDE, território da cidadania, m esorregião PNDR, Amazônia Legal, semiárido, faixa "
+  ]
+ }
+}

@@ -1,0 +1,32 @@
+{
+ "inep_download": {
+  "ok": 10,
+  "falhas": 0,
+  "erros": [],
+  "tempo_max_s": 0.16,
+  "tempo_mediano_s": 0.11
+ },
+ "inep_ideb": {
+  "ok": 10,
+  "falhas": 0,
+  "erros": [],
+  "tempo_max_s": 0.12,
+  "tempo_mediano_s": 0.11
+ },
+ "ibge_api": {
+  "ok": 10,
+  "falhas": 0,
+  "erros": [],
+  "tempo_max_s": 0.12,
+  "tempo_mediano_s": 0.1
+ },
+ "tesouro_api": {
+  "ok": 6,
+  "falhas": 4,
+  "erros": [
+   "TimeoutError('The read operation timed out')"
+  ],
+  "tempo_max_s": 40.56,
+  "tempo_mediano_s": 2.4
+ }
+}

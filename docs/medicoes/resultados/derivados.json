@@ -1,0 +1,76 @@
+{
+ "sih_regra_antiga": {
+  "origem": "sih_agregados.json",
+  "periodo": "Altas de 2025, Brasil",
+  "calculo": "Soma de regra_antiga_visiveis_internacoes_1a4 nas tabelas publicáveis, sem o fluxo, que fica à parte",
+  "tabelas": 14,
+  "celulas_visiveis_com_1a4_internacoes": 2225,
+  "no_fluxo_por_ano": 720
+ },
+ "sih_altas_antes_de_2025": {
+  "origem": "sih_agregados.json, fatos.amplitude_mes",
+  "calculo": "Linhas das competências de 2025 com alta antes de 2025 / total de linhas",
+  "linhas": 645089,
+  "total": 14648508,
+  "pct": 4.4
+ },
+ "sih_municipios_sem_internacao_por_hospital": {
+  "origem": "sih_agregados.json",
+  "calculo": "mun_res - mun_hosp",
+  "valor": 2424
+ },
+ "sih_valor_zero": {
+  "origem": "sih_regras.json",
+  "calculo": "AIHs com valor zero na especialidade 87 / todas com valor zero",
+  "aihs": 43934,
+  "especialidade_87": 43136,
+  "pct": 98.2
+ },
+ "sih_coleta_fora_sp": {
+  "origem": "rd_brasil_coleta.json",
+  "calculo": "Soma dos arquivos das 26 UFs fora SP, competências de 2025",
+  "arquivos": 312,
+  "mb": 880,
+  "segundos_de_relogio": 223
+ },
+ "tabnet_atendimento": {
+  "origem": "conferencia_tabnet_alta.json",
+  "periodo": "Competências de 2025, 5 municípios, 2 visões",
+  "comparacoes": 10,
+  "meses": 163,
+  "iguais_data_de_internacao": 135,
+  "iguais_data_de_saida": 5,
+  "meses_fora_da_capital": 121,
+  "iguais_data_de_internacao_fora_da_capital": 120,
+  "comparacoes_com_total_igual": 7,
+  "maior_diferenca_de_total_pct": 0.02
+ },
+ "caged": {
+  "origem": "caged_agregados.json",
+  "periodo": "2025",
+  "erro_do_saldo_so_com_mov_pct": 1.8,
+  "for_no_mes_seguinte_pct": 63.7,
+  "defasagem_maxima_for_meses": 12,
+  "mov_comprimido_mb_medio": 53.3,
+  "mov_aberto_mb_medio": 446.6,
+  "parquet_mb_tabelas_com_ate_recorte": 7.0
+ },
+ "educacao_parquet_mb": {
+  "origem": "educacao.json",
+  "calculo": "censo.parquet_mb + geral.parquet_mb",
+  "valor": 0.24
+ },
+ "primeira_carga_kb": {
+  "origem": "particoes.json e leitor_x_motor.json",
+  "calculo": "Código com gzip + arquivo da maior tabela testada com gzip",
+  "sem_compressao_e_leitor_leve": 287.2,
+  "zstd_e_leitor_com_descompressor": 354.6
+ },
+ "municipios_ate_20_mil": {
+  "origem": "fontes.json",
+  "calculo": "(até 5 mil + 5 a 20 mil) / todos, na estimativa de 2026",
+  "municipios": 3816,
+  "total": 5571,
+  "pct": 68.5
+ }
+}

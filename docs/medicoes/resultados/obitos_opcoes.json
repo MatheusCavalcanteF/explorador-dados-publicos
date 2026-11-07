@@ -1,0 +1,333 @@
+{
+ "estado_anterior": {
+  "res_ano_capitulo": {
+   "municipios": 5570,
+   "municipios_com_uma_unica_celula_nula": 14,
+   "municipios_com_valor_deduzivel": 6,
+   "deduzidos_de_1a4": 6
+  },
+  "res_ano_faixa12_sexo": {
+   "municipios": 5570,
+   "municipios_com_uma_unica_celula_nula": 1,
+   "municipios_com_valor_deduzivel": 1,
+   "deduzidos_de_1a4": 1
+  },
+  "res_ano_raca": {
+   "municipios": 5570,
+   "municipios_com_uma_unica_celula_nula": 1241,
+   "municipios_com_valor_deduzivel": 2,
+   "deduzidos_de_1a4": 2
+  },
+  "hosp_ano_espec": {
+   "municipios": 3145,
+   "municipios_com_uma_unica_celula_nula": 816,
+   "municipios_com_valor_deduzivel": 0,
+   "deduzidos_de_1a4": 0
+  }
+ },
+ "opcao_a": {
+  "res_ano_capitulo": {
+   "linhas": 106957,
+   "pct_celulas_com_obito_oculto": 45.8,
+   "pct_celulas_com_obito_positivo_ocultas": 63.5,
+   "pct_obitos_ocultos": 10.74,
+   "linhas_dedutiveis_depois": 0,
+   "convergiu": true,
+   "voltas": 2,
+   "sobreviventes_1a4_visiveis": 8,
+   "por_porte": {
+    "ate_5mil": {
+     "pct_celulas_com_obito_oculto": 57.9,
+     "pct_obitos_ocultos": 76.9
+    },
+    "5_a_20mil": {
+     "pct_celulas_com_obito_oculto": 48.4,
+     "pct_obitos_ocultos": 38.6
+    },
+    "20_a_100mil": {
+     "pct_celulas_com_obito_oculto": 36.9,
+     "pct_obitos_ocultos": 10.8
+    },
+    "100_a_500mil": {
+     "pct_celulas_com_obito_oculto": 24.7,
+     "pct_obitos_ocultos": 1.8
+    },
+    "mais_500mil": {
+     "pct_celulas_com_obito_oculto": 17.4,
+     "pct_obitos_ocultos": 0.3
+    }
+   }
+  },
+  "res_ano_faixa12_sexo": {
+   "linhas": 131936,
+   "pct_celulas_com_obito_oculto": 50.5,
+   "pct_celulas_com_obito_positivo_ocultas": 75.7,
+   "pct_obitos_ocultos": 19.47,
+   "linhas_dedutiveis_depois": 0,
+   "convergiu": true,
+   "voltas": 3,
+   "sobreviventes_1a4_visiveis": 1,
+   "por_porte": {
+    "ate_5mil": {
+     "pct_celulas_com_obito_oculto": 65.8,
+     "pct_obitos_ocultos": 97.5
+    },
+    "5_a_20mil": {
+     "pct_celulas_com_obito_oculto": 51.3,
+     "pct_obitos_ocultos": 68.5
+    },
+    "20_a_100mil": {
+     "pct_celulas_com_obito_oculto": 40.3,
+     "pct_obitos_ocultos": 22.9
+    },
+    "100_a_500mil": {
+     "pct_celulas_com_obito_oculto": 33.5,
+     "pct_obitos_ocultos": 4.6
+    },
+    "mais_500mil": {
+     "pct_celulas_com_obito_oculto": 23.9,
+     "pct_obitos_ocultos": 0.6
+    }
+   }
+  },
+  "res_ano_raca": {
+   "linhas": 22483,
+   "pct_celulas_com_obito_oculto": 62.4,
+   "pct_celulas_com_obito_positivo_ocultas": 64.8,
+   "pct_obitos_ocultos": 13.2,
+   "linhas_dedutiveis_depois": 0,
+   "convergiu": true,
+   "voltas": 2,
+   "sobreviventes_1a4_visiveis": 0,
+   "por_porte": {
+    "ate_5mil": {
+     "pct_celulas_com_obito_oculto": 75.2,
+     "pct_obitos_ocultos": 63.2
+    },
+    "5_a_20mil": {
+     "pct_celulas_com_obito_oculto": 65.3,
+     "pct_obitos_ocultos": 43.8
+    },
+    "20_a_100mil": {
+     "pct_celulas_com_obito_oculto": 54.2,
+     "pct_obitos_ocultos": 16.9
+    },
+    "100_a_500mil": {
+     "pct_celulas_com_obito_oculto": 38.6,
+     "pct_obitos_ocultos": 3.1
+    },
+    "mais_500mil": {
+     "pct_celulas_com_obito_oculto": 25.3,
+     "pct_obitos_ocultos": 0.5
+    }
+   }
+  },
+  "hosp_ano_espec": {
+   "linhas": 10984,
+   "pct_celulas_com_obito_oculto": 30.4,
+   "pct_celulas_com_obito_positivo_ocultas": 46.2,
+   "pct_obitos_ocultos": 7.14,
+   "linhas_dedutiveis_depois": 0,
+   "convergiu": true,
+   "voltas": 3,
+   "sobreviventes_1a4_visiveis": 1,
+   "por_porte": {
+    "ate_5mil": {
+     "pct_celulas_com_obito_oculto": 45.0,
+     "pct_obitos_ocultos": 29.7
+    },
+    "5_a_20mil": {
+     "pct_celulas_com_obito_oculto": 30.8,
+     "pct_obitos_ocultos": 27.1
+    },
+    "20_a_100mil": {
+     "pct_celulas_com_obito_oculto": 28.3,
+     "pct_obitos_ocultos": 18.1
+    },
+    "100_a_500mil": {
+     "pct_celulas_com_obito_oculto": 32.2,
+     "pct_obitos_ocultos": 4.0
+    },
+    "mais_500mil": {
+     "pct_celulas_com_obito_oculto": 33.9,
+     "pct_obitos_ocultos": 1.2
+    }
+   }
+  }
+ },
+ "opcao_a_utilidade": {
+  "res_ano_capitulo": {
+   "ate_5mil": {
+    "municipios": 1284,
+    "com_metade_ou_mais_visivel": 11
+   },
+   "5_a_20mil": {
+    "municipios": 2526,
+    "com_metade_ou_mais_visivel": 265
+   },
+   "20_a_100mil": {
+    "municipios": 1417,
+    "com_metade_ou_mais_visivel": 839
+   },
+   "100_a_500mil": {
+    "municipios": 289,
+    "com_metade_ou_mais_visivel": 285
+   },
+   "mais_500mil": {
+    "municipios": 49,
+    "com_metade_ou_mais_visivel": 49
+   }
+  },
+  "res_ano_faixa12_sexo": {
+   "ate_5mil": {
+    "municipios": 1284,
+    "com_metade_ou_mais_visivel": 0
+   },
+   "5_a_20mil": {
+    "municipios": 2526,
+    "com_metade_ou_mais_visivel": 41
+   },
+   "20_a_100mil": {
+    "municipios": 1417,
+    "com_metade_ou_mais_visivel": 366
+   },
+   "100_a_500mil": {
+    "municipios": 289,
+    "com_metade_ou_mais_visivel": 264
+   },
+   "mais_500mil": {
+    "municipios": 49,
+    "com_metade_ou_mais_visivel": 49
+   }
+  },
+  "res_ano_raca": {
+   "ate_5mil": {
+    "municipios": 1284,
+    "com_metade_ou_mais_visivel": 331
+   },
+   "5_a_20mil": {
+    "municipios": 2526,
+    "com_metade_ou_mais_visivel": 660
+   },
+   "20_a_100mil": {
+    "municipios": 1417,
+    "com_metade_ou_mais_visivel": 596
+   },
+   "100_a_500mil": {
+    "municipios": 289,
+    "com_metade_ou_mais_visivel": 266
+   },
+   "mais_500mil": {
+    "municipios": 49,
+    "com_metade_ou_mais_visivel": 49
+   }
+  },
+  "hosp_ano_espec": {
+   "ate_5mil": {
+    "municipios": 135,
+    "com_metade_ou_mais_visivel": 55
+   },
+   "5_a_20mil": {
+    "municipios": 1152,
+    "com_metade_ou_mais_visivel": 729
+   },
+   "20_a_100mil": {
+    "municipios": 1218,
+    "com_metade_ou_mais_visivel": 715
+   },
+   "100_a_500mil": {
+    "municipios": 278,
+    "com_metade_ou_mais_visivel": 195
+   },
+   "mais_500mil": {
+    "municipios": 49,
+    "com_metade_ou_mais_visivel": 43
+   }
+  }
+ },
+ "opcao_b": {
+  "res_ano": {
+   "municipios": 5570,
+   "internacoes_ocultas": 0,
+   "obitos_ocultos_primarios": 140,
+   "obitos_ocultos_com_complementar": 144,
+   "pct_municipios_com_obito_oculto": 2.6,
+   "pct_obitos_ocultos": 0.07,
+   "municipios_com_zero_obito_visivel": 5,
+   "linhas_dedutiveis_depois": 0,
+   "convergiu": true,
+   "sobreviventes_1a4_visiveis": 0,
+   "por_porte": {
+    "ate_5mil": {
+     "municipios": 1286,
+     "municipios_com_obito_oculto": 115
+    },
+    "5_a_20mil": {
+     "municipios": 2529,
+     "municipios_com_obito_oculto": 29
+    },
+    "20_a_100mil": {
+     "municipios": 1417,
+     "municipios_com_obito_oculto": 0
+    },
+    "100_a_500mil": {
+     "municipios": 289,
+     "municipios_com_obito_oculto": 0
+    },
+    "mais_500mil": {
+     "municipios": 49,
+     "municipios_com_obito_oculto": 0
+    }
+   },
+   "parquet_mb": 0.028
+  },
+  "hosp_ano": {
+   "municipios": 3145,
+   "internacoes_ocultas": 4,
+   "obitos_ocultos_primarios": 360,
+   "obitos_ocultos_com_complementar": 364,
+   "pct_municipios_com_obito_oculto": 11.6,
+   "pct_obitos_ocultos": 0.15,
+   "municipios_com_zero_obito_visivel": 310,
+   "linhas_dedutiveis_depois": 0,
+   "convergiu": true,
+   "sobreviventes_1a4_visiveis": 0,
+   "por_porte": {
+    "ate_5mil": {
+     "municipios": 177,
+     "municipios_com_obito_oculto": 67
+    },
+    "5_a_20mil": {
+     "municipios": 1350,
+     "municipios_com_obito_oculto": 238
+    },
+    "20_a_100mil": {
+     "municipios": 1286,
+     "municipios_com_obito_oculto": 55
+    },
+    "100_a_500mil": {
+     "municipios": 283,
+     "municipios_com_obito_oculto": 4
+    },
+    "mais_500mil": {
+     "municipios": 49,
+     "municipios_com_obito_oculto": 0
+    }
+   },
+   "parquet_mb": 0.018
+  }
+ },
+ "por_mes": {
+  "descricao": "Óbitos por município de residência e mês da alta, se fossem publicados",
+  "populacao": "Todas as AIHs com alta a partir de 01/2025, Brasil",
+  "periodo": "Meses da alta de 2025",
+  "calculo": "Só a regra primária, sem complementar: célula oculta quando há de 1 a 4 óbitos. Série inteira visível: município sem nenhum mês de 1 a 4",
+  "celulas": 66828,
+  "com_zero_obito": 11508,
+  "com_1a4_obitos": 32901,
+  "com_5_ou_mais": 22419,
+  "pct_celulas_com_1a4": 49.2,
+  "municipios": 5570,
+  "municipios_com_serie_inteira_visivel": 793
+ }
+}

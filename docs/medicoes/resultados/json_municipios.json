@@ -1,0 +1,80 @@
+{
+ "natureza": "estimativa: um ano medido e dois gerados, com o conteúdo da v1",
+ "arquivos": 5571,
+ "total_mb": 113.8,
+ "total_gzip_mb": 24.2,
+ "p50_kb": 20.6,
+ "p95_kb": 25.7,
+ "p99_kb": 26.9,
+ "max_kb": 30.2,
+ "p50_gzip_kb": 4.2,
+ "p95_gzip_kb": 6.0,
+ "p99_gzip_kb": 6.7,
+ "max_gzip_kb": 8.1,
+ "maiores": [
+  {
+   "nome": "São Paulo",
+   "kb": 30.2,
+   "gzip_kb": 8.1
+  },
+  {
+   "nome": "Rio de Janeiro",
+   "kb": 29.5,
+   "gzip_kb": 7.8
+  },
+  {
+   "nome": "Belo Horizonte",
+   "kb": 29.4,
+   "gzip_kb": 7.7
+  },
+  {
+   "nome": "Porto Alegre",
+   "kb": 29.1,
+   "gzip_kb": 7.5
+  },
+  {
+   "nome": "Uberlândia",
+   "kb": 28.9,
+   "gzip_kb": 7.1
+  }
+ ],
+ "amostras": {
+  "3304557": {
+   "nome": "Rio de Janeiro",
+   "bytes": 29499,
+   "gzip": 7801
+  },
+  "3500105": {
+   "nome": "Adamantina",
+   "bytes": 24770,
+   "gzip": 5628
+  },
+  "3506359": {
+   "nome": "Bertioga",
+   "bytes": 24935,
+   "gzip": 5763
+  },
+  "3548500": {
+   "nome": "Santos",
+   "bytes": 26674,
+   "gzip": 6607
+  },
+  "3550308": {
+   "nome": "São Paulo",
+   "bytes": 30181,
+   "gzip": 8092
+  },
+  "5300108": {
+   "nome": "Brasília",
+   "bytes": 28783,
+   "gzip": 7510
+  }
+ },
+ "mediana_por_parte_kb": {
+  "sih": 18.7,
+  "educacao": 1.8,
+  "ibge": 0.1
+ },
+ "indice_kb": 167.8,
+ "indice_gzip_kb": 51.3
+}

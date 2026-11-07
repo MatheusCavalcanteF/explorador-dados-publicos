@@ -1,0 +1,1879 @@
+{
+ "conexoes": 4,
+ "segundos_de_relogio": 223,
+ "o_que_o_tempo_inclui": "baixar e converter para Parquet os arquivos que ainda n\u00e3o estavam na pasta",
+ "arquivos": [
+  {
+   "nome": "RDAC2502.dbc",
+   "dbc_bytes": 311602,
+   "download_s": 0.5,
+   "linhas": 4243
+  },
+  {
+   "nome": "RDAC2504.dbc",
+   "dbc_bytes": 406880,
+   "download_s": 0.4,
+   "linhas": 5887
+  },
+  {
+   "nome": "RDAC2501.dbc",
+   "dbc_bytes": 323000,
+   "download_s": 0.4,
+   "linhas": 4541
+  },
+  {
+   "nome": "RDAC2503.dbc",
+   "dbc_bytes": 379584,
+   "download_s": 0.5,
+   "linhas": 5348
+  },
+  {
+   "nome": "RDAC2508.dbc",
+   "dbc_bytes": 357643,
+   "download_s": 0.3,
+   "linhas": 5091
+  },
+  {
+   "nome": "RDAC2507.dbc",
+   "dbc_bytes": 365292,
+   "download_s": 0.4,
+   "linhas": 5122
+  },
+  {
+   "nome": "RDAC2505.dbc",
+   "dbc_bytes": 392106,
+   "download_s": 0.4,
+   "linhas": 5601
+  },
+  {
+   "nome": "RDAC2506.dbc",
+   "dbc_bytes": 423832,
+   "download_s": 0.5,
+   "linhas": 5988
+  },
+  {
+   "nome": "RDAC2512.dbc",
+   "dbc_bytes": 327321,
+   "download_s": 0.3,
+   "linhas": 4527
+  },
+  {
+   "nome": "RDAC2509.dbc",
+   "dbc_bytes": 357995,
+   "download_s": 0.4,
+   "linhas": 5062
+  },
+  {
+   "nome": "RDAC2511.dbc",
+   "dbc_bytes": 331276,
+   "download_s": 0.5,
+   "linhas": 4609
+  },
+  {
+   "nome": "RDAC2510.dbc",
+   "dbc_bytes": 391718,
+   "download_s": 0.4,
+   "linhas": 5561
+  },
+  {
+   "nome": "RDAL2501.dbc",
+   "dbc_bytes": 997065,
+   "download_s": 0.4,
+   "linhas": 13473
+  },
+  {
+   "nome": "RDAL2504.dbc",
+   "dbc_bytes": 1055472,
+   "download_s": 0.5,
+   "linhas": 14383
+  },
+  {
+   "nome": "RDAL2503.dbc",
+   "dbc_bytes": 1058444,
+   "download_s": 0.7,
+   "linhas": 14431
+  },
+  {
+   "nome": "RDAL2502.dbc",
+   "dbc_bytes": 1032316,
+   "download_s": 0.8,
+   "linhas": 13863
+  },
+  {
+   "nome": "RDAL2505.dbc",
+   "dbc_bytes": 1131255,
+   "download_s": 0.6,
+   "linhas": 15373
+  },
+  {
+   "nome": "RDAL2508.dbc",
+   "dbc_bytes": 1118861,
+   "download_s": 0.5,
+   "linhas": 15188
+  },
+  {
+   "nome": "RDAL2506.dbc",
+   "dbc_bytes": 1010920,
+   "download_s": 0.7,
+   "linhas": 13732
+  },
+  {
+   "nome": "RDAL2507.dbc",
+   "dbc_bytes": 1281997,
+   "download_s": 1.1,
+   "linhas": 17324
+  },
+  {
+   "nome": "RDAL2511.dbc",
+   "dbc_bytes": 1097223,
+   "download_s": 0.5,
+   "linhas": 14768
+  },
+  {
+   "nome": "RDAL2509.dbc",
+   "dbc_bytes": 1124433,
+   "download_s": 0.6,
+   "linhas": 15198
+  },
+  {
+   "nome": "RDAL2512.dbc",
+   "dbc_bytes": 1054320,
+   "download_s": 0.7,
+   "linhas": 14176
+  },
+  {
+   "nome": "RDAL2510.dbc",
+   "dbc_bytes": 1168634,
+   "download_s": 0.8,
+   "linhas": 15731
+  },
+  {
+   "nome": "RDAM2502.dbc",
+   "dbc_bytes": 1325471,
+   "download_s": 0.6,
+   "linhas": 18984
+  },
+  {
+   "nome": "RDAM2504.dbc",
+   "dbc_bytes": 1403613,
+   "download_s": 0.8,
+   "linhas": 20290
+  },
+  {
+   "nome": "RDAM2503.dbc",
+   "dbc_bytes": 1409069,
+   "download_s": 0.7,
+   "linhas": 19892
+  },
+  {
+   "nome": "RDAM2501.dbc",
+   "dbc_bytes": 1544751,
+   "download_s": 0.9,
+   "linhas": 22037
+  },
+  {
+   "nome": "RDAM2505.dbc",
+   "dbc_bytes": 1400479,
+   "download_s": 0.6,
+   "linhas": 20167
+  },
+  {
+   "nome": "RDAM2507.dbc",
+   "dbc_bytes": 1741681,
+   "download_s": 0.7,
+   "linhas": 24613
+  },
+  {
+   "nome": "RDAM2506.dbc",
+   "dbc_bytes": 1578600,
+   "download_s": 0.9,
+   "linhas": 22515
+  },
+  {
+   "nome": "RDAM2508.dbc",
+   "dbc_bytes": 1725942,
+   "download_s": 1.0,
+   "linhas": 24408
+  },
+  {
+   "nome": "RDAM2509.dbc",
+   "dbc_bytes": 1635870,
+   "download_s": 0.7,
+   "linhas": 23100
+  },
+  {
+   "nome": "RDAM2511.dbc",
+   "dbc_bytes": 1550012,
+   "download_s": 0.9,
+   "linhas": 21990
+  },
+  {
+   "nome": "RDAM2510.dbc",
+   "dbc_bytes": 1804844,
+   "download_s": 0.8,
+   "linhas": 25113
+  },
+  {
+   "nome": "RDAM2512.dbc",
+   "dbc_bytes": 1549105,
+   "download_s": 1.4,
+   "linhas": 21768
+  },
+  {
+   "nome": "RDAP2501.dbc",
+   "dbc_bytes": 294039,
+   "download_s": 0.3,
+   "linhas": 4219
+  },
+  {
+   "nome": "RDAP2502.dbc",
+   "dbc_bytes": 267335,
+   "download_s": 0.4,
+   "linhas": 4023
+  },
+  {
+   "nome": "RDAP2504.dbc",
+   "dbc_bytes": 350245,
+   "download_s": 0.3,
+   "linhas": 5258
+  },
+  {
+   "nome": "RDAP2503.dbc",
+   "dbc_bytes": 331978,
+   "download_s": 0.5,
+   "linhas": 5009
+  },
+  {
+   "nome": "RDAP2505.dbc",
+   "dbc_bytes": 345159,
+   "download_s": 0.4,
+   "linhas": 5246
+  },
+  {
+   "nome": "RDAP2506.dbc",
+   "dbc_bytes": 345774,
+   "download_s": 0.3,
+   "linhas": 5312
+  },
+  {
+   "nome": "RDAP2507.dbc",
+   "dbc_bytes": 338439,
+   "download_s": 0.4,
+   "linhas": 5059
+  },
+  {
+   "nome": "RDAP2508.dbc",
+   "dbc_bytes": 325745,
+   "download_s": 0.4,
+   "linhas": 4957
+  },
+  {
+   "nome": "RDAP2509.dbc",
+   "dbc_bytes": 310102,
+   "download_s": 0.4,
+   "linhas": 4792
+  },
+  {
+   "nome": "RDAP2510.dbc",
+   "dbc_bytes": 327308,
+   "download_s": 0.4,
+   "linhas": 4903
+  },
+  {
+   "nome": "RDAP2511.dbc",
+   "dbc_bytes": 305221,
+   "download_s": 0.4,
+   "linhas": 4195
+  },
+  {
+   "nome": "RDAP2512.dbc",
+   "dbc_bytes": 331050,
+   "download_s": 0.4,
+   "linhas": 4900
+  },
+  {
+   "nome": "RDBA2501.dbc",
+   "dbc_bytes": 5312678,
+   "download_s": 1.3,
+   "linhas": 72641
+  },
+  {
+   "nome": "RDBA2502.dbc",
+   "dbc_bytes": 5463209,
+   "download_s": 1.5,
+   "linhas": 75138
+  },
+  {
+   "nome": "RDBA2504.dbc",
+   "dbc_bytes": 5710960,
+   "download_s": 2.1,
+   "linhas": 78674
+  },
+  {
+   "nome": "RDBA2503.dbc",
+   "dbc_bytes": 5700415,
+   "download_s": 2.2,
+   "linhas": 78502
+  },
+  {
+   "nome": "RDBA2506.dbc",
+   "dbc_bytes": 5774804,
+   "download_s": 1.3,
+   "linhas": 79101
+  },
+  {
+   "nome": "RDBA2505.dbc",
+   "dbc_bytes": 6016321,
+   "download_s": 1.7,
+   "linhas": 82789
+  },
+  {
+   "nome": "RDBA2508.dbc",
+   "dbc_bytes": 6212875,
+   "download_s": 2.3,
+   "linhas": 85529
+  },
+  {
+   "nome": "RDBA2507.dbc",
+   "dbc_bytes": 6171920,
+   "download_s": 2.9,
+   "linhas": 84930
+  },
+  {
+   "nome": "RDBA2510.dbc",
+   "dbc_bytes": 6021577,
+   "download_s": 1.2,
+   "linhas": 82670
+  },
+  {
+   "nome": "RDBA2512.dbc",
+   "dbc_bytes": 5669291,
+   "download_s": 2.9,
+   "linhas": 77304
+  },
+  {
+   "nome": "RDBA2511.dbc",
+   "dbc_bytes": 5875464,
+   "download_s": 2.4,
+   "linhas": 80315
+  },
+  {
+   "nome": "RDBA2509.dbc",
+   "dbc_bytes": 6287688,
+   "download_s": 1.9,
+   "linhas": 86324
+  },
+  {
+   "nome": "RDCE2501.dbc",
+   "dbc_bytes": 3400181,
+   "download_s": 1.1,
+   "linhas": 45944
+  },
+  {
+   "nome": "RDCE2503.dbc",
+   "dbc_bytes": 3532117,
+   "download_s": 1.1,
+   "linhas": 48114
+  },
+  {
+   "nome": "RDCE2502.dbc",
+   "dbc_bytes": 3325523,
+   "download_s": 1.4,
+   "linhas": 45200
+  },
+  {
+   "nome": "RDCE2504.dbc",
+   "dbc_bytes": 3596650,
+   "download_s": 2.0,
+   "linhas": 49533
+  },
+  {
+   "nome": "RDCE2505.dbc",
+   "dbc_bytes": 3928946,
+   "download_s": 1.3,
+   "linhas": 54231
+  },
+  {
+   "nome": "RDCE2507.dbc",
+   "dbc_bytes": 3716478,
+   "download_s": 1.3,
+   "linhas": 50832
+  },
+  {
+   "nome": "RDCE2506.dbc",
+   "dbc_bytes": 3657629,
+   "download_s": 1.8,
+   "linhas": 50393
+  },
+  {
+   "nome": "RDCE2508.dbc",
+   "dbc_bytes": 3681719,
+   "download_s": 2.3,
+   "linhas": 50126
+  },
+  {
+   "nome": "RDCE2512.dbc",
+   "dbc_bytes": 3615944,
+   "download_s": 0.9,
+   "linhas": 48468
+  },
+  {
+   "nome": "RDCE2509.dbc",
+   "dbc_bytes": 3920790,
+   "download_s": 1.3,
+   "linhas": 53086
+  },
+  {
+   "nome": "RDCE2511.dbc",
+   "dbc_bytes": 3725140,
+   "download_s": 1.6,
+   "linhas": 49855
+  },
+  {
+   "nome": "RDCE2510.dbc",
+   "dbc_bytes": 3887899,
+   "download_s": 1.7,
+   "linhas": 52343
+  },
+  {
+   "nome": "RDDF2501.dbc",
+   "dbc_bytes": 1672990,
+   "download_s": 0.6,
+   "linhas": 20996
+  },
+  {
+   "nome": "RDDF2503.dbc",
+   "dbc_bytes": 1654822,
+   "download_s": 0.7,
+   "linhas": 21047
+  },
+  {
+   "nome": "RDDF2502.dbc",
+   "dbc_bytes": 1561393,
+   "download_s": 1.0,
+   "linhas": 19383
+  },
+  {
+   "nome": "RDDF2504.dbc",
+   "dbc_bytes": 1605478,
+   "download_s": 1.0,
+   "linhas": 20315
+  },
+  {
+   "nome": "RDDF2506.dbc",
+   "dbc_bytes": 1703052,
+   "download_s": 0.7,
+   "linhas": 21120
+  },
+  {
+   "nome": "RDDF2505.dbc",
+   "dbc_bytes": 1681296,
+   "download_s": 0.8,
+   "linhas": 21895
+  },
+  {
+   "nome": "RDDF2508.dbc",
+   "dbc_bytes": 1618145,
+   "download_s": 1.0,
+   "linhas": 20541
+  },
+  {
+   "nome": "RDDF2507.dbc",
+   "dbc_bytes": 1706797,
+   "download_s": 0.8,
+   "linhas": 21591
+  },
+  {
+   "nome": "RDDF2509.dbc",
+   "dbc_bytes": 1672610,
+   "download_s": 0.6,
+   "linhas": 20874
+  },
+  {
+   "nome": "RDDF2512.dbc",
+   "dbc_bytes": 1632861,
+   "download_s": 0.8,
+   "linhas": 20360
+  },
+  {
+   "nome": "RDDF2511.dbc",
+   "dbc_bytes": 1588836,
+   "download_s": 0.9,
+   "linhas": 19793
+  },
+  {
+   "nome": "RDDF2510.dbc",
+   "dbc_bytes": 1698801,
+   "download_s": 0.9,
+   "linhas": 20829
+  },
+  {
+   "nome": "RDES2504.dbc",
+   "dbc_bytes": 1828316,
+   "download_s": 0.7,
+   "linhas": 23758
+  },
+  {
+   "nome": "RDES2501.dbc",
+   "dbc_bytes": 1987458,
+   "download_s": 1.0,
+   "linhas": 25860
+  },
+  {
+   "nome": "RDES2502.dbc",
+   "dbc_bytes": 1930009,
+   "download_s": 0.9,
+   "linhas": 24987
+  },
+  {
+   "nome": "RDES2503.dbc",
+   "dbc_bytes": 2072567,
+   "download_s": 0.9,
+   "linhas": 27148
+  },
+  {
+   "nome": "RDES2505.dbc",
+   "dbc_bytes": 2275925,
+   "download_s": 0.7,
+   "linhas": 29636
+  },
+  {
+   "nome": "RDES2507.dbc",
+   "dbc_bytes": 2114611,
+   "download_s": 1.1,
+   "linhas": 27542
+  },
+  {
+   "nome": "RDES2508.dbc",
+   "dbc_bytes": 2110960,
+   "download_s": 1.0,
+   "linhas": 27626
+  },
+  {
+   "nome": "RDES2506.dbc",
+   "dbc_bytes": 2144269,
+   "download_s": 0.9,
+   "linhas": 28053
+  },
+  {
+   "nome": "RDES2512.dbc",
+   "dbc_bytes": 1983458,
+   "download_s": 0.7,
+   "linhas": 25613
+  },
+  {
+   "nome": "RDES2509.dbc",
+   "dbc_bytes": 2084967,
+   "download_s": 1.0,
+   "linhas": 27108
+  },
+  {
+   "nome": "RDES2511.dbc",
+   "dbc_bytes": 2025818,
+   "download_s": 1.3,
+   "linhas": 26276
+  },
+  {
+   "nome": "RDES2510.dbc",
+   "dbc_bytes": 2185464,
+   "download_s": 1.1,
+   "linhas": 28429
+  },
+  {
+   "nome": "RDGO2501.dbc",
+   "dbc_bytes": 2805508,
+   "download_s": 0.8,
+   "linhas": 38096
+  },
+  {
+   "nome": "RDGO2502.dbc",
+   "dbc_bytes": 2763465,
+   "download_s": 1.0,
+   "linhas": 37258
+  },
+  {
+   "nome": "RDGO2504.dbc",
+   "dbc_bytes": 2911224,
+   "download_s": 1.0,
+   "linhas": 39034
+  },
+  {
+   "nome": "RDGO2503.dbc",
+   "dbc_bytes": 2968360,
+   "download_s": 1.7,
+   "linhas": 40265
+  },
+  {
+   "nome": "RDGO2508.dbc",
+   "dbc_bytes": 2921349,
+   "download_s": 1.1,
+   "linhas": 39319
+  },
+  {
+   "nome": "RDGO2507.dbc",
+   "dbc_bytes": 2982831,
+   "download_s": 1.1,
+   "linhas": 39900
+  },
+  {
+   "nome": "RDGO2506.dbc",
+   "dbc_bytes": 2920024,
+   "download_s": 0.8,
+   "linhas": 39560
+  },
+  {
+   "nome": "RDGO2505.dbc",
+   "dbc_bytes": 3094221,
+   "download_s": 1.2,
+   "linhas": 41650
+  },
+  {
+   "nome": "RDGO2512.dbc",
+   "dbc_bytes": 2790363,
+   "download_s": 0.8,
+   "linhas": 37206
+  },
+  {
+   "nome": "RDGO2509.dbc",
+   "dbc_bytes": 2890626,
+   "download_s": 1.0,
+   "linhas": 38484
+  },
+  {
+   "nome": "RDGO2510.dbc",
+   "dbc_bytes": 2923008,
+   "download_s": 1.0,
+   "linhas": 39000
+  },
+  {
+   "nome": "RDGO2511.dbc",
+   "dbc_bytes": 2864590,
+   "download_s": 1.0,
+   "linhas": 38239
+  },
+  {
+   "nome": "RDMA2504.dbc",
+   "dbc_bytes": 2836675,
+   "download_s": 0.7,
+   "linhas": 42493
+  },
+  {
+   "nome": "RDMA2503.dbc",
+   "dbc_bytes": 2795077,
+   "download_s": 1.0,
+   "linhas": 41505
+  },
+  {
+   "nome": "RDMA2502.dbc",
+   "dbc_bytes": 2655985,
+   "download_s": 1.6,
+   "linhas": 39186
+  },
+  {
+   "nome": "RDMA2501.dbc",
+   "dbc_bytes": 2808309,
+   "download_s": 1.3,
+   "linhas": 41684
+  },
+  {
+   "nome": "RDMA2505.dbc",
+   "dbc_bytes": 2987280,
+   "download_s": 0.8,
+   "linhas": 44494
+  },
+  {
+   "nome": "RDMA2508.dbc",
+   "dbc_bytes": 2934475,
+   "download_s": 1.3,
+   "linhas": 42849
+  },
+  {
+   "nome": "RDMA2506.dbc",
+   "dbc_bytes": 2984297,
+   "download_s": 1.1,
+   "linhas": 44136
+  },
+  {
+   "nome": "RDMA2507.dbc",
+   "dbc_bytes": 3008305,
+   "download_s": 1.3,
+   "linhas": 44192
+  },
+  {
+   "nome": "RDMA2509.dbc",
+   "dbc_bytes": 2958867,
+   "download_s": 0.8,
+   "linhas": 43689
+  },
+  {
+   "nome": "RDMA2512.dbc",
+   "dbc_bytes": 2760067,
+   "download_s": 1.0,
+   "linhas": 40293
+  },
+  {
+   "nome": "RDMA2510.dbc",
+   "dbc_bytes": 2955289,
+   "download_s": 1.2,
+   "linhas": 43150
+  },
+  {
+   "nome": "RDMA2511.dbc",
+   "dbc_bytes": 2870073,
+   "download_s": 1.7,
+   "linhas": 42047
+  },
+  {
+   "nome": "RDMG2503.dbc",
+   "dbc_bytes": 9853101,
+   "download_s": 2.4,
+   "linhas": 127776
+  },
+  {
+   "nome": "RDMG2502.dbc",
+   "dbc_bytes": 9492037,
+   "download_s": 1.7,
+   "linhas": 122372
+  },
+  {
+   "nome": "RDMG2504.dbc",
+   "dbc_bytes": 10061374,
+   "download_s": 4.1,
+   "linhas": 130850
+  },
+  {
+   "nome": "RDMG2501.dbc",
+   "dbc_bytes": 9878413,
+   "download_s": 3.3,
+   "linhas": 126429
+  },
+  {
+   "nome": "RDMG2506.dbc",
+   "dbc_bytes": 10528505,
+   "download_s": 2.8,
+   "linhas": 136264
+  },
+  {
+   "nome": "RDMG2505.dbc",
+   "dbc_bytes": 10746927,
+   "download_s": 2.1,
+   "linhas": 139441
+  },
+  {
+   "nome": "RDMG2507.dbc",
+   "dbc_bytes": 10971201,
+   "download_s": 3.5,
+   "linhas": 140907
+  },
+  {
+   "nome": "RDMG2508.dbc",
+   "dbc_bytes": 10850769,
+   "download_s": 4.7,
+   "linhas": 139123
+  },
+  {
+   "nome": "RDMG2510.dbc",
+   "dbc_bytes": 10898135,
+   "download_s": 2.7,
+   "linhas": 139336
+  },
+  {
+   "nome": "RDMG2509.dbc",
+   "dbc_bytes": 10831725,
+   "download_s": 2.0,
+   "linhas": 138501
+  },
+  {
+   "nome": "RDMG2511.dbc",
+   "dbc_bytes": 10145011,
+   "download_s": 3.5,
+   "linhas": 129707
+  },
+  {
+   "nome": "RDMG2512.dbc",
+   "dbc_bytes": 10072909,
+   "download_s": 4.5,
+   "linhas": 128022
+  },
+  {
+   "nome": "RDMS2502.dbc",
+   "dbc_bytes": 1293261,
+   "download_s": 0.6,
+   "linhas": 16939
+  },
+  {
+   "nome": "RDMS2501.dbc",
+   "dbc_bytes": 1444350,
+   "download_s": 0.7,
+   "linhas": 18667
+  },
+  {
+   "nome": "RDMS2503.dbc",
+   "dbc_bytes": 1356294,
+   "download_s": 0.8,
+   "linhas": 17766
+  },
+  {
+   "nome": "RDMS2504.dbc",
+   "dbc_bytes": 1421900,
+   "download_s": 1.0,
+   "linhas": 18774
+  },
+  {
+   "nome": "RDMS2505.dbc",
+   "dbc_bytes": 1437922,
+   "download_s": 0.6,
+   "linhas": 18744
+  },
+  {
+   "nome": "RDMS2508.dbc",
+   "dbc_bytes": 1391275,
+   "download_s": 0.6,
+   "linhas": 18088
+  },
+  {
+   "nome": "RDMS2506.dbc",
+   "dbc_bytes": 1358058,
+   "download_s": 0.8,
+   "linhas": 17680
+  },
+  {
+   "nome": "RDMS2507.dbc",
+   "dbc_bytes": 1414828,
+   "download_s": 1.1,
+   "linhas": 18272
+  },
+  {
+   "nome": "RDMS2509.dbc",
+   "dbc_bytes": 1417208,
+   "download_s": 0.7,
+   "linhas": 18389
+  },
+  {
+   "nome": "RDMS2510.dbc",
+   "dbc_bytes": 1367870,
+   "download_s": 0.6,
+   "linhas": 17417
+  },
+  {
+   "nome": "RDMS2512.dbc",
+   "dbc_bytes": 1255467,
+   "download_s": 0.7,
+   "linhas": 16193
+  },
+  {
+   "nome": "RDMS2511.dbc",
+   "dbc_bytes": 1305003,
+   "download_s": 0.8,
+   "linhas": 16642
+  },
+  {
+   "nome": "RDMT2501.dbc",
+   "dbc_bytes": 1547292,
+   "download_s": 0.8,
+   "linhas": 20561
+  },
+  {
+   "nome": "RDMT2502.dbc",
+   "dbc_bytes": 1542231,
+   "download_s": 0.5,
+   "linhas": 20655
+  },
+  {
+   "nome": "RDMT2503.dbc",
+   "dbc_bytes": 1739644,
+   "download_s": 0.8,
+   "linhas": 23311
+  },
+  {
+   "nome": "RDMT2504.dbc",
+   "dbc_bytes": 1633980,
+   "download_s": 1.0,
+   "linhas": 21906
+  },
+  {
+   "nome": "RDMT2505.dbc",
+   "dbc_bytes": 1703902,
+   "download_s": 0.9,
+   "linhas": 22989
+  },
+  {
+   "nome": "RDMT2506.dbc",
+   "dbc_bytes": 1734483,
+   "download_s": 0.8,
+   "linhas": 23317
+  },
+  {
+   "nome": "RDMT2508.dbc",
+   "dbc_bytes": 1750226,
+   "download_s": 0.6,
+   "linhas": 23377
+  },
+  {
+   "nome": "RDMT2507.dbc",
+   "dbc_bytes": 1631719,
+   "download_s": 0.8,
+   "linhas": 21917
+  },
+  {
+   "nome": "RDMT2509.dbc",
+   "dbc_bytes": 1711420,
+   "download_s": 1.1,
+   "linhas": 22979
+  },
+  {
+   "nome": "RDMT2510.dbc",
+   "dbc_bytes": 1681689,
+   "download_s": 0.8,
+   "linhas": 22427
+  },
+  {
+   "nome": "RDMT2512.dbc",
+   "dbc_bytes": 1538750,
+   "download_s": 0.6,
+   "linhas": 20653
+  },
+  {
+   "nome": "RDMT2511.dbc",
+   "dbc_bytes": 1600859,
+   "download_s": 0.9,
+   "linhas": 21284
+  },
+  {
+   "nome": "RDPA2501.dbc",
+   "dbc_bytes": 3104813,
+   "download_s": 1.2,
+   "linhas": 44600
+  },
+  {
+   "nome": "RDPA2502.dbc",
+   "dbc_bytes": 3042086,
+   "download_s": 1.1,
+   "linhas": 43943
+  },
+  {
+   "nome": "RDPA2504.dbc",
+   "dbc_bytes": 3228910,
+   "download_s": 1.5,
+   "linhas": 46662
+  },
+  {
+   "nome": "RDPA2503.dbc",
+   "dbc_bytes": 3281762,
+   "download_s": 1.2,
+   "linhas": 47078
+  },
+  {
+   "nome": "RDPA2505.dbc",
+   "dbc_bytes": 3417859,
+   "download_s": 1.4,
+   "linhas": 49149
+  },
+  {
+   "nome": "RDPA2506.dbc",
+   "dbc_bytes": 3399464,
+   "download_s": 1.0,
+   "linhas": 48859
+  },
+  {
+   "nome": "RDPA2508.dbc",
+   "dbc_bytes": 3567490,
+   "download_s": 1.0,
+   "linhas": 50660
+  },
+  {
+   "nome": "RDPA2507.dbc",
+   "dbc_bytes": 3462258,
+   "download_s": 1.4,
+   "linhas": 49639
+  },
+  {
+   "nome": "RDPA2509.dbc",
+   "dbc_bytes": 3448791,
+   "download_s": 1.6,
+   "linhas": 49448
+  },
+  {
+   "nome": "RDPA2510.dbc",
+   "dbc_bytes": 3530326,
+   "download_s": 1.1,
+   "linhas": 50058
+  },
+  {
+   "nome": "RDPB2501.dbc",
+   "dbc_bytes": 1522063,
+   "download_s": 0.7,
+   "linhas": 20029
+  },
+  {
+   "nome": "RDPA2511.dbc",
+   "dbc_bytes": 3428646,
+   "download_s": 1.1,
+   "linhas": 48679
+  },
+  {
+   "nome": "RDPA2512.dbc",
+   "dbc_bytes": 3416755,
+   "download_s": 1.3,
+   "linhas": 48817
+  },
+  {
+   "nome": "RDPB2502.dbc",
+   "dbc_bytes": 1476488,
+   "download_s": 0.7,
+   "linhas": 19487
+  },
+  {
+   "nome": "RDPB2503.dbc",
+   "dbc_bytes": 1611397,
+   "download_s": 0.8,
+   "linhas": 21502
+  },
+  {
+   "nome": "RDPB2505.dbc",
+   "dbc_bytes": 1696345,
+   "download_s": 0.8,
+   "linhas": 22266
+  },
+  {
+   "nome": "RDPB2504.dbc",
+   "dbc_bytes": 1585533,
+   "download_s": 1.1,
+   "linhas": 21058
+  },
+  {
+   "nome": "RDPB2506.dbc",
+   "dbc_bytes": 1688223,
+   "download_s": 0.7,
+   "linhas": 22325
+  },
+  {
+   "nome": "RDPB2509.dbc",
+   "dbc_bytes": 1721829,
+   "download_s": 0.9,
+   "linhas": 22459
+  },
+  {
+   "nome": "RDPB2507.dbc",
+   "dbc_bytes": 1764025,
+   "download_s": 0.8,
+   "linhas": 22819
+  },
+  {
+   "nome": "RDPB2508.dbc",
+   "dbc_bytes": 1797135,
+   "download_s": 1.2,
+   "linhas": 23200
+  },
+  {
+   "nome": "RDPB2510.dbc",
+   "dbc_bytes": 1811350,
+   "download_s": 0.6,
+   "linhas": 23172
+  },
+  {
+   "nome": "RDPB2512.dbc",
+   "dbc_bytes": 1499569,
+   "download_s": 0.7,
+   "linhas": 19260
+  },
+  {
+   "nome": "RDPB2511.dbc",
+   "dbc_bytes": 1601784,
+   "download_s": 0.9,
+   "linhas": 20599
+  },
+  {
+   "nome": "RDPE2501.dbc",
+   "dbc_bytes": 3929369,
+   "download_s": 1.4,
+   "linhas": 52811
+  },
+  {
+   "nome": "RDPE2503.dbc",
+   "dbc_bytes": 4006823,
+   "download_s": 1.2,
+   "linhas": 53849
+  },
+  {
+   "nome": "RDPE2502.dbc",
+   "dbc_bytes": 3768413,
+   "download_s": 1.5,
+   "linhas": 50421
+  },
+  {
+   "nome": "RDPE2504.dbc",
+   "dbc_bytes": 4150631,
+   "download_s": 1.5,
+   "linhas": 56353
+  },
+  {
+   "nome": "RDPE2505.dbc",
+   "dbc_bytes": 4367232,
+   "download_s": 1.9,
+   "linhas": 58995
+  },
+  {
+   "nome": "RDPE2506.dbc",
+   "dbc_bytes": 4046853,
+   "download_s": 1.1,
+   "linhas": 55198
+  },
+  {
+   "nome": "RDPE2509.dbc",
+   "dbc_bytes": 4357401,
+   "download_s": 1.2,
+   "linhas": 58532
+  },
+  {
+   "nome": "RDPE2508.dbc",
+   "dbc_bytes": 4349853,
+   "download_s": 1.3,
+   "linhas": 58867
+  },
+  {
+   "nome": "RDPE2507.dbc",
+   "dbc_bytes": 4227191,
+   "download_s": 1.4,
+   "linhas": 57887
+  },
+  {
+   "nome": "RDPI2501.dbc",
+   "dbc_bytes": 1427233,
+   "download_s": 0.6,
+   "linhas": 19037
+  },
+  {
+   "nome": "RDPE2512.dbc",
+   "dbc_bytes": 4126363,
+   "download_s": 1.4,
+   "linhas": 55935
+  },
+  {
+   "nome": "RDPE2510.dbc",
+   "dbc_bytes": 4318788,
+   "download_s": 1.1,
+   "linhas": 58387
+  },
+  {
+   "nome": "RDPE2511.dbc",
+   "dbc_bytes": 4073161,
+   "download_s": 1.7,
+   "linhas": 55363
+  },
+  {
+   "nome": "RDPI2502.dbc",
+   "dbc_bytes": 1272783,
+   "download_s": 1.5,
+   "linhas": 17055
+  },
+  {
+   "nome": "RDPI2504.dbc",
+   "dbc_bytes": 1307865,
+   "download_s": 0.6,
+   "linhas": 17687
+  },
+  {
+   "nome": "RDPI2506.dbc",
+   "dbc_bytes": 1437822,
+   "download_s": 0.6,
+   "linhas": 19293
+  },
+  {
+   "nome": "RDPI2503.dbc",
+   "dbc_bytes": 1377960,
+   "download_s": 1.0,
+   "linhas": 18468
+  },
+  {
+   "nome": "RDPI2505.dbc",
+   "dbc_bytes": 1434371,
+   "download_s": 1.1,
+   "linhas": 19217
+  },
+  {
+   "nome": "RDPI2509.dbc",
+   "dbc_bytes": 1265716,
+   "download_s": 0.6,
+   "linhas": 17236
+  },
+  {
+   "nome": "RDPI2507.dbc",
+   "dbc_bytes": 1460850,
+   "download_s": 0.8,
+   "linhas": 19503
+  },
+  {
+   "nome": "RDPI2508.dbc",
+   "dbc_bytes": 1425880,
+   "download_s": 0.8,
+   "linhas": 18952
+  },
+  {
+   "nome": "RDPI2510.dbc",
+   "dbc_bytes": 1514778,
+   "download_s": 0.7,
+   "linhas": 19901
+  },
+  {
+   "nome": "RDPI2511.dbc",
+   "dbc_bytes": 1375344,
+   "download_s": 0.5,
+   "linhas": 18131
+  },
+  {
+   "nome": "RDPI2512.dbc",
+   "dbc_bytes": 1432098,
+   "download_s": 0.7,
+   "linhas": 19014
+  },
+  {
+   "nome": "RDPR2502.dbc",
+   "dbc_bytes": 6490156,
+   "download_s": 1.4,
+   "linhas": 85810
+  },
+  {
+   "nome": "RDPR2501.dbc",
+   "dbc_bytes": 6681810,
+   "download_s": 1.9,
+   "linhas": 87482
+  },
+  {
+   "nome": "RDPR2503.dbc",
+   "dbc_bytes": 6692973,
+   "download_s": 2.2,
+   "linhas": 88023
+  },
+  {
+   "nome": "RDPR2504.dbc",
+   "dbc_bytes": 6798319,
+   "download_s": 2.7,
+   "linhas": 91035
+  },
+  {
+   "nome": "RDPR2505.dbc",
+   "dbc_bytes": 7020609,
+   "download_s": 1.6,
+   "linhas": 93300
+  },
+  {
+   "nome": "RDPR2506.dbc",
+   "dbc_bytes": 7119986,
+   "download_s": 2.1,
+   "linhas": 94036
+  },
+  {
+   "nome": "RDPR2507.dbc",
+   "dbc_bytes": 7251140,
+   "download_s": 2.4,
+   "linhas": 95792
+  },
+  {
+   "nome": "RDPR2508.dbc",
+   "dbc_bytes": 7133379,
+   "download_s": 3.4,
+   "linhas": 93912
+  },
+  {
+   "nome": "RDPR2509.dbc",
+   "dbc_bytes": 7157417,
+   "download_s": 1.7,
+   "linhas": 94437
+  },
+  {
+   "nome": "RDPR2510.dbc",
+   "dbc_bytes": 7326565,
+   "download_s": 2.2,
+   "linhas": 96026
+  },
+  {
+   "nome": "RDPR2512.dbc",
+   "dbc_bytes": 6874435,
+   "download_s": 2.4,
+   "linhas": 89610
+  },
+  {
+   "nome": "RDPR2511.dbc",
+   "dbc_bytes": 7011948,
+   "download_s": 2.6,
+   "linhas": 91835
+  },
+  {
+   "nome": "RDRJ2502.dbc",
+   "dbc_bytes": 5617016,
+   "download_s": 1.7,
+   "linhas": 71711
+  },
+  {
+   "nome": "RDRJ2503.dbc",
+   "dbc_bytes": 5751601,
+   "download_s": 2.5,
+   "linhas": 73809
+  },
+  {
+   "nome": "RDRJ2504.dbc",
+   "dbc_bytes": 5713834,
+   "download_s": 1.6,
+   "linhas": 73206
+  },
+  {
+   "nome": "RDRJ2501.dbc",
+   "dbc_bytes": 5890232,
+   "download_s": 1.2,
+   "linhas": 75893
+  },
+  {
+   "nome": "RDRJ2506.dbc",
+   "dbc_bytes": 6065195,
+   "download_s": 1.3,
+   "linhas": 78073
+  },
+  {
+   "nome": "RDRJ2507.dbc",
+   "dbc_bytes": 6282589,
+   "download_s": 1.8,
+   "linhas": 80739
+  },
+  {
+   "nome": "RDRJ2505.dbc",
+   "dbc_bytes": 6126202,
+   "download_s": 1.8,
+   "linhas": 78635
+  },
+  {
+   "nome": "RDRJ2508.dbc",
+   "dbc_bytes": 6184473,
+   "download_s": 3.3,
+   "linhas": 79180
+  },
+  {
+   "nome": "RDRJ2509.dbc",
+   "dbc_bytes": 6273970,
+   "download_s": 1.9,
+   "linhas": 80405
+  },
+  {
+   "nome": "RDRJ2510.dbc",
+   "dbc_bytes": 6331549,
+   "download_s": 1.2,
+   "linhas": 81109
+  },
+  {
+   "nome": "RDRJ2511.dbc",
+   "dbc_bytes": 6024136,
+   "download_s": 2.3,
+   "linhas": 77277
+  },
+  {
+   "nome": "RDRJ2512.dbc",
+   "dbc_bytes": 5963987,
+   "download_s": 3.1,
+   "linhas": 76232
+  },
+  {
+   "nome": "RDRN2503.dbc",
+   "dbc_bytes": 1393972,
+   "download_s": 0.6,
+   "linhas": 18603
+  },
+  {
+   "nome": "RDRN2502.dbc",
+   "dbc_bytes": 1326772,
+   "download_s": 0.8,
+   "linhas": 17891
+  },
+  {
+   "nome": "RDRN2504.dbc",
+   "dbc_bytes": 1375448,
+   "download_s": 0.9,
+   "linhas": 18676
+  },
+  {
+   "nome": "RDRN2501.dbc",
+   "dbc_bytes": 1360945,
+   "download_s": 1.0,
+   "linhas": 17948
+  },
+  {
+   "nome": "RDRN2508.dbc",
+   "dbc_bytes": 1437185,
+   "download_s": 0.6,
+   "linhas": 19379
+  },
+  {
+   "nome": "RDRN2506.dbc",
+   "dbc_bytes": 1423363,
+   "download_s": 0.7,
+   "linhas": 19292
+  },
+  {
+   "nome": "RDRN2505.dbc",
+   "dbc_bytes": 1499983,
+   "download_s": 0.7,
+   "linhas": 20311
+  },
+  {
+   "nome": "RDRN2507.dbc",
+   "dbc_bytes": 1494339,
+   "download_s": 1.4,
+   "linhas": 20225
+  },
+  {
+   "nome": "RDRN2510.dbc",
+   "dbc_bytes": 1381067,
+   "download_s": 0.8,
+   "linhas": 18369
+  },
+  {
+   "nome": "RDRN2509.dbc",
+   "dbc_bytes": 1415841,
+   "download_s": 1.0,
+   "linhas": 18947
+  },
+  {
+   "nome": "RDRN2511.dbc",
+   "dbc_bytes": 1366885,
+   "download_s": 0.9,
+   "linhas": 18148
+  },
+  {
+   "nome": "RDRN2512.dbc",
+   "dbc_bytes": 1300009,
+   "download_s": 1.3,
+   "linhas": 17704
+  },
+  {
+   "nome": "RDRO2501.dbc",
+   "dbc_bytes": 765535,
+   "download_s": 0.4,
+   "linhas": 10637
+  },
+  {
+   "nome": "RDRO2502.dbc",
+   "dbc_bytes": 731448,
+   "download_s": 0.4,
+   "linhas": 10219
+  },
+  {
+   "nome": "RDRO2503.dbc",
+   "dbc_bytes": 761844,
+   "download_s": 0.6,
+   "linhas": 10762
+  },
+  {
+   "nome": "RDRO2504.dbc",
+   "dbc_bytes": 812586,
+   "download_s": 0.8,
+   "linhas": 11551
+  },
+  {
+   "nome": "RDRO2505.dbc",
+   "dbc_bytes": 832186,
+   "download_s": 0.5,
+   "linhas": 11824
+  },
+  {
+   "nome": "RDRO2506.dbc",
+   "dbc_bytes": 780174,
+   "download_s": 0.5,
+   "linhas": 11235
+  },
+  {
+   "nome": "RDRO2507.dbc",
+   "dbc_bytes": 886259,
+   "download_s": 0.6,
+   "linhas": 12611
+  },
+  {
+   "nome": "RDRO2508.dbc",
+   "dbc_bytes": 871060,
+   "download_s": 0.6,
+   "linhas": 12372
+  },
+  {
+   "nome": "RDRO2509.dbc",
+   "dbc_bytes": 863870,
+   "download_s": 0.5,
+   "linhas": 12259
+  },
+  {
+   "nome": "RDRO2512.dbc",
+   "dbc_bytes": 804323,
+   "download_s": 0.5,
+   "linhas": 11527
+  },
+  {
+   "nome": "RDRO2510.dbc",
+   "dbc_bytes": 904126,
+   "download_s": 0.6,
+   "linhas": 12766
+  },
+  {
+   "nome": "RDRO2511.dbc",
+   "dbc_bytes": 857128,
+   "download_s": 0.7,
+   "linhas": 12159
+  },
+  {
+   "nome": "RDRR2501.dbc",
+   "dbc_bytes": 276752,
+   "download_s": 0.5,
+   "linhas": 3882
+  },
+  {
+   "nome": "RDRR2504.dbc",
+   "dbc_bytes": 220431,
+   "download_s": 0.3,
+   "linhas": 2895
+  },
+  {
+   "nome": "RDRR2502.dbc",
+   "dbc_bytes": 213813,
+   "download_s": 0.4,
+   "linhas": 2855
+  },
+  {
+   "nome": "RDRR2503.dbc",
+   "dbc_bytes": 258435,
+   "download_s": 0.5,
+   "linhas": 3459
+  },
+  {
+   "nome": "RDRR2505.dbc",
+   "dbc_bytes": 216385,
+   "download_s": 0.3,
+   "linhas": 2898
+  },
+  {
+   "nome": "RDRR2506.dbc",
+   "dbc_bytes": 219859,
+   "download_s": 0.4,
+   "linhas": 2935
+  },
+  {
+   "nome": "RDRR2507.dbc",
+   "dbc_bytes": 222006,
+   "download_s": 0.3,
+   "linhas": 3003
+  },
+  {
+   "nome": "RDRR2508.dbc",
+   "dbc_bytes": 236111,
+   "download_s": 0.3,
+   "linhas": 3193
+  },
+  {
+   "nome": "RDRR2509.dbc",
+   "dbc_bytes": 205393,
+   "download_s": 0.4,
+   "linhas": 2738
+  },
+  {
+   "nome": "RDRR2510.dbc",
+   "dbc_bytes": 180195,
+   "download_s": 0.4,
+   "linhas": 2346
+  },
+  {
+   "nome": "RDRR2512.dbc",
+   "dbc_bytes": 157662,
+   "download_s": 0.3,
+   "linhas": 2128
+  },
+  {
+   "nome": "RDRR2511.dbc",
+   "dbc_bytes": 205151,
+   "download_s": 0.4,
+   "linhas": 2740
+  },
+  {
+   "nome": "RDRS2501.dbc",
+   "dbc_bytes": 5254835,
+   "download_s": 1.1,
+   "linhas": 66998
+  },
+  {
+   "nome": "RDRS2502.dbc",
+   "dbc_bytes": 5191386,
+   "download_s": 1.5,
+   "linhas": 66262
+  },
+  {
+   "nome": "RDRS2504.dbc",
+   "dbc_bytes": 5500369,
+   "download_s": 2.4,
+   "linhas": 70578
+  },
+  {
+   "nome": "RDRS2503.dbc",
+   "dbc_bytes": 5377816,
+   "download_s": 2.0,
+   "linhas": 68915
+  },
+  {
+   "nome": "RDRS2505.dbc",
+   "dbc_bytes": 5725170,
+   "download_s": 1.3,
+   "linhas": 73411
+  },
+  {
+   "nome": "RDRS2506.dbc",
+   "dbc_bytes": 5565277,
+   "download_s": 1.5,
+   "linhas": 71678
+  },
+  {
+   "nome": "RDRS2508.dbc",
+   "dbc_bytes": 5799983,
+   "download_s": 2.2,
+   "linhas": 74379
+  },
+  {
+   "nome": "RDRS2507.dbc",
+   "dbc_bytes": 5828250,
+   "download_s": 2.2,
+   "linhas": 75146
+  },
+  {
+   "nome": "RDRS2509.dbc",
+   "dbc_bytes": 5899543,
+   "download_s": 1.4,
+   "linhas": 75659
+  },
+  {
+   "nome": "RDRS2510.dbc",
+   "dbc_bytes": 5932540,
+   "download_s": 1.6,
+   "linhas": 75980
+  },
+  {
+   "nome": "RDRS2511.dbc",
+   "dbc_bytes": 5789049,
+   "download_s": 1.6,
+   "linhas": 73866
+  },
+  {
+   "nome": "RDRS2512.dbc",
+   "dbc_bytes": 5515055,
+   "download_s": 2.5,
+   "linhas": 70967
+  },
+  {
+   "nome": "RDSC2501.dbc",
+   "dbc_bytes": 4244720,
+   "download_s": 1.5,
+   "linhas": 53631
+  },
+  {
+   "nome": "RDSC2504.dbc",
+   "dbc_bytes": 4353586,
+   "download_s": 1.4,
+   "linhas": 55685
+  },
+  {
+   "nome": "RDSC2503.dbc",
+   "dbc_bytes": 4336559,
+   "download_s": 1.1,
+   "linhas": 55023
+  },
+  {
+   "nome": "RDSC2502.dbc",
+   "dbc_bytes": 4213851,
+   "download_s": 1.4,
+   "linhas": 53444
+  },
+  {
+   "nome": "RDSC2506.dbc",
+   "dbc_bytes": 4501046,
+   "download_s": 1.4,
+   "linhas": 57435
+  },
+  {
+   "nome": "RDSC2508.dbc",
+   "dbc_bytes": 4709321,
+   "download_s": 1.0,
+   "linhas": 60270
+  },
+  {
+   "nome": "RDSC2505.dbc",
+   "dbc_bytes": 4750957,
+   "download_s": 1.7,
+   "linhas": 60523
+  },
+  {
+   "nome": "RDSC2507.dbc",
+   "dbc_bytes": 4768696,
+   "download_s": 2.5,
+   "linhas": 60325
+  },
+  {
+   "nome": "RDSC2510.dbc",
+   "dbc_bytes": 4842329,
+   "download_s": 1.4,
+   "linhas": 61454
+  },
+  {
+   "nome": "RDSC2509.dbc",
+   "dbc_bytes": 4650546,
+   "download_s": 1.0,
+   "linhas": 59352
+  },
+  {
+   "nome": "RDSC2511.dbc",
+   "dbc_bytes": 4575713,
+   "download_s": 1.7,
+   "linhas": 58629
+  },
+  {
+   "nome": "RDSC2512.dbc",
+   "dbc_bytes": 4360387,
+   "download_s": 2.4,
+   "linhas": 55204
+  },
+  {
+   "nome": "RDSE2503.dbc",
+   "dbc_bytes": 773720,
+   "download_s": 0.5,
+   "linhas": 10435
+  },
+  {
+   "nome": "RDSE2501.dbc",
+   "dbc_bytes": 735130,
+   "download_s": 0.6,
+   "linhas": 9452
+  },
+  {
+   "nome": "RDSE2502.dbc",
+   "dbc_bytes": 731007,
+   "download_s": 0.5,
+   "linhas": 9482
+  },
+  {
+   "nome": "RDSE2504.dbc",
+   "dbc_bytes": 791608,
+   "download_s": 0.8,
+   "linhas": 10574
+  },
+  {
+   "nome": "RDSE2505.dbc",
+   "dbc_bytes": 780958,
+   "download_s": 0.5,
+   "linhas": 10594
+  },
+  {
+   "nome": "RDSE2506.dbc",
+   "dbc_bytes": 711399,
+   "download_s": 0.6,
+   "linhas": 9399
+  },
+  {
+   "nome": "RDSE2508.dbc",
+   "dbc_bytes": 819261,
+   "download_s": 0.5,
+   "linhas": 10681
+  },
+  {
+   "nome": "RDSE2507.dbc",
+   "dbc_bytes": 812741,
+   "download_s": 0.6,
+   "linhas": 10602
+  },
+  {
+   "nome": "RDSE2510.dbc",
+   "dbc_bytes": 847814,
+   "download_s": 0.5,
+   "linhas": 11059
+  },
+  {
+   "nome": "RDSE2509.dbc",
+   "dbc_bytes": 839760,
+   "download_s": 0.8,
+   "linhas": 11259
+  },
+  {
+   "nome": "RDSE2512.dbc",
+   "dbc_bytes": 794564,
+   "download_s": 0.6,
+   "linhas": 10417
+  },
+  {
+   "nome": "RDSE2511.dbc",
+   "dbc_bytes": 799880,
+   "download_s": 0.6,
+   "linhas": 10374
+  },
+  {
+   "nome": "RDTO2503.dbc",
+   "dbc_bytes": 697579,
+   "download_s": 0.4,
+   "linhas": 9144
+  },
+  {
+   "nome": "RDTO2504.dbc",
+   "dbc_bytes": 688853,
+   "download_s": 0.5,
+   "linhas": 9139
+  },
+  {
+   "nome": "RDTO2501.dbc",
+   "dbc_bytes": 689207,
+   "download_s": 0.7,
+   "linhas": 8962
+  },
+  {
+   "nome": "RDTO2502.dbc",
+   "dbc_bytes": 681243,
+   "download_s": 0.8,
+   "linhas": 8872
+  },
+  {
+   "nome": "RDTO2505.dbc",
+   "dbc_bytes": 718316,
+   "download_s": 0.5,
+   "linhas": 9527
+  },
+  {
+   "nome": "RDTO2506.dbc",
+   "dbc_bytes": 731296,
+   "download_s": 0.5,
+   "linhas": 9711
+  },
+  {
+   "nome": "RDTO2508.dbc",
+   "dbc_bytes": 723910,
+   "download_s": 0.5,
+   "linhas": 9466
+  },
+  {
+   "nome": "RDTO2507.dbc",
+   "dbc_bytes": 738155,
+   "download_s": 0.7,
+   "linhas": 9478
+  },
+  {
+   "nome": "RDTO2509.dbc",
+   "dbc_bytes": 695136,
+   "download_s": 0.5,
+   "linhas": 9104
+  },
+  {
+   "nome": "RDTO2510.dbc",
+   "dbc_bytes": 717143,
+   "download_s": 0.5,
+   "linhas": 9302
+  },
+  {
+   "nome": "RDTO2512.dbc",
+   "dbc_bytes": 597811,
+   "download_s": 0.6,
+   "linhas": 7768
+  },
+  {
+   "nome": "RDTO2511.dbc",
+   "dbc_bytes": 644207,
+   "download_s": 0.6,
+   "linhas": 8338
+  }
+ ]
+}

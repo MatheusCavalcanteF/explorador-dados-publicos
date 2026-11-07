@@ -1,0 +1,60 @@
+{
+ "comparacoes": 72,
+ "iguais": 72,
+ "diferencas": [],
+ "navegadores": {
+  "chromium": {
+   "versao": "157.0.8103.38",
+   "iguais": 24,
+   "total": 24,
+   "erros": []
+  },
+  "firefox": {
+   "versao": "159.0",
+   "iguais": 24,
+   "total": 24,
+   "erros": []
+  },
+  "webkit": {
+   "versao": "27.2",
+   "iguais": 24,
+   "total": 24,
+   "erros": []
+  }
+ },
+ "host_real": {
+  "url": "https://idl.uw.edu/mosaic-datasets/data/flights-200k.parquet",
+  "linhas_esperadas": 231083,
+  "origem_da_pagina": "servidor local, fora da origem do arquivo",
+  "inteiro": {
+   "ms": 516.8000000119209,
+   "total": 231083,
+   "status": 200
+  },
+  "parcial": {
+   "erro": "Error: page.evaluate: TypeError: Failed to fetch"
+  },
+  "requisicoes": [
+   "GET 200 []",
+   "GET null [bytes=1064395-1129930]"
+  ]
+ },
+ "nulos": {
+  "linhas_leitor": 380845,
+  "nulos_leitor": 146671,
+  "ocultas_leitor": 146671,
+  "linhas_motor": 380845,
+  "nulos_motor": 146671,
+  "ocultas_motor": 146671
+ },
+ "bundles": {
+  "hyp.js": {
+   "gzip_bytes": 94728,
+   "bruto_bytes": 177772
+  },
+  "hyp_leve.js": {
+   "gzip_bytes": 18582,
+   "bruto_bytes": 59594
+  }
+ }
+}

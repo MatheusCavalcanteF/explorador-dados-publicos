@@ -1,0 +1,85 @@
+{
+ "coletado_em": "2026-11-07 05:09 UTC",
+ "motor": {
+  "versao": "1.33.1-dev57.0",
+  "wasm_bruto_bytes": 35913747,
+  "url_cdn": "https://cdn.jsdelivr.net/npm/@duckdb/duckdb-wasm@1.33.1-dev57.0/dist/duckdb-eh.wasm",
+  "cdn_com_brotli": {
+   "status": 200,
+   "content_length": "7124338",
+   "content_encoding": "br",
+   "content_range": null,
+   "accept_ranges": "bytes",
+   "server": "cloudflare",
+   "bytes_recebidos": 0
+  },
+  "cdn_com_brotli_curl": {
+   "content_length": "6220268",
+   "content_encoding": "br",
+   "server": null,
+   "atendido_por": "cache-fra-etou8220051-FRA, cache-gru-sbgr1930066-GRU"
+  }
+ },
+ "cloudflare_range_fora_do_navegador": {
+  "https://naidan.pages.dev/assets/app-E39mwzM7.js": {
+   "aceita_gzip": {
+    "status": 200,
+    "content_length": null,
+    "content_encoding": "gzip",
+    "content_range": null,
+    "accept_ranges": null,
+    "server": "cloudflare",
+    "bytes_recebidos": 106491
+   },
+   "identity": {
+    "status": 200,
+    "content_length": "371833",
+    "content_encoding": null,
+    "content_range": null,
+    "accept_ranges": null,
+    "server": "cloudflare",
+    "bytes_recebidos": 371833
+   }
+  },
+  "https://pxweb2.pages.dev/assets/index-DrB5y3zi.js": {
+   "aceita_gzip": {
+    "status": 200,
+    "content_length": null,
+    "content_encoding": "gzip",
+    "content_range": null,
+    "accept_ranges": null,
+    "server": "cloudflare",
+    "bytes_recebidos": 863436
+   },
+   "identity": {
+    "status": 200,
+    "content_length": "2704567",
+    "content_encoding": null,
+    "content_range": null,
+    "accept_ranges": null,
+    "server": "cloudflare",
+    "bytes_recebidos": 2704567
+   }
+  },
+  "https://query-json.pages.dev/assets/index-BmlMqrip.js": {
+   "aceita_gzip": {
+    "status": 200,
+    "content_length": null,
+    "content_encoding": "gzip",
+    "content_range": null,
+    "accept_ranges": null,
+    "server": "cloudflare",
+    "bytes_recebidos": 625783
+   },
+   "identity": {
+    "status": 200,
+    "content_length": "2374380",
+    "content_encoding": null,
+    "content_range": null,
+    "accept_ranges": null,
+    "server": "cloudflare",
+    "bytes_recebidos": 2374380
+   }
+  }
+ }
+}

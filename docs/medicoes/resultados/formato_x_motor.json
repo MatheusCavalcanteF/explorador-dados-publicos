@@ -1,0 +1,106 @@
+{
+ "arquivos": [
+  "uf35_hosp_tri_capitulo_sem.parquet",
+  "uf35_res_ano_faixa12_sexo_sem.parquet",
+  "uf35_res_mes_sem.parquet",
+  "uf35_res_tri_capitulo_sem.parquet"
+ ],
+ "comparacoes": [
+  {
+   "navegador": "chromium",
+   "versao": "157.0.8103.38",
+   "arquivo": "uf35_hosp_tri_capitulo_sem.parquet",
+   "linhas_leitor": 21012,
+   "linhas_motor": 21012,
+   "iguais": true
+  },
+  {
+   "navegador": "chromium",
+   "versao": "157.0.8103.38",
+   "arquivo": "uf35_res_ano_faixa12_sexo_sem.parquet",
+   "linhas_leitor": 15307,
+   "linhas_motor": 15307,
+   "iguais": true
+  },
+  {
+   "navegador": "chromium",
+   "versao": "157.0.8103.38",
+   "arquivo": "uf35_res_mes_sem.parquet",
+   "linhas_leitor": 7740,
+   "linhas_motor": 7740,
+   "iguais": true
+  },
+  {
+   "navegador": "chromium",
+   "versao": "157.0.8103.38",
+   "arquivo": "uf35_res_tri_capitulo_sem.parquet",
+   "linhas_leitor": 46656,
+   "linhas_motor": 46656,
+   "iguais": true
+  },
+  {
+   "navegador": "firefox",
+   "versao": "159.0",
+   "arquivo": "uf35_hosp_tri_capitulo_sem.parquet",
+   "linhas_leitor": 21012,
+   "linhas_motor": 21012,
+   "iguais": true
+  },
+  {
+   "navegador": "firefox",
+   "versao": "159.0",
+   "arquivo": "uf35_res_ano_faixa12_sexo_sem.parquet",
+   "linhas_leitor": 15307,
+   "linhas_motor": 15307,
+   "iguais": true
+  },
+  {
+   "navegador": "firefox",
+   "versao": "159.0",
+   "arquivo": "uf35_res_mes_sem.parquet",
+   "linhas_leitor": 7740,
+   "linhas_motor": 7740,
+   "iguais": true
+  },
+  {
+   "navegador": "firefox",
+   "versao": "159.0",
+   "arquivo": "uf35_res_tri_capitulo_sem.parquet",
+   "linhas_leitor": 46656,
+   "linhas_motor": 46656,
+   "iguais": true
+  },
+  {
+   "navegador": "webkit",
+   "versao": "27.2",
+   "arquivo": "uf35_hosp_tri_capitulo_sem.parquet",
+   "linhas_leitor": 21012,
+   "linhas_motor": 21012,
+   "iguais": true
+  },
+  {
+   "navegador": "webkit",
+   "versao": "27.2",
+   "arquivo": "uf35_res_ano_faixa12_sexo_sem.parquet",
+   "linhas_leitor": 15307,
+   "linhas_motor": 15307,
+   "iguais": true
+  },
+  {
+   "navegador": "webkit",
+   "versao": "27.2",
+   "arquivo": "uf35_res_mes_sem.parquet",
+   "linhas_leitor": 7740,
+   "linhas_motor": 7740,
+   "iguais": true
+  },
+  {
+   "navegador": "webkit",
+   "versao": "27.2",
+   "arquivo": "uf35_res_tri_capitulo_sem.parquet",
+   "linhas_leitor": 46656,
+   "linhas_motor": 46656,
+   "iguais": true
+  }
+ ]
+}

@@ -1,0 +1,139 @@
+{
+ "eixos_de_tempo_no_formulario": [
+  [
+   "Ano/mês_atendimento",
+   "Ano/mês atendimento"
+  ],
+  [
+   "Ano_atendimento",
+   "Ano atendimento"
+  ]
+ ],
+ "competencias_selecionadas": [
+  "2501",
+  "2502",
+  "2503",
+  "2504",
+  "2505",
+  "2506",
+  "2507",
+  "2508",
+  "2509",
+  "2510",
+  "2511",
+  "2512"
+ ],
+ "comparacoes": [
+  {
+   "visao": "hospital",
+   "municipio": "354850",
+   "meses": 17,
+   "meses_lidos_do_tabnet": 17,
+   "iguais_data_de_saida": 0,
+   "iguais_data_de_internacao": 17,
+   "maior_diferenca_saida": 380,
+   "total_tabnet": 34038,
+   "total_saida": 34038
+  },
+  {
+   "visao": "hospital",
+   "municipio": "350635",
+   "meses": 13,
+   "meses_lidos_do_tabnet": 13,
+   "iguais_data_de_saida": 2,
+   "iguais_data_de_internacao": 13,
+   "maior_diferenca_saida": 30,
+   "total_tabnet": 3363,
+   "total_saida": 3363
+  },
+  {
+   "visao": "hospital",
+   "municipio": "352210",
+   "meses": 16,
+   "meses_lidos_do_tabnet": 16,
+   "iguais_data_de_saida": 0,
+   "iguais_data_de_internacao": 16,
+   "maior_diferenca_saida": 140,
+   "total_tabnet": 11920,
+   "total_saida": 11920
+  },
+  {
+   "visao": "hospital",
+   "municipio": "350010",
+   "meses": 13,
+   "meses_lidos_do_tabnet": 13,
+   "iguais_data_de_saida": 1,
+   "iguais_data_de_internacao": 13,
+   "maior_diferenca_saida": 46,
+   "total_tabnet": 5393,
+   "total_saida": 5393
+  },
+  {
+   "visao": "hospital",
+   "municipio": "355030",
+   "meses": 21,
+   "meses_lidos_do_tabnet": 21,
+   "iguais_data_de_saida": 0,
+   "iguais_data_de_internacao": 7,
+   "maior_diferenca_saida": 7127,
+   "total_tabnet": 749495,
+   "total_saida": 749526
+  },
+  {
+   "visao": "residencia",
+   "municipio": "354850",
+   "meses": 17,
+   "meses_lidos_do_tabnet": 17,
+   "iguais_data_de_saida": 0,
+   "iguais_data_de_internacao": 17,
+   "maior_diferenca_saida": 211,
+   "total_tabnet": 20474,
+   "total_saida": 20474
+  },
+  {
+   "visao": "residencia",
+   "municipio": "350635",
+   "meses": 16,
+   "meses_lidos_do_tabnet": 15,
+   "iguais_data_de_saida": 1,
+   "iguais_data_de_internacao": 15,
+   "maior_diferenca_saida": 58,
+   "total_tabnet": 4810,
+   "total_saida": 4811
+  },
+  {
+   "visao": "residencia",
+   "municipio": "352210",
+   "meses": 15,
+   "meses_lidos_do_tabnet": 15,
+   "iguais_data_de_saida": 0,
+   "iguais_data_de_internacao": 15,
+   "maior_diferenca_saida": 93,
+   "total_tabnet": 7192,
+   "total_saida": 7192
+  },
+  {
+   "visao": "residencia",
+   "municipio": "350010",
+   "meses": 14,
+   "meses_lidos_do_tabnet": 14,
+   "iguais_data_de_saida": 1,
+   "iguais_data_de_internacao": 14,
+   "maior_diferenca_saida": 38,
+   "total_tabnet": 3283,
+   "total_saida": 3283
+  },
+  {
+   "visao": "residencia",
+   "municipio": "355030",
+   "meses": 21,
+   "meses_lidos_do_tabnet": 21,
+   "iguais_data_de_saida": 0,
+   "iguais_data_de_internacao": 8,
+   "maior_diferenca_saida": 6030,
+   "total_tabnet": 641277,
+   "total_saida": 641303
+  }
+ ],
+ "eixo_usado": "Ano/mês_atendimento"
+}

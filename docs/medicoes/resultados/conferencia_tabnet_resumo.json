@@ -1,0 +1,204 @@
+{
+ "comparacoes": 150,
+ "identicas": 132,
+ "municipios": [
+  "350010",
+  "350635",
+  "352210",
+  "354850",
+  "355030"
+ ],
+ "competencias": [
+  "2501",
+  "2504",
+  "2508"
+ ],
+ "por_medida": {
+  "nisp/Internações": {
+   "identicas": 13,
+   "total": 15
+  },
+  "nisp/AIH_aprovadas": {
+   "identicas": 13,
+   "total": 15
+  },
+  "nisp/Valor_total": {
+   "identicas": 13,
+   "total": 15
+  },
+  "nisp/Óbitos": {
+   "identicas": 14,
+   "total": 15
+  },
+  "nisp/Dias_permanência": {
+   "identicas": 13,
+   "total": 15
+  },
+  "nrsp/Internações": {
+   "identicas": 13,
+   "total": 15
+  },
+  "nrsp/AIH_aprovadas": {
+   "identicas": 13,
+   "total": 15
+  },
+  "nrsp/Valor_total": {
+   "identicas": 13,
+   "total": 15
+  },
+  "nrsp/Óbitos": {
+   "identicas": 14,
+   "total": 15
+  },
+  "nrsp/Dias_permanência": {
+   "identicas": 13,
+   "total": 15
+  }
+ },
+ "diferencas_capital": [
+  {
+   "visao": "nisp",
+   "mun": "355030",
+   "comp": "2501",
+   "medida": "Internações",
+   "calculado": 60597.0,
+   "tabnet": 60593.0
+  },
+  {
+   "visao": "nisp",
+   "mun": "355030",
+   "comp": "2501",
+   "medida": "AIH_aprovadas",
+   "calculado": 61186.0,
+   "tabnet": 61182.0
+  },
+  {
+   "visao": "nisp",
+   "mun": "355030",
+   "comp": "2501",
+   "medida": "Valor_total",
+   "calculado": 137700963.49,
+   "tabnet": 137691448.21
+  },
+  {
+   "visao": "nisp",
+   "mun": "355030",
+   "comp": "2501",
+   "medida": "Óbitos",
+   "calculado": 3010.0,
+   "tabnet": 3009.0
+  },
+  {
+   "visao": "nisp",
+   "mun": "355030",
+   "comp": "2501",
+   "medida": "Dias_permanência",
+   "calculado": 348933.0,
+   "tabnet": 348854.0
+  },
+  {
+   "visao": "nisp",
+   "mun": "355030",
+   "comp": "2508",
+   "medida": "Internações",
+   "calculado": 64994.0,
+   "tabnet": 64992.0
+  },
+  {
+   "visao": "nisp",
+   "mun": "355030",
+   "comp": "2508",
+   "medida": "AIH_aprovadas",
+   "calculado": 65626.0,
+   "tabnet": 65624.0
+  },
+  {
+   "visao": "nisp",
+   "mun": "355030",
+   "comp": "2508",
+   "medida": "Valor_total",
+   "calculado": 157337668.04,
+   "tabnet": 157332624.42
+  },
+  {
+   "visao": "nisp",
+   "mun": "355030",
+   "comp": "2508",
+   "medida": "Dias_permanência",
+   "calculado": 348355.0,
+   "tabnet": 348322.0
+  },
+  {
+   "visao": "nrsp",
+   "mun": "355030",
+   "comp": "2501",
+   "medida": "Internações",
+   "calculado": 52175.0,
+   "tabnet": 52171.0
+  },
+  {
+   "visao": "nrsp",
+   "mun": "355030",
+   "comp": "2501",
+   "medida": "AIH_aprovadas",
+   "calculado": 53007.0,
+   "tabnet": 53003.0
+  },
+  {
+   "visao": "nrsp",
+   "mun": "355030",
+   "comp": "2501",
+   "medida": "Valor_total",
+   "calculado": 103215046.0,
+   "tabnet": 103205530.72
+  },
+  {
+   "visao": "nrsp",
+   "mun": "355030",
+   "comp": "2501",
+   "medida": "Óbitos",
+   "calculado": 2688.0,
+   "tabnet": 2687.0
+  },
+  {
+   "visao": "nrsp",
+   "mun": "355030",
+   "comp": "2501",
+   "medida": "Dias_permanência",
+   "calculado": 307757.0,
+   "tabnet": 307678.0
+  },
+  {
+   "visao": "nrsp",
+   "mun": "355030",
+   "comp": "2508",
+   "medida": "Internações",
+   "calculado": 55382.0,
+   "tabnet": 55381.0
+  },
+  {
+   "visao": "nrsp",
+   "mun": "355030",
+   "comp": "2508",
+   "medida": "AIH_aprovadas",
+   "calculado": 56209.0,
+   "tabnet": 56208.0
+  },
+  {
+   "visao": "nrsp",
+   "mun": "355030",
+   "comp": "2508",
+   "medida": "Valor_total",
+   "calculado": 114555477.83,
+   "tabnet": 114551988.88
+  },
+  {
+   "visao": "nrsp",
+   "mun": "355030",
+   "comp": "2508",
+   "medida": "Dias_permanência",
+   "calculado": 307759.0,
+   "tabnet": 307728.0
+  }
+ ]
+}

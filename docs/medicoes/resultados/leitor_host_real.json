@@ -1,0 +1,68 @@
+{
+ "url": "https://idl.uw.edu/mosaic-datasets/data/flights-200k.parquet",
+ "navegadores": {
+  "chromium": {
+   "versao": "157.0.8103.38",
+   "resultado": {
+    "ms": 232.80000001192093,
+    "linhas_no_arquivo": 231083,
+    "grupos": 2,
+    "linhas_lidas": 1000,
+    "primeira": {
+     "delay": 14,
+     "distance": 405,
+     "time": 0.01666666753590107
+    }
+   },
+   "requisicoes": [
+    "GET 206 [bytes=1064395-1129930] enc=- cr=bytes 1064395-1129930/1129931 66114b",
+    "GET 206 [bytes=4-609876] enc=- cr=bytes 4-609876/1129931 610751b"
+   ],
+   "bytes": 0,
+   "codigo_injetado": [],
+   "scripts_na_pagina": []
+  },
+  "firefox": {
+   "versao": "159.0",
+   "resultado": {
+    "ms": 165,
+    "linhas_no_arquivo": 231083,
+    "grupos": 2,
+    "linhas_lidas": 1000,
+    "primeira": {
+     "delay": 14,
+     "distance": 405,
+     "time": 0.01666666753590107
+    }
+   },
+   "requisicoes": [
+    "GET 206 [bytes=1064395-1129930] enc=- cr=bytes 1064395-1129930/1129931 65536b",
+    "GET 206 [bytes=4-609876] enc=- cr=bytes 4-609876/1129931 609873b"
+   ],
+   "bytes": 0,
+   "codigo_injetado": [],
+   "scripts_na_pagina": []
+  },
+  "webkit": {
+   "versao": "27.2",
+   "resultado": {
+    "ms": 154,
+    "linhas_no_arquivo": 231083,
+    "grupos": 2,
+    "linhas_lidas": 1000,
+    "primeira": {
+     "delay": 14,
+     "distance": 405,
+     "time": 0.01666666753590107
+    }
+   },
+   "requisicoes": [
+    "GET 206 [bytes=1064395-1129930] enc=- cr=bytes 1064395-1129930/1129931 65536b",
+    "GET 206 [bytes=4-609876] enc=- cr=bytes 4-609876/1129931 609873b"
+   ],
+   "bytes": 0,
+   "codigo_injetado": [],
+   "scripts_na_pagina": []
+  }
+ }
+}
