@@ -1,0 +1,9 @@
+# Fim de linha LF em tudo que é texto, no Windows e no runner, para que os hashes batam.
+* text=auto eol=lf
+
+*.parquet binary
+*.dbc binary
+*.zip binary
+*.7z binary
+*.png binary
+*.xlsx binary
