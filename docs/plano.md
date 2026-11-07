@@ -98,6 +98,7 @@ flowchart LR
 
 ```json
 {
+  "tema": "saude",
   "metrica": "internacoes",
   "filtros": { "municipio_residencia": ["3548500"], "capitulo_cid": ["10"] },
   "periodo": { "de": "2025-T1", "ate": "2025-T4" },
@@ -213,6 +214,8 @@ Os dados não entram no git, e o que está publicado não serve de base para rec
 
 **Manifesto no git.** Um JSON por base com versão, tamanho e data de cada arquivo de origem, totais por UF e competência, e a lista de meses em revisão, com o valor anterior. A comparação de versões lê as tabelas já publicadas no site, então nada sem supressão precisa ser guardado. É o único dado que entra no git, e seu histórico mostra o que mudou.
 
+**Conferência de links.** Uma tarefa agendada do CI, separada dos testes, abre os links oficiais do catálogo e uma amostra dos links exatos, e marca no manifesto os que falharem, com status e data. Um link exato também precisa devolver o valor publicado. Os testes continuam sem rede. Link quebrado não impede a publicação: o painel avisa que o link falhou na última conferência.
+
 ### Trava de queda
 
 Medido entre as versões de setembro e outubro de 2026, só em SP, porque é a única UF com as duas versões guardadas. Queda de 30% ou mais, com pelo menos 100 internações:
@@ -240,6 +243,20 @@ O catálogo é a fonte de verdade: gera os agregados, valida a especificação, 
 
 ```yaml
 versao: 1
+
+temas:   # lista fixa; o filtro mostra só os que têm métrica publicada
+  populacao: População
+  saude: Saúde
+  educacao: Educação
+  economia: Economia
+  trabalho: Trabalho
+  financas_publicas: Finanças públicas
+  agropecuaria: Agropecuária
+  assistencia_social: Assistência social
+  saneamento: Saneamento
+  meio_ambiente: Meio ambiente
+  eleicoes: Eleições
+  seguranca: Segurança
 
 bases:
   sih:
@@ -276,18 +293,47 @@ bases:
       - Os meses são da data da alta. No TabNet, "atendimento" é a data de internação, e os meses não coincidem.
 
 metricas:
+  populacao_estimada:
+    tema: populacao
+    etiquetas: []
+    base: ibge_estimativa
+    rotulo: População estimada
+    fonte:
+      orgao: IBGE
+      pesquisa: Estimativas da População, tabela 6579 da SIDRA, variável 9324
+      acesso:
+        tipo: exato     # exato | tabela | arquivo | receita
+        url: "https://apisidra.ibge.gov.br/values/t/6579/n6/{municipio}/v/9324/p/{periodo}"
+      tabela: "https://sidra.ibge.gov.br/tabela/6579"
   internacoes:
+    tema: saude
+    etiquetas: []
     base: sih
     rotulo: Internações
     sinonimos: [internação, hospitalização, baixa hospitalar]
     regra: "IDENT = 1"
+    fonte:
+      orgao: Ministério da Saúde / DATASUS
+      acesso:
+        tipo: receita
+        url: "http://tabnet.datasus.gov.br/cgi/deftohtm.exe?sih/cnv/nrbr.def"
+        receita: "Linha: Município; Conteúdo: Internações; Períodos disponíveis: as competências do ano"
     conferencia: { ferramenta: TabNet, medida: "Internações", eixos: [competencia, data_de_internacao] }
   obitos:
+    tema: saude
+    etiquetas: []
     base: sih
     rotulo: Óbitos hospitalares
     regra: "soma de MORTE"
     cruzamentos: [sih_res_ano, sih_hosp_ano]   # só o total anual
     ressalvas: [Hospitais de referência recebem casos mais graves. A taxa sozinha não mede qualidade.]
+  taxa_internacao:
+    tema: saude
+    etiquetas: [populacao]
+    rotulo: Internações por mil habitantes
+    formula: "internacoes / populacao_estimada * 1000"
+    fontes: [internacoes, populacao_estimada]   # calculada: cada parcela traz a própria fonte
+    oculta_se: [internacoes]                     # herda a máscara do numerador
 
 dimensoes:
   municipio_residencia: { base: sih, coluna: mun_res, conversao: ibge6_para_ibge7 }
@@ -314,6 +360,21 @@ ambiguidades:
 ```
 
 As margens são declaradas porque são elas que definem o que dá para deduzir. Publicar uma margem nova exige passar de novo no teste.
+
+**Tema e etiquetas.** Cada métrica tem um `tema` principal e `etiquetas` com os outros temas em que aparece. A lista de temas é fixa e fica no catálogo; criar um tema é mudança de catálogo, não de tela. O filtro mostra só temas com métrica publicada e entra na especificação e na URL (`"tema": "saude"`).
+
+**Fonte.** Cada métrica diz como chegar ao número na origem:
+
+| `acesso.tipo` | Quando | O que a tela mostra |
+|---|---|---|
+| `exato` | A origem tem um endereço que devolve aquele valor | O link, já com município e período |
+| `tabela` | O endereço abre a tabela, e é preciso escolher município e período | O link e os filtros a aplicar |
+| `arquivo` | O número sai de um arquivo baixado | O endereço do arquivo |
+| `receita` | Não há link para o resultado, como no TabNet | Os passos na ferramenta oficial |
+
+Hash e data da coleta de cada arquivo usado vêm do manifesto, não do catálogo: o catálogo diz de onde vem, o manifesto diz o que foi baixado. Quando o número usa muitos arquivos, como o SIH por residência, o painel mostra o resumo e o link para a lista completa. Métrica calculada lista todas as parcelas em `fontes` e a `formula`, e cada parcela traz a própria fonte.
+
+**Célula oculta.** Cada célula oculta traz o motivo: `contagem_pequena` (1 a k−1) ou `complementar` (oculta para impedir dedução). O motivo também é informação para quem tenta deduzir: numa margem com uma oculta de cada tipo e soma 6, a pequena só pode ser 1. Por isso o teste de dedução trata o motivo como público, com a pequena entre 1 e k−1 e a complementar fora desse intervalo, e a regra complementar precisa resistir a isso. O efeito na quantidade de células ocultas ainda não foi medido; é parte da F1b.
 
 ## Regras do SIH levadas para o catálogo
 
@@ -423,7 +484,7 @@ O teste de dedução da F1 inclui essa comparação, sobre o site publicado e a 
 
 ### Novo CAGED, Brasil, 2025
 
-**Base desta tabela: só o arquivo `MOV` de 2025.** Linhas, tamanhos e supressão dos cruzamentos não incluem `FOR` nem `EXC`, e a conferência com os ajustes, descrita em [Novo CAGED](#fontes), é só do total nacional. Com os três arquivos, esses números podem mudar, e a F4 precisa medi-los de novo.
+**Base desta tabela: só o arquivo `MOV` de 2025.** Linhas, tamanhos e supressão dos cruzamentos não incluem `FOR` nem `EXC`, e a conferência com os ajustes, descrita em [Novo CAGED](#fontes), é só do total nacional. Com os três arquivos, esses números podem mudar, e a F5 precisa medi-los de novo.
 
 O problema é o mesmo, e maior. A regra anterior decidia só pelo total de movimentos e deixava de 7.390 a 225.434 células visíveis com admissões ou desligamentos de 1 a 4, conforme a tabela. Com a regra por métrica e a família:
 
@@ -442,7 +503,7 @@ O problema é o mesmo, e maior. A regra anterior decidia só pelo total de movim
 | Município x ano x seção x sexo x faixa | 441.455 | 78,4% | 9,13% | 0,85 MB | **Não** |
 | Município x mês x seção x sexo | 932.445 | 78,8% | 11,38% | 1,58 MB | **Não** |
 
-A F4 deve testar máscara por medida, escondendo só as admissões quando elas forem pequenas e mantendo os desligamentos, o que pode recuperar parte disso. O teste de dedução da F1 ainda não cobre o CAGED.
+A F5 deve testar máscara por medida, escondendo só as admissões quando elas forem pequenas e mantendo os desligamentos, o que pode recuperar parte disso. O teste de dedução da F1 ainda não cobre o CAGED.
 
 ### Educação, Brasil, 2024
 
@@ -513,9 +574,12 @@ Pelo que foi possível examinar, nenhum junta os quatro pontos: temas diferentes
 ## Escopo da v1
 
 **Entra (F1 a F3):**
-- Página para cada um dos 5.570 municípios, com busca por nome.
+- Página para cada um dos 5.571 municípios da lista do IBGE, com busca por nome.
 - SIH (2021 em diante), IBGE (população e PIB), Censo Escolar e IDEB.
 - Construtor de dashboards sobre cruzamentos pré-calculados, links compartilháveis, exportação para CSV e PNG.
+- Filtro por tema, com só os temas que têm dado publicado. O tema entra na especificação e na URL.
+- **Painel "Fonte e método" em todo número, gráfico e dashboard:** órgão e pesquisa, tipo de acesso e link (ou receita), período de referência, arquivos usados com hash e data da coleta, fórmula e parcelas quando a métrica é calculada, motivo de cada célula oculta e as ressalvas. Num dashboard, o painel junta as fontes de todos os gráficos.
+- **Exportação que leva a fonte junto:** o CSV tem colunas de fonte, link ou receita, data da coleta e ressalva em cada linha; o PNG traz no rodapé a fonte e o link do estado que o gerou.
 - Busca em português com avaliação publicada.
 - Arquivos abertos para download, com caminhos estáveis.
 - Tema claro e escuro, tabela equivalente a cada gráfico, uso bom no celular.
@@ -557,9 +621,10 @@ As fases originais mudaram com as medições. O que mudou está marcado em **neg
 A divisão proposta (deploy e CI; SIH e catálogo; educação e IBGE) foi mantida, com uma mudança: **o IBGE não pode ser o último**. A página mínima precisa da lista de 5.571 municípios, e o SIH precisa de população para taxas e dos códigos de 7 dígitos. Por isso localidades e população vão para a primeira etapa, e só o PIB fica para a última.
 
 **F1a. Deploy, CI e uma página real**
-- Deploy próprio no GitHub Pages; workflow agendado; Release e manifesto no git.
+- Deploy próprio no GitHub Pages; workflow agendado; Release e manifesto no git. Fim de linha fixado em LF no `.gitattributes` antes do primeiro workflow.
 - Coleta real pelo runner: IBGE inteiro e um teste de alcance de cada fonte (um `RD` pequeno do DATASUS, a listagem do CAGED, um arquivo do INEP, uma consulta do Siconfi).
-- Página de cada município com nome, UF, população, fonte e data da coleta.
+- Página de cada município com nome, UF, população, fonte e data da coleta, e o painel "Fonte e método" com o link exato do IBGE para a população.
+- Conferência agendada de links, marcando os quebrados no manifesto.
 - Repetir no site real os testes de `Range`, `HEAD`, gzip e leitor.
 
 *Pronto quando:* o workflow agendado publica sozinho, as fontes respondem do runner e os testes de hospedagem batem com este plano. Se o runner não alcançar os FTPs, parar e avisar: é o que mais pode mudar o plano.
@@ -590,15 +655,32 @@ A divisão proposta (deploy e CI; SIH e catálogo; educação e IBGE) foi mantid
 - Dicionário e correspondência aproximada primeiro. Embeddings no navegador só se o ganho compensar o peso.
 - Taxas de acerto, recusa correta e resposta errada publicadas no README.
 
-### F4. CAGED e cruzamento entre temas
-- `MOV` + `FOR` − `EXC`, máscara por medida, comparação entre cidades parecidas.
-- Refazer tamanho e supressão dos cruzamentos com os três arquivos, porque a medição atual usa só `MOV`.
-- O cruzamento entre saúde e educação já é possível desde a F2.
+### Depois da v1
 
-### F5. Contas públicas e relatório
+**Nesta ordem.** Cada área começa como a Etapa 0: medir a fonte antes de prometer a tela. Não há números estimados aqui, e o acesso de cada fonte ainda não foi testado, salvo CAGED e Siconfi, descritos em [Fontes](#fontes). Em todas, a medição responde às mesmas perguntas: se o runner alcança a fonte, formato e tamanho por ano, cobertura municipal, defasagem e republicação, licença declarada, quanto a supressão oculta em cada cruzamento e com que ferramenta oficial o resultado pode ser conferido.
+
+| Fase | Área | Fonte a medir |
+|---|---|---|
+| F4 | Saúde ampliada | SIM (óbitos por residência), SINASC (nascidos vivos), CNES (estabelecimentos, leitos e profissionais) e vacinação (SI-PNI), todos do Ministério da Saúde |
+| F5 | Trabalho e finanças públicas | Novo CAGED (Ministério do Trabalho e Emprego) e Siconfi (Tesouro Nacional) |
+| F6 | Agropecuária | IBGE, Produção Agrícola Municipal (PAM) e Pesquisa da Pecuária Municipal (PPM), pela SIDRA |
+| F7 | Assistência social | Ministério do Desenvolvimento e Assistência Social (MDS), dados municipais de Cadastro Único e programas |
+| F8 | Saneamento | SINISA, do Ministério das Cidades |
+| F9 | Meio ambiente | INPE: desmatamento (PRODES e DETER) e focos de queimada |
+| F10 | Eleições | TSE, Portal de Dados Abertos: eleitorado e resultados por município |
+| F11 | Segurança | SINESP, do Ministério da Justiça e Segurança Pública |
+
+**F4. Saúde ampliada**
+- SIM e SINASC por residência, com a mesma supressão por família do SIH. Óbito por causa tem o mesmo problema medido nos óbitos hospitalares, então a medição começa pelo total anual.
+- CNES liga leitos e profissionais ao município do hospital, que o SIH já usa.
+
+**F5. Trabalho e finanças públicas**
+- CAGED: `MOV` + `FOR` − `EXC`, máscara por medida, comparação entre cidades parecidas. Refazer tamanho e supressão dos cruzamentos com os três arquivos, porque a medição atual usa só `MOV`. O cruzamento entre saúde e educação já é possível desde a F2.
 - Siconfi, com licença ODbL em arquivos próprios.
 - Relatório municipal para imprimir.
 - **Saem daqui:** SIH do Brasil e INEP (para a F1); dados abertos e caminhos estáveis (para a F2).
+
+**F6 a F11.** Cada área entra quando a medição dela estiver pronta, com seu tema na lista fixa do catálogo.
 
 ## Reprodução
 
