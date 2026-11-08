@@ -33,9 +33,11 @@ for m in json.load(open(args.municipios, encoding="utf-8")):
 # Só os termos locais ignoram maiúsculas: a letra de unidade em minúscula casaria com o d:\d de uma expressão regular
 padroes = [r"(?<![A-Za-z])[A-Z]:[\\/]", r"/home/", r"/Users/"] + [f"(?i:{re.escape(t)})" for t in args.termo_local]
 CAMINHO = re.compile("|".join(padroes))
+URL = re.compile(r"(?:https?|ftp)://\S+")
 SUFIXOS_TEXTO = {".py", ".mjs", ".js", ".md", ".json", ".html", ".sh", ".txt", ".yml", ".yaml"}
-# Não são contagem de pessoas: meses comparados, requisições HTTP, linhas de relatório fiscal, bytes, status, população
-NAO_CONTAGEM = re.compile(r"^(meses|meses_lidos_do_tabnet|iguais_data_de_saida|iguais_data_de_internacao|maior_diferenca_saida|req|r206|status\d*|bytes.*|dca\d+|rreo.*|pop|uf)$")
+# Não são contagem de pessoas: meses comparados, requisições HTTP, linhas de relatório fiscal, bytes, status, população,
+# e a maior diferença entre duas fontes para o mesmo conjunto de AIHs, que é discrepância, não grupo de pessoas
+NAO_CONTAGEM = re.compile(r"^(meses|meses_lidos_do_tabnet|meses_iguais|iguais_data_de_saida|iguais_data_de_internacao|maior_diferenca_saida|maior_diferenca|req|r206|status\d*|bytes.*|dca\d+|rreo.*|pop|uf)$")
 
 problemas = []
 ignorados = {}
@@ -85,7 +87,8 @@ for p in sorted(pasta_texto.rglob("*")):
         continue
     varridos += 1
     for n, linha in enumerate(p.read_text(encoding="utf-8", errors="replace").splitlines(), 1):
-        if CAMINHO.search(linha):
+        # Endereço web não é caminho da máquina: "https://wiki-sagi.mds.gov.br/home/..." tem /home/.
+        if CAMINHO.search(URL.sub("", linha)):
             problemas.append((str(p.relative_to(pasta_texto)), n, "caminho", linha.strip()[:80]))
 print("arquivos de texto varridos em busca de caminhos:", varridos, "| termos locais recebidos:", len(args.termo_local))
 print("problemas:", len(problemas))

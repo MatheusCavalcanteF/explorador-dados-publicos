@@ -1,0 +1,19 @@
+{
+ "pergunta": "Há ferramenta oficial que tabule as internações pelo mês da alta?",
+ "consultado_em": "2026-11-08",
+ "arquivo": "ftp://ftp.datasus.gov.br/dissemin/publicos/SIHSUS/200801_/Auxiliar/TAB_SIH.zip",
+ "modificado_no_ftp": "2026-10-15T22:14",
+ "bytes": 6083658,
+ "sha256": "21e42384645a9386add9f3644264145f39fc00bbb602f305d87bd0793b7e476b",
+ "definicao": "RD2008.DEF",
+ "data_da_definicao_no_zip": "2026-10-15",
+ "linhas_com_DT_SAIDA": [
+  "XAno de saída                     ,DT_SAIDA   , 1 ,CNV\\ANO.CNV",
+  "XMês de saída                     ,DT_SAIDA   , 5 ,CNV\\MESES.CNV",
+  "LAno/Mês de saída                 ,DT_SAIDA   , 1 ,CNV\\ANOMES.CNV",
+  "CAno/Mês de saída                 ,DT_SAIDA   , 1 ,CNV\\ANOMESC.CNV",
+  "SAno/Mês de saída                 ,DT_SAIDA   , 1 ,CNV\\ANOMESC.CNV"
+ ],
+ "leitura": "Ano/Mês de saída aparece em linhas com os prefixos L, C e S, que no formato de definição do TabWin marcam linha, coluna e seleção. O significado do prefixo X não foi conferido.",
+ "conclusao": "O TabWin, programa do DATASUS para Windows, tabula os arquivos RD pelo mês da alta (DT_SAIDA). A conferência por esse eixo não foi feita: exige rodar o TabWin, que é interativo, numa máquina Windows."
+}

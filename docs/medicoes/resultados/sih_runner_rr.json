@@ -1,0 +1,3409 @@
+{
+ "ambiente_inicio": {
+  "cpus": 4,
+  "disco_livre_bytes": 93579661312,
+  "processo_mb": 134,
+  "maior_filho_mb": 0
+ },
+ "etapas": {
+  "listagem_s": 3.1,
+  "total_s": 61.2
+ },
+ "janela": {
+  "ultima_no_ftp": 202608,
+  "ultima_completa": 202607,
+  "ultima_congelada": 202508,
+  "ultimo_mes_fechado": 202503,
+  "anos": [
+   2021,
+   2022,
+   2023,
+   2024,
+   2025,
+   2026
+  ],
+  "anos_abertos": [
+   2025,
+   2026
+  ],
+  "aguardando": [
+   "RDAL2608.dbc",
+   "RDAM2608.dbc",
+   "RDAP2608.dbc",
+   "RDBA2608.dbc",
+   "RDCE2608.dbc",
+   "RDDF2608.dbc",
+   "RDES2608.dbc",
+   "RDGO2608.dbc",
+   "RDMA2608.dbc",
+   "RDMG2608.dbc",
+   "RDMS2608.dbc",
+   "RDMT2608.dbc",
+   "RDPA2608.dbc",
+   "RDPB2608.dbc",
+   "RDPE2608.dbc",
+   "RDPI2608.dbc",
+   "RDPR2608.dbc",
+   "RDRJ2608.dbc",
+   "RDRN2608.dbc",
+   "RDRO2608.dbc",
+   "RDRS2608.dbc",
+   "RDSC2608.dbc",
+   "RDSE2608.dbc",
+   "RDSP2608.dbc",
+   "RDTO2608.dbc"
+  ]
+ },
+ "coleta": {
+  "segundos": 42.6,
+  "bytes_dbc": 16943073,
+  "bytes_min": 2441453,
+  "maior_disco_bytes": 2441453,
+  "processos": 4,
+  "arquivos": 67,
+  "sexo_ignorado": "<5",
+  "idade_ignorada": 0,
+  "lentos": [
+   {
+    "arquivo": "RDRR2103.dbc",
+    "bytes_dbc": 274489,
+    "aihs": 3693,
+    "s_download": 2.57,
+    "s_conversao": 0.85
+   },
+   {
+    "arquivo": "RDRR2101.dbc",
+    "bytes_dbc": 234734,
+    "aihs": 3157,
+    "s_download": 2.48,
+    "s_conversao": 0.89
+   },
+   {
+    "arquivo": "RDRR2102.dbc",
+    "bytes_dbc": 240893,
+    "aihs": 3304,
+    "s_download": 2.45,
+    "s_conversao": 0.92
+   },
+   {
+    "arquivo": "RDRR2104.dbc",
+    "bytes_dbc": 251811,
+    "aihs": 3333,
+    "s_download": 2.43,
+    "s_conversao": 0.88
+   },
+   {
+    "arquivo": "RDRR2109.dbc",
+    "bytes_dbc": 268024,
+    "aihs": 3519,
+    "s_download": 2.48,
+    "s_conversao": 0.25
+   }
+  ]
+ },
+ "totais_uf_competencia": {
+  "RR/202101": {
+   "aihs": 3157,
+   "internacoes": 3157,
+   "bytes_dbc": 234734,
+   "modificado_no_ftp": "2022-03-07T13:15"
+  },
+  "RR/202102": {
+   "aihs": 3304,
+   "internacoes": 3304,
+   "bytes_dbc": 240893,
+   "modificado_no_ftp": "2022-04-11T19:24"
+  },
+  "RR/202103": {
+   "aihs": 3693,
+   "internacoes": 3693,
+   "bytes_dbc": 274489,
+   "modificado_no_ftp": "2022-05-04T12:34"
+  },
+  "RR/202104": {
+   "aihs": 3333,
+   "internacoes": 3333,
+   "bytes_dbc": 251811,
+   "modificado_no_ftp": "2022-05-04T12:34"
+  },
+  "RR/202105": {
+   "aihs": 3215,
+   "internacoes": 3215,
+   "bytes_dbc": 240880,
+   "modificado_no_ftp": "2022-06-03T13:05"
+  },
+  "RR/202106": {
+   "aihs": 3276,
+   "internacoes": 3276,
+   "bytes_dbc": 251318,
+   "modificado_no_ftp": "2022-07-06T13:12"
+  },
+  "RR/202107": {
+   "aihs": 4021,
+   "internacoes": 4021,
+   "bytes_dbc": 303290,
+   "modificado_no_ftp": "2022-08-04T15:44"
+  },
+  "RR/202108": {
+   "aihs": 3929,
+   "internacoes": 3929,
+   "bytes_dbc": 295944,
+   "modificado_no_ftp": "2022-09-06T11:18"
+  },
+  "RR/202109": {
+   "aihs": 3519,
+   "internacoes": 3519,
+   "bytes_dbc": 268024,
+   "modificado_no_ftp": "2022-10-05T14:28"
+  },
+  "RR/202110": {
+   "aihs": 3530,
+   "internacoes": 3530,
+   "bytes_dbc": 269414,
+   "modificado_no_ftp": "2022-11-03T17:56"
+  },
+  "RR/202111": {
+   "aihs": 3587,
+   "internacoes": 3587,
+   "bytes_dbc": 271870,
+   "modificado_no_ftp": "2022-12-06T16:24"
+  },
+  "RR/202112": {
+   "aihs": 3666,
+   "internacoes": 3666,
+   "bytes_dbc": 279296,
+   "modificado_no_ftp": "2023-01-04T12:48"
+  },
+  "RR/202201": {
+   "aihs": 3440,
+   "internacoes": 3440,
+   "bytes_dbc": 265559,
+   "modificado_no_ftp": "2023-02-06T13:07"
+  },
+  "RR/202202": {
+   "aihs": 3340,
+   "internacoes": 3340,
+   "bytes_dbc": 252712,
+   "modificado_no_ftp": "2023-03-09T15:44"
+  },
+  "RR/202203": {
+   "aihs": 4206,
+   "internacoes": 4206,
+   "bytes_dbc": 309582,
+   "modificado_no_ftp": "2023-04-05T12:21"
+  },
+  "RR/202204": {
+   "aihs": 3930,
+   "internacoes": 3930,
+   "bytes_dbc": 292263,
+   "modificado_no_ftp": "2023-05-08T14:34"
+  },
+  "RR/202205": {
+   "aihs": 4372,
+   "internacoes": 4372,
+   "bytes_dbc": 325659,
+   "modificado_no_ftp": "2023-06-05T11:35"
+  },
+  "RR/202206": {
+   "aihs": 668,
+   "internacoes": 668,
+   "bytes_dbc": 50318,
+   "modificado_no_ftp": "2023-07-05T12:50"
+  },
+  "RR/202207": {
+   "aihs": 4134,
+   "internacoes": 4134,
+   "bytes_dbc": 308161,
+   "modificado_no_ftp": "2023-08-03T17:33"
+  },
+  "RR/202208": {
+   "aihs": 4863,
+   "internacoes": 4863,
+   "bytes_dbc": 368638,
+   "modificado_no_ftp": "2023-09-04T21:01"
+  },
+  "RR/202209": {
+   "aihs": 3972,
+   "internacoes": 3972,
+   "bytes_dbc": 300510,
+   "modificado_no_ftp": "2023-10-04T17:04"
+  },
+  "RR/202210": {
+   "aihs": 4713,
+   "internacoes": 4713,
+   "bytes_dbc": 352598,
+   "modificado_no_ftp": "2023-11-06T15:55"
+  },
+  "RR/202211": {
+   "aihs": 4486,
+   "internacoes": 4486,
+   "bytes_dbc": 334610,
+   "modificado_no_ftp": "2023-12-05T15:02"
+  },
+  "RR/202212": {
+   "aihs": 4489,
+   "internacoes": 4489,
+   "bytes_dbc": 329543,
+   "modificado_no_ftp": "2024-01-05T18:09"
+  },
+  "RR/202301": {
+   "aihs": 4734,
+   "internacoes": 4734,
+   "bytes_dbc": 349244,
+   "modificado_no_ftp": "2024-02-05T23:00"
+  },
+  "RR/202302": {
+   "aihs": 3936,
+   "internacoes": 3936,
+   "bytes_dbc": 297649,
+   "modificado_no_ftp": "2024-03-07T18:45"
+  },
+  "RR/202303": {
+   "aihs": 4495,
+   "internacoes": 4495,
+   "bytes_dbc": 338974,
+   "modificado_no_ftp": "2024-04-09T14:32"
+  },
+  "RR/202304": {
+   "aihs": 4492,
+   "internacoes": 4492,
+   "bytes_dbc": 334342,
+   "modificado_no_ftp": "2024-06-16T01:17"
+  },
+  "RR/202305": {
+   "aihs": 4054,
+   "internacoes": 4054,
+   "bytes_dbc": 295832,
+   "modificado_no_ftp": "2024-06-16T01:17"
+  },
+  "RR/202306": {
+   "aihs": 3915,
+   "internacoes": 3915,
+   "bytes_dbc": 292318,
+   "modificado_no_ftp": "2024-08-05T14:46"
+  },
+  "RR/202307": {
+   "aihs": 4201,
+   "internacoes": 4201,
+   "bytes_dbc": 321728,
+   "modificado_no_ftp": "2024-08-05T14:46"
+  },
+  "RR/202308": {
+   "aihs": 4655,
+   "internacoes": 4655,
+   "bytes_dbc": 347846,
+   "modificado_no_ftp": "2024-09-05T10:32"
+  },
+  "RR/202309": {
+   "aihs": 1535,
+   "internacoes": 1535,
+   "bytes_dbc": 119285,
+   "modificado_no_ftp": "2024-10-08T12:08"
+  },
+  "RR/202310": {
+   "aihs": 2171,
+   "internacoes": 2171,
+   "bytes_dbc": 166954,
+   "modificado_no_ftp": "2024-11-07T15:40"
+  },
+  "RR/202311": {
+   "aihs": 3632,
+   "internacoes": 3632,
+   "bytes_dbc": 275988,
+   "modificado_no_ftp": "2025-01-05T19:00"
+  },
+  "RR/202312": {
+   "aihs": 3534,
+   "internacoes": 3534,
+   "bytes_dbc": 259816,
+   "modificado_no_ftp": "2025-01-05T19:00"
+  },
+  "RR/202401": {
+   "aihs": 3714,
+   "internacoes": 3714,
+   "bytes_dbc": 275725,
+   "modificado_no_ftp": "2025-02-09T21:29"
+  },
+  "RR/202402": {
+   "aihs": 3413,
+   "internacoes": 3413,
+   "bytes_dbc": 255806,
+   "modificado_no_ftp": "2025-03-11T23:44"
+  },
+  "RR/202403": {
+   "aihs": 3619,
+   "internacoes": 3619,
+   "bytes_dbc": 272502,
+   "modificado_no_ftp": "2025-04-05T12:17"
+  },
+  "RR/202404": {
+   "aihs": 3041,
+   "internacoes": 3041,
+   "bytes_dbc": 225994,
+   "modificado_no_ftp": "2025-05-08T08:10"
+  },
+  "RR/202405": {
+   "aihs": 2805,
+   "internacoes": 2805,
+   "bytes_dbc": 213283,
+   "modificado_no_ftp": "2025-06-06T10:48"
+  },
+  "RR/202406": {
+   "aihs": 2996,
+   "internacoes": 2996,
+   "bytes_dbc": 226367,
+   "modificado_no_ftp": "2025-07-06T11:33"
+  },
+  "RR/202407": {
+   "aihs": 2637,
+   "internacoes": 2637,
+   "bytes_dbc": 203323,
+   "modificado_no_ftp": "2025-08-04T07:17"
+  },
+  "RR/202408": {
+   "aihs": 3127,
+   "internacoes": 3127,
+   "bytes_dbc": 237040,
+   "modificado_no_ftp": "2025-09-05T12:59"
+  },
+  "RR/202409": {
+   "aihs": 2882,
+   "internacoes": 2882,
+   "bytes_dbc": 218845,
+   "modificado_no_ftp": "2025-10-06T17:10"
+  },
+  "RR/202410": {
+   "aihs": 3221,
+   "internacoes": 3221,
+   "bytes_dbc": 245227,
+   "modificado_no_ftp": "2025-11-06T16:15"
+  },
+  "RR/202411": {
+   "aihs": 3349,
+   "internacoes": 3349,
+   "bytes_dbc": 250853,
+   "modificado_no_ftp": "2025-12-05T20:16"
+  },
+  "RR/202412": {
+   "aihs": 2584,
+   "internacoes": 2584,
+   "bytes_dbc": 197546,
+   "modificado_no_ftp": "2026-01-07T19:02"
+  },
+  "RR/202501": {
+   "aihs": 3882,
+   "internacoes": 3882,
+   "bytes_dbc": 276752,
+   "modificado_no_ftp": "2026-02-08T14:17"
+  },
+  "RR/202502": {
+   "aihs": 2855,
+   "internacoes": 2855,
+   "bytes_dbc": 213813,
+   "modificado_no_ftp": "2026-03-06T22:15"
+  },
+  "RR/202503": {
+   "aihs": 3459,
+   "internacoes": 3459,
+   "bytes_dbc": 258435,
+   "modificado_no_ftp": "2026-04-07T07:25"
+  },
+  "RR/202504": {
+   "aihs": 2895,
+   "internacoes": 2895,
+   "bytes_dbc": 220431,
+   "modificado_no_ftp": "2026-05-06T18:59"
+  },
+  "RR/202505": {
+   "aihs": 2898,
+   "internacoes": 2898,
+   "bytes_dbc": 216385,
+   "modificado_no_ftp": "2026-06-06T20:16"
+  },
+  "RR/202506": {
+   "aihs": 2935,
+   "internacoes": 2935,
+   "bytes_dbc": 219859,
+   "modificado_no_ftp": "2026-07-06T15:12"
+  },
+  "RR/202507": {
+   "aihs": 3003,
+   "internacoes": 3003,
+   "bytes_dbc": 222006,
+   "modificado_no_ftp": "2026-08-07T12:35"
+  },
+  "RR/202508": {
+   "aihs": 3193,
+   "internacoes": 3193,
+   "bytes_dbc": 236111,
+   "modificado_no_ftp": "2026-09-06T21:31"
+  },
+  "RR/202509": {
+   "aihs": 2738,
+   "internacoes": 2738,
+   "bytes_dbc": 205393,
+   "modificado_no_ftp": "2026-10-16T17:30"
+  },
+  "RR/202510": {
+   "aihs": 2346,
+   "internacoes": 2346,
+   "bytes_dbc": 180195,
+   "modificado_no_ftp": "2026-10-16T17:30"
+  },
+  "RR/202511": {
+   "aihs": 2740,
+   "internacoes": 2740,
+   "bytes_dbc": 205151,
+   "modificado_no_ftp": "2026-10-16T17:30"
+  },
+  "RR/202512": {
+   "aihs": 2128,
+   "internacoes": 2128,
+   "bytes_dbc": 157662,
+   "modificado_no_ftp": "2026-10-16T17:30"
+  },
+  "RR/202601": {
+   "aihs": 2597,
+   "internacoes": 2597,
+   "bytes_dbc": 193980,
+   "modificado_no_ftp": "2026-10-16T17:30"
+  },
+  "RR/202602": {
+   "aihs": 2961,
+   "internacoes": 2961,
+   "bytes_dbc": 225267,
+   "modificado_no_ftp": "2026-10-16T17:30"
+  },
+  "RR/202603": {
+   "aihs": 3082,
+   "internacoes": 3082,
+   "bytes_dbc": 237799,
+   "modificado_no_ftp": "2026-10-16T17:30"
+  },
+  "RR/202604": {
+   "aihs": 3013,
+   "internacoes": 3013,
+   "bytes_dbc": 222684,
+   "modificado_no_ftp": "2026-10-16T17:30"
+  },
+  "RR/202605": {
+   "aihs": 3199,
+   "internacoes": 3199,
+   "bytes_dbc": 227217,
+   "modificado_no_ftp": "2026-10-16T17:30"
+  },
+  "RR/202606": {
+   "aihs": 3936,
+   "internacoes": 3936,
+   "bytes_dbc": 285483,
+   "modificado_no_ftp": "2026-10-16T17:30"
+  },
+  "RR/202607": {
+   "aihs": 515,
+   "internacoes": 515,
+   "bytes_dbc": 43847,
+   "modificado_no_ftp": "2026-10-16T17:30"
+  }
+ },
+ "anos": {
+  "2021": {
+   "ano": 2021,
+   "aihs": 43381,
+   "internacoes": 43381,
+   "nos_no_fechamento": 82,
+   "supressao": {
+    "sih_res_ano": {
+     "linhas": 31,
+     "celulas_ocultas": 20,
+     "pct_celulas_ocultas": 64.52,
+     "pct_internacoes_ocultas": 4.205,
+     "por_motivo": {
+      "contagem_pequena": 14,
+      "complementar": 6,
+      "familia": 0
+     }
+    },
+    "sih_hosp_ano": {
+     "linhas": 11,
+     "celulas_ocultas": 0,
+     "pct_celulas_ocultas": 0.0,
+     "pct_internacoes_ocultas": 0.0,
+     "por_motivo": {
+      "contagem_pequena": 0,
+      "complementar": 0,
+      "familia": 0
+     }
+    },
+    "sih_res_mes": {
+     "linhas": 212,
+     "celulas_ocultas": 93,
+     "pct_celulas_ocultas": 43.87,
+     "pct_internacoes_ocultas": 6.745,
+     "por_motivo": {
+      "contagem_pequena": 23,
+      "complementar": 70,
+      "familia": 0
+     }
+    },
+    "sih_hosp_mes": {
+     "linhas": 126,
+     "celulas_ocultas": 23,
+     "pct_celulas_ocultas": 18.25,
+     "pct_internacoes_ocultas": 0.27,
+     "por_motivo": {
+      "contagem_pequena": 12,
+      "complementar": 11,
+      "familia": 0
+     }
+    },
+    "sih_res_mes_sexo": {
+     "linhas": 404,
+     "celulas_ocultas": 174,
+     "pct_celulas_ocultas": 43.07,
+     "pct_internacoes_ocultas": 7.406,
+     "por_motivo": {
+      "contagem_pequena": 38,
+      "complementar": 8,
+      "familia": 128
+     }
+    },
+    "sih_res_mes_urgencia": {
+     "linhas": 386,
+     "celulas_ocultas": 293,
+     "pct_celulas_ocultas": 75.91,
+     "pct_internacoes_ocultas": 37.814,
+     "por_motivo": {
+      "contagem_pequena": 106,
+      "complementar": 103,
+      "familia": 84
+     }
+    },
+    "sih_res_mes_faixa5": {
+     "linhas": 929,
+     "celulas_ocultas": 485,
+     "pct_celulas_ocultas": 52.21,
+     "pct_internacoes_ocultas": 9.642,
+     "por_motivo": {
+      "contagem_pequena": 200,
+      "complementar": 73,
+      "familia": 212
+     }
+    },
+    "sih_res_ano_capitulo": {
+     "linhas": 310,
+     "celulas_ocultas": 151,
+     "pct_celulas_ocultas": 48.71,
+     "pct_internacoes_ocultas": 14.682,
+     "por_motivo": {
+      "contagem_pequena": 78,
+      "complementar": 21,
+      "familia": 52
+     }
+    },
+    "sih_res_ano_faixa12_sexo": {
+     "linhas": 392,
+     "celulas_ocultas": 224,
+     "pct_celulas_ocultas": 57.14,
+     "pct_internacoes_ocultas": 9.781,
+     "por_motivo": {
+      "contagem_pequena": 54,
+      "complementar": 84,
+      "familia": 86
+     }
+    },
+    "sih_res_ano_raca": {
+     "linhas": 99,
+     "celulas_ocultas": 70,
+     "pct_celulas_ocultas": 70.71,
+     "pct_internacoes_ocultas": 17.941,
+     "por_motivo": {
+      "contagem_pequena": 32,
+      "complementar": 19,
+      "familia": 19
+     }
+    },
+    "sih_res_tri_capitulo": {
+     "linhas": 1007,
+     "celulas_ocultas": 726,
+     "pct_celulas_ocultas": 72.1,
+     "pct_internacoes_ocultas": 34.872,
+     "por_motivo": {
+      "contagem_pequena": 402,
+      "complementar": 51,
+      "familia": 273
+     }
+    },
+    "sih_hosp_ano_especialidade": {
+     "linhas": 30,
+     "celulas_ocultas": 2,
+     "pct_celulas_ocultas": 6.67,
+     "pct_internacoes_ocultas": 0.731,
+     "por_motivo": {
+      "contagem_pequena": 1,
+      "complementar": 1,
+      "familia": 0
+     }
+    },
+    "sih_hosp_tri_capitulo": {
+     "linhas": 415,
+     "celulas_ocultas": 242,
+     "pct_celulas_ocultas": 58.31,
+     "pct_internacoes_ocultas": 5.373,
+     "por_motivo": {
+      "contagem_pequena": 203,
+      "complementar": 26,
+      "familia": 13
+     }
+    },
+    "sih_hosp_mes_carater": {
+     "linhas": 151,
+     "celulas_ocultas": 33,
+     "pct_celulas_ocultas": 21.85,
+     "pct_internacoes_ocultas": 1.766,
+     "por_motivo": {
+      "contagem_pequena": 17,
+      "complementar": 5,
+      "familia": 11
+     }
+    }
+   },
+   "deducao_internacoes": {
+    "voltas": 8,
+    "pequenas_reveladas": 108,
+    "pequenas_reveladas_em_publicados": 37,
+    "pequenas_estreitadas": 0,
+    "ocultas_exatas": 46,
+    "por_no": {
+     "mun_res+faixa12+sexo": {
+      "celulas": 392,
+      "escondidas": 224,
+      "exatas": 3,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+mes+sexo": {
+      "celulas": 404,
+      "escondidas": 174,
+      "exatas": 3,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+faixa5+sexo": {
+      "celulas": 176,
+      "escondidas": 176,
+      "exatas": 48,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+mes+faixa5": {
+      "celulas": 929,
+      "escondidas": 485,
+      "exatas": 4,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+mes+urgencia": {
+      "celulas": 386,
+      "escondidas": 293,
+      "exatas": 8,
+      "pequenas_reveladas": 4,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+tri+capitulo": {
+      "celulas": 1007,
+      "escondidas": 726,
+      "exatas": 3,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+tri+sexo": {
+      "celulas": 147,
+      "escondidas": 147,
+      "exatas": 61,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+faixa12+sexo": {
+      "celulas": 49,
+      "escondidas": 49,
+      "exatas": 3,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+mes+sexo": {
+      "celulas": 60,
+      "escondidas": 60,
+      "exatas": 3,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+tri+faixa5": {
+      "celulas": 335,
+      "escondidas": 335,
+      "exatas": 104,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+tri+urgencia": {
+      "celulas": 144,
+      "escondidas": 144,
+      "exatas": 15,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+faixa5+sexo": {
+      "celulas": 29,
+      "escondidas": 29,
+      "exatas": 3,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+mes+faixa5": {
+      "celulas": 101,
+      "escondidas": 101,
+      "exatas": 4,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+mes+urgencia": {
+      "celulas": 51,
+      "escondidas": 51,
+      "exatas": 22,
+      "pequenas_reveladas": 4,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+tri+capitulo": {
+      "celulas": 124,
+      "escondidas": 124,
+      "exatas": 14,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+tri+sexo": {
+      "celulas": 28,
+      "escondidas": 28,
+      "exatas": 3,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+tri+faixa5": {
+      "celulas": 49,
+      "escondidas": 49,
+      "exatas": 2,
+      "pequenas_reveladas": 2,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+tri+urgencia": {
+      "celulas": 25,
+      "escondidas": 25,
+      "exatas": 6,
+      "pequenas_reveladas": 2,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+capitulo": {
+      "celulas": 310,
+      "escondidas": 151,
+      "exatas": 3,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+faixa12": {
+      "celulas": 208,
+      "escondidas": 208,
+      "exatas": 68,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+mes": {
+      "celulas": 212,
+      "escondidas": 93,
+      "exatas": 9,
+      "pequenas_reveladas": 5,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+raca": {
+      "celulas": 99,
+      "escondidas": 70,
+      "exatas": 3,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+sexo": {
+      "celulas": 48,
+      "escondidas": 48,
+      "exatas": 13,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+faixa5": {
+      "celulas": 99,
+      "escondidas": 99,
+      "exatas": 27,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+tri": {
+      "celulas": 82,
+      "escondidas": 82,
+      "exatas": 37,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+urgencia": {
+      "celulas": 47,
+      "escondidas": 47,
+      "exatas": 3,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+capitulo": {
+      "celulas": 45,
+      "escondidas": 45,
+      "exatas": 3,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+faixa12": {
+      "celulas": 33,
+      "escondidas": 33,
+      "exatas": 3,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+mes": {
+      "celulas": 36,
+      "escondidas": 14,
+      "exatas": 5,
+      "pequenas_reveladas": 5,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+raca": {
+      "celulas": 22,
+      "escondidas": 22,
+      "exatas": 3,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+sexo": {
+      "celulas": 15,
+      "escondidas": 15,
+      "exatas": 3,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+faixa5": {
+      "celulas": 20,
+      "escondidas": 20,
+      "exatas": 2,
+      "pequenas_reveladas": 2,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+tri": {
+      "celulas": 19,
+      "escondidas": 19,
+      "exatas": 10,
+      "pequenas_reveladas": 2,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+urgencia": {
+      "celulas": 15,
+      "escondidas": 15,
+      "exatas": 2,
+      "pequenas_reveladas": 2,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res": {
+      "celulas": 31,
+      "escondidas": 20,
+      "exatas": 3,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res": {
+      "celulas": 12,
+      "escondidas": 10,
+      "exatas": 2,
+      "pequenas_reveladas": 2,
+      "pequenas_estreitadas": 0
+     }
+    },
+    "rodadas": [
+     {
+      "rodada": 0,
+      "pequenas_reveladas": 112,
+      "celulas_ocultas": 1640
+     },
+     {
+      "rodada": 1,
+      "pequenas_reveladas": 108,
+      "celulas_ocultas": 1786
+     },
+     {
+      "rodada": 2,
+      "pequenas_reveladas": 108,
+      "celulas_ocultas": 1892
+     },
+     {
+      "rodada": 3,
+      "pequenas_reveladas": 108,
+      "celulas_ocultas": 2055
+     },
+     {
+      "rodada": 4,
+      "pequenas_reveladas": 108,
+      "celulas_ocultas": 2226
+     },
+     {
+      "rodada": 5,
+      "pequenas_reveladas": 108,
+      "celulas_ocultas": 2384
+     },
+     {
+      "rodada": 6,
+      "pequenas_reveladas": 108,
+      "celulas_ocultas": 2536
+     }
+    ],
+    "passou": false,
+    "motivo_por_celula": false
+   },
+   "deducao_obitos": {
+    "voltas": 3,
+    "pequenas_reveladas": 2,
+    "pequenas_reveladas_em_publicados": 2,
+    "pequenas_estreitadas": 0,
+    "ocultas_exatas": 2,
+    "por_no": {
+     "mun_res": {
+      "celulas": 31,
+      "escondidas": 3,
+      "exatas": 1,
+      "pequenas_reveladas": 1,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res": {
+      "celulas": 12,
+      "escondidas": 1,
+      "exatas": 1,
+      "pequenas_reveladas": 1,
+      "pequenas_estreitadas": 0
+     }
+    },
+    "passou": false
+   },
+   "segundos": {
+    "base": 0.2,
+    "fechamento": 0.2,
+    "supressao": 2.0,
+    "deducao_obitos": 0.0,
+    "gravar": 0.1
+   },
+   "preliminares": []
+  },
+  "2022": {
+   "ano": 2022,
+   "aihs": 49876,
+   "internacoes": 49876,
+   "nos_no_fechamento": 82,
+   "supressao": {
+    "sih_res_ano": {
+     "linhas": 37,
+     "celulas_ocultas": 26,
+     "pct_celulas_ocultas": 70.27,
+     "pct_internacoes_ocultas": 4.387,
+     "por_motivo": {
+      "contagem_pequena": 20,
+      "complementar": 6,
+      "familia": 0
+     }
+    },
+    "sih_hosp_ano": {
+     "linhas": 10,
+     "celulas_ocultas": 0,
+     "pct_celulas_ocultas": 0.0,
+     "pct_internacoes_ocultas": 0.0,
+     "por_motivo": {
+      "contagem_pequena": 0,
+      "complementar": 0,
+      "familia": 0
+     }
+    },
+    "sih_res_mes": {
+     "linhas": 222,
+     "celulas_ocultas": 82,
+     "pct_celulas_ocultas": 36.94,
+     "pct_internacoes_ocultas": 4.357,
+     "por_motivo": {
+      "contagem_pequena": 32,
+      "complementar": 50,
+      "familia": 0
+     }
+    },
+    "sih_hosp_mes": {
+     "linhas": 120,
+     "celulas_ocultas": 28,
+     "pct_celulas_ocultas": 23.33,
+     "pct_internacoes_ocultas": 0.451,
+     "por_motivo": {
+      "contagem_pequena": 9,
+      "complementar": 19,
+      "familia": 0
+     }
+    },
+    "sih_res_mes_sexo": {
+     "linhas": 417,
+     "celulas_ocultas": 155,
+     "pct_celulas_ocultas": 37.17,
+     "pct_internacoes_ocultas": 5.824,
+     "por_motivo": {
+      "contagem_pequena": 48,
+      "complementar": 18,
+      "familia": 89
+     }
+    },
+    "sih_res_mes_urgencia": {
+     "linhas": 388,
+     "celulas_ocultas": 353,
+     "pct_celulas_ocultas": 90.98,
+     "pct_internacoes_ocultas": 60.965,
+     "por_motivo": {
+      "contagem_pequena": 134,
+      "complementar": 159,
+      "familia": 60
+     }
+    },
+    "sih_res_mes_faixa5": {
+     "linhas": 929,
+     "celulas_ocultas": 419,
+     "pct_celulas_ocultas": 45.1,
+     "pct_internacoes_ocultas": 8.682,
+     "por_motivo": {
+      "contagem_pequena": 183,
+      "complementar": 82,
+      "familia": 154
+     }
+    },
+    "sih_res_ano_capitulo": {
+     "linhas": 323,
+     "celulas_ocultas": 156,
+     "pct_celulas_ocultas": 48.3,
+     "pct_internacoes_ocultas": 6.348,
+     "por_motivo": {
+      "contagem_pequena": 76,
+      "complementar": 16,
+      "familia": 64
+     }
+    },
+    "sih_res_ano_faixa12_sexo": {
+     "linhas": 399,
+     "celulas_ocultas": 193,
+     "pct_celulas_ocultas": 48.37,
+     "pct_internacoes_ocultas": 7.878,
+     "por_motivo": {
+      "contagem_pequena": 52,
+      "complementar": 51,
+      "familia": 90
+     }
+    },
+    "sih_res_ano_raca": {
+     "linhas": 110,
+     "celulas_ocultas": 72,
+     "pct_celulas_ocultas": 65.45,
+     "pct_internacoes_ocultas": 7.479,
+     "por_motivo": {
+      "contagem_pequena": 40,
+      "complementar": 12,
+      "familia": 20
+     }
+    },
+    "sih_res_tri_capitulo": {
+     "linhas": 1065,
+     "celulas_ocultas": 685,
+     "pct_celulas_ocultas": 64.32,
+     "pct_internacoes_ocultas": 11.671,
+     "por_motivo": {
+      "contagem_pequena": 411,
+      "complementar": 45,
+      "familia": 229
+     }
+    },
+    "sih_hosp_ano_especialidade": {
+     "linhas": 31,
+     "celulas_ocultas": 2,
+     "pct_celulas_ocultas": 6.45,
+     "pct_internacoes_ocultas": 0.992,
+     "por_motivo": {
+      "contagem_pequena": 1,
+      "complementar": 1,
+      "familia": 0
+     }
+    },
+    "sih_hosp_tri_capitulo": {
+     "linhas": 414,
+     "celulas_ocultas": 231,
+     "pct_celulas_ocultas": 55.8,
+     "pct_internacoes_ocultas": 5.215,
+     "por_motivo": {
+      "contagem_pequena": 180,
+      "complementar": 27,
+      "familia": 24
+     }
+    },
+    "sih_hosp_mes_carater": {
+     "linhas": 147,
+     "celulas_ocultas": 37,
+     "pct_celulas_ocultas": 25.17,
+     "pct_internacoes_ocultas": 1.271,
+     "por_motivo": {
+      "contagem_pequena": 15,
+      "complementar": 3,
+      "familia": 19
+     }
+    }
+   },
+   "deducao_internacoes": {
+    "voltas": 7,
+    "pequenas_reveladas": 136,
+    "pequenas_reveladas_em_publicados": 43,
+    "pequenas_estreitadas": 0,
+    "ocultas_exatas": 58,
+    "por_no": {
+     "mun_res+faixa12+sexo": {
+      "celulas": 399,
+      "escondidas": 193,
+      "exatas": 4,
+      "pequenas_reveladas": 4,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+mes+sexo": {
+      "celulas": 417,
+      "escondidas": 155,
+      "exatas": 4,
+      "pequenas_reveladas": 4,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+faixa5+sexo": {
+      "celulas": 184,
+      "escondidas": 184,
+      "exatas": 73,
+      "pequenas_reveladas": 4,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+mes+faixa5": {
+      "celulas": 929,
+      "escondidas": 419,
+      "exatas": 5,
+      "pequenas_reveladas": 4,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+mes+urgencia": {
+      "celulas": 388,
+      "escondidas": 353,
+      "exatas": 16,
+      "pequenas_reveladas": 4,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+tri+capitulo": {
+      "celulas": 1065,
+      "escondidas": 685,
+      "exatas": 4,
+      "pequenas_reveladas": 4,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+tri+sexo": {
+      "celulas": 157,
+      "escondidas": 157,
+      "exatas": 80,
+      "pequenas_reveladas": 4,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+faixa12+sexo": {
+      "celulas": 55,
+      "escondidas": 55,
+      "exatas": 3,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+mes+sexo": {
+      "celulas": 63,
+      "escondidas": 63,
+      "exatas": 14,
+      "pequenas_reveladas": 4,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+tri+faixa5": {
+      "celulas": 340,
+      "escondidas": 340,
+      "exatas": 138,
+      "pequenas_reveladas": 4,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+tri+urgencia": {
+      "celulas": 151,
+      "escondidas": 151,
+      "exatas": 5,
+      "pequenas_reveladas": 4,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+faixa5+sexo": {
+      "celulas": 32,
+      "escondidas": 32,
+      "exatas": 3,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+mes+faixa5": {
+      "celulas": 105,
+      "escondidas": 105,
+      "exatas": 9,
+      "pequenas_reveladas": 4,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+mes+urgencia": {
+      "celulas": 54,
+      "escondidas": 54,
+      "exatas": 25,
+      "pequenas_reveladas": 4,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+tri+capitulo": {
+      "celulas": 125,
+      "escondidas": 125,
+      "exatas": 20,
+      "pequenas_reveladas": 4,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+tri+sexo": {
+      "celulas": 31,
+      "escondidas": 31,
+      "exatas": 6,
+      "pequenas_reveladas": 4,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+tri+faixa5": {
+      "celulas": 51,
+      "escondidas": 51,
+      "exatas": 4,
+      "pequenas_reveladas": 4,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+tri+urgencia": {
+      "celulas": 30,
+      "escondidas": 30,
+      "exatas": 5,
+      "pequenas_reveladas": 4,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+capitulo": {
+      "celulas": 323,
+      "escondidas": 156,
+      "exatas": 4,
+      "pequenas_reveladas": 4,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+faixa12": {
+      "celulas": 215,
+      "escondidas": 215,
+      "exatas": 90,
+      "pequenas_reveladas": 4,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+mes": {
+      "celulas": 222,
+      "escondidas": 82,
+      "exatas": 6,
+      "pequenas_reveladas": 4,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+raca": {
+      "celulas": 110,
+      "escondidas": 72,
+      "exatas": 4,
+      "pequenas_reveladas": 4,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+sexo": {
+      "celulas": 56,
+      "escondidas": 56,
+      "exatas": 12,
+      "pequenas_reveladas": 4,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+faixa5": {
+      "celulas": 103,
+      "escondidas": 103,
+      "exatas": 32,
+      "pequenas_reveladas": 4,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+tri": {
+      "celulas": 89,
+      "escondidas": 89,
+      "exatas": 50,
+      "pequenas_reveladas": 4,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+urgencia": {
+      "celulas": 54,
+      "escondidas": 54,
+      "exatas": 4,
+      "pequenas_reveladas": 4,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+capitulo": {
+      "celulas": 48,
+      "escondidas": 48,
+      "exatas": 4,
+      "pequenas_reveladas": 4,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+faixa12": {
+      "celulas": 36,
+      "escondidas": 36,
+      "exatas": 3,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+mes": {
+      "celulas": 39,
+      "escondidas": 15,
+      "exatas": 4,
+      "pequenas_reveladas": 4,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+raca": {
+      "celulas": 23,
+      "escondidas": 23,
+      "exatas": 3,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+sexo": {
+      "celulas": 18,
+      "escondidas": 18,
+      "exatas": 3,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+faixa5": {
+      "celulas": 23,
+      "escondidas": 23,
+      "exatas": 3,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+tri": {
+      "celulas": 23,
+      "escondidas": 23,
+      "exatas": 12,
+      "pequenas_reveladas": 4,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+urgencia": {
+      "celulas": 18,
+      "escondidas": 18,
+      "exatas": 3,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res": {
+      "celulas": 37,
+      "escondidas": 26,
+      "exatas": 4,
+      "pequenas_reveladas": 4,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res": {
+      "celulas": 16,
+      "escondidas": 14,
+      "exatas": 3,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     }
+    },
+    "rodadas": [
+     {
+      "rodada": 0,
+      "pequenas_reveladas": 137,
+      "celulas_ocultas": 1633
+     },
+     {
+      "rodada": 1,
+      "pequenas_reveladas": 136,
+      "celulas_ocultas": 1798
+     },
+     {
+      "rodada": 2,
+      "pequenas_reveladas": 136,
+      "celulas_ocultas": 1883
+     },
+     {
+      "rodada": 3,
+      "pequenas_reveladas": 136,
+      "celulas_ocultas": 2027
+     },
+     {
+      "rodada": 4,
+      "pequenas_reveladas": 136,
+      "celulas_ocultas": 2133
+     },
+     {
+      "rodada": 5,
+      "pequenas_reveladas": 136,
+      "celulas_ocultas": 2298
+     },
+     {
+      "rodada": 6,
+      "pequenas_reveladas": 136,
+      "celulas_ocultas": 2439
+     }
+    ],
+    "passou": false,
+    "motivo_por_celula": false
+   },
+   "deducao_obitos": {
+    "voltas": 3,
+    "pequenas_reveladas": 0,
+    "pequenas_reveladas_em_publicados": 0,
+    "pequenas_estreitadas": 0,
+    "ocultas_exatas": 0,
+    "por_no": {},
+    "passou": true
+   },
+   "segundos": {
+    "base": 0.2,
+    "fechamento": 0.2,
+    "supressao": 2.0,
+    "deducao_obitos": 0.0,
+    "gravar": 0.2
+   },
+   "preliminares": []
+  },
+  "2023": {
+   "ano": 2023,
+   "aihs": 48602,
+   "internacoes": 48602,
+   "nos_no_fechamento": 82,
+   "supressao": {
+    "sih_res_ano": {
+     "linhas": 36,
+     "celulas_ocultas": 25,
+     "pct_celulas_ocultas": 69.44,
+     "pct_internacoes_ocultas": 4.422,
+     "por_motivo": {
+      "contagem_pequena": 19,
+      "complementar": 6,
+      "familia": 0
+     }
+    },
+    "sih_hosp_ano": {
+     "linhas": 10,
+     "celulas_ocultas": 0,
+     "pct_celulas_ocultas": 0.0,
+     "pct_internacoes_ocultas": 0.0,
+     "por_motivo": {
+      "contagem_pequena": 0,
+      "complementar": 0,
+      "familia": 0
+     }
+    },
+    "sih_res_mes": {
+     "linhas": 221,
+     "celulas_ocultas": 80,
+     "pct_celulas_ocultas": 36.2,
+     "pct_internacoes_ocultas": 4.014,
+     "por_motivo": {
+      "contagem_pequena": 32,
+      "complementar": 48,
+      "familia": 0
+     }
+    },
+    "sih_hosp_mes": {
+     "linhas": 116,
+     "celulas_ocultas": 22,
+     "pct_celulas_ocultas": 18.97,
+     "pct_internacoes_ocultas": 0.319,
+     "por_motivo": {
+      "contagem_pequena": 13,
+      "complementar": 9,
+      "familia": 0
+     }
+    },
+    "sih_res_mes_sexo": {
+     "linhas": 414,
+     "celulas_ocultas": 150,
+     "pct_celulas_ocultas": 36.23,
+     "pct_internacoes_ocultas": 5.588,
+     "por_motivo": {
+      "contagem_pequena": 48,
+      "complementar": 18,
+      "familia": 84
+     }
+    },
+    "sih_res_mes_urgencia": {
+     "linhas": 398,
+     "celulas_ocultas": 251,
+     "pct_celulas_ocultas": 63.07,
+     "pct_internacoes_ocultas": 15.267,
+     "por_motivo": {
+      "contagem_pequena": 113,
+      "complementar": 85,
+      "familia": 53
+     }
+    },
+    "sih_res_mes_faixa5": {
+     "linhas": 941,
+     "celulas_ocultas": 382,
+     "pct_celulas_ocultas": 40.6,
+     "pct_internacoes_ocultas": 6.033,
+     "por_motivo": {
+      "contagem_pequena": 183,
+      "complementar": 67,
+      "familia": 132
+     }
+    },
+    "sih_res_ano_capitulo": {
+     "linhas": 333,
+     "celulas_ocultas": 159,
+     "pct_celulas_ocultas": 47.75,
+     "pct_internacoes_ocultas": 5.086,
+     "por_motivo": {
+      "contagem_pequena": 88,
+      "complementar": 9,
+      "familia": 62
+     }
+    },
+    "sih_res_ano_faixa12_sexo": {
+     "linhas": 406,
+     "celulas_ocultas": 195,
+     "pct_celulas_ocultas": 48.03,
+     "pct_internacoes_ocultas": 7.413,
+     "por_motivo": {
+      "contagem_pequena": 54,
+      "complementar": 47,
+      "familia": 94
+     }
+    },
+    "sih_res_ano_raca": {
+     "linhas": 106,
+     "celulas_ocultas": 64,
+     "pct_celulas_ocultas": 60.38,
+     "pct_internacoes_ocultas": 8.129,
+     "por_motivo": {
+      "contagem_pequena": 39,
+      "complementar": 10,
+      "familia": 15
+     }
+    },
+    "sih_res_tri_capitulo": {
+     "linhas": 1074,
+     "celulas_ocultas": 666,
+     "pct_celulas_ocultas": 62.01,
+     "pct_internacoes_ocultas": 9.938,
+     "por_motivo": {
+      "contagem_pequena": 406,
+      "complementar": 51,
+      "familia": 209
+     }
+    },
+    "sih_hosp_ano_especialidade": {
+     "linhas": 31,
+     "celulas_ocultas": 6,
+     "pct_celulas_ocultas": 19.35,
+     "pct_internacoes_ocultas": 0.901,
+     "por_motivo": {
+      "contagem_pequena": 3,
+      "complementar": 3,
+      "familia": 0
+     }
+    },
+    "sih_hosp_tri_capitulo": {
+     "linhas": 404,
+     "celulas_ocultas": 216,
+     "pct_celulas_ocultas": 53.47,
+     "pct_internacoes_ocultas": 5.708,
+     "por_motivo": {
+      "contagem_pequena": 171,
+      "complementar": 33,
+      "familia": 12
+     }
+    },
+    "sih_hosp_mes_carater": {
+     "linhas": 141,
+     "celulas_ocultas": 32,
+     "pct_celulas_ocultas": 22.7,
+     "pct_internacoes_ocultas": 1.704,
+     "por_motivo": {
+      "contagem_pequena": 18,
+      "complementar": 5,
+      "familia": 9
+     }
+    }
+   },
+   "deducao_internacoes": {
+    "voltas": 7,
+    "pequenas_reveladas": 119,
+    "pequenas_reveladas_em_publicados": 38,
+    "pequenas_estreitadas": 0,
+    "ocultas_exatas": 41,
+    "por_no": {
+     "mun_res+faixa12+sexo": {
+      "celulas": 406,
+      "escondidas": 195,
+      "exatas": 5,
+      "pequenas_reveladas": 2,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+mes+sexo": {
+      "celulas": 414,
+      "escondidas": 150,
+      "exatas": 4,
+      "pequenas_reveladas": 4,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+faixa5+sexo": {
+      "celulas": 185,
+      "escondidas": 185,
+      "exatas": 78,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+mes+faixa5": {
+      "celulas": 941,
+      "escondidas": 382,
+      "exatas": 4,
+      "pequenas_reveladas": 4,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+mes+urgencia": {
+      "celulas": 398,
+      "escondidas": 251,
+      "exatas": 4,
+      "pequenas_reveladas": 4,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+tri+capitulo": {
+      "celulas": 1074,
+      "escondidas": 666,
+      "exatas": 3,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+tri+sexo": {
+      "celulas": 156,
+      "escondidas": 156,
+      "exatas": 72,
+      "pequenas_reveladas": 4,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+faixa12+sexo": {
+      "celulas": 56,
+      "escondidas": 56,
+      "exatas": 2,
+      "pequenas_reveladas": 2,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+mes+sexo": {
+      "celulas": 60,
+      "escondidas": 60,
+      "exatas": 10,
+      "pequenas_reveladas": 4,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+tri+faixa5": {
+      "celulas": 342,
+      "escondidas": 342,
+      "exatas": 146,
+      "pequenas_reveladas": 4,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+tri+urgencia": {
+      "celulas": 149,
+      "escondidas": 149,
+      "exatas": 28,
+      "pequenas_reveladas": 4,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+faixa5+sexo": {
+      "celulas": 29,
+      "escondidas": 29,
+      "exatas": 3,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+mes+faixa5": {
+      "celulas": 107,
+      "escondidas": 107,
+      "exatas": 11,
+      "pequenas_reveladas": 4,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+mes+urgencia": {
+      "celulas": 52,
+      "escondidas": 52,
+      "exatas": 13,
+      "pequenas_reveladas": 4,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+tri+capitulo": {
+      "celulas": 128,
+      "escondidas": 128,
+      "exatas": 14,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+tri+sexo": {
+      "celulas": 27,
+      "escondidas": 27,
+      "exatas": 5,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+tri+faixa5": {
+      "celulas": 48,
+      "escondidas": 48,
+      "exatas": 5,
+      "pequenas_reveladas": 4,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+tri+urgencia": {
+      "celulas": 24,
+      "escondidas": 24,
+      "exatas": 5,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+capitulo": {
+      "celulas": 333,
+      "escondidas": 159,
+      "exatas": 3,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+faixa12": {
+      "celulas": 218,
+      "escondidas": 218,
+      "exatas": 92,
+      "pequenas_reveladas": 2,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+mes": {
+      "celulas": 221,
+      "escondidas": 80,
+      "exatas": 4,
+      "pequenas_reveladas": 4,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+raca": {
+      "celulas": 106,
+      "escondidas": 64,
+      "exatas": 3,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+sexo": {
+      "celulas": 54,
+      "escondidas": 54,
+      "exatas": 13,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+faixa5": {
+      "celulas": 104,
+      "escondidas": 104,
+      "exatas": 37,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+tri": {
+      "celulas": 88,
+      "escondidas": 88,
+      "exatas": 47,
+      "pequenas_reveladas": 4,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+urgencia": {
+      "celulas": 52,
+      "escondidas": 52,
+      "exatas": 5,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+capitulo": {
+      "celulas": 46,
+      "escondidas": 46,
+      "exatas": 5,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+faixa12": {
+      "celulas": 34,
+      "escondidas": 34,
+      "exatas": 2,
+      "pequenas_reveladas": 2,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+mes": {
+      "celulas": 34,
+      "escondidas": 12,
+      "exatas": 5,
+      "pequenas_reveladas": 5,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+raca": {
+      "celulas": 14,
+      "escondidas": 14,
+      "exatas": 4,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+sexo": {
+      "celulas": 12,
+      "escondidas": 12,
+      "exatas": 3,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+faixa5": {
+      "celulas": 19,
+      "escondidas": 19,
+      "exatas": 3,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+tri": {
+      "celulas": 17,
+      "escondidas": 17,
+      "exatas": 10,
+      "pequenas_reveladas": 4,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+urgencia": {
+      "celulas": 12,
+      "escondidas": 12,
+      "exatas": 3,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res": {
+      "celulas": 36,
+      "escondidas": 25,
+      "exatas": 3,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res": {
+      "celulas": 8,
+      "escondidas": 5,
+      "exatas": 3,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     }
+    },
+    "rodadas": [
+     {
+      "rodada": 0,
+      "pequenas_reveladas": 119,
+      "celulas_ocultas": 1568
+     },
+     {
+      "rodada": 1,
+      "pequenas_reveladas": 119,
+      "celulas_ocultas": 1660
+     },
+     {
+      "rodada": 2,
+      "pequenas_reveladas": 119,
+      "celulas_ocultas": 1772
+     },
+     {
+      "rodada": 3,
+      "pequenas_reveladas": 119,
+      "celulas_ocultas": 1890
+     },
+     {
+      "rodada": 4,
+      "pequenas_reveladas": 119,
+      "celulas_ocultas": 1976
+     },
+     {
+      "rodada": 5,
+      "pequenas_reveladas": 119,
+      "celulas_ocultas": 2103
+     },
+     {
+      "rodada": 6,
+      "pequenas_reveladas": 119,
+      "celulas_ocultas": 2248
+     }
+    ],
+    "passou": false,
+    "motivo_por_celula": false
+   },
+   "deducao_obitos": {
+    "voltas": 3,
+    "pequenas_reveladas": 2,
+    "pequenas_reveladas_em_publicados": 2,
+    "pequenas_estreitadas": 0,
+    "ocultas_exatas": 2,
+    "por_no": {
+     "mun_res": {
+      "celulas": 36,
+      "escondidas": 4,
+      "exatas": 1,
+      "pequenas_reveladas": 1,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res": {
+      "celulas": 8,
+      "escondidas": 1,
+      "exatas": 1,
+      "pequenas_reveladas": 1,
+      "pequenas_estreitadas": 0
+     }
+    },
+    "passou": false
+   },
+   "segundos": {
+    "base": 0.2,
+    "fechamento": 0.2,
+    "supressao": 2.0,
+    "deducao_obitos": 0.0,
+    "gravar": 0.1
+   },
+   "preliminares": []
+  },
+  "2024": {
+   "ano": 2024,
+   "aihs": 33806,
+   "internacoes": 33806,
+   "nos_no_fechamento": 82,
+   "supressao": {
+    "sih_res_ano": {
+     "linhas": 38,
+     "celulas_ocultas": 26,
+     "pct_celulas_ocultas": 68.42,
+     "pct_internacoes_ocultas": 3.082,
+     "por_motivo": {
+      "contagem_pequena": 19,
+      "complementar": 7,
+      "familia": 0
+     }
+    },
+    "sih_hosp_ano": {
+     "linhas": 11,
+     "celulas_ocultas": 0,
+     "pct_celulas_ocultas": 0.0,
+     "pct_internacoes_ocultas": 0.0,
+     "por_motivo": {
+      "contagem_pequena": 0,
+      "complementar": 0,
+      "familia": 0
+     }
+    },
+    "sih_res_mes": {
+     "linhas": 228,
+     "celulas_ocultas": 113,
+     "pct_celulas_ocultas": 49.56,
+     "pct_internacoes_ocultas": 6.765,
+     "por_motivo": {
+      "contagem_pequena": 40,
+      "complementar": 73,
+      "familia": 0
+     }
+    },
+    "sih_hosp_mes": {
+     "linhas": 123,
+     "celulas_ocultas": 34,
+     "pct_celulas_ocultas": 27.64,
+     "pct_internacoes_ocultas": 0.837,
+     "por_motivo": {
+      "contagem_pequena": 18,
+      "complementar": 16,
+      "familia": 0
+     }
+    },
+    "sih_res_mes_sexo": {
+     "linhas": 419,
+     "celulas_ocultas": 221,
+     "pct_celulas_ocultas": 52.74,
+     "pct_internacoes_ocultas": 8.833,
+     "por_motivo": {
+      "contagem_pequena": 57,
+      "complementar": 31,
+      "familia": 133
+     }
+    },
+    "sih_res_mes_urgencia": {
+     "linhas": 402,
+     "celulas_ocultas": 328,
+     "pct_celulas_ocultas": 81.59,
+     "pct_internacoes_ocultas": 44.081,
+     "por_motivo": {
+      "contagem_pequena": 108,
+      "complementar": 118,
+      "familia": 102
+     }
+    },
+    "sih_res_mes_faixa5": {
+     "linhas": 918,
+     "celulas_ocultas": 543,
+     "pct_celulas_ocultas": 59.15,
+     "pct_internacoes_ocultas": 9.637,
+     "por_motivo": {
+      "contagem_pequena": 286,
+      "complementar": 72,
+      "familia": 185
+     }
+    },
+    "sih_res_ano_capitulo": {
+     "linhas": 329,
+     "celulas_ocultas": 175,
+     "pct_celulas_ocultas": 53.19,
+     "pct_internacoes_ocultas": 8.694,
+     "por_motivo": {
+      "contagem_pequena": 100,
+      "complementar": 35,
+      "familia": 40
+     }
+    },
+    "sih_res_ano_faixa12_sexo": {
+     "linhas": 406,
+     "celulas_ocultas": 210,
+     "pct_celulas_ocultas": 51.72,
+     "pct_internacoes_ocultas": 18.943,
+     "por_motivo": {
+      "contagem_pequena": 78,
+      "complementar": 76,
+      "familia": 56
+     }
+    },
+    "sih_res_ano_raca": {
+     "linhas": 95,
+     "celulas_ocultas": 60,
+     "pct_celulas_ocultas": 63.16,
+     "pct_internacoes_ocultas": 6.354,
+     "por_motivo": {
+      "contagem_pequena": 42,
+      "complementar": 8,
+      "familia": 10
+     }
+    },
+    "sih_res_tri_capitulo": {
+     "linhas": 1015,
+     "celulas_ocultas": 811,
+     "pct_celulas_ocultas": 79.9,
+     "pct_internacoes_ocultas": 23.203,
+     "por_motivo": {
+      "contagem_pequena": 472,
+      "complementar": 51,
+      "familia": 288
+     }
+    },
+    "sih_hosp_ano_especialidade": {
+     "linhas": 30,
+     "celulas_ocultas": 4,
+     "pct_celulas_ocultas": 13.33,
+     "pct_internacoes_ocultas": 0.13,
+     "por_motivo": {
+      "contagem_pequena": 2,
+      "complementar": 2,
+      "familia": 0
+     }
+    },
+    "sih_hosp_tri_capitulo": {
+     "linhas": 402,
+     "celulas_ocultas": 246,
+     "pct_celulas_ocultas": 61.19,
+     "pct_internacoes_ocultas": 10.063,
+     "por_motivo": {
+      "contagem_pequena": 179,
+      "complementar": 28,
+      "familia": 39
+     }
+    },
+    "sih_hosp_mes_carater": {
+     "linhas": 139,
+     "celulas_ocultas": 42,
+     "pct_celulas_ocultas": 30.22,
+     "pct_internacoes_ocultas": 2.946,
+     "por_motivo": {
+      "contagem_pequena": 22,
+      "complementar": 4,
+      "familia": 16
+     }
+    }
+   },
+   "deducao_internacoes": {
+    "voltas": 7,
+    "pequenas_reveladas": 246,
+    "pequenas_reveladas_em_publicados": 77,
+    "pequenas_estreitadas": 0,
+    "ocultas_exatas": 88,
+    "por_no": {
+     "mun_res+faixa12+sexo": {
+      "celulas": 406,
+      "escondidas": 210,
+      "exatas": 7,
+      "pequenas_reveladas": 6,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+mes+sexo": {
+      "celulas": 419,
+      "escondidas": 221,
+      "exatas": 8,
+      "pequenas_reveladas": 8,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+faixa5+sexo": {
+      "celulas": 190,
+      "escondidas": 190,
+      "exatas": 68,
+      "pequenas_reveladas": 6,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+mes+faixa5": {
+      "celulas": 918,
+      "escondidas": 543,
+      "exatas": 8,
+      "pequenas_reveladas": 7,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+mes+urgencia": {
+      "celulas": 402,
+      "escondidas": 328,
+      "exatas": 12,
+      "pequenas_reveladas": 8,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+tri+capitulo": {
+      "celulas": 1015,
+      "escondidas": 811,
+      "exatas": 8,
+      "pequenas_reveladas": 6,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+tri+sexo": {
+      "celulas": 163,
+      "escondidas": 163,
+      "exatas": 41,
+      "pequenas_reveladas": 7,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+faixa12+sexo": {
+      "celulas": 56,
+      "escondidas": 56,
+      "exatas": 6,
+      "pequenas_reveladas": 6,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+mes+sexo": {
+      "celulas": 57,
+      "escondidas": 57,
+      "exatas": 11,
+      "pequenas_reveladas": 9,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+tri+faixa5": {
+      "celulas": 343,
+      "escondidas": 343,
+      "exatas": 72,
+      "pequenas_reveladas": 6,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+tri+urgencia": {
+      "celulas": 159,
+      "escondidas": 159,
+      "exatas": 13,
+      "pequenas_reveladas": 7,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+faixa5+sexo": {
+      "celulas": 30,
+      "escondidas": 30,
+      "exatas": 5,
+      "pequenas_reveladas": 5,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+mes+faixa5": {
+      "celulas": 102,
+      "escondidas": 102,
+      "exatas": 9,
+      "pequenas_reveladas": 7,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+mes+urgencia": {
+      "celulas": 49,
+      "escondidas": 49,
+      "exatas": 27,
+      "pequenas_reveladas": 11,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+tri+capitulo": {
+      "celulas": 127,
+      "escondidas": 127,
+      "exatas": 17,
+      "pequenas_reveladas": 7,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+tri+sexo": {
+      "celulas": 26,
+      "escondidas": 26,
+      "exatas": 8,
+      "pequenas_reveladas": 8,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+tri+faixa5": {
+      "celulas": 46,
+      "escondidas": 46,
+      "exatas": 6,
+      "pequenas_reveladas": 6,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+tri+urgencia": {
+      "celulas": 23,
+      "escondidas": 23,
+      "exatas": 13,
+      "pequenas_reveladas": 9,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+capitulo": {
+      "celulas": 329,
+      "escondidas": 175,
+      "exatas": 6,
+      "pequenas_reveladas": 6,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+faixa12": {
+      "celulas": 224,
+      "escondidas": 224,
+      "exatas": 80,
+      "pequenas_reveladas": 6,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+mes": {
+      "celulas": 228,
+      "escondidas": 113,
+      "exatas": 11,
+      "pequenas_reveladas": 8,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+raca": {
+      "celulas": 95,
+      "escondidas": 60,
+      "exatas": 6,
+      "pequenas_reveladas": 6,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+sexo": {
+      "celulas": 59,
+      "escondidas": 59,
+      "exatas": 13,
+      "pequenas_reveladas": 7,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+faixa5": {
+      "celulas": 110,
+      "escondidas": 110,
+      "exatas": 32,
+      "pequenas_reveladas": 6,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+tri": {
+      "celulas": 97,
+      "escondidas": 97,
+      "exatas": 37,
+      "pequenas_reveladas": 7,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+urgencia": {
+      "celulas": 55,
+      "escondidas": 55,
+      "exatas": 6,
+      "pequenas_reveladas": 6,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+capitulo": {
+      "celulas": 46,
+      "escondidas": 46,
+      "exatas": 7,
+      "pequenas_reveladas": 6,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+faixa12": {
+      "celulas": 36,
+      "escondidas": 36,
+      "exatas": 6,
+      "pequenas_reveladas": 6,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+mes": {
+      "celulas": 33,
+      "escondidas": 11,
+      "exatas": 11,
+      "pequenas_reveladas": 11,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+raca": {
+      "celulas": 15,
+      "escondidas": 15,
+      "exatas": 6,
+      "pequenas_reveladas": 5,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+sexo": {
+      "celulas": 12,
+      "escondidas": 12,
+      "exatas": 6,
+      "pequenas_reveladas": 6,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+faixa5": {
+      "celulas": 20,
+      "escondidas": 20,
+      "exatas": 5,
+      "pequenas_reveladas": 5,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+tri": {
+      "celulas": 17,
+      "escondidas": 17,
+      "exatas": 17,
+      "pequenas_reveladas": 9,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+urgencia": {
+      "celulas": 11,
+      "escondidas": 11,
+      "exatas": 7,
+      "pequenas_reveladas": 6,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res": {
+      "celulas": 38,
+      "escondidas": 26,
+      "exatas": 6,
+      "pequenas_reveladas": 6,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res": {
+      "celulas": 8,
+      "escondidas": 5,
+      "exatas": 5,
+      "pequenas_reveladas": 5,
+      "pequenas_estreitadas": 0
+     }
+    },
+    "rodadas": [
+     {
+      "rodada": 0,
+      "pequenas_reveladas": 248,
+      "celulas_ocultas": 1816
+     },
+     {
+      "rodada": 1,
+      "pequenas_reveladas": 247,
+      "celulas_ocultas": 2025
+     },
+     {
+      "rodada": 2,
+      "pequenas_reveladas": 246,
+      "celulas_ocultas": 2173
+     },
+     {
+      "rodada": 3,
+      "pequenas_reveladas": 246,
+      "celulas_ocultas": 2299
+     },
+     {
+      "rodada": 4,
+      "pequenas_reveladas": 246,
+      "celulas_ocultas": 2499
+     },
+     {
+      "rodada": 5,
+      "pequenas_reveladas": 246,
+      "celulas_ocultas": 2662
+     },
+     {
+      "rodada": 6,
+      "pequenas_reveladas": 246,
+      "celulas_ocultas": 2813
+     }
+    ],
+    "passou": false,
+    "motivo_por_celula": false
+   },
+   "deducao_obitos": {
+    "voltas": 3,
+    "pequenas_reveladas": 0,
+    "pequenas_reveladas_em_publicados": 0,
+    "pequenas_estreitadas": 0,
+    "ocultas_exatas": 0,
+    "por_no": {},
+    "passou": true
+   },
+   "segundos": {
+    "base": 0.1,
+    "fechamento": 0.2,
+    "supressao": 2.1,
+    "deducao_obitos": 0.0,
+    "gravar": 0.1
+   },
+   "preliminares": []
+  },
+  "2025": {
+   "ano": 2025,
+   "aihs": 35909,
+   "internacoes": 35909,
+   "nos_no_fechamento": 82,
+   "supressao": {
+    "sih_res_ano": {
+     "linhas": 40,
+     "celulas_ocultas": 29,
+     "pct_celulas_ocultas": 72.5,
+     "pct_internacoes_ocultas": 5.194,
+     "por_motivo": {
+      "contagem_pequena": 23,
+      "complementar": 6,
+      "familia": 0
+     }
+    },
+    "sih_hosp_ano": {
+     "linhas": 11,
+     "celulas_ocultas": 0,
+     "pct_celulas_ocultas": 0.0,
+     "pct_internacoes_ocultas": 0.0,
+     "por_motivo": {
+      "contagem_pequena": 0,
+      "complementar": 0,
+      "familia": 0
+     }
+    },
+    "sih_res_mes": {
+     "linhas": 229,
+     "celulas_ocultas": 72,
+     "pct_celulas_ocultas": 31.44,
+     "pct_internacoes_ocultas": 2.924,
+     "por_motivo": {
+      "contagem_pequena": 37,
+      "complementar": 35,
+      "familia": 0
+     }
+    },
+    "sih_hosp_mes": {
+     "linhas": 123,
+     "celulas_ocultas": 33,
+     "pct_celulas_ocultas": 26.83,
+     "pct_internacoes_ocultas": 0.448,
+     "por_motivo": {
+      "contagem_pequena": 17,
+      "complementar": 16,
+      "familia": 0
+     }
+    },
+    "sih_res_mes_sexo": {
+     "linhas": 422,
+     "celulas_ocultas": 143,
+     "pct_celulas_ocultas": 33.89,
+     "pct_internacoes_ocultas": 5.723,
+     "por_motivo": {
+      "contagem_pequena": 54,
+      "complementar": 33,
+      "familia": 56
+     }
+    },
+    "sih_res_mes_urgencia": {
+     "linhas": 410,
+     "celulas_ocultas": 208,
+     "pct_celulas_ocultas": 50.73,
+     "pct_internacoes_ocultas": 11.192,
+     "por_motivo": {
+      "contagem_pequena": 99,
+      "complementar": 69,
+      "familia": 40
+     }
+    },
+    "sih_res_mes_faixa5": {
+     "linhas": 934,
+     "celulas_ocultas": 415,
+     "pct_celulas_ocultas": 44.43,
+     "pct_internacoes_ocultas": 8.533,
+     "por_motivo": {
+      "contagem_pequena": 239,
+      "complementar": 98,
+      "familia": 78
+     }
+    },
+    "sih_res_ano_capitulo": {
+     "linhas": 330,
+     "celulas_ocultas": 159,
+     "pct_celulas_ocultas": 48.18,
+     "pct_internacoes_ocultas": 6.26,
+     "por_motivo": {
+      "contagem_pequena": 93,
+      "complementar": 8,
+      "familia": 58
+     }
+    },
+    "sih_res_ano_faixa12_sexo": {
+     "linhas": 408,
+     "celulas_ocultas": 240,
+     "pct_celulas_ocultas": 58.82,
+     "pct_internacoes_ocultas": 11.936,
+     "por_motivo": {
+      "contagem_pequena": 64,
+      "complementar": 82,
+      "familia": 94
+     }
+    },
+    "sih_res_ano_raca": {
+     "linhas": 98,
+     "celulas_ocultas": 73,
+     "pct_celulas_ocultas": 74.49,
+     "pct_internacoes_ocultas": 9.803,
+     "por_motivo": {
+      "contagem_pequena": 47,
+      "complementar": 11,
+      "familia": 15
+     }
+    },
+    "sih_res_tri_capitulo": {
+     "linhas": 1054,
+     "celulas_ocultas": 674,
+     "pct_celulas_ocultas": 63.95,
+     "pct_internacoes_ocultas": 12.019,
+     "por_motivo": {
+      "contagem_pequena": 455,
+      "complementar": 49,
+      "familia": 170
+     }
+    },
+    "sih_hosp_ano_especialidade": {
+     "linhas": 28,
+     "celulas_ocultas": 2,
+     "pct_celulas_ocultas": 7.14,
+     "pct_internacoes_ocultas": 0.593,
+     "por_motivo": {
+      "contagem_pequena": 1,
+      "complementar": 1,
+      "familia": 0
+     }
+    },
+    "sih_hosp_tri_capitulo": {
+     "linhas": 386,
+     "celulas_ocultas": 240,
+     "pct_celulas_ocultas": 62.18,
+     "pct_internacoes_ocultas": 8.75,
+     "por_motivo": {
+      "contagem_pequena": 186,
+      "complementar": 32,
+      "familia": 22
+     }
+    },
+    "sih_hosp_mes_carater": {
+     "linhas": 143,
+     "celulas_ocultas": 42,
+     "pct_celulas_ocultas": 29.37,
+     "pct_internacoes_ocultas": 1.849,
+     "por_motivo": {
+      "contagem_pequena": 22,
+      "complementar": 4,
+      "familia": 16
+     }
+    }
+   },
+   "deducao_internacoes": {
+    "voltas": 8,
+    "pequenas_reveladas": 78,
+    "pequenas_reveladas_em_publicados": 23,
+    "pequenas_estreitadas": 0,
+    "ocultas_exatas": 27,
+    "por_no": {
+     "mun_res+faixa12+sexo": {
+      "celulas": 408,
+      "escondidas": 240,
+      "exatas": 4,
+      "pequenas_reveladas": 2,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+mes+sexo": {
+      "celulas": 422,
+      "escondidas": 143,
+      "exatas": 2,
+      "pequenas_reveladas": 2,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+faixa5+sexo": {
+      "celulas": 191,
+      "escondidas": 191,
+      "exatas": 46,
+      "pequenas_reveladas": 2,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+mes+faixa5": {
+      "celulas": 934,
+      "escondidas": 415,
+      "exatas": 2,
+      "pequenas_reveladas": 2,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+mes+urgencia": {
+      "celulas": 410,
+      "escondidas": 208,
+      "exatas": 3,
+      "pequenas_reveladas": 2,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+tri+capitulo": {
+      "celulas": 1054,
+      "escondidas": 674,
+      "exatas": 2,
+      "pequenas_reveladas": 2,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+tri+sexo": {
+      "celulas": 163,
+      "escondidas": 163,
+      "exatas": 76,
+      "pequenas_reveladas": 2,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+faixa12+sexo": {
+      "celulas": 57,
+      "escondidas": 57,
+      "exatas": 2,
+      "pequenas_reveladas": 2,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+mes+sexo": {
+      "celulas": 62,
+      "escondidas": 62,
+      "exatas": 9,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+tri+faixa5": {
+      "celulas": 349,
+      "escondidas": 349,
+      "exatas": 127,
+      "pequenas_reveladas": 2,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+tri+urgencia": {
+      "celulas": 159,
+      "escondidas": 159,
+      "exatas": 44,
+      "pequenas_reveladas": 2,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+faixa5+sexo": {
+      "celulas": 31,
+      "escondidas": 31,
+      "exatas": 2,
+      "pequenas_reveladas": 2,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+mes+faixa5": {
+      "celulas": 116,
+      "escondidas": 116,
+      "exatas": 5,
+      "pequenas_reveladas": 2,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+mes+urgencia": {
+      "celulas": 55,
+      "escondidas": 55,
+      "exatas": 16,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+tri+capitulo": {
+      "celulas": 136,
+      "escondidas": 136,
+      "exatas": 11,
+      "pequenas_reveladas": 2,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+tri+sexo": {
+      "celulas": 29,
+      "escondidas": 29,
+      "exatas": 3,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+tri+faixa5": {
+      "celulas": 54,
+      "escondidas": 54,
+      "exatas": 2,
+      "pequenas_reveladas": 2,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+tri+urgencia": {
+      "celulas": 29,
+      "escondidas": 29,
+      "exatas": 3,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+capitulo": {
+      "celulas": 330,
+      "escondidas": 159,
+      "exatas": 2,
+      "pequenas_reveladas": 2,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+faixa12": {
+      "celulas": 223,
+      "escondidas": 223,
+      "exatas": 62,
+      "pequenas_reveladas": 2,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+mes": {
+      "celulas": 229,
+      "escondidas": 72,
+      "exatas": 3,
+      "pequenas_reveladas": 2,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+raca": {
+      "celulas": 98,
+      "escondidas": 73,
+      "exatas": 2,
+      "pequenas_reveladas": 2,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+sexo": {
+      "celulas": 59,
+      "escondidas": 59,
+      "exatas": 10,
+      "pequenas_reveladas": 2,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+faixa5": {
+      "celulas": 109,
+      "escondidas": 109,
+      "exatas": 26,
+      "pequenas_reveladas": 2,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+tri": {
+      "celulas": 95,
+      "escondidas": 95,
+      "exatas": 53,
+      "pequenas_reveladas": 2,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+urgencia": {
+      "celulas": 58,
+      "escondidas": 58,
+      "exatas": 6,
+      "pequenas_reveladas": 2,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+capitulo": {
+      "celulas": 50,
+      "escondidas": 50,
+      "exatas": 2,
+      "pequenas_reveladas": 2,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+faixa12": {
+      "celulas": 38,
+      "escondidas": 38,
+      "exatas": 2,
+      "pequenas_reveladas": 2,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+mes": {
+      "celulas": 38,
+      "escondidas": 14,
+      "exatas": 3,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+raca": {
+      "celulas": 18,
+      "escondidas": 18,
+      "exatas": 2,
+      "pequenas_reveladas": 2,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+sexo": {
+      "celulas": 14,
+      "escondidas": 14,
+      "exatas": 2,
+      "pequenas_reveladas": 2,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+faixa5": {
+      "celulas": 22,
+      "escondidas": 22,
+      "exatas": 2,
+      "pequenas_reveladas": 2,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+tri": {
+      "celulas": 19,
+      "escondidas": 19,
+      "exatas": 11,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+urgencia": {
+      "celulas": 14,
+      "escondidas": 14,
+      "exatas": 2,
+      "pequenas_reveladas": 2,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res": {
+      "celulas": 40,
+      "escondidas": 29,
+      "exatas": 2,
+      "pequenas_reveladas": 2,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res": {
+      "celulas": 10,
+      "escondidas": 7,
+      "exatas": 2,
+      "pequenas_reveladas": 2,
+      "pequenas_estreitadas": 0
+     }
+    },
+    "rodadas": [
+     {
+      "rodada": 0,
+      "pequenas_reveladas": 80,
+      "celulas_ocultas": 1729
+     },
+     {
+      "rodada": 1,
+      "pequenas_reveladas": 78,
+      "celulas_ocultas": 1825
+     },
+     {
+      "rodada": 2,
+      "pequenas_reveladas": 78,
+      "celulas_ocultas": 1886
+     },
+     {
+      "rodada": 3,
+      "pequenas_reveladas": 78,
+      "celulas_ocultas": 1996
+     },
+     {
+      "rodada": 4,
+      "pequenas_reveladas": 79,
+      "celulas_ocultas": 2090
+     },
+     {
+      "rodada": 5,
+      "pequenas_reveladas": 78,
+      "celulas_ocultas": 2219
+     },
+     {
+      "rodada": 6,
+      "pequenas_reveladas": 78,
+      "celulas_ocultas": 2330
+     }
+    ],
+    "passou": false,
+    "motivo_por_celula": false
+   },
+   "deducao_obitos": {
+    "voltas": 3,
+    "pequenas_reveladas": 0,
+    "pequenas_reveladas_em_publicados": 0,
+    "pequenas_estreitadas": 0,
+    "ocultas_exatas": 0,
+    "por_no": {},
+    "passou": true
+   },
+   "segundos": {
+    "base": 0.1,
+    "fechamento": 0.2,
+    "supressao": 2.0,
+    "deducao_obitos": 0.0,
+    "gravar": 0.1
+   },
+   "preliminares": [
+    202504,
+    202505,
+    202506,
+    202507,
+    202508,
+    202509,
+    202510,
+    202511,
+    202512
+   ]
+  },
+  "2026": {
+   "ano": 2026,
+   "aihs": 13591,
+   "internacoes": 13591,
+   "nos_no_fechamento": 82,
+   "supressao": {
+    "sih_res_ano": {
+     "linhas": 40,
+     "celulas_ocultas": 23,
+     "pct_celulas_ocultas": 57.5,
+     "pct_internacoes_ocultas": 0.199,
+     "por_motivo": {
+      "contagem_pequena": 23,
+      "complementar": 0,
+      "familia": 0
+     }
+    },
+    "sih_hosp_ano": {
+     "linhas": 10,
+     "celulas_ocultas": 0,
+     "pct_celulas_ocultas": 0.0,
+     "pct_internacoes_ocultas": 0.0,
+     "por_motivo": {
+      "contagem_pequena": 0,
+      "complementar": 0,
+      "familia": 0
+     }
+    },
+    "sih_res_mes": {
+     "linhas": 133,
+     "celulas_ocultas": 73,
+     "pct_celulas_ocultas": 54.89,
+     "pct_internacoes_ocultas": 14.944,
+     "por_motivo": {
+      "contagem_pequena": 38,
+      "complementar": 35,
+      "familia": 0
+     }
+    },
+    "sih_hosp_mes": {
+     "linhas": 50,
+     "celulas_ocultas": 20,
+     "pct_celulas_ocultas": 40.0,
+     "pct_internacoes_ocultas": 0.75,
+     "por_motivo": {
+      "contagem_pequena": 9,
+      "complementar": 11,
+      "familia": 0
+     }
+    },
+    "sih_res_mes_sexo": {
+     "linhas": 236,
+     "celulas_ocultas": 142,
+     "pct_celulas_ocultas": 60.17,
+     "pct_internacoes_ocultas": 42.065,
+     "por_motivo": {
+      "contagem_pequena": 61,
+      "complementar": 25,
+      "familia": 56
+     }
+    },
+    "sih_res_mes_urgencia": {
+     "linhas": 220,
+     "celulas_ocultas": 152,
+     "pct_celulas_ocultas": 69.09,
+     "pct_internacoes_ocultas": 30.204,
+     "por_motivo": {
+      "contagem_pequena": 71,
+      "complementar": 33,
+      "familia": 48
+     }
+    },
+    "sih_res_mes_faixa5": {
+     "linhas": 437,
+     "celulas_ocultas": 280,
+     "pct_celulas_ocultas": 64.07,
+     "pct_internacoes_ocultas": 19.954,
+     "por_motivo": {
+      "contagem_pequena": 181,
+      "complementar": 41,
+      "familia": 58
+     }
+    },
+    "sih_res_ano_capitulo": {
+     "linhas": 290,
+     "celulas_ocultas": 125,
+     "pct_celulas_ocultas": 43.1,
+     "pct_internacoes_ocultas": 2.215,
+     "por_motivo": {
+      "contagem_pequena": 116,
+      "complementar": 9,
+      "familia": 0
+     }
+    },
+    "sih_res_ano_faixa12_sexo": {
+     "linhas": 390,
+     "celulas_ocultas": 165,
+     "pct_celulas_ocultas": 42.31,
+     "pct_internacoes_ocultas": 9.374,
+     "por_motivo": {
+      "contagem_pequena": 139,
+      "complementar": 26,
+      "familia": 0
+     }
+    },
+    "sih_res_ano_raca": {
+     "linhas": 86,
+     "celulas_ocultas": 53,
+     "pct_celulas_ocultas": 61.63,
+     "pct_internacoes_ocultas": 3.245,
+     "por_motivo": {
+      "contagem_pequena": 46,
+      "complementar": 7,
+      "familia": 0
+     }
+    },
+    "sih_res_tri_capitulo": {
+     "linhas": 496,
+     "celulas_ocultas": 445,
+     "pct_celulas_ocultas": 89.72,
+     "pct_internacoes_ocultas": 70.017,
+     "por_motivo": {
+      "contagem_pequena": 261,
+      "complementar": 98,
+      "familia": 86
+     }
+    },
+    "sih_hosp_ano_especialidade": {
+     "linhas": 24,
+     "celulas_ocultas": 6,
+     "pct_celulas_ocultas": 25.0,
+     "pct_internacoes_ocultas": 0.537,
+     "por_motivo": {
+      "contagem_pequena": 3,
+      "complementar": 3,
+      "familia": 0
+     }
+    },
+    "sih_hosp_tri_capitulo": {
+     "linhas": 167,
+     "celulas_ocultas": 118,
+     "pct_celulas_ocultas": 70.66,
+     "pct_internacoes_ocultas": 30.594,
+     "por_motivo": {
+      "contagem_pequena": 86,
+      "complementar": 18,
+      "familia": 14
+     }
+    },
+    "sih_hosp_mes_carater": {
+     "linhas": 63,
+     "celulas_ocultas": 28,
+     "pct_celulas_ocultas": 44.44,
+     "pct_internacoes_ocultas": 4.341,
+     "por_motivo": {
+      "contagem_pequena": 13,
+      "complementar": 4,
+      "familia": 11
+     }
+    }
+   },
+   "deducao_internacoes": {
+    "voltas": 9,
+    "pequenas_reveladas": 32,
+    "pequenas_reveladas_em_publicados": 15,
+    "pequenas_estreitadas": 0,
+    "ocultas_exatas": 17,
+    "por_no": {
+     "mun_res+mes+sexo": {
+      "celulas": 236,
+      "escondidas": 142,
+      "exatas": 2,
+      "pequenas_reveladas": 2,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+mes+faixa5": {
+      "celulas": 437,
+      "escondidas": 280,
+      "exatas": 4,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+mes+urgencia": {
+      "celulas": 220,
+      "escondidas": 152,
+      "exatas": 3,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+tri+capitulo": {
+      "celulas": 496,
+      "escondidas": 445,
+      "exatas": 1,
+      "pequenas_reveladas": 1,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+tri+sexo": {
+      "celulas": 107,
+      "escondidas": 107,
+      "exatas": 25,
+      "pequenas_reveladas": 1,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+mes+sexo": {
+      "celulas": 46,
+      "escondidas": 46,
+      "exatas": 3,
+      "pequenas_reveladas": 2,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+tri+faixa5": {
+      "celulas": 187,
+      "escondidas": 187,
+      "exatas": 41,
+      "pequenas_reveladas": 1,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+tri+urgencia": {
+      "celulas": 98,
+      "escondidas": 98,
+      "exatas": 15,
+      "pequenas_reveladas": 1,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+mes+faixa5": {
+      "celulas": 65,
+      "escondidas": 65,
+      "exatas": 4,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+mes+urgencia": {
+      "celulas": 42,
+      "escondidas": 42,
+      "exatas": 6,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+tri+capitulo": {
+      "celulas": 84,
+      "escondidas": 84,
+      "exatas": 7,
+      "pequenas_reveladas": 1,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+tri+sexo": {
+      "celulas": 28,
+      "escondidas": 28,
+      "exatas": 1,
+      "pequenas_reveladas": 1,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+tri+faixa5": {
+      "celulas": 37,
+      "escondidas": 37,
+      "exatas": 1,
+      "pequenas_reveladas": 1,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+tri+urgencia": {
+      "celulas": 26,
+      "escondidas": 26,
+      "exatas": 1,
+      "pequenas_reveladas": 1,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+mes": {
+      "celulas": 133,
+      "escondidas": 73,
+      "exatas": 3,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "mun_res+tri": {
+      "celulas": 66,
+      "escondidas": 66,
+      "exatas": 23,
+      "pequenas_reveladas": 1,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+mes": {
+      "celulas": 31,
+      "escondidas": 20,
+      "exatas": 3,
+      "pequenas_reveladas": 3,
+      "pequenas_estreitadas": 0
+     },
+     "uf_res+tri": {
+      "celulas": 20,
+      "escondidas": 20,
+      "exatas": 6,
+      "pequenas_reveladas": 1,
+      "pequenas_estreitadas": 0
+     }
+    },
+    "rodadas": [
+     {
+      "rodada": 0,
+      "pequenas_reveladas": 50,
+      "celulas_ocultas": 1415
+     },
+     {
+      "rodada": 1,
+      "pequenas_reveladas": 32,
+      "celulas_ocultas": 1483
+     },
+     {
+      "rodada": 2,
+      "pequenas_reveladas": 33,
+      "celulas_ocultas": 1544
+     },
+     {
+      "rodada": 3,
+      "pequenas_reveladas": 32,
+      "celulas_ocultas": 1575
+     },
+     {
+      "rodada": 4,
+      "pequenas_reveladas": 32,
+      "celulas_ocultas": 1590
+     },
+     {
+      "rodada": 5,
+      "pequenas_reveladas": 32,
+      "celulas_ocultas": 1617
+     },
+     {
+      "rodada": 6,
+      "pequenas_reveladas": 32,
+      "celulas_ocultas": 1630
+     }
+    ],
+    "passou": false,
+    "motivo_por_celula": false
+   },
+   "deducao_obitos": {
+    "voltas": 3,
+    "pequenas_reveladas": 1,
+    "pequenas_reveladas_em_publicados": 1,
+    "pequenas_estreitadas": 0,
+    "ocultas_exatas": 1,
+    "por_no": {
+     "uf_res": {
+      "celulas": 12,
+      "escondidas": 1,
+      "exatas": 1,
+      "pequenas_reveladas": 1,
+      "pequenas_estreitadas": 0
+     }
+    },
+    "passou": false
+   },
+   "segundos": {
+    "base": 0.1,
+    "fechamento": 0.2,
+    "supressao": 2.1,
+    "deducao_obitos": 0.0,
+    "gravar": 0.1
+   },
+   "preliminares": [
+    202601,
+    202602,
+    202603,
+    202604,
+    202605,
+    202606,
+    202607
+   ]
+  }
+ },
+ "particoes": {
+  "2021": {
+   "arquivos": 113,
+   "bytes": 237374,
+   "gzip": 111559,
+   "maior": [
+    "sih_res_mes_faixa5/uf=14/ano=2021",
+    {
+     "bytes": 11536,
+     "gzip": 6007
+    }
+   ]
+  },
+  "2022": {
+   "arquivos": 149,
+   "bytes": 299693,
+   "gzip": 140245,
+   "maior": [
+    "sih_res_mes_faixa5/uf=14/ano=2022",
+    {
+     "bytes": 12696,
+     "gzip": 6690
+    }
+   ]
+  },
+  "2023": {
+   "arquivos": 77,
+   "bytes": 189194,
+   "gzip": 90567,
+   "maior": [
+    "sih_res_mes_faixa5/uf=14/ano=2023",
+    {
+     "bytes": 13319,
+     "gzip": 7113
+    }
+   ]
+  },
+  "2024": {
+   "arquivos": 77,
+   "bytes": 176915,
+   "gzip": 83887,
+   "maior": [
+    "sih_res_mes_faixa5/uf=14/ano=2024",
+    {
+     "bytes": 10421,
+     "gzip": 5384
+    }
+   ]
+  },
+  "2025": {
+   "arquivos": 95,
+   "bytes": 215215,
+   "gzip": 102694,
+   "maior": [
+    "sih_res_mes_faixa5/uf=14/ano=2025",
+    {
+     "bytes": 12464,
+     "gzip": 6707
+    }
+   ]
+  },
+  "2026": {
+   "arquivos": 113,
+   "bytes": 216968,
+   "gzip": 101460,
+   "maior": [
+    "sih_res_ano_faixa12_sexo/uf=14/ano=2026",
+    {
+     "bytes": 6898,
+     "gzip": 3524
+    }
+   ]
+  }
+ },
+ "disco": {
+  "trabalho_bytes": 3776812,
+  "min_bytes": 2441453,
+  "dbc_bytes": 0,
+  "particoes_bytes": 1335359
+ },
+ "ambiente_fim": {
+  "cpus": 4,
+  "disco_livre_bytes": 93573304320,
+  "processo_mb": 296,
+  "maior_filho_mb": 0
+ },
+ "sistema": {
+  "execucao": "42459740987",
+  "tempo_de_relogio": "1:01.93",
+  "pico_de_memoria_kb": 302612,
+  "instalacao_s": 27,
+  "cpus": 4,
+  "disco_livre_antes_bytes": 94147391488,
+  "disco_livre_depois_bytes": 93573201920
+ }
+}
