@@ -99,7 +99,10 @@ bases:
       # revela 1, e uma rodada de reforço chega a zero com 39 células a mais. Proposta aguardando decisão:
       # não publicar o motivo por célula, e mostrar toda célula oculta do mesmo jeito, nunca como "<5".
       motivo_por_celula: false
-      reforco_max_rodadas: 6
+      # Rodadas do reforço guiado pelo teste. Na medição entre versões de 08/11/2026, 14 das 16 versões
+      # montadas chegaram a zero em até 6 rodadas; as outras 2 são o mesmo estado (2026 com as competências
+      # até 2605), que chegou a zero na 10ª. O pipeline para assim que o teste dá zero.
+      reforco_max_rodadas: 15
       # Margens que a complementar protege: as publicadas e as que saem de outra tabela publicada
       # ("conhecidas"), ou toda soma de uma coluna ("todas"). Medido em 08/11/2026 (2021, 2025 e 2026):
       # as duas passam no teste de dedução depois do reforço; "conhecidas" oculta de 10% a 12% menos

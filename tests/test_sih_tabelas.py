@@ -143,3 +143,29 @@ def test_arredondamento_esconde_meia_base_para_cada_lado():
     assert list(lo[:5]) == [5, 5, 8, 8, 13] and list(hi[:5]) == [7, 7, 12, 12, 17]
     assert (lo[:5] <= valores[:5]).all() and (valores[:5] <= hi[:5]).all()
     assert (lo[5], hi[5]) == (0, 4)
+
+
+def test_cada_aih_cai_no_mes_da_alta_e_os_tres_eixos_fecham(cat):
+    # AIHs inventadas com processamento tardio: internação num mês, alta no seguinte, competência depois.
+    linhas = aihs_sinteticas(600, semente=11)
+    rng = np.random.default_rng(3)
+    mes_alta = rng.integers(1, 13, size=len(linhas))
+    atraso = rng.integers(0, 6, size=len(linhas))
+    linhas["dt_saida"] = 2025 * 10000 + mes_alta * 100 + 15
+    inter = [2025 * 12 + m - 1 - d for m, d in zip(mes_alta, rng.integers(0, 2, size=len(linhas)))]  # mesmo mês ou o anterior
+    linhas["dt_inter"] = [(n // 12) * 10000 + (n % 12 + 1) * 100 + 10 for n in inter]
+    linhas["competencia"] = [((2025 * 12 + m - 1 + a) // 12) * 100 + (2025 * 12 + m - 1 + a) % 12 + 1
+                             for m, a in zip(mes_alta, atraso)]
+    con = duckdb.connect()
+    con.register("aih", linhas)
+    por_mes = tab.calcular_base(con, "aih", 2025, [("mes",)], cat)[("mes",)]
+    esperado = linhas[linhas["ident"] == 1].groupby(linhas["dt_saida"] // 100).size()
+    assert dict(zip(por_mes["mes"].astype(int), por_mes["internacoes"])) == esperado.to_dict()
+    # O mesmo conjunto de AIHs, contado pelos três eixos, dá o mesmo total.
+    total = int(por_mes["internacoes"].sum())
+    pela_competencia = con.execute("SELECT count(*) FILTER (WHERE ident = 1) FROM aih GROUP BY competencia").fetchall()
+    pela_internacao = con.execute("SELECT count(*) FILTER (WHERE ident = 1) FROM aih GROUP BY dt_inter // 100").fetchall()
+    assert total == sum(n for (n,) in pela_competencia) == sum(n for (n,) in pela_internacao)
+    # E o eixo não é o da competência nem o da internação: os meses diferem.
+    por_competencia = dict(con.execute("SELECT competencia, count(*) FILTER (WHERE ident = 1) FROM aih GROUP BY 1").fetchall())
+    assert dict(zip(por_mes["mes"].astype(int), por_mes["internacoes"])) != por_competencia
