@@ -1,0 +1,142 @@
+{
+ "medido_em": "2026-11-08",
+ "o_que_e": "Partições do SIH por cruzamento, UF e ano, Parquet sem compressão, com a supressão final; 'catalogo' grava só as métricas declaradas de cada cruzamento, 'todas' grava internações, dias e valor em todos, como a Etapa 0 e a execução nacional do runner",
+ "anos": {
+  "2021": {
+   "todas": {
+    "arquivos": 378,
+    "mb": 19.94,
+    "mb_gzip": 12.0,
+    "maior": "sih_res_mes_faixa5/uf=31/ano=2021",
+    "maior_bytes": {
+     "bytes": 484167,
+     "gzip": 300304
+    }
+   },
+   "catalogo": {
+    "arquivos": 378,
+    "mb": 6.9,
+    "mb_gzip": 3.76,
+    "maior": "sih_res_mes/uf=31/ano=2021",
+    "maior_bytes": {
+     "bytes": 166628,
+     "gzip": 102301
+    }
+   }
+  },
+  "2022": {
+   "todas": {
+    "arquivos": 378,
+    "mb": 20.99,
+    "mb_gzip": 12.62,
+    "maior": "sih_res_mes_faixa5/uf=31/ano=2022",
+    "maior_bytes": {
+     "bytes": 519438,
+     "gzip": 319968
+    }
+   },
+   "catalogo": {
+    "arquivos": 378,
+    "mb": 7.08,
+    "mb_gzip": 3.83,
+    "maior": "sih_res_mes/uf=31/ano=2022",
+    "maior_bytes": {
+     "bytes": 167682,
+     "gzip": 102860
+    }
+   }
+  },
+  "2023": {
+   "todas": {
+    "arquivos": 378,
+    "mb": 21.56,
+    "mb_gzip": 12.98,
+    "maior": "sih_res_mes_faixa5/uf=31/ano=2023",
+    "maior_bytes": {
+     "bytes": 537939,
+     "gzip": 331935
+    }
+   },
+   "catalogo": {
+    "arquivos": 378,
+    "mb": 7.18,
+    "mb_gzip": 3.88,
+    "maior": "sih_res_mes/uf=31/ano=2023",
+    "maior_bytes": {
+     "bytes": 168625,
+     "gzip": 103333
+    }
+   }
+  },
+  "2024": {
+   "todas": {
+    "arquivos": 378,
+    "mb": 21.97,
+    "mb_gzip": 13.25,
+    "maior": "sih_res_mes_faixa5/uf=31/ano=2024",
+    "maior_bytes": {
+     "bytes": 550202,
+     "gzip": 340788
+    }
+   },
+   "catalogo": {
+    "arquivos": 378,
+    "mb": 7.26,
+    "mb_gzip": 3.92,
+    "maior": "sih_res_mes/uf=31/ano=2024",
+    "maior_bytes": {
+     "bytes": 169560,
+     "gzip": 103782
+    }
+   }
+  },
+  "2025": {
+   "todas": {
+    "arquivos": 378,
+    "mb": 22.25,
+    "mb_gzip": 13.43,
+    "maior": "sih_res_mes_faixa5/uf=31/ano=2025",
+    "maior_bytes": {
+     "bytes": 556432,
+     "gzip": 344754
+    }
+   },
+   "catalogo": {
+    "arquivos": 378,
+    "mb": 7.31,
+    "mb_gzip": 3.95,
+    "maior": "sih_res_mes/uf=31/ano=2025",
+    "maior_bytes": {
+     "bytes": 170165,
+     "gzip": 104232
+    }
+   }
+  },
+  "2026": {
+   "todas": {
+    "arquivos": 378,
+    "mb": 14.88,
+    "mb_gzip": 8.83,
+    "maior": "sih_res_mes_faixa5/uf=31/ano=2026",
+    "maior_bytes": {
+     "bytes": 318388,
+     "gzip": 199552
+    }
+   },
+   "catalogo": {
+    "arquivos": 378,
+    "mb": 5.35,
+    "mb_gzip": 2.86,
+    "maior": "sih_res_mes/uf=31/ano=2026",
+    "maior_bytes": {
+     "bytes": 112286,
+     "gzip": 66446
+    }
+   }
+  }
+ },
+ "total_todas_mb": 121.59,
+ "total_todas_mb_gzip": 73.11,
+ "total_catalogo_mb": 41.08,
+ "total_catalogo_mb_gzip": 22.2
+}

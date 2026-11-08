@@ -20,6 +20,8 @@ Este documento parte do que os dados mostraram. As medições foram feitas entre
 | Suprimir cada tabela isoladamente basta | Entre tabelas, 113 contagens de 1 a 4 continuavam dedutíveis | Supressão por família, com teste de dedução em cadeia. Com ela, zero |
 | A curva de maturação da Baixada vale para o país | Altas processadas no próprio mês: 87% na Baixada, 81,7% em SP, 66,1% no Brasil, 18,6% em RR | Regra por UF no catálogo |
 | A API de localidades do IBGE dá a lista de municípios, e a de períodos diz quando a SIDRA mudou | Em 3 execuções, o runner não abriu conexão com `servicodados.ibge.gov.br`, onde ficam as duas. O geoftp e a `apisidra` responderam nas 3 | Lista pela DTB do geoftp, período mais recente pela `apisidra`, mudança detectada pelo hash dos valores |
+| Supressão por família e as margens declaradas bastam | Com todas as somas que se pode montar, 82 tabelas por ano, e o motivo de cada célula oculta público, o teste revelou 4.365 contagens em 2025 | Motivo por célula fora do site (proposta), complementar nas margens conhecidas e reforço guiado pelo teste: zero nos seis anos, de 2021 a 2026 |
+| Arredondar os meses preliminares é uma alternativa a avaliar | Com valores exatos, cada atualização mensal revela de 62 (SP, setembro x outubro, 2025) a 194.045 (simulado, 27 UFs, 2026) diferenças de 1 a 4. Em múltiplos de 5, zero, com erro médio de 1,2 internação | Proposta no relatório da F1b, aguardando decisão |
 | HTTP Range resolve o carregamento e o DuckDB-WASM fica no construtor | Primeira carga do motor em 4G lento: quase 1 minuto. Um leitor em JavaScript devolveu os mesmos dados em 72 de 72 comparações, baixando poucas centenas de KB. Ver [Carregamento](#carregamento) | Leitor em JavaScript como padrão; arquivo por UF, sem depender de `Range`; motor fora da v1 |
 
 ## Fontes
@@ -46,6 +48,10 @@ Cada base foi testada com dados reais. "Licença" descreve o que a própria font
 - **Republicar pode piorar o dado, e depois corrigir.** Na versão de outubro, 6 estabelecimentos de Santo André com 50 AIHs ou mais sumiram das competências 2605, 2606 e 2607. Em 2605, o município caiu de 3.616 para 1.269 internações (−64,9%). Na direção contrária, Paulínia estava com 111 internações de moradores em setembro e voltou a 507 em outubro.
 - **Conferência com o TabNet, por competência:** 150 comparações (5 municípios, 3 competências, 5 medidas, por local de internação e de residência). 132 são idênticas. As outras 18 são todas da capital, em duas competências, com diferença de até 0,04%. A causa não foi identificada. Na queda de Santo André, as 3 competências no TabNet já mostram os valores da versão de outubro.
 - **O TabNet não tem o eixo do site.** Seu "Ano/mês atendimento" é a data de internação, como diz a nota técnica ("período correspondente à data de internação do paciente") e como os dados confirmam: em 10 comparações (5 municípios, 2 visões, competências de 2025), 135 de 163 meses batem com a data de internação e só 5 com a data da alta. Fora da capital, são 120 de 121. Por isso, os meses do site não coincidem com os do TabNet, e a tela precisa dizer isso. O que dá para conferir é o conjunto de AIHs: o total das 12 competências coincide em 7 das 10 comparações, e as outras 3 diferem em até 0,02%. **Nenhum número por mês da alta foi conferido em ferramenta oficial.**
+- **Conferência da F1b, em 08/11/2026, sobre o Parquet mínimo do pipeline** ([`conferencia_tabnet_f1b.json`](medicoes/resultados/conferencia_tabnet_f1b.json)). Dois municípios por região, a capital e um do interior: Manaus e Cruzeiro do Sul, Salvador e Picos, Belo Horizonte e São Paulo, Porto Alegre e Chapecó, Goiânia e Rondonópolis. Por competência (2503 e 2601), nas visões de hospital e de residência, com internações, valor, óbitos e dias de permanência: **137 de 160 comparações idênticas**. As 23 diferentes são de 3 municípios: São Paulo (3 internações a mais no pipeline nas duas competências), Goiânia (1, em 2503, por hospital) e Rondonópolis (1, em 2601). Por data de internação, com as 12 competências de 2025: 317 de 366 meses idênticos, e 8 das 20 comparações com o total igual; nas outras, o pipeline tem de 1 a 31 internações a mais (0,004% em São Paulo). **O pipeline nunca tem menos que o TabNet.** Dias de permanência batem somando todas as AIHs, inclusive as de prorrogação.
+- **A diferença da capital ficou localizada, sem causa** ([`conferencia_tabnet_f1b_capital.json`](medicoes/resultados/conferencia_tabnet_f1b_capital.json)). Em 2503, só 2 dos 101 estabelecimentos diferem, e o TabNet deixa as AIHs a mais de fora mesmo sem filtro de município, em vez de atribuí-las a outro. Não há N_AIH repetido no arquivo nem reapresentado em outra competência, e nenhum de 11 campos administrativos do RD tem valor raro nelas. Resta a hipótese de o TabNet ter sido gerado de outra versão do arquivo, que daqui não dá para testar.
+- **Existe ferramenta oficial com o eixo da alta: o TabWin.** A definição `RD2008.DEF`, dentro do `TAB_SIH.zip` da pasta `Auxiliar` do próprio FTP (de 15/10/2026), tem "Ano/Mês de saída" sobre `DT_SAIDA` como linha, coluna e seleção ([`tabwin_eixo_saida.json`](medicoes/resultados/tabwin_eixo_saida.json)). O TabWin é um programa do DATASUS para Windows, interativo; a conferência por ele ainda não foi feita.
+- **Sexo 4.** Aparece a partir da competência 2606, em 276 AIHs de 194 municípios, e não está no dicionário. Vai para "ignorado", com a contagem registrada.
 
 **Novo CAGED**
 - Somando `MOV` + `FOR` − `EXC` de 2025, dá **26.599.777 admissões, 25.320.279 desligamentos e saldo de 1.279.498**, os três iguais à [apresentação do Ministério do Trabalho e Emprego](https://www.gov.br/trabalho-e-emprego/pt-br/acesso-a-informacao/acoes-e-programas/programas-projetos-acoes-obras-e-atividades/estatisticas-trabalho/novo-caged/2025/dezembro/apresentacao-dezembro-de-2025-1.pdf). O saldo também está no [comunicado oficial](https://www.gov.br/trabalho-e-emprego/pt-br/noticias-e-conteudo/2026/janeiro/novo-caged-brasil-encerra-2025-com-saldo-positivo-de-1-27-milhao-de-empregos-formais). Só com `MOV`, o saldo daria 1.256.997, um erro de 1,8%. A conferência é do total nacional, sem amostra por município.
@@ -235,7 +241,7 @@ Os dados não entram no git, e o que está publicado não serve de base para rec
 | Agendamentos | Em repositório público, são desativados após 60 dias sem atividade. A documentação não define "atividade" nem diz se commit do próprio workflow conta | O job grava o manifesto no git todo mês, e a página mostra a idade dos dados. **Se o commit do workflow conta não foi verificado** |
 | Atrasos | O agendamento pode atrasar, e na carga alta execuções podem ser descartadas, sobretudo na virada da hora | Execução semanal em minuto quebrado, idempotente, com disparo manual disponível |
 | Artefatos | Retenção de 1 a 90 dias em repositório público; download exige acesso de leitura | Nada sem supressão vira artefato, nem aparece em log |
-| Runner público | 4 CPUs, 16 GB de RAM, 14 GB de disco, 6 h por job | Basta no papel. Não foi executado lá |
+| Runner público | 4 CPUs, 16 GB de RAM, 14 GB de disco, 6 h por job. Relida em 08/11/2026: os mesmos números; Releases com até 1.000 arquivos de menos de 2 GiB, sem limite de total nem de banda | Executado na F1b; ver [SIH no runner](#sih-no-runner) |
 
 **INEP e IBGE.** O ano do Censo vira partição fechada na Release. O job só rebaixa se o `Last-Modified` mudar, e confere o MD5 que vem no `.zip`. Na DTB e na SIDRA, a mudança é detectada pelo hash dos valores (código, nome e UF; valor por município), comparado com o da coleta anterior gravada no manifesto. A data de modificação da SIDRA saiu do contrato, porque vem do `servicodados`, que não aceita o runner. Se essas fontes estiverem fora do ar, o site mantém o que tem e marca a coleta como atrasada.
 
@@ -244,6 +250,24 @@ Os dados não entram no git, e o que está publicado não serve de base para rec
 **Manifesto no git.** Um JSON por base com versão, tamanho e data de cada arquivo de origem, totais por UF e competência, e a lista de meses em revisão, com o valor anterior. A comparação de versões lê as tabelas já publicadas no site, então nada sem supressão precisa ser guardado. É o único dado que entra no git, e seu histórico mostra o que mudou.
 
 **Conferência de links.** Uma tarefa agendada do CI, separada dos testes, abre os links oficiais do catálogo e uma amostra dos links exatos, e marca no manifesto os que falharem, com status e data. Um link exato também precisa devolver o valor publicado. Os testes continuam sem rede. Link quebrado não impede a publicação: o painel avisa que o link falhou na última conferência.
+
+### SIH no runner
+
+Medido em 08/11/2026 com o workflow manual `SIH (medição)`, que roda o pipeline inteiro (coleta, contrato, tabelas por ano da alta, supressão, teste de dedução com reforço e partições por UF) e só guarda a medição. Nada vai para o site nem para as Releases, e o artefato não tem dado: os `.dbc`, o Parquet mínimo e as partições somem com o runner. Medições em `sih_runner_*.json`.
+
+| Execução | Arquivos | Baixado | Coleta (download e conversão) | Total | Pico de memória | Disco no fim |
+|---|---:|---:|---:|---:|---:|---:|
+| RR, 2021 a 2026 (42459740987) | 67 | 16,9 MB | 43 s | 62 s | 0,30 GB | 3,8 MB |
+| SP, 2021 a 2026 (42459747506) | 67 | 1,18 GB | 409 s | 7 min 20 s | 1,25 GB | 171 MB |
+| **Brasil, 2021 a 2026 (42460657525)** | **1.809** | **5,65 GB** | **39 min 26 s** | **41 min 43 s** | **4,7 GB** | **859 MB** |
+
+**O gargalo é o FTP.** Com 4 conexões, cada arquivo de SP (20 MB) levou cerca de 24 s para baixar e 2,7 s para converter. Pelas duas execuções, a coleta custa 0,56 s por arquivo mais 0,31 s por MB. A projeção para as 27 UFs de 2021 a 2026, 1.809 arquivos e 5,65 GB, feita antes de rodar o Brasil, foi de 46 min de coleta e cerca de 1 h no total; a execução levou 39 min 26 s de coleta e 41 min 43 s no total. Montar, suprimir, testar e gravar cada ano levou de 20 a 24 s. A execução semanal, que só refaz os anos abertos (hoje 513 arquivos e 1,78 GB, das competências 2501 a 2607), ficaria em torno de 14 min de coleta, pela mesma conta. As duas cabem nas 6 h por job.
+
+**Disco.** O `.dbc` é apagado depois de convertido, e o Parquet mínimo das 27 UFs, de 2021 a 2026, tem 737 MB, medido localmente. O volume de trabalho do runner tinha 94 GB livres nas duas execuções; a documentação garante 14 GB.
+
+**O teste de dedução numa UF sozinha não vale.** Em RR e SP sozinhos, ele não chega a zero: sem os arquivos das outras UFs, os moradores de fora internados ali viram margens de UF minúsculas. A medição que vale para o teste é a do Brasil. **No Brasil, o teste deu zero nos seis anos**, com as mesmas contagens, rodada a rodada, da execução local: a supressão sai igual em duas máquinas diferentes.
+
+**As partições medidas no runner ainda levavam dias e valor em todas as tabelas** (121,6 MB, igual ao medido localmente nesse formato). Corrigido depois, cada cruzamento leva só as métricas do catálogo: 41,1 MB, medido localmente.
 
 ### Trava de queda
 
@@ -265,6 +289,8 @@ Comparar com a própria história, em vez de comparar versões, seria pior: 36 p
 - **Publicação inteira: só em falha estrutural.** Queda de 5% ou mais no total de uma UF e competência (a maior medida foi −0,88%), ou arquivo que reprove o contrato. Nesses casos o site anterior continua no ar e um alerta é aberto.
 
 Barrar a publicação inteira por causa de um município teria parado 5.570 páginas por 6 estabelecimentos de uma cidade, e por tempo indeterminado.
+
+**No pipeline, em 08/11/2026** (`sih_trava.py`, [`trava_f1b.json`](medicoes/resultados/trava_f1b.json)). Sobre as tabelas já suprimidas, no mesmo par de versões de SP e com as 27 UFs: por mês da alta, 4 acionamentos por residência e 4 por hospital, todos de Santo André, de 2604 a 2607, e nenhum em outro município. Entre os pares visíveis nas duas versões, mudaram 2 por residência e 1 por hospital em 2025, e 139 e 18 em 2026. A maior queda de uma UF numa competência foi de 0,88%, abaixo dos 5% da falha estrutural. A trava só compara células visíveis nas duas versões: uma oculta não tem valor publicado para comparar.
 
 ## Esquema do catálogo
 
@@ -403,7 +429,7 @@ As margens são declaradas porque são elas que definem o que dá para deduzir. 
 
 Hash e data da coleta de cada arquivo usado vêm do manifesto, não do catálogo: o catálogo diz de onde vem, o manifesto diz o que foi baixado. Quando o número usa muitos arquivos, como o SIH por residência, o painel mostra o resumo e o link para a lista completa. Métrica calculada lista todas as parcelas em `fontes` e a `formula`, e cada parcela traz a própria fonte.
 
-**Célula oculta.** Cada célula oculta traz o motivo: `contagem_pequena` (1 a k−1) ou `complementar` (oculta para impedir dedução). O motivo também é informação para quem tenta deduzir: numa margem com uma oculta de cada tipo e soma 6, a pequena só pode ser 1. Por isso o teste de dedução trata o motivo como público, com a pequena entre 1 e k−1 e a complementar fora desse intervalo, e a regra complementar precisa resistir a isso. O efeito na quantidade de células ocultas ainda não foi medido; é parte da F1b.
+**Célula oculta.** Cada célula oculta traz o motivo: `contagem_pequena` (1 a k−1) ou `complementar` (oculta para impedir dedução). O motivo também é informação para quem tenta deduzir: numa margem com uma oculta de cada tipo e soma 6, a pequena só pode ser 1. Por isso o teste de dedução trata o motivo como público quando ele é publicado, com a pequena entre 0 e k−1 (0 porque a regra também oculta pelas AIHs) e a complementar fora de 1 a k−1. **Medido na F1b:** com o motivo público, a supressão não resiste, e a proposta é não publicá-lo; ver [Teste de dedução da F1b](#teste-de-dedução-da-f1b).
 
 ## Regras do SIH levadas para o catálogo
 
@@ -439,6 +465,31 @@ O site publica só agregados. Contagens de 1 a 4 aparecem como "<5", e zero é m
 
 **Critério para publicar um cruzamento:** no máximo 5% das internações e 50% das células ocultas, e zero no teste de dedução com as margens declaradas. Tabelas de cauda longa, como fluxo entre municípios, podem passar com recorte (os maiores valores e "demais").
 
+### Teste de dedução da F1b
+
+Medido em 08/11/2026, com as 27 UFs, nos seis anos da alta de 2021 a 2026 (2026 até julho), na versão dos arquivos de 16/10/2026. Scripts no pipeline: `deducao.py`, `sih_deducao.py`, `supressao.py`.
+
+**O ataque ficou mais forte que o da Etapa 0.** Em vez de usar só as margens declaradas, ele parte de tudo o que é publicado (os 14 cruzamentos e as margens de UF e do Brasil) e de toda soma que se pode montar com isso: trimestre por faixa etária, UF por sexo, município por trimestre, e assim por diante, 82 tabelas por ano, das quais 64 ninguém publica. Cada célula ganha um intervalo do que pode valer, e o ataque aperta os intervalos pelas somas, em cadeia, até nada mudar. Uma contagem é revelada quando o intervalo vira um ponto entre 1 e 4. O teste confere que o valor verdadeiro nunca sai do intervalo.
+
+**O motivo da célula oculta, se publicado, entrega quase tudo.** Com o motivo público, a pequena entre 0 e 4 (0 porque a regra também oculta pelas AIHs) e a complementar fora de 1 a 4, a supressão da Etapa 0 deixou 4.365 contagens reveladas em 2025, quase todas em residência x trimestre x capítulo e residência x mês x faixa etária, e 10.078 estreitadas a dois valores possíveis. O reforço descrito abaixo baixou para cerca de 365 e empacou, depois de 10 rodadas e 1,6 ponto percentual a mais de células ocultas. Sem o motivo, quem lê só sabe que a célula está oculta, e a mesma supressão revelou 1. Por isso a proposta, que aguarda decisão, é **não publicar o motivo por célula** e mostrar toda célula oculta do mesmo jeito, nunca como "<5", que diria o intervalo. A regra continua explicada no painel "Fonte e método". Está em `supressao.motivo_por_celula: false` no catálogo.
+
+**Reforço guiado pelo teste.** Quando o ataque revela algo, as células ocultas que ficaram exatas e as que compõem uma soma revelada estão expostas, e cada margem que contém uma delas perde a menor célula visível. Uma soma não publicada costuma sair de um total menos as vizinhas exatas, como o trimestre de um município: o total da UF no trimestre, que sai das margens mensais publicadas, menos os trimestres dos outros municípios. Nesse caso o reforço oculta um retângulo: um mês do mesmo trimestre e um de outro trimestre num município vizinho, para que as quatro somas deixem de ser exatas. Repete até o teste dar zero.
+
+**A complementar protege só as margens conhecidas.** Antes, ela tratava como conhecida toda soma de uma coluna, inclusive as que só saem da própria tabela, como eletivo mais outros num hospital e mês. Agora protege as publicadas e as que dá para calcular a partir de outra tabela publicada, e o teste com o reforço cobre o resto. Nos três anos medidos dos dois jeitos (2021, 2025, 2026), os dois passam no teste, e as margens conhecidas ocultam de 10% a 12% menos células. É `supressao.margens_complementar: conhecidas`.
+
+| Ano da alta | Internações | Reveladas antes do reforço | Rodadas | Teste depois do reforço |
+|---|---:|---:|---:|---|
+| 2021 | 11.559.233 | 108 | 1 | zero |
+| 2022 | 12.363.273 | 96 | 1 | zero |
+| 2023 | 13.229.794 | 113 | 1 | zero |
+| 2024 | 14.029.372 | 82 | 1 | zero |
+| 2025 | 14.546.743 | 55 | 1 | zero |
+| 2026, até julho | 7.899.844 | 1.100 | 3 | zero |
+
+Óbitos, com máscara própria no total anual por município, deram zero em todos os anos, sem reforço.
+
+**O que passa do critério de publicação.** Com a supressão final, 2025 fica dentro do limite em todos os cruzamentos. Em 2021, residência x mês x urgência oculta 6,7% das internações, e hospital x mês x caráter, 5,1%. Em 2026, residência x mês x sexo (6,3%), residência x ano x faixa x sexo (5,1%) e residência x trimestre x capítulo (7,9% das internações e 52,9% das células) passam do limite. Nos dois de sexo, a causa é um código novo: **o sexo 4 aparece a partir da competência 2606**, em 276 AIHs de 194 municípios, todas com alta em 2026, e não está no dicionário. Ele vai para "ignorado", e uma categoria tão rara obriga a ocultar o masculino ou o feminino nas linhas em que aparece, inclusive em cidades grandes. No trimestre de 2026, o terceiro trimestre só tem julho. O que fazer com esses cruzamentos nesses anos fica para a decisão sobre a publicação.
+
 ### SIH, Brasil, 2025
 
 A coluna "Internações ocultas" mede internações, não AIHs. Percentuais com todas as margens consideradas na complementar.
@@ -473,7 +524,7 @@ A coluna "Internações ocultas" mede internações, não AIHs. Percentuais com 
 | Residência x mês x categoria CID | 4.612.115 | 88,8% | 44,09% | 12,16 MB | **Não** |
 | Residência x mês x capítulo x faixa (5) x sexo | 3.296.997 | 92,3% | 54,42% | 5,44 MB | **Não** |
 
-As 15 tabelas publicáveis somam **10,64 MB por ano** nestes arquivos nacionais com zstd; com os totais anuais de óbitos, 10,7 MB. No formato escolhido, por UF e sem compressão, são 22,9 MB, ou 11,9 MB em transferência com gzip. Juntar categorias raras ajuda muito: "caráter" com 3 grupos oculta 8,06%, porque a complementar acaba caindo em células grandes; com "urgência ou não", 1,60%.
+As 15 tabelas publicáveis somam **10,64 MB por ano** nestes arquivos nacionais com zstd; com os totais anuais de óbitos, 10,7 MB. No formato escolhido, por UF e sem compressão, são 22,9 MB, ou 11,9 MB em transferência com gzip. **Na F1b, com cada cruzamento levando só as métricas do catálogo** (dias e valor nas tabelas de município por ano e por mês; nas outras, só internações), são de 6,9 a 7,3 MB por ano completo, 3,8 a 3,9 MB com gzip, e o maior arquivo, residência x mês de MG, tem 170 KB ([`particoes_f1b.json`](medicoes/resultados/particoes_f1b.json)). Com dias e valor em todas as tabelas, como na Etapa 0, seriam 20 a 22 MB. Juntar categorias raras ajuda muito: "caráter" com 3 grupos oculta 8,06%, porque a complementar acaba caindo em células grandes; com "urgência ou não", 1,60%.
 
 **A média nacional esconde as cidades pequenas.** O critério acima olha o país inteiro. Por faixa de população (células ocultas / internações ocultas):
 
@@ -509,7 +560,38 @@ O caminho anterior, de só trocar 1 a 4 por nulo, não protegia: entre as tabela
 
 A republicação mensal também permite subtrair. Medido em SP, entre setembro e outubro de 2026, por mês da alta: **77 pares visíveis nas duas versões mudaram de 1 a 4 internações por residência (em 56 municípios), e 7 por hospital.** Quem guardar as duas versões descobre essa contagem pequena, ainda que sem detalhe de categoria.
 
-O teste de dedução da F1 inclui essa comparação, sobre o site publicado e a versão candidata, em todos os cruzamentos. Antes de publicar é preciso decidir o tratamento. A alternativa a avaliar é arredondar os meses preliminares para múltiplos de 5, com o valor exato só quando o mês fecha, o que também combina com a natureza provisória do dado. O efeito não foi medido.
+O teste de dedução da F1 inclui essa comparação, sobre o site publicado e a versão candidata, em todos os cruzamentos. Antes de publicar é preciso decidir o tratamento. A alternativa a avaliar é arredondar os meses preliminares para múltiplos de 5, com o valor exato só quando o mês fecha, o que também combina com a natureza provisória do dado.
+
+**Medido na F1b, em 08/11/2026** ([`versoes_f1b.json`](medicoes/resultados/versoes_f1b.json)). Como nada do SIH foi publicado, a versão "publicada" foi montada de dois jeitos, sempre com as 27 UFs e a supressão final (sem motivo por célula, reforço até o teste dar zero dentro de cada versão):
+- **Par real:** SP com os arquivos de setembro de 2026 (2509 a 2607, guardados no projeto de origem) contra os de outubro. As outras UFs entram iguais nas duas versões, porque só SP tem as duas guardadas.
+- **Pares simulados:** a versão com a última competência L contra a com L−1, para L de 2604 a 2607, tirando as AIHs das competências que ainda não teriam saído. Mede o processamento tardio, que é a maior parte do que muda de um mês para o outro, e deixa de fora as correções de republicação.
+
+Quem guarda as duas versões conhece a diferença onde as duas são exatas e pode deduzir mais pelas mesmas somas, porque a diferença também respeita todas as arestas (`deducao.diferencas`). Diferença exata de 1 a 4, em módulo, conta como revelada.
+
+| Par | Ano | Meses preliminares | Exato: diferenças de 1 a 4 | Em tabelas publicadas | Múltiplo de 5 | Múltiplo de 10 |
+|---|---|---:|---:|---:|---:|---:|
+| Real, SP setembro x outubro | 2025 | 9 | 62 | 31 | 0 | 0 |
+| Real, SP setembro x outubro | 2026 | 8 | 2.193 | 1.342 | 0 | 0 |
+| Simulado, 2603 x 2604 | 2025 | 12 | 19.452 | 9.999 | 0 | 0 |
+| Simulado, 2603 x 2604 | 2026 | 4 | 126.513 | 109.476 | 0 | 0 |
+| Simulado, 2604 x 2605 | 2025 | 12 | 5.830 | 2.837 | 0 | 0 |
+| Simulado, 2604 x 2605 | 2026 | 5 | 156.389 | 128.123 | 0 | 0 |
+| Simulado, 2605 x 2606 | 2026 | 6 | 185.667 | 149.676 | 0 | 0 |
+| Simulado, 2606 x 2607 | 2026 | 7 | 194.045 | 158.632 | 0 | 0 |
+
+Todas as diferenças reveladas vêm direto de duas células exatas; a cadeia não acrescentou nenhuma. As que mais aparecem são residência x ano x faixa x sexo, residência x ano x capítulo e residência x mês x faixa etária: o processamento tardio de uma competência traz poucas AIHs por município e categoria. **Com os valores exatos, toda atualização mensal revela milhares de grupos de 1 a 4 internações.**
+
+**O custo do arredondamento.** Arredonda-se toda célula visível de período que contém mês preliminar: o mês, o trimestre dele e, nas tabelas anuais, o ano aberto inteiro, porque um total anual exato entregaria a soma dos meses arredondados. Ocultas continuam ocultas, e zero continua zero. Com a janela de 12 competências e a defasagem de 5 meses, um mês fica preliminar por 17 meses, então em novembro de 2026 isso alcança 80,4% das células visíveis de 2025 e todas as de 2026.
+
+| | Múltiplo de 5 | Múltiplo de 10 |
+|---|---:|---:|
+| Erro médio por célula | 1,17 a 1,18 internação | 2,53 a 2,57 internações |
+| Células com erro acima de 10% | 19,5% a 23,4% | 37,5% a 42,9% |
+| Células com erro acima de 20% | 5,8% a 7,3% | 19,8% a 24,4% |
+| Diferenças de 1 a 4 reveladas entre versões | 0 | 0 |
+| Contagens reveladas dentro de cada versão | 0 | 0 |
+
+Faixas dos 8 pares acima, sobre as células arredondadas da versão mais nova. **A proposta para os meses preliminares está no relatório desta etapa e aguarda decisão.**
 
 ### Novo CAGED, Brasil, 2025
 
@@ -555,7 +637,7 @@ Os limites valem para o que é publicado. O orçamento total deixa margem no 1 G
 
 | Tema | Medido (Brasil) | Janela da v1 | Previsto (estimativa) | Limite |
 |---|---:|---|---:|---:|
-| SIH, agregados Parquet | 22,9 MB por ano, por UF e sem compressão | 2021 em diante | ~140 MB | 200 MB |
+| SIH, agregados Parquet | Medido na F1b: 41,1 MB de 2021 a julho de 2026 (6,9 a 7,3 MB por ano completo), por UF e sem compressão; 22,2 MB com gzip | 2021 em diante | ~45 MB até o fim de 2026 | 200 MB |
 | INEP, Censo Escolar e IDEB | 0,24 MB por ano + IDEB | 2019 em diante | ~5 MB | 20 MB |
 | IBGE | < 1 MB | Última + série de população | ~2 MB | 10 MB |
 | JSON por município | 113,8 MB (estimativa, 36 meses) | 36 meses | ~115 MB | 200 MB |
@@ -632,8 +714,8 @@ Pelo que foi possível examinar, nenhum junta os quatro pontos: temas diferentes
 | **Fontes que recusam o runner** | Medido em 07/11/2026, em 3 execuções do workflow `Alcance das fontes`. A API de serviços do IBGE (`servicodados.ibge.gov.br`: localidades e períodos da SIDRA) não aceitou conexão TCP em nenhuma, nem pelo curl. O INEP aceitou a conexão na primeira e respondeu com reset no TLS; nas outras duas recusou a conexão, também pelo curl, com e sem a chave híbrida no ClientHello. SIDRA, FTP do IBGE, geoftp do IBGE, FTP do DATASUS (um `RD` baixado, com o mesmo SHA-256 da máquina local), FTP do PDET e Siconfi responderam nas 3. Da máquina local, a API do IBGE respondeu nas 3 rodadas; o INEP falhou no TLS nas 3 rodadas completas e respondeu em 5 de 5 tentativas isoladas | Nada da coleta depende do `servicodados`: a lista vem da DTB do geoftp, e a população e o período mais recente, da `apisidra`. Sem a data de modificação, a mudança é detectada pelo hash dos valores. O INEP fica fora do alcance obrigatório do `Publicar` até a F1c. **Hipótese, não confirmada:** bloqueio por excesso de pedidos, porque a primeira execução abriu conexão e as seguintes, feitas minutos depois, não. **Em teste de 08 a 14/11/2026:** o workflow `INEP diário` faz um único pedido por dia (o primeiro KB do Censo Escolar 2024), sem nova tentativa, guarda passo a passo e resultado num artefato de 90 dias e se desliga depois do último dia. Nesse período, o `Alcance das fontes` só pede ao INEP se isso for marcado no disparo. Se os 7 pedidos falharem, a hipótese cai, e a F1c parte para outra origem oficial dos arquivos |
 | **Agendamento desativado** | 60 dias sem atividade param a atualização, e a documentação não define "atividade" | Manifesto mensal no git, idade dos dados visível na página, verificação na F1. O commit que altera o `cron` reativa |
 | **Fonte republica e piora** | Santo André caiu 64,9% em uma versão | Trava de dois níveis: marca o município, só para tudo em falha estrutural. Limite a reavaliar com mais versões |
-| **Dedução entre tabelas** | Sem família, 113 contagens eram dedutíveis. O teste atual é de cadeia, com as margens declaradas, sobre o SIH de um ano | Teste na F1 sobre tudo o que for publicado, em vários anos e temas. Reprovou, não publica |
-| **Dedução entre versões** | Em SP, 77 pares por residência revelaram diferença de 1 a 4 entre duas versões | Medir no teste da F1 e decidir o tratamento dos meses preliminares antes de publicar |
+| **Dedução entre tabelas** | Sem família, 113 contagens eram dedutíveis. Na F1b, com todas as somas e o motivo da célula público, 4.365 em 2025 | Teste em cadeia sobre os 14 cruzamentos e as margens, em 6 anos, com reforço até zero. Motivo por célula fora do site, a decidir. Reprovou, não publica. CAGED e educação entram no teste quando entrarem no site |
+| **Dedução entre versões** | Medido na F1b: de 62 a 194.045 diferenças de 1 a 4 por atualização, conforme o par e o ano | Arredondar os meses preliminares zera nos 8 pares medidos. Decisão pendente antes de publicar o SIH |
 | **Comportamento do host muda** | O `HEAD` já informa tamanho comprimido, `Range` depende de detalhes não documentados, e o formato escolhido conta com o gzip do host. Pedido com `Range` e `Accept-Encoding: gzip` recebe uma fatia do gzip, medido em Python | Leitor padrão baixa o arquivo inteiro. Teste semanal no site publicado, em Python e Node, no CI; nos navegadores, o teste é manual. Se o gzip sumir, o build volta ao zstd |
 | **Site e TabNet em eixos diferentes** | O site usa a data da alta, e o TabNet, a de internação. Quem comparar um mês vai ver números diferentes e pode achar que é erro | Ressalva junto ao número, explicando a diferença. Conferência pública por competência e por data de internação |
 | **Mês da alta sem conferência oficial** | Nenhuma ferramenta oficial testada oferece esse eixo | Conferir as mesmas AIHs pelos outros dois eixos e testar a data da alta no pipeline. Fica registrado como limite |
@@ -671,6 +753,12 @@ A divisão proposta (deploy e CI; SIH e catálogo; educação e IBGE) foi mantid
 - **Conferência por mês da alta.** O TabNet não tem esse eixo, então a conferência é em duas partes. Com o TabNet, amostra por município em cada região, nos eixos que ele oferece: competência e data de internação, confirmando que o pipeline parte das mesmas AIHs. No pipeline, teste com AIHs sintéticas de que cada uma cai no mês da sua data de alta, e que os totais fecham entre os três eixos. Investigar a diferença da capital. Procurar outra ferramenta oficial com esse eixo; se não houver, o limite fica declarado na tela.
 
 *Pronto quando:* o teste de dedução dá zero, a amostra bate com o TabNet nos dois eixos dele, os totais fecham com o mês da alta, e o JSON respeita o limite. A meta de abrir a página em menos de 3 s em 4G lento é medida no site real.
+
+**Estado em 08/11/2026, parada antes de publicar o SIH:**
+- Feito: coleta das 27 UFs com contrato por linha, janela recalculada a cada execução, tabelas por ano da alta, supressão por família, teste de dedução em cadeia com reforço (zero nos seis anos), comparação entre versões medida, trava de queda, conferência com o TabNet e o workflow `SIH (medição)` no runner. O SIH está no catálogo com `publicacao: {site: false, releases: false}`.
+- Aguardando decisão: publicar ou não o motivo por célula; o tratamento dos meses preliminares; o que fazer com os cruzamentos que passam do critério em 2021 e 2026.
+- Não feito: as Releases das partições fechadas (o código grava as partições na pasta de trabalho, mas nada sobe enquanto o catálogo disser `releases: false`), a comparação com a versão realmente publicada (não há uma ainda; o teste usa o par real de SP e os pares simulados), a página com gráficos, e a conferência pelo mês da alta no TabWin.
+- Contrato: nos 76,1 milhões de AIHs das competências 2101 a 2608, nenhuma linha violou as regras (competência, IDENT, UF do hospital, municípios na DTB, datas, defasagem de até 5 meses, CID, dicionários, chave única). O sexo 4, novo, vai para "ignorado".
 
 **F1c. Educação e o restante do IBGE**
 - **Antes de tudo, uma rota do runner até o INEP**, que recusou a conexão em 07/11/2026. Se a hipótese de bloqueio por excesso de pedidos não se confirmar, procurar outra origem oficial dos mesmos arquivos. Sem rota, a educação não entra.

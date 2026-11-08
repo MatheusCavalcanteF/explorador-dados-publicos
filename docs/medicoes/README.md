@@ -36,6 +36,9 @@ Node: `@duckdb/duckdb-wasm@1.33.1-dev57.0`, `playwright-core@1.65.0`, `hyparquet
 | `scripts/testar_inep_conexao.py` | Taxa de falha de conexão no INEP e em outras fontes |
 | `scripts/limitar_cpu.py` | Teto de CPU por Job Object do Windows |
 | `scripts/conferir_endereco.py` | Depois da renomeação do repositório: o endereço antigo do site dá 404 e o novo responde; o sitemap publicado tem exatamente as páginas esperadas; o JSON-LD de Santos passa no validador do pipeline e bate com o Parquet; peso servido de 25 páginas. Roda da raiz do repositório |
+| `scripts/conferir_tabnet_f1b.py` | F1b: o Parquet mínimo do pipeline contra o TabNet, em dois municípios por região, por competência e por data de internação. Valores de 1 a 4 não são gravados |
+| `scripts/medir_versoes_f1b.py` | F1b: dedução entre duas versões publicadas (o par real de SP e pares simulados de processamento tardio, nas 27 UFs) e o efeito de arredondar os meses preliminares |
+| `scripts/medir_trava_f1b.py` | F1b: a trava de queda do pipeline no par real de SP, por mês da alta, e o total por UF e competência |
 | `scripts/resumo.py`, `resumo_carga.py` | Tabelas-resumo dos agregados e do carregamento |
 | `scripts/derivar_numeros.py` | Números do plano que são contas sobre outros resultados, com origem e cálculo |
 | `scripts/verificar_resultados.py` | Caminhos da máquina em `docs/` e contagens abaixo de 5 por município nos resultados. O que é próprio da máquina vem por `--termo-local`, nunca fica no código: `verificar_resultados.py <resultados> <municipios.json> --texto docs --termo-local <usuário>` |
@@ -100,6 +103,12 @@ Os testes de tempo e de igualdade precisam dos dados no site. A partir dos Parqu
 | `site_publicado_navegadores.json` | Saída de `testar_site_publicado.mjs` sobre a execução 42439217829 do `Publicar`, com os cabeçalhos de cada pedido |
 | `endereco_e_buscadores.json` | Saída de `conferir_endereco.py` sobre a execução 42442355751 do `Publicar`, a primeira no endereço novo |
 | `alcance_roteiro_local.json` | `diagnostico.executar(diagnostico.ROTEIRO)` numa máquina local, em 08/11/2026: as rotas das fontes do roteiro depois da v1, só com tamanho e hash de cada corpo |
+| `conferencia_tabnet_f1b.json` | Saída de `conferir_tabnet_f1b.py`: 160 comparações por competência e 20 por data de internação, nas 5 regiões. O bloco por competência foi regravado em colunas e linhas, sem mudar os valores |
+| `conferencia_tabnet_f1b_capital.json` | O que foi testado para achar a diferença da capital de SP, sem atributos das AIHs envolvidas |
+| `versoes_f1b.json` | Saída de `medir_versoes_f1b.py`: diferenças exatas de 1 a 4 entre versões, por política, e o erro do arredondamento |
+| `trava_f1b.json` | Saída de `medir_trava_f1b.py` |
+| `particoes_f1b.json` | Tamanho das partições do SIH por ano, com só as métricas do catálogo em cada cruzamento e com dias e valor em todos |
+| `sih_runner_*.json` | Medições do workflow `SIH (medição)` no runner, reduzidas ao que o plano cita: tempos, disco, memória, tamanho das partições e, por ano, o teste de dedução (no Brasil, também a supressão por cruzamento) |
 | `derivados.json` | Somas e percentuais citados no plano, com origem e cálculo |
 | `range_hosts.json`, `motor_host_real.json`, `motor_host_real_consultas.json` | `Range` nos 3 navegadores, e o motor em host real, com e sem leitura parcial |
 
@@ -112,12 +121,12 @@ Os testes de tempo e de igualdade precisam dos dados no site. A partir dos Parqu
 - Nenhum deploy próprio foi feito: a leitura em host real usou arquivos públicos de terceiros, e os tempos usam um servidor local que imita o GitHub Pages.
 - "Celular" é emulação em desktop: viewport, banda e CPU limitadas. Não houve teste em aparelho físico nem em Safari no iOS.
 - O antivírus desta máquina altera o tráfego do Chrome, injetando script e cabeçalho de segurança nas páginas. Ele não foi desligado, e parte dos resultados passa por ele.
-- O teste de dedução cobre o SIH de um ano, em cadeia, com as margens declaradas. Não prova ausência de dedução, e não cobre CAGED nem educação.
-- A trava de queda foi medida em uma única republicação, só em SP.
+- O teste de dedução da Etapa 0 cobre o SIH de um ano, com as margens declaradas. O da F1b, no pipeline, cobre os seis anos e todas as somas que se pode montar com o publicado, mas também não prova ausência de dedução: aperta intervalos soma a soma e não resolve o sistema inteiro de uma vez. Não cobre CAGED nem educação.
+- A trava de queda foi medida em uma única republicação, só em SP, na Etapa 0 e de novo pelo pipeline na F1b. Os pares simulados da F1b medem só o processamento tardio, sem as correções de republicação.
 - A estimativa de JSON gera dois dos três anos a partir de um ano medido.
 - `medir_inep.py` e `medir_inep2.py` são a primeira leitura, com dados que `medir_educacao.py` refez.
 - A amostra do Siconfi tem 60 municípios, sem carga completa.
-- Nenhum número por mês da alta foi conferido em ferramenta oficial. O eixo "atendimento" do TabNet é a data de internação.
+- Nenhum número por mês da alta foi conferido em ferramenta oficial. O eixo "atendimento" do TabNet é a data de internação. O TabWin tem o eixo da alta (`tabwin_eixo_saida.json`), mas não foi rodado.
 - Tamanhos e supressão dos cruzamentos do CAGED foram medidos só sobre `MOV`. O CAGED foi conferido com o ministério só no total nacional de 2025. `educacao.json` traz a supressão de turmas, medida antes de turmas ficarem fora da regra.
 - Em `leitor_x_motor.json`, o bloco `host_real` traz uma leitura parcial entre origens que falhou, com `Failed to fetch`. A chamada de leitura foi alcançada: o pedido com `Range` saiu e ficou sem resposta (`GET null`), mas a causa não foi investigada, e o antivírus desta máquina está nesse caminho. No site, leitor e dados ficam na mesma origem, caso que `leitor_host_real.json` mostra funcionando.
 - `verificar_resultados.py` não detecta contagem pequena que só apareça por subtração. A verificação disso foi uma varredura pontual nos resumos, que achou dois casos, já corrigidos nos scripts: em `sih_regras.json`, categorias com menos de 5 são somadas à menor seguinte (`cod_idade` traz `5 + 0`), e `conferencia_tabnet_alta.json` não lista mais valores por mês. Ela não prova que não haja outro caso.
