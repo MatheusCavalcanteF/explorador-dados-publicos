@@ -128,9 +128,26 @@ def test_download_com_tamanho_errado_falha_sem_deixar_arquivo(tmp_path):
     assert not list(tmp_path.iterdir())
 
 
-def test_arquivo_ja_baixado_com_o_mesmo_tamanho_nao_e_baixado_de_novo(tmp_path):
-    (tmp_path / "RDSP2608.dbc").write_bytes(b"y" * 10)
+def test_arquivo_ja_baixado_da_mesma_versao_nao_e_baixado_de_novo(tmp_path):
+    sih_coleta.baixar("RDSP2608.dbc", 10, tmp_path, conectar_ftp=FtpFalso(b"y" * 10), modificado="2026-10-16T17:30")
 
     def proibido():
         raise AssertionError("baixou de novo")
-    assert sih_coleta.baixar("RDSP2608.dbc", 10, tmp_path, conectar_ftp=proibido).read_bytes() == b"y" * 10
+    alvo = sih_coleta.baixar("RDSP2608.dbc", 10, tmp_path, conectar_ftp=proibido, modificado="2026-10-16T17:30")
+    assert alvo.read_bytes() == b"y" * 10
+    assert sih_coleta.versao_local(alvo) == {"bytes": 10, "modificado_no_ftp": "2026-10-16T17:30"}
+
+
+def test_republicacao_de_mesmo_tamanho_e_baixada_de_novo(tmp_path):
+    sih_coleta.baixar("RDSP2608.dbc", 10, tmp_path, conectar_ftp=FtpFalso(b"y" * 10), modificado="2026-10-16T17:30")
+    # Mesmo tamanho, conteúdo e data diferentes: a listagem nova manda baixar.
+    alvo = sih_coleta.baixar("RDSP2608.dbc", 10, tmp_path, conectar_ftp=FtpFalso(b"z" * 10), modificado="2026-11-16T09:00")
+    assert alvo.read_bytes() == b"z" * 10
+    assert sih_coleta.versao_local(alvo)["modificado_no_ftp"] == "2026-11-16T09:00"
+
+
+@pytest.mark.parametrize("modificado", ["2026-10-16T17:30", None])
+def test_arquivo_sem_registro_de_versao_ou_sem_data_e_baixado_de_novo(tmp_path, modificado):
+    (tmp_path / "RDSP2608.dbc").write_bytes(b"y" * 10)   # de origem desconhecida: nada prova a versão
+    alvo = sih_coleta.baixar("RDSP2608.dbc", 10, tmp_path, conectar_ftp=FtpFalso(b"z" * 10), modificado=modificado)
+    assert alvo.read_bytes() == b"z" * 10

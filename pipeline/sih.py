@@ -35,18 +35,20 @@ def _memoria_mb() -> dict:
     return {"processo_mb": round(proprio / 1024), "maior_filho_mb": round(filhos / 1024)}
 
 
-def _um_arquivo(nome: str, esperado: int, trabalho: str, municipios6: frozenset, colunas: list, defasagem: int,
-                manter_dbc: bool, origem_local: str | None) -> dict:
+def _um_arquivo(nome: str, esperado: int, modificado: str, trabalho: str, municipios6: frozenset, colunas: list,
+                defasagem: int, manter_dbc: bool, origem_local: str | None) -> dict:
     """Baixa (ou lê da pasta local) e converte um arquivo. Roda num processo à parte."""
     import pyarrow.parquet as pq
     inicio = time.perf_counter()
     pasta = Path(trabalho)
     if origem_local:
+        # Cópia local, só para medir: precisa ter a versão da listagem atual gravada ao lado.
         dbc = Path(origem_local) / nome
-        if dbc.stat().st_size != esperado:
-            raise ErroDeContrato(f"{nome}: a cópia local tem {dbc.stat().st_size} bytes, a listagem diz {esperado}")
+        versao = {"bytes": esperado, "modificado_no_ftp": modificado}
+        if dbc.stat().st_size != esperado or sih_coleta.versao_local(dbc) != versao:
+            raise ErroDeContrato(f"{nome}: a cópia local não é a versão da listagem atual ({versao})")
     else:
-        dbc = sih_coleta.baixar(nome, esperado, pasta / "dbc")
+        dbc = sih_coleta.baixar(nome, esperado, pasta / "dbc", modificado=modificado)
     baixado = time.perf_counter()
     tabela, resumo = sih_coleta.converter(dbc.read_bytes(), nome, set(municipios6), colunas, defasagem)
     destino = pasta / "min" / (nome[:-4] + ".parquet")
@@ -56,6 +58,7 @@ def _um_arquivo(nome: str, esperado: int, trabalho: str, municipios6: frozenset,
     parcial.replace(destino)
     if not manter_dbc and not origem_local:
         dbc.unlink()
+        dbc.with_name(dbc.name + ".versao").unlink(missing_ok=True)
     return resumo | {"arquivo": nome, "bytes_dbc": esperado, "s_download": round(baixado - inicio, 2),
                      "s_conversao": round(time.perf_counter() - baixado, 2), "bytes_min": destino.stat().st_size}
 
@@ -68,8 +71,9 @@ def coletar(listagem: dict[str, dict], arquivos: list[str], trabalho: Path, muni
     inicio = time.perf_counter()
     resumos, maior_disco = [], 0
     with ProcessPoolExecutor(processos) as pool:
-        futuros = {pool.submit(_um_arquivo, n, listagem[n]["bytes"], str(trabalho), frozenset(municipios6), colunas,
-                               defasagem, manter_dbc, str(origem_local) if origem_local else None): n for n in arquivos}
+        futuros = {pool.submit(_um_arquivo, n, listagem[n]["bytes"], listagem[n]["modificado_no_ftp"], str(trabalho),
+                               frozenset(municipios6), colunas, defasagem, manter_dbc,
+                               str(origem_local) if origem_local else None): n for n in arquivos}
         for i, futuro in enumerate(as_completed(futuros), 1):
             resumos.append(futuro.result() | {"modificado_no_ftp": listagem[futuros[futuro]]["modificado_no_ftp"]})
             if i % 50 == 0 or i == len(arquivos):

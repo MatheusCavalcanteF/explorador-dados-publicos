@@ -12,6 +12,7 @@ tem uma linha por AIH e nunca sai do runner, nem como artefato; só os agregados
 from __future__ import annotations
 
 import ftplib
+import json
 import re
 import time
 from datetime import datetime
@@ -76,18 +77,31 @@ def listar(conectar_ftp=conectar) -> dict[str, dict]:
     return ler_listagem(linhas)
 
 
+def versao_local(alvo: Path) -> dict | None:
+    """A versão da listagem gravada ao lado do arquivo quando ele foi baixado, ou None se não houver."""
+    registro = alvo.with_name(alvo.name + ".versao")
+    try:
+        return json.loads(registro.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+
+
 def baixar(nome: str, esperado: int, destino: Path, conectar_ftp=conectar, tentativas: int = 4,
-           espera: float = 5.0, dormir=time.sleep) -> Path:
+           espera: float = 5.0, dormir=time.sleep, modificado: str | None = None) -> Path:
     """Baixa para um .part e só troca pelo definitivo com o tamanho da listagem. Idempotente.
 
-    Um arquivo já baixado com o mesmo tamanho não é baixado de novo. O tamanho é a única conferência
-    possível: o FTP não publica hash.
+    O FTP não publica hash, e uma republicação pode ter o mesmo tamanho com outro conteúdo. Por isso o
+    arquivo local só é reaproveitado quando a versão gravada ao lado dele no download (tamanho e data da
+    listagem) é a mesma da listagem atual. Sem esse registro, ou sem a data da listagem, baixa de novo.
     """
     alvo = destino / nome
-    if alvo.exists() and alvo.stat().st_size == esperado:
+    versao = {"bytes": esperado, "modificado_no_ftp": modificado}
+    if (modificado is not None and alvo.exists() and alvo.stat().st_size == esperado
+            and versao_local(alvo) == versao):
         return alvo
     destino.mkdir(parents=True, exist_ok=True)
     parcial = alvo.with_suffix(".part")
+    registro = alvo.with_name(alvo.name + ".versao")
     ultimo = None
     for tentativa in range(tentativas):
         try:
@@ -100,7 +114,9 @@ def baixar(nome: str, esperado: int, destino: Path, conectar_ftp=conectar, tenta
             recebido = parcial.stat().st_size
             if recebido != esperado:
                 raise ErroDeContrato(f"{nome}: {recebido} bytes recebidos, a listagem diz {esperado}")
+            registro.unlink(missing_ok=True)
             parcial.replace(alvo)
+            registro.write_text(json.dumps(versao), encoding="utf-8")
             return alvo
         except (*ftplib.all_errors, ErroDeContrato) as erro:
             ultimo = erro
