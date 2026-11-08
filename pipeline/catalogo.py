@@ -28,6 +28,11 @@ def validar(catalogo: dict) -> None:
     metricas = catalogo.get("metricas") or {}
     if not temas or not metricas:
         raise ErroDeCatalogo("Catálogo sem temas ou sem métricas")
+    limites = catalogo.get("limites") or {}
+    for chave in ("pagina_html_kb", "arquivo_mib"):
+        valor = limites.get(chave)
+        if isinstance(valor, bool) or not isinstance(valor, (int, float)) or valor <= 0:
+            raise ErroDeCatalogo(f"limites.{chave} deve ser um número positivo")
     for nome, base in bases.items():
         origem = str((base.get("coleta") or {}).get("origem", ""))
         if not base.get("nome") or not base.get("orgao") or not origem.startswith(("https://", "http://", "ftp://")):

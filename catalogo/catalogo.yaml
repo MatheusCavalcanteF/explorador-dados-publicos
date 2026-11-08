@@ -2,6 +2,16 @@
 # Hash e data da coleta não ficam aqui: vêm do manifesto de cada execução.
 versao: 1
 
+# Limites do que é publicado. O build falha se um arquivo passar, e o erro aponta qual.
+# KB e MB são decimais (1 KB = 1.000 bytes); MiB é binário. Ver "Limites de tamanho" no plano.
+limites:
+  # Sem compressão, por página. Definido em 08/11/2026 com folga: no build da coleta da execução
+  # 42442355751, a maior página tinha 56,4 KB (a de MG, com 853 municípios), e a de município, 10,1 KB
+  # de mediana. Reavaliar quando a página ganhar o SIH, com a medição nova.
+  pagina_html_kb: 100
+  # Qualquer arquivo do site, sem exceção: mantém a porta aberta para outro host.
+  arquivo_mib: 25
+
 temas:
   populacao: População
   saude: Saúde

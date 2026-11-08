@@ -119,7 +119,9 @@ def main(argv=None) -> int:
     elif args.comando == "construir":
         anteriores = _ler(args.links) if args.links and args.links.exists() else None
         versao = site.construir(_ler(args.coleta / "ibge.json"), cat, args.saida, anteriores, args.execucao)
-        print(f"Site: {versao['municipios']} páginas de município em {args.saida}")
+        tamanho = versao["tamanho"]
+        print(f"Site: {versao['municipios']} páginas de município em {args.saida}. Maior página: "
+              f"{tamanho['maior_pagina']}, {tamanho['maior_pagina_bytes']} bytes, limite {tamanho['limite_pagina_bytes']}")
     elif args.comando == "hospedagem":
         resultado = hospedagem.conferir(args.url, args.site, args.execucao)
         _gravar(args.coleta / "hospedagem.json", resultado)

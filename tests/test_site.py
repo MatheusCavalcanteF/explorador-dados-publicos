@@ -306,3 +306,29 @@ def test_404_usa_o_caminho_do_site_e_fica_fora_dos_buscadores(construido):
 def test_estimativa_publicada_le_o_parquet_do_site(construido):
     corpo = (construido / site.PARQUET).read_bytes()
     assert site.estimativa_publicada(corpo) == {"3548500": 429528, "4206504": 22000, "5101837": 5983}
+
+
+def test_pagina_acima_do_limite_falha_e_aponta_qual(tmp_path):
+    cat = catalogo.carregar()
+    santos = len(site.pagina_municipio(coleta()["municipios"][0], coleta(), cat, None).encode("utf-8"))
+    cat["limites"]["pagina_html_kb"] = (santos - 1) / 1000
+    with pytest.raises(site.ErroDeLimite, match=r"municipio/3548500/index\.html: [\d.]+ bytes, limite de página"):
+        site.construir(coleta(), cat, tmp_path / "site")
+
+
+def test_pagina_no_limite_passa_e_o_build_diz_a_maior(tmp_path):
+    cat = catalogo.carregar()
+    saida = tmp_path / "site"
+    tamanho = site.construir(coleta(), cat, saida)["tamanho"]
+    maior = max((p.stat().st_size, p.relative_to(saida).as_posix()) for p in saida.rglob("*.html"))
+    assert (tamanho["maior_pagina_bytes"], tamanho["maior_pagina"]) == maior
+    assert tamanho["limite_pagina_bytes"] == 100_000
+    cat["limites"]["pagina_html_kb"] = maior[0] / 1000
+    site.construir(coleta(), cat, tmp_path / "exato")
+
+
+def test_arquivo_acima_do_limite_falha_mesmo_sem_ser_pagina(tmp_path):
+    cat = catalogo.carregar()
+    cat["limites"]["arquivo_mib"] = 1000 / (1024 * 1024)
+    with pytest.raises(site.ErroDeLimite, match=r"dados/ibge/populacao\.parquet: [\d.]+ bytes, limite de arquivo"):
+        site.construir(coleta(), cat, tmp_path / "site")

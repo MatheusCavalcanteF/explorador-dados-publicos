@@ -387,6 +387,35 @@ def estimativa_publicada(corpo: bytes) -> dict[str, int]:
     return {c: v for c, v in zip(tabela["codigo"], tabela["populacao_estimada"]) if v is not None}
 
 
+class ErroDeLimite(ValueError):
+    """Um arquivo do site passou do limite do catálogo. O site não é publicado."""
+
+
+def conferir_limites(saida: Path, limites: dict) -> dict:
+    """Confere o tamanho sem compressão de cada página e de cada arquivo, e devolve os maiores.
+
+    O erro lista todos os que passaram, do maior para o menor, com o caminho dentro do site.
+    """
+    pagina_max = int(limites["pagina_html_kb"] * 1000)
+    arquivo_max = int(limites["arquivo_mib"] * 1024 * 1024)
+    paginas, acima = [], []
+    for caminho in sorted(saida.rglob("*")):
+        if not caminho.is_file():
+            continue
+        tamanho, nome = caminho.stat().st_size, caminho.relative_to(saida).as_posix()
+        if caminho.suffix == ".html":
+            paginas.append((tamanho, nome))
+            if tamanho > pagina_max:
+                acima.append(f"{nome}: {numero(tamanho)} bytes, limite de página {numero(pagina_max)}")
+        if tamanho > arquivo_max:
+            acima.append(f"{nome}: {numero(tamanho)} bytes, limite de arquivo {numero(arquivo_max)}")
+    if acima:
+        raise ErroDeLimite(f"{len(acima)} arquivo(s) acima do limite do catálogo: " + "; ".join(sorted(acima, reverse=True)))
+    paginas.sort(reverse=True)
+    return {"paginas": len(paginas), "maior_pagina": paginas[0][1] if paginas else None,
+            "maior_pagina_bytes": paginas[0][0] if paginas else 0, "limite_pagina_bytes": pagina_max}
+
+
 def construir(coleta: dict, catalogo: dict, saida: Path, links: dict | None = None, execucao: str = "local",
               google: str | None = projeto.GOOGLE_SEARCH_CONSOLE) -> dict:
     if saida.exists():
@@ -424,4 +453,5 @@ def construir(coleta: dict, catalogo: dict, saida: Path, links: dict | None = No
     parquet(municipios, saida / PARQUET)
     versao = {"execucao": execucao, "coletado_em": coleta["coletado_em"], "municipios": len(municipios)}
     gravar("versao.json", json.dumps(versao, ensure_ascii=False))
-    return versao
+    # Por último, para que nenhum arquivo escape da conferência. Passou do limite, o build falha.
+    return versao | {"tamanho": conferir_limites(saida, catalogo["limites"])}

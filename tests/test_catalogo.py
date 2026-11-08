@@ -85,3 +85,15 @@ def test_metrica_calculada_lista_as_parcelas(cat):
     novo["metricas"]["crescimento"]["fontes"] = ["populacao_estimada", "inexistente"]
     with pytest.raises(catalogo.ErroDeCatalogo, match="calculada"):
         catalogo.validar(novo)
+
+
+@pytest.mark.parametrize("valor", [None, 0, -1, "100", True])
+def test_limite_de_pagina_precisa_ser_numero_positivo(cat, valor):
+    novo = copy.deepcopy(cat)
+    novo["limites"]["pagina_html_kb"] = valor
+    with pytest.raises(catalogo.ErroDeCatalogo, match="limites.pagina_html_kb"):
+        catalogo.validar(novo)
+
+
+def test_limite_de_pagina_e_100_kb(cat):
+    assert cat["limites"] == {"pagina_html_kb": 100, "arquivo_mib": 25}

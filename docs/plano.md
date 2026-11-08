@@ -166,7 +166,7 @@ O endereço do site e o do repositório ficam só em `projeto.yaml`. Link canôn
 
 **Sitemap.** Gerado pelo pipeline em `sitemap.xml`, com as 5.599 páginas: a inicial, as 27 UFs e os 5.571 municípios. O `lastmod` é a data em que a coleta viu pela primeira vez os valores que a página mostra, não a data da execução: toda página é refeita a cada semana, com a data da coleta no rodapé, mas só muda de fato quando um valor muda. Para isso, o manifesto passou a guardar, por fonte, `valores_desde`, e na estimativa também `periodo_desde`. Um município revisado pelo IBGE ganha a data da revisão; os outros, não. Na primeira execução com o registro, todas as páginas ficaram com 08/11/2026, 02:36 UTC, a coleta mais antiga do manifesto. No site publicado, o sitemap tem exatamente as páginas esperadas pela lista de municípios, e o JSON-LD de Santos passou no validador com os mesmos valores do Parquet.
 
-**robots.txt.** O GitHub Pages serve um site de projeto numa subpasta do domínio `matheuscavalcantef.github.io`, e os buscadores só leem `robots.txt` na raiz do domínio, que pertence a um site de usuário, outro repositório. Por isso não há `robots.txt`; o sitemap é enviado direto no Search Console.
+**robots.txt.** O GitHub Pages serve um site de projeto numa subpasta do domínio `matheuscavalcantef.github.io`, e os buscadores só leem `robots.txt` na raiz do domínio, que pertence a um site de usuário, outro repositório. Por isso não há `robots.txt`; o sitemap é enviado direto no Search Console. Decidido em 08/11/2026: o repositório do site de usuário não será criado só para isso, porque o endereço antigo ficou um dia no ar e não foi indexado.
 
 **Google Search Console.** O suporte ao arquivo de verificação está pronto: com o código em `google_search_console`, no `projeto.yaml`, o pipeline grava `google<código>.html` na raiz do site, com o conteúdo que o Google pede. Hoje não há código nem arquivo. A propriedade a cadastrar é a do prefixo de URL do site, e não a do domínio inteiro.
 
@@ -564,7 +564,9 @@ Os limites valem para o que é publicado. O orçamento total deixa margem no 1 G
 | Siconfi | Não medido em escala | Fora da v1 | Não estimado | 60 MB |
 | **Total** | | | | **595 MB** |
 
-As páginas HTML não entraram neste orçamento. Em 08/11/2026, com o JSON-LD, o build local do site inteiro tem 58,1 MB, quase todo em páginas de município (mediana de 10,1 KB). O limite delas fica para a F1b, quando a página ganhar o SIH.
+As páginas HTML não entraram neste orçamento. Em 08/11/2026, com o JSON-LD, o build local do site inteiro tem 58,1 MB, quase todo em páginas de município (mediana de 10,1 KB).
+
+**Limite por página, definido em 08/11/2026: 100 KB sem compressão**, em `limites.pagina_html_kb` no catálogo. No build da coleta da execução 42442355751, a maior página é a de MG, com 56,4 KB, porque lista 853 municípios. O build falha se uma página passar, e o erro diz qual e com quantos bytes; um teste garante isso. O limite é reavaliado com medição quando a página ganhar o SIH.
 
 Limites por arquivo:
 - **Até 25 MiB para qualquer arquivo publicado, sem exceção.** Mantém a porta aberta para outro host. O `.wasm` do motor tem 35,9 MB e não entra no site; se um dia for usado, vem do CDN.
@@ -692,7 +694,7 @@ A divisão proposta (deploy e CI; SIH e catálogo; educação e IBGE) foi mantid
 
 **Nesta ordem, revista em 08/11/2026: agropecuária primeiro.** Cada área começa como a Etapa 0: medir a fonte antes de prometer a tela. Em todas, a medição responde às mesmas perguntas: se o runner alcança a fonte, formato e tamanho por ano, cobertura municipal, defasagem e republicação, licença declarada, quanto a supressão oculta em cada cruzamento e com que ferramenta oficial o resultado pode ser conferido.
 
-**O levantamento de 07/11/2026.** Um levantamento à parte, feito numa máquina local e fora deste repositório, testou 15 entradas (estabelecimentos e leitos separados, assim como Bolsa Família e Cadastro Único): 13 tiveram dados baixados e inspecionados, e 2 ficaram só documentadas. A tabela segue a marcação dele: **medido** é corpo recebido e inspecionado, esquema observado ou resultado de tentativa de acesso; **documentado** é o que a origem publica, inclusive tamanho anunciado em cabeçalho HTTP, que não é arquivo baixado inteiro. CAGED e Siconfi foram medidos na Etapa 0 e estão em [Fontes](#fontes).
+**O levantamento de 07/11/2026.** Um levantamento à parte, feito numa máquina local, testou 15 entradas (estabelecimentos e leitos separados, assim como Bolsa Família e Cadastro Único): 13 tiveram dados baixados e inspecionados, e 2 ficaram só documentadas. A tabela segue a marcação dele: **medido** é corpo recebido e inspecionado, esquema observado ou resultado de tentativa de acesso; **documentado** é o que a origem publica, inclusive tamanho anunciado em cabeçalho HTTP, que não é arquivo baixado inteiro. CAGED e Siconfi foram medidos na Etapa 0 e estão em [Fontes](#fontes). O catálogo do levantamento está em [`docs/medicoes/roteiro/`](medicoes/roteiro/README.md), sem a pasta de amostras, que tem registros individuais.
 
 | Fase | Área e fonte | Acesso | Código do município | Tamanho | Licença declarada | Situação |
 |---|---|---|---|---|---|---|
