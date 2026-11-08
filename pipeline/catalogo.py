@@ -27,6 +27,10 @@ def validar(catalogo: dict) -> None:
     metricas = catalogo.get("metricas") or {}
     if not temas or not metricas:
         raise ErroDeCatalogo("Catálogo sem temas ou sem métricas")
+    for nome, base in bases.items():
+        origem = str((base.get("coleta") or {}).get("origem", ""))
+        if not base.get("nome") or not base.get("orgao") or not origem.startswith(("https://", "http://", "ftp://")):
+            raise ErroDeCatalogo(f"Base {nome}: sem nome, órgão ou coleta.origem")
     for nome, metrica in metricas.items():
         onde = f"Métrica {nome}"
         if metrica.get("tema") not in temas:

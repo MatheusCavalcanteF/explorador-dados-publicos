@@ -19,6 +19,7 @@ Este documento parte do que os dados mostraram. As medições foram feitas entre
 | Óbitos por categoria e por mês | Por mês, 49,2% das células ficariam ocultas. Por categoria, até 97,5% dos óbitos somem nas cidades pequenas | Óbito municipal só no total anual |
 | Suprimir cada tabela isoladamente basta | Entre tabelas, 113 contagens de 1 a 4 continuavam dedutíveis | Supressão por família, com teste de dedução em cadeia. Com ela, zero |
 | A curva de maturação da Baixada vale para o país | Altas processadas no próprio mês: 87% na Baixada, 81,7% em SP, 66,1% no Brasil, 18,6% em RR | Regra por UF no catálogo |
+| A API de localidades do IBGE dá a lista de municípios, e a de períodos diz quando a SIDRA mudou | Em 3 execuções, o runner não abriu conexão com `servicodados.ibge.gov.br`, onde ficam as duas. O geoftp e a `apisidra` responderam nas 3 | Lista pela DTB do geoftp, período mais recente pela `apisidra`, mudança detectada pelo hash dos valores |
 | HTTP Range resolve o carregamento e o DuckDB-WASM fica no construtor | Primeira carga do motor em 4G lento: quase 1 minuto. Um leitor em JavaScript devolveu os mesmos dados em 72 de 72 comparações, baixando poucas centenas de KB. Ver [Carregamento](#carregamento) | Leitor em JavaScript como padrão; arquivo por UF, sem depender de `Range`; motor fora da v1 |
 
 ## Fontes
@@ -28,8 +29,8 @@ Cada base foi testada com dados reais. "Licença" descreve o que a própria font
 | Base | Acesso | Licença declarada | Formato | Frequência | Revisões | Cobertura municipal |
 |---|---|---|---|---|---|---|
 | **SIH/SUS** (AIH Reduzida) | FTP anônimo, sem TLS nem hash | Nenhuma no FTP. Site do Ministério: CC BY-ND 3.0 para o conteúdo do site e "licença aberta", creditando a fonte, para dados abertos. Um conjunto do portal consultado declara CC BY | `.dbc` (DBF comprimido), 1 arquivo por UF e mês. 880 MB por ano fora SP | Mensal. 2608 publicada em 16/10/2026; AC e RR ainda ausentes em 07/11/2026 | Últimas 12 competências republicadas de uma vez. Ver abaixo | 5.570 por residência; 3.146 por hospital nas competências de 2025, 3.145 com alta em 2025 |
-| **IBGE Localidades** | API REST, CORS aberto, cache de 30 dias | Sem termo específico localizado; publicações do IBGE pedem a citação da fonte | JSON | Quando há mudança | Sem histórico | 5.571 |
-| **IBGE SIDRA** | API REST sem chave | Idem | JSON | Anual nas tabelas testadas | A API de períodos informa a data de modificação: Censo 2022 em 07/05/2026; estimativas 2025 e 2026 em 28/08/2026; PIB 2021 a 2023 em 19/12/2025 | 5.570 no Censo 2022 e no PIB; 5.571 na estimativa 2026 |
+| **IBGE DTB** (Divisão Territorial Brasileira) | geoftp, HTTPS, um `.zip` por ano, em pasta por ano | Sem termo específico localizado; publicações do IBGE pedem a citação da fonte | `.zip` com planilhas `.ods` e `.xls`. A de municípios tem título, data-base e o cabeçalho na 5ª linha, com código e nome da UF, sem a sigla | Anual. A edição 2025, com data-base 31/12/2025, saiu em 26/03/2026; não há pasta de 2026 em 07/11/2026 | Sem histórico. O nome da planilha muda entre edições, e em 2022 o `.ods` era um `.xls` com outra extensão | 5.571 |
+| **IBGE SIDRA** | API REST sem chave (`apisidra.ibge.gov.br`) | Idem | JSON | Anual nas tabelas testadas | A API de períodos informa a data de modificação: Censo 2022 em 07/05/2026; estimativas 2025 e 2026 em 28/08/2026; PIB 2021 a 2023 em 19/12/2025. Ela fica em `servicodados.ibge.gov.br`, que não aceita o runner, então o pipeline detecta mudança pelo hash dos valores | 5.570 no Censo 2022 e no PIB; 5.571 na estimativa 2026 |
 | **Novo CAGED** | FTP anônimo, sem TLS | Página do ministério: CC BY-ND 3.0 para o site. A API do portal federal pede chave, então a licença do conjunto não foi lida | `.7z` com TXT em UTF-8, separado por `;`. Em média, 53 MB por mês comprimidos e 447 MB abertos | Mensal. 202609 publicada em 04/11/2026 | Arquivos separados: `MOV`, `FOR` (fora do prazo) e `EXC` (exclusões) | 5.566, mais o código `999999` |
 | **INEP Censo Escolar** | HTTPS | Site: CC BY-ND 3.0. O manual cita a Lei de Acesso à Informação e a LGPD | `.zip` com CSV em latin-1, uma linha por escola, 426 colunas | Anual. A última é 2024; 2025 responde 404 | O `.zip` de 2024 mudou em 08/07/2026, em pasta chamada `..._defeso`, sem explicação no manual | 5.570 |
 | **INEP IDEB** | HTTPS | Idem | `.xlsx`, com cabeçalho na linha 10 | Bienal. A última é 2023; 2025 não está na URL esperada | Arquivos de 13/08/2024 | Anos iniciais 5.567 (5.432 com nota em 2023); finais 5.568 (5.384); médio 5.559 (5.076) |
@@ -63,6 +64,8 @@ Cada base foi testada com dados reais. "Licença" descreve o que a própria font
 - Cada município-ano custa ~340 KB de JSON. O Brasil inteiro seriam 5.570 consultas por ano de referência: ~1,6 h a 1 consulta por segundo (estimativa). A rajada de 15 chamadas sem espera não foi barrada, mas não localizei o limite oficial. Um endpoint de catálogo teve 4 de 10 pedidos em timeout.
 
 **Municípios**
+- A lista vem da DTB mais recente do geoftp: o pipeline percorre as pastas de ano, da mais nova para a mais antiga, e usa a primeira que tiver `DTB_{ano}.zip`. Uma pasta com outro `.zip` para o pipeline, em vez de cair para o ano anterior. A sigla da UF não vem na DTB e sai de uma tabela fixa, conferida com o nome da UF.
+- Lida pelo pipeline, a DTB 2025 tem os mesmos 5.571 códigos, nomes e UFs da API de localidades, conferido em 07/11/2026 numa máquina local. O mesmo leitor abre as edições 2023 (5.570 municípios, data-base 22/11/2024) e 2024 (5.571, 31/12/2024); a de 2022 é recusada.
 - Os códigos do IBGE têm 7 dígitos; SIH e CAGED usam 6. Os primeiros 6 dígitos são únicos nos 5.571 municípios, então a conversão é segura.
 - Boa Esperança do Norte (MT, 5101837) existe nas localidades e na estimativa, mas não no Censo 2022, no PIB nem nas internações de 2025.
 
@@ -210,7 +213,7 @@ Os dados não entram no git, e o que está publicado não serve de base para rec
 | Artefatos | Retenção de 1 a 90 dias em repositório público; download exige acesso de leitura | Nada sem supressão vira artefato, nem aparece em log |
 | Runner público | 4 CPUs, 16 GB de RAM, 14 GB de disco, 6 h por job | Basta no papel. Não foi executado lá |
 
-**INEP e IBGE.** O ano do Censo vira partição fechada na Release. O job só rebaixa se o `Last-Modified` mudar, e confere o MD5 que vem no `.zip`. Na SIDRA, a API de períodos diz quando algo mudou. Se essas fontes estiverem fora do ar, o site mantém o que tem e marca a coleta como atrasada. Só uma falha estrutural do SIH impede a atualização, e nesse caso o site anterior continua no ar.
+**INEP e IBGE.** O ano do Censo vira partição fechada na Release. O job só rebaixa se o `Last-Modified` mudar, e confere o MD5 que vem no `.zip`. Na DTB e na SIDRA, a mudança é detectada pelo hash dos valores (código, nome e UF; valor por município), comparado com o da coleta anterior gravada no manifesto. A data de modificação da SIDRA saiu do contrato, porque vem do `servicodados`, que não aceita o runner. Se essas fontes estiverem fora do ar, o site mantém o que tem e marca a coleta como atrasada. Só uma falha estrutural do SIH impede a atualização, e nesse caso o site anterior continua no ar.
 
 **Manifesto no git.** Um JSON por base com versão, tamanho e data de cada arquivo de origem, totais por UF e competência, e a lista de meses em revisão, com o valor anterior. A comparação de versões lê as tabelas já publicadas no site, então nada sem supressão precisa ser guardado. É o único dado que entra no git, e seu histórico mostra o que mudou.
 
@@ -596,7 +599,7 @@ Pelo que foi possível examinar, nenhum junta os quatro pontos: temas diferentes
 | Risco | Efeito | O que fazer |
 |---|---|---|
 | **FTPs sem TLS nem hash** | Não dá para provar que o arquivo é o publicado | Validar a estrutura, comparar versões, registrar tamanho e data da origem |
-| **Fontes que recusam o runner** | Medido em 07/11/2026, em 3 execuções do workflow `Alcance das fontes`. A API de serviços do IBGE (`servicodados.ibge.gov.br`: localidades e períodos da SIDRA) não aceitou conexão TCP em nenhuma, nem pelo curl. O INEP aceitou a conexão na primeira e respondeu com reset no TLS; nas outras duas recusou a conexão, também pelo curl, com e sem a chave híbrida no ClientHello. SIDRA, FTP do IBGE, geoftp do IBGE, FTP do DATASUS (um `RD` baixado, com o mesmo SHA-256 da máquina local), FTP do PDET e Siconfi responderam nas 3. Da máquina local, a API do IBGE respondeu nas 3 rodadas; o INEP falhou no TLS nas 3 rodadas completas e respondeu em 5 de 5 tentativas isoladas | Agendamento do `Publicar` desligado até decidir a rota. A lista oficial de municípios também está na DTB do geoftp, que o runner alcança: a de 2025 tem os mesmos 5.571 códigos, nomes e UFs da API |
+| **Fontes que recusam o runner** | Medido em 07/11/2026, em 3 execuções do workflow `Alcance das fontes`. A API de serviços do IBGE (`servicodados.ibge.gov.br`: localidades e períodos da SIDRA) não aceitou conexão TCP em nenhuma, nem pelo curl. O INEP aceitou a conexão na primeira e respondeu com reset no TLS; nas outras duas recusou a conexão, também pelo curl, com e sem a chave híbrida no ClientHello. SIDRA, FTP do IBGE, geoftp do IBGE, FTP do DATASUS (um `RD` baixado, com o mesmo SHA-256 da máquina local), FTP do PDET e Siconfi responderam nas 3. Da máquina local, a API do IBGE respondeu nas 3 rodadas; o INEP falhou no TLS nas 3 rodadas completas e respondeu em 5 de 5 tentativas isoladas | Nada da coleta depende do `servicodados`: a lista vem da DTB do geoftp, e a população e o período mais recente, da `apisidra`. Sem a data de modificação, a mudança é detectada pelo hash dos valores. O INEP fica fora do alcance obrigatório do `Publicar` até a F1c e continua no diagnóstico manual. **Hipótese, não confirmada:** bloqueio por excesso de pedidos, porque a primeira execução abriu conexão e as seguintes, feitas minutos depois, não. Testar antes da F1c com o diagnóstico espaçado |
 | **Agendamento desativado** | 60 dias sem atividade param a atualização, e a documentação não define "atividade" | Manifesto mensal no git, idade dos dados visível na página, verificação na F1. O commit que altera o `cron` reativa |
 | **Fonte republica e piora** | Santo André caiu 64,9% em uma versão | Trava de dois níveis: marca o município, só para tudo em falha estrutural. Limite a reavaliar com mais versões |
 | **Dedução entre tabelas** | Sem família, 113 contagens eram dedutíveis. O teste atual é de cadeia, com as margens declaradas, sobre o SIH de um ano | Teste na F1 sobre tudo o que for publicado, em vários anos e temas. Reprovou, não publica |
@@ -622,7 +625,7 @@ A divisão proposta (deploy e CI; SIH e catálogo; educação e IBGE) foi mantid
 
 **F1a. Deploy, CI e uma página real**
 - Deploy próprio no GitHub Pages; workflow agendado; Release e manifesto no git. Fim de linha fixado em LF no `.gitattributes` antes do primeiro workflow.
-- Coleta real pelo runner: IBGE inteiro e um teste de alcance de cada fonte (um `RD` pequeno do DATASUS, a listagem do CAGED, um arquivo do INEP, uma consulta do Siconfi).
+- Coleta real pelo runner: lista de municípios pela DTB do geoftp, população pela SIDRA, e um teste de alcance de cada fonte (um `RD` pequeno do DATASUS, a listagem do CAGED, uma consulta do Siconfi). **O INEP saiu do teste semanal até a F1c:** recusou o runner nas 3 execuções do diagnóstico manual, que continua a testá-lo.
 - Página de cada município com nome, UF, população, fonte e data da coleta, e o painel "Fonte e método" com o link exato do IBGE para a população.
 - Conferência agendada de links, marcando os quebrados no manifesto.
 - Repetir no site real os testes de `Range`, `HEAD`, gzip e leitor.
@@ -639,6 +642,7 @@ A divisão proposta (deploy e CI; SIH e catálogo; educação e IBGE) foi mantid
 *Pronto quando:* o teste de dedução dá zero, a amostra bate com o TabNet nos dois eixos dele, os totais fecham com o mês da alta, e o JSON respeita o limite. A meta de abrir a página em menos de 3 s em 4G lento é medida no site real.
 
 **F1c. Educação e o restante do IBGE**
+- **Antes de tudo, uma rota do runner até o INEP**, que recusou a conexão em 07/11/2026. Se a hipótese de bloqueio por excesso de pedidos não se confirmar, procurar outra origem oficial dos mesmos arquivos. Sem rota, a educação não entra.
 - **Censo Escolar e IDEB**, PIB, amostra conferida com as ferramentas do INEP e do SIDRA.
 - O teste de dedução passa a cobrir as tabelas novas.
 

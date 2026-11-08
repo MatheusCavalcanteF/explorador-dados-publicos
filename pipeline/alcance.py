@@ -86,7 +86,10 @@ def siconfi(pedir=rede.pedir) -> dict:
     return {"url": SICONFI_URL, "itens": len(itens), "segundos": round(resposta.segundos, 2)}
 
 
-ALVOS = {"datasus_ftp": datasus, "caged_ftp": caged, "inep": inep, "siconfi": siconfi}
+# O INEP fica fora até a F1c: recusou o runner em 3 execuções do diagnóstico, e a hipótese de bloqueio
+# por excesso de pedidos (ver Riscos no plano) desaconselha bater nele toda semana. O diagnóstico
+# manual (`python -m pipeline diagnostico`) continua testando o INEP; esta função volta na F1c.
+ALVOS = {"datasus_ftp": datasus, "caged_ftp": caged, "siconfi": siconfi}
 
 
 def executar(alvos=ALVOS, agora=None) -> dict:

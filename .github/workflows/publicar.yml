@@ -48,8 +48,12 @@ jobs:
             gh release download ibge-censo-2022 --pattern censo-2022.json --dir build/release
           fi
 
+      # Lista pela DTB do geoftp e população pela SIDRA. O manifesto da coleta anterior, no git,
+      # serve para dizer o que mudou, pelo hash dos valores.
       - name: Coleta do IBGE
-        run: python -m pipeline coletar --saida build/coleta --censo-release build/release/censo-2022.json
+        run: >
+          python -m pipeline coletar --saida build/coleta --censo-release build/release/censo-2022.json
+          --anterior manifesto/ibge.json
 
       - name: Alcance das outras fontes
         run: python -m pipeline alcance --saida build/coleta

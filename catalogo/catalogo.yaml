@@ -16,20 +16,31 @@ temas:
   eleicoes: Eleições
   seguranca: Segurança
 
+# A API de serviços do IBGE (servicodados) não aceitou conexão do runner em 07/11/2026. Nenhuma base
+# depende dela: a lista vem da DTB no geoftp, e a população e o período mais recente, da apisidra.
 bases:
-  ibge_localidades:
-    nome: Municípios do IBGE
+  ibge_dtb:
+    nome: Divisão Territorial Brasileira
     orgao: IBGE
-    licenca: { id: nao-declarada-na-origem, atribuicao: "IBGE" }
+    licenca: { id: nao-declarada-na-origem, atribuicao: "IBGE, Divisão Territorial Brasileira" }
     coleta:
-      origem: "https://servicodados.ibge.gov.br/api/v1/localidades/municipios"
+      origem: "https://geoftp.ibge.gov.br/organizacao_do_territorio/estrutura_territorial/divisao_territorial/"
+      # Uma pasta por ano. Vale a mais recente que tiver o arquivo; pasta com outro .zip para o pipeline.
+      arquivo: "{ano}/DTB_{ano}.zip"
+      planilha: "RELATORIO_DTB_BRASIL*MUNICIPIO*.ods"
+      colunas: [UF, Nome_UF, Código Município Completo, Nome_Município]
+      data_base: "DATA BASE: dd/mm/aaaa, acima do cabeçalho"
+      # A sigla da UF não vem na DTB: sai de uma tabela fixa do pipeline, conferida com Nome_UF.
+    mudanca: hash_dos_valores   # código, nome e UF, comparados com a coleta anterior do manifesto
+    ressalvas:
+      - "A DTB descreve a divisão territorial na data-base e sai uma vez por ano. Mudança posterior, como um município novo, só entra na edição seguinte."
   ibge_estimativa:
     nome: Estimativas de População
     orgao: IBGE
     licenca: { id: nao-declarada-na-origem, atribuicao: "IBGE, Estimativas de População" }
     coleta:
-      origem: "https://apisidra.ibge.gov.br/values/t/6579/n6/all/v/9324/p/last%201"
-      periodos: "https://servicodados.ibge.gov.br/api/v3/agregados/6579/periodos"
+      origem: "https://apisidra.ibge.gov.br/values/t/6579/n6/all/v/9324/p/last%201"   # a SIDRA diz o período mais recente
+    mudanca: hash_dos_valores   # a SIDRA revisa estimativas; o hash compara com a coleta anterior
     supressao: { aplica: false }   # população não é contagem de atendimentos
   ibge_censo_2022:
     nome: Censo Demográfico 2022
@@ -37,8 +48,8 @@ bases:
     licenca: { id: nao-declarada-na-origem, atribuicao: "IBGE, Censo Demográfico 2022" }
     coleta:
       origem: "https://apisidra.ibge.gov.br/values/t/4714/n6/all/v/93/p/2022"
-      periodos: "https://servicodados.ibge.gov.br/api/v3/agregados/4714/periodos"
     particao_fechada: { release: ibge-censo-2022, arquivo: censo-2022.json }
+    mudanca: hash_dos_valores   # valor diferente do guardado na Release para o pipeline
     supressao: { aplica: false }
 
 metricas:

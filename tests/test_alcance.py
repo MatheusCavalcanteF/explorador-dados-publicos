@@ -88,3 +88,10 @@ def test_uma_fonte_fora_nao_esconde_as_outras():
     assert resultado["fontes"]["boa"]["ok"] is True and resultado["fontes"]["boa"]["x"] == 1
     assert resultado["fontes"]["ruim"] == {"ok": False, "erro": "TimeoutError: sem resposta",
                                            "segundos_total": resultado["fontes"]["ruim"]["segundos_total"]}
+
+
+def test_inep_fora_do_alcance_obrigatorio_ate_a_f1c():
+    from pipeline import diagnostico
+    assert set(alcance.ALVOS) == {"datasus_ftp", "caged_ftp", "siconfi"}
+    # Continua no diagnóstico manual.
+    assert "inep" in {alvo["nome"] for alvo in diagnostico.ALVOS}

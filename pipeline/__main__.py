@@ -1,6 +1,6 @@
 """Linha de comando do pipeline. Cada etapa grava em build/coleta, que o workflow passa adiante.
 
-    python -m pipeline coletar    --saida build/coleta [--censo-release arquivo]
+    python -m pipeline coletar    --saida build/coleta [--censo-release arquivo] [--anterior manifesto/ibge.json]
     python -m pipeline alcance    --saida build/coleta
     python -m pipeline diagnostico --saida build/diagnostico [--resumo arquivo.md]
     python -m pipeline construir  --coleta build/coleta --saida build/site [--links manifesto/links.json] [--execucao ID]
@@ -34,6 +34,8 @@ def main(argv=None) -> int:
     p = sub.add_parser("coletar")
     p.add_argument("--saida", type=Path, required=True)
     p.add_argument("--censo-release", type=Path)
+    # Manifesto da coleta anterior: a mudança é detectada pelo hash dos valores, comparado com ele.
+    p.add_argument("--anterior", type=Path)
     sub.add_parser("alcance").add_argument("--saida", type=Path, required=True)
     p = sub.add_parser("diagnostico")
     p.add_argument("--saida", type=Path, required=True)
@@ -58,10 +60,14 @@ def main(argv=None) -> int:
     cat = catalogo.carregar()
     if args.comando == "coletar":
         release = args.censo_release if args.censo_release and args.censo_release.exists() else None
-        resultado = ibge.coletar(args.saida, release)
+        anterior = _ler(args.anterior)["fontes"] if args.anterior and args.anterior.exists() else None
+        resultado = ibge.coletar(args.saida, release, anterior)
         fontes = resultado["fontes"]
-        print(f"IBGE: {len(resultado['municipios'])} municípios; estimativa {fontes['estimativa']['periodo']}; "
+        print(f"IBGE: {len(resultado['municipios'])} municípios da DTB {fontes['dtb']['periodo']} "
+              f"(data-base {fontes['dtb']['data_base']}); estimativa {fontes['estimativa']['periodo']}; "
               f"Censo 2022 da {fontes['censo']['origem']}")
+        for nome, fonte in fontes.items():
+            print(f"{nome}: em relação à coleta anterior, {fonte['em_relacao_a_coleta_anterior']}")
     elif args.comando == "alcance":
         resultado = alcance.executar()
         _gravar(args.saida / "alcance.json", resultado)

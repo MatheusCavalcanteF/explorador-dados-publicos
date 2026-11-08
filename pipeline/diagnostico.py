@@ -20,7 +20,7 @@ import time
 from datetime import datetime, timezone
 from urllib.parse import urlsplit
 
-from . import alcance, ibge, rede
+from . import alcance, dtb, rede
 
 TEMPO_DNS = 10
 TEMPO_CONEXAO = 10
@@ -35,16 +35,21 @@ MSS_REDUZIDO = 1200
 GRUPO_CLASSICO = "X25519"
 ROTULOS = {"so_x25519": "só X25519", f"mss_{MSS_REDUZIDO}": f"MSS {MSS_REDUZIDO}"}
 
+# A API de serviços do IBGE saiu da coleta (a lista vem da DTB, e o período, da SIDRA), mas continua
+# aqui para saber quando ela volta a aceitar o runner.
+URL_LOCALIDADES = "https://servicodados.ibge.gov.br/api/v1/localidades/municipios"
+URL_PERIODOS = "https://servicodados.ibge.gov.br/api/v3/agregados/6579/periodos"
+
 ALVOS = [
-    {"nome": "ibge_localidades", "url": ibge.URL_LOCALIDADES},
-    {"nome": "ibge_agregados", "url": ibge.URL_PERIODOS.format(tabela=ibge.ESTIMATIVA["tabela"])},
+    {"nome": "ibge_localidades", "url": URL_LOCALIDADES},
+    {"nome": "ibge_agregados", "url": URL_PERIODOS},
     {"nome": "ibge_sidra", "url": "https://apisidra.ibge.gov.br/values/t/6579/n6/3548500/v/9324/p/last%201"},
     {"nome": "ibge_ftp", "url": "ftp://ftp.ibge.gov.br/Estimativas_de_Populacao/"},
     {"nome": "ibge_ftp_https", "url": "https://ftp.ibge.gov.br/Estimativas_de_Populacao/"},
-    # Divisão Territorial Brasileira: a lista oficial de municípios fora da API de localidades.
-    {"nome": "ibge_geoftp_https", "url": "https://geoftp.ibge.gov.br/organizacao_do_territorio/estrutura_territorial/"
-                                         "divisao_territorial/2025/DTB_2025.zip", "cabecalhos": {"Range": "bytes=0-1023"}},
+    # Divisão Territorial Brasileira: de onde a coleta tira a lista oficial de municípios.
+    {"nome": "ibge_geoftp_https", "url": f"{dtb.RAIZ}2025/DTB_2025.zip", "cabecalhos": {"Range": "bytes=0-1023"}},
     {"nome": "datasus_ftp", "url": f"ftp://ftp.datasus.gov.br{alcance.SIH_PASTA}/{alcance.SIH_ARQUIVO}"},
+    # Fora do alcance obrigatório do Publicar até a F1c; só este diagnóstico manual testa o INEP.
     {"nome": "inep", "url": alcance.INEP_URL, "cabecalhos": {"Range": "bytes=0-1023"}},
     {"nome": "pdet_ftp", "url": f"ftp://ftp.mtps.gov.br{alcance.CAGED_PASTA}/"},
     {"nome": "siconfi", "url": alcance.SICONFI_URL},

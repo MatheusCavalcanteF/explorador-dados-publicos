@@ -1,6 +1,9 @@
-"""Dados sintéticos no formato das APIs do IBGE. Nenhum teste usa rede: o socket é bloqueado."""
+"""Dados sintéticos no formato das fontes do IBGE (DTB e SIDRA). Nenhum teste usa rede: o socket é bloqueado."""
+import io
 import json
 import socket
+import zipfile
+from xml.sax.saxutils import escape
 
 import pytest
 
@@ -26,15 +29,88 @@ def codigos(n=5571):
     return [f"{ufs[i % 27]}{(i // 27) * 10:05d}" for i in range(n)]
 
 
-def localidades(lista=None, micro_nula=()):
-    itens = []
+NOMES_UF = {"RO": "Rondônia", "AC": "Acre", "AM": "Amazonas", "RR": "Roraima", "PA": "Pará", "AP": "Amapá",
+            "TO": "Tocantins", "MA": "Maranhão", "PI": "Piauí", "CE": "Ceará", "RN": "Rio Grande do Norte",
+            "PB": "Paraíba", "PE": "Pernambuco", "AL": "Alagoas", "SE": "Sergipe", "BA": "Bahia",
+            "MG": "Minas Gerais", "ES": "Espírito Santo", "RJ": "Rio de Janeiro", "SP": "São Paulo",
+            "PR": "Paraná", "SC": "Santa Catarina", "RS": "Rio Grande do Sul", "MS": "Mato Grosso do Sul",
+            "MT": "Mato Grosso", "GO": "Goiás", "DF": "Distrito Federal"}
+CABECALHO_DTB = ["UF", "Nome_UF", "Região Geográfica Intermediária", "Nome Região Geográfica Intermediária",
+                 "Região Geográfica Imediata", "Nome Região Geográfica Imediata", "Município",
+                 "Código Município Completo", "Nome_Município"]
+
+
+def linhas_dtb(lista=None, data_base="31/12/2025", cabecalho=CABECALHO_DTB):
+    """Linhas no formato da planilha de municípios da DTB: título, data-base, cabeçalho e um município por linha."""
+    linhas = [["TÍTULO : BET - BANCO DE ESTRUTURAS TERRITORIAIS"], ["RELATÓRIO DE DIVISÃO TERRITORIAL BRASILEIRA"],
+              ["UF: 99 - BRASIL"]]
+    if data_base:
+        linhas.append([f"DATA BASE: {data_base}"])
+    linhas.append(list(cabecalho))
     for codigo in lista or codigos():
-        uf = {"id": int(codigo[:2]), "sigla": UFS[int(codigo[:2])], "nome": f"Estado {UFS[int(codigo[:2])]}",
-              "regiao": {"id": 1, "sigla": "N", "nome": "Norte"}}
-        imediata = {"id": 1, "nome": "Imediata", "regiao-intermediaria": {"id": 1, "nome": "Intermediária", "UF": uf}}
-        micro = None if codigo in micro_nula else {"id": 1, "nome": "Micro", "mesorregiao": {"id": 1, "nome": "Meso", "UF": uf}}
-        itens.append({"id": int(codigo), "nome": f"Município {codigo}", "microrregiao": micro, "regiao-imediata": imediata})
-    return itens
+        uf = codigo[:2]
+        valores = {"UF": uf, "Nome_UF": NOMES_UF[UFS[int(uf)]], "Região Geográfica Intermediária": uf + "01",
+                   "Nome Região Geográfica Intermediária": "Intermediária", "Região Geográfica Imediata": uf + "0001",
+                   "Nome Região Geográfica Imediata": "Imediata", "Município": codigo[2:],
+                   "Código Município Completo": codigo, "Nome_Município": f"Município {codigo}"}
+        linhas.append([valores.get(c, "") for c in cabecalho])
+    return linhas
+
+
+def _celula_ods(texto):
+    if texto == "":
+        return "<table:table-cell/>"
+    # Dois espaços seguidos viram <text:s/> no ODS, como o LibreOffice grava.
+    corpo = escape(texto).replace("  ", ' <text:s/>')
+    return f'<table:table-cell office:value-type="string"><text:p>{corpo}</text:p></table:table-cell>'
+
+
+def ods(linhas):
+    """Planilha .ods mínima: um zip com content.xml, células repetidas no fim de cada linha e linhas vazias no fim."""
+    corpo = "".join("<table:table-row>" + "".join(_celula_ods(c) for c in linha)
+                    + '<table:table-cell table:number-columns-repeated="16365"/></table:table-row>' for linha in linhas)
+    xml = ('<?xml version="1.0" encoding="UTF-8"?><office:document-content '
+           'xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" '
+           'xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" '
+           'xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"><office:body><office:spreadsheet>'
+           f'<table:table table:name="DTB_Municípios">{corpo}'
+           '<table:table-row table:number-rows-repeated="1042997"><table:table-cell table:number-columns-repeated="16384"/>'
+           '</table:table-row></table:table></office:spreadsheet></office:body></office:document-content>')
+    buffer = io.BytesIO()
+    with zipfile.ZipFile(buffer, "w") as z:
+        z.writestr("mimetype", "application/vnd.oasis.opendocument.spreadsheet")
+        z.writestr("content.xml", xml)
+    return buffer.getvalue()
+
+
+def dtb_zip(linhas=None, membro="RELATORIO_DTB_BRASIL_2025_MUNICIPIOS.ods", extras=("RELATORIO_DTB_BRASIL_2025_DISTRITOS.ods",)):
+    buffer = io.BytesIO()
+    with zipfile.ZipFile(buffer, "w") as z:
+        z.writestr(membro, linhas if isinstance(linhas, bytes) else ods(linhas or linhas_dtb()))
+        for nome in extras:
+            z.writestr(nome, ods([["outra planilha"]]))
+    return buffer.getvalue()
+
+
+def indice(nomes):
+    """Listagem de pasta como a do geoftp (Apache "Index of"), com os links de ordenação e o da pasta acima."""
+    itens = "".join(f'<tr><td><a href="{n}">{n}</a></td><td>2026-03-26 18:38</td></tr>' for n in nomes)
+    return ('<html><body><a href="https://www.ibge.gov.br/">IBGE</a><table><tr><th><a href="?C=N;O=D">Name</a></th></tr>'
+            '<tr><td><a href="/organizacao_do_territorio/estrutura_territorial/">Parent Directory</a></td></tr>'
+            f'{itens}</table></body></html>').encode("latin-1")
+
+
+def fonte_dtb(lista=None, pastas=None, corpo=None):
+    """Respostas do geoftp: raiz com as pastas de ano e o .zip da mais recente."""
+    from pipeline import dtb
+    pastas = pastas or {"2024": ["DTB_2024.zip"], "2025": ["DTB_2025.zip"]}
+    respostas = {dtb.RAIZ: resposta(indice(["1940/", *[f"{a}/" for a in pastas]]))}
+    for ano, arquivos in pastas.items():
+        respostas[f"{dtb.RAIZ}{ano}/"] = resposta(indice(arquivos))
+        for arquivo in arquivos:
+            respostas[f"{dtb.RAIZ}{ano}/{arquivo}"] = resposta(corpo or dtb_zip(linhas_dtb(lista)),
+                                                               cabecalhos={"Last-Modified": "Thu, 26 Mar 2026 21:07:36 GMT"})
+    return respostas
 
 
 def sidra(valores, variavel, periodo, ordem=("municipio", "variavel", "periodo")):
@@ -53,11 +129,6 @@ def sidra(valores, variavel, periodo, ordem=("municipio", "variavel", "periodo")
             linha[f"D{i}N"] = dados[nome]
         linhas.append(linha)
     return linhas
-
-
-def periodos(periodo, modificacao):
-    return [{"id": "2021", "literals": ["2021"], "modificacao": "24/06/2024"},
-            {"id": periodo, "literals": [periodo], "modificacao": modificacao}]
 
 
 def resposta(valor, status=200, cabecalhos=None):
