@@ -39,6 +39,8 @@ Node: `@duckdb/duckdb-wasm@1.33.1-dev57.0`, `playwright-core@1.65.0`, `hyparquet
 | `scripts/conferir_tabnet_f1b.py` | F1b: o Parquet mínimo do pipeline contra o TabNet, em dois municípios por região, por competência e por data de internação. Valores de 1 a 4 não são gravados |
 | `scripts/medir_versoes_f1b.py` | F1b: dedução entre duas versões publicadas (o par real de SP e pares simulados de processamento tardio, nas 27 UFs) e o efeito de arredondar os meses preliminares |
 | `scripts/medir_trava_f1b.py` | F1b: a trava de queda do pipeline no par real de SP, por mês da alta, e o total por UF e competência |
+| `scripts/medir_versoes_transicao.py` | F1b, com a regra decidida: versões atacadas juntas, na transição em que um mês ou o ano fecha e em três versões seguidas, com e sem a herança do padrão dos períodos fechados |
+| `scripts/medir_mudanca_tardia.py` | F1b: quanto um mês ainda muda depois de 6, 9 e 12 meses, por UF, depois do fechamento (listagem do FTP) e depois do próprio mês (processamento tardio e o par real de SP) |
 | `scripts/resumo.py`, `resumo_carga.py` | Tabelas-resumo dos agregados e do carregamento |
 | `scripts/derivar_numeros.py` | Números do plano que são contas sobre outros resultados, com origem e cálculo |
 | `scripts/verificar_resultados.py` | Caminhos da máquina em `docs/` e contagens abaixo de 5 por município nos resultados. O que é próprio da máquina vem por `--termo-local`, nunca fica no código: `verificar_resultados.py <resultados> <municipios.json> --texto docs --termo-local <usuário>` |
@@ -107,6 +109,9 @@ Os testes de tempo e de igualdade precisam dos dados no site. A partir dos Parqu
 | `conferencia_tabnet_f1b_capital.json` | O que foi testado para achar a diferença da capital de SP, sem atributos das AIHs envolvidas |
 | `versoes_f1b.json` | Saída de `medir_versoes_f1b.py`: diferenças exatas de 1 a 4 entre versões, por política, e o erro do arredondamento |
 | `trava_f1b.json` | Saída de `medir_trava_f1b.py` |
+| `versoes_transicao_f1b.json` | Saída de `medir_versoes_transicao.py`: teste de cada versão, das versões juntas e diferenças de 1 a 4 por par; os grupos sem herança em `sem_heranca` |
+| `mudanca_tardia_f1b.json` | Saída de `medir_mudanca_tardia.py`. Percentuais com uma casa; resto ou variação de 1 a 4 sai nulo |
+| `sih_local_f1b.json` | Resumo da execução local do pipeline com as regras decididas (teste por ano, critério, o que não foi publicado e por quê) e o peso das páginas do build local com o SIH |
 | `particoes_f1b.json` | Tamanho das partições do SIH por ano, com só as métricas do catálogo em cada cruzamento e com dias e valor em todos |
 | `sih_runner_*.json` | Medições do workflow `SIH (medição)` no runner, reduzidas ao que o plano cita: tempos, disco, memória, tamanho das partições e, por ano, o teste de dedução (no Brasil, também a supressão por cruzamento) |
 | `derivados.json` | Somas e percentuais citados no plano, com origem e cálculo |

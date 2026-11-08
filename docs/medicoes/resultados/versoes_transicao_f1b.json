@@ -1,0 +1,406 @@
+{
+ "medido_em": "2026-11-08T16:11:38Z",
+ "k": 5,
+ "arredondar_multiplo": 5,
+ "reforco_max_rodadas": 15,
+ "script": "docs/medicoes/scripts/medir_versoes_transicao.py",
+ "grupos": [
+  {
+   "grupo": "fecha_2024",
+   "herda_da_anterior": true,
+   "ano": 2024,
+   "voltas_do_ataque_conjunto": 2,
+   "celulas_publicadas_que_fecharam": {"0-1": 481273},
+   "versoes": [
+    {
+     "rotulo": "L=202604",
+     "ultima_no_ftp": 202604,
+     "ultimo_mes": 202604,
+     "fechado_ate": 202411,
+     "meses_preliminares": 1,
+     "nao_publicados": [],
+     "rodadas": 1,
+     "teste_sozinha": 0,
+     "teste_com_as_outras": 0,
+     "por_no": {}
+    },
+    {
+     "rotulo": "L=202605",
+     "ultima_no_ftp": 202605,
+     "ultimo_mes": 202605,
+     "fechado_ate": 202412,
+     "meses_preliminares": 0,
+     "nao_publicados": [],
+     "rodadas": 3,
+     "teste_sozinha": 0,
+     "teste_com_as_outras": 0,
+     "por_no": {}
+    }
+   ],
+   "pares": {
+    "0-1": {
+     "diferencas_pequenas_diretas": 0,
+     "diferencas_pequenas_pela_cadeia": 0,
+     "em_nos_publicados": 0,
+     "celulas_que_mudaram": 0,
+     "por_no": {}
+    }
+   }
+  },
+  {
+   "grupo": "real_sp",
+   "herda_da_anterior": true,
+   "ano": 2025,
+   "voltas_do_ataque_conjunto": 3,
+   "celulas_publicadas_que_fecharam": {"0-1": 201009},
+   "versoes": [
+    {
+     "rotulo": "setembro",
+     "ultima_no_ftp": 202607,
+     "ultimo_mes": 202607,
+     "fechado_ate": 202502,
+     "meses_preliminares": 10,
+     "nao_publicados": [],
+     "rodadas": 1,
+     "teste_sozinha": 0,
+     "teste_com_as_outras": 0,
+     "por_no": {}
+    },
+    {
+     "rotulo": "outubro",
+     "ultima_no_ftp": 202608,
+     "ultimo_mes": 202607,
+     "fechado_ate": 202503,
+     "meses_preliminares": 9,
+     "nao_publicados": [],
+     "rodadas": 1,
+     "teste_sozinha": 0,
+     "teste_com_as_outras": 0,
+     "por_no": {}
+    }
+   ],
+   "pares": {
+    "0-1": {
+     "diferencas_pequenas_diretas": 0,
+     "diferencas_pequenas_pela_cadeia": 0,
+     "em_nos_publicados": 0,
+     "celulas_que_mudaram": 0,
+     "por_no": {}
+    }
+   }
+  },
+  {
+   "grupo": "real_sp",
+   "herda_da_anterior": true,
+   "ano": 2026,
+   "voltas_do_ataque_conjunto": 1,
+   "celulas_publicadas_que_fecharam": {"0-1": 0},
+   "versoes": [
+    {
+     "rotulo": "setembro",
+     "ultima_no_ftp": 202607,
+     "ultimo_mes": 202607,
+     "fechado_ate": 202502,
+     "meses_preliminares": 7,
+     "nao_publicados": ["sih_res_tri_capitulo"],
+     "rodadas": 1,
+     "teste_sozinha": 0,
+     "teste_com_as_outras": 0,
+     "por_no": {}
+    },
+    {
+     "rotulo": "outubro",
+     "ultima_no_ftp": 202608,
+     "ultimo_mes": 202607,
+     "fechado_ate": 202503,
+     "meses_preliminares": 7,
+     "nao_publicados": ["sih_res_tri_capitulo"],
+     "rodadas": 1,
+     "teste_sozinha": 0,
+     "teste_com_as_outras": 0,
+     "por_no": {}
+    }
+   ],
+   "pares": {
+    "0-1": {
+     "diferencas_pequenas_diretas": 0,
+     "diferencas_pequenas_pela_cadeia": 0,
+     "em_nos_publicados": 0,
+     "celulas_que_mudaram": 0,
+     "por_no": {}
+    }
+   }
+  },
+  {
+   "grupo": "sequencia",
+   "herda_da_anterior": true,
+   "ano": 2025,
+   "voltas_do_ataque_conjunto": 2,
+   "celulas_publicadas_que_fecharam": {"0-1": 62888, "1-2": 63039},
+   "versoes": [
+    {
+     "rotulo": "L=202605",
+     "ultima_no_ftp": 202605,
+     "ultimo_mes": 202605,
+     "fechado_ate": 202412,
+     "meses_preliminares": 12,
+     "nao_publicados": [],
+     "rodadas": 1,
+     "teste_sozinha": 0,
+     "teste_com_as_outras": 0,
+     "por_no": {}
+    },
+    {
+     "rotulo": "L=202606",
+     "ultima_no_ftp": 202606,
+     "ultimo_mes": 202606,
+     "fechado_ate": 202501,
+     "meses_preliminares": 11,
+     "nao_publicados": [],
+     "rodadas": 1,
+     "teste_sozinha": 0,
+     "teste_com_as_outras": 0,
+     "por_no": {}
+    },
+    {
+     "rotulo": "L=202607",
+     "ultima_no_ftp": 202607,
+     "ultimo_mes": 202607,
+     "fechado_ate": 202502,
+     "meses_preliminares": 10,
+     "nao_publicados": [],
+     "rodadas": 1,
+     "teste_sozinha": 0,
+     "teste_com_as_outras": 0,
+     "por_no": {}
+    }
+   ],
+   "pares": {
+    "0-1": {
+     "diferencas_pequenas_diretas": 0,
+     "diferencas_pequenas_pela_cadeia": 0,
+     "em_nos_publicados": 0,
+     "celulas_que_mudaram": 0,
+     "por_no": {}
+    },
+    "1-2": {
+     "diferencas_pequenas_diretas": 0,
+     "diferencas_pequenas_pela_cadeia": 0,
+     "em_nos_publicados": 0,
+     "celulas_que_mudaram": 0,
+     "por_no": {}
+    },
+    "0-2": {
+     "diferencas_pequenas_diretas": 0,
+     "diferencas_pequenas_pela_cadeia": 0,
+     "em_nos_publicados": 0,
+     "celulas_que_mudaram": 0,
+     "por_no": {}
+    }
+   }
+  },
+  {
+   "grupo": "sequencia",
+   "herda_da_anterior": true,
+   "ano": 2026,
+   "voltas_do_ataque_conjunto": 1,
+   "celulas_publicadas_que_fecharam": {"0-1": 0, "1-2": 0},
+   "versoes": [
+    {
+     "rotulo": "L=202605",
+     "ultima_no_ftp": 202605,
+     "ultimo_mes": 202605,
+     "fechado_ate": 202412,
+     "meses_preliminares": 5,
+     "nao_publicados": ["sih_res_tri_capitulo"],
+     "rodadas": 1,
+     "teste_sozinha": 0,
+     "teste_com_as_outras": 0,
+     "por_no": {}
+    },
+    {
+     "rotulo": "L=202606",
+     "ultima_no_ftp": 202606,
+     "ultimo_mes": 202606,
+     "fechado_ate": 202501,
+     "meses_preliminares": 6,
+     "nao_publicados": [],
+     "rodadas": 1,
+     "teste_sozinha": 0,
+     "teste_com_as_outras": 0,
+     "por_no": {}
+    },
+    {
+     "rotulo": "L=202607",
+     "ultima_no_ftp": 202607,
+     "ultimo_mes": 202607,
+     "fechado_ate": 202502,
+     "meses_preliminares": 7,
+     "nao_publicados": ["sih_res_tri_capitulo"],
+     "rodadas": 1,
+     "teste_sozinha": 0,
+     "teste_com_as_outras": 0,
+     "por_no": {}
+    }
+   ],
+   "pares": {
+    "0-1": {
+     "diferencas_pequenas_diretas": 0,
+     "diferencas_pequenas_pela_cadeia": 0,
+     "em_nos_publicados": 0,
+     "celulas_que_mudaram": 0,
+     "por_no": {}
+    },
+    "1-2": {
+     "diferencas_pequenas_diretas": 0,
+     "diferencas_pequenas_pela_cadeia": 0,
+     "em_nos_publicados": 0,
+     "celulas_que_mudaram": 36,
+     "por_no": {}
+    },
+    "0-2": {
+     "diferencas_pequenas_diretas": 0,
+     "diferencas_pequenas_pela_cadeia": 0,
+     "em_nos_publicados": 0,
+     "celulas_que_mudaram": 36,
+     "por_no": {}
+    }
+   }
+  }
+ ],
+ "sem_heranca": [
+  {
+   "grupo": "fecha_2024_sem_heranca",
+   "ano": 2024,
+   "versoes": [
+    {
+     "rotulo": "L=202604",
+     "rodadas": 1,
+     "teste_sozinha": 0,
+     "teste_com_as_outras": 18,
+     "por_no": {"mun_hosp+mes+carater": 1, "mun_hosp+mes+urgencia": 1, "mun_hosp+tri+carater": 1, "mun_res+mes+faixa5": 11, "mun_res+tri+capitulo": 1, "mun_hosp+tri+urgencia": 1, "mun_hosp+mes": 1, "mun_hosp+tri": 1}
+    },
+    {
+     "rotulo": "L=202605",
+     "rodadas": 2,
+     "teste_sozinha": 0,
+     "teste_com_as_outras": 18,
+     "por_no": {"mun_hosp+mes+carater": 1, "mun_hosp+mes+urgencia": 1, "mun_hosp+tri+carater": 1, "mun_res+mes+faixa5": 11, "mun_res+tri+capitulo": 1, "mun_hosp+tri+urgencia": 1, "mun_hosp+mes": 1, "mun_hosp+tri": 1}
+    }
+   ],
+   "pares": {
+    "0-1": {"diferencas_pequenas_diretas": 0, "diferencas_pequenas_pela_cadeia": 0, "em_nos_publicados": 0}
+   }
+  },
+  {
+   "grupo": "real_sp_sem_heranca",
+   "ano": 2025,
+   "versoes": [
+    {
+     "rotulo": "setembro",
+     "rodadas": 1,
+     "teste_sozinha": 0,
+     "teste_com_as_outras": 0,
+     "por_no": {}
+    },
+    {
+     "rotulo": "outubro",
+     "rodadas": 1,
+     "teste_sozinha": 0,
+     "teste_com_as_outras": 0,
+     "por_no": {}
+    }
+   ],
+   "pares": {
+    "0-1": {"diferencas_pequenas_diretas": 0, "diferencas_pequenas_pela_cadeia": 0, "em_nos_publicados": 0}
+   }
+  },
+  {
+   "grupo": "real_sp_sem_heranca",
+   "ano": 2026,
+   "versoes": [
+    {
+     "rotulo": "setembro",
+     "rodadas": 1,
+     "teste_sozinha": 0,
+     "teste_com_as_outras": 0,
+     "por_no": {}
+    },
+    {
+     "rotulo": "outubro",
+     "rodadas": 1,
+     "teste_sozinha": 0,
+     "teste_com_as_outras": 0,
+     "por_no": {}
+    }
+   ],
+   "pares": {
+    "0-1": {"diferencas_pequenas_diretas": 0, "diferencas_pequenas_pela_cadeia": 0, "em_nos_publicados": 0}
+   }
+  },
+  {
+   "grupo": "sequencia_sem_heranca",
+   "ano": 2025,
+   "versoes": [
+    {
+     "rotulo": "L=202605",
+     "rodadas": 1,
+     "teste_sozinha": 0,
+     "teste_com_as_outras": 0,
+     "por_no": {}
+    },
+    {
+     "rotulo": "L=202606",
+     "rodadas": 1,
+     "teste_sozinha": 0,
+     "teste_com_as_outras": 0,
+     "por_no": {}
+    },
+    {
+     "rotulo": "L=202607",
+     "rodadas": 1,
+     "teste_sozinha": 0,
+     "teste_com_as_outras": 0,
+     "por_no": {}
+    }
+   ],
+   "pares": {
+    "0-1": {"diferencas_pequenas_diretas": 0, "diferencas_pequenas_pela_cadeia": 0, "em_nos_publicados": 0},
+    "1-2": {"diferencas_pequenas_diretas": 0, "diferencas_pequenas_pela_cadeia": 0, "em_nos_publicados": 0},
+    "0-2": {"diferencas_pequenas_diretas": 0, "diferencas_pequenas_pela_cadeia": 0, "em_nos_publicados": 0}
+   }
+  },
+  {
+   "grupo": "sequencia_sem_heranca",
+   "ano": 2026,
+   "versoes": [
+    {
+     "rotulo": "L=202605",
+     "rodadas": 1,
+     "teste_sozinha": 0,
+     "teste_com_as_outras": 0,
+     "por_no": {}
+    },
+    {
+     "rotulo": "L=202606",
+     "rodadas": 1,
+     "teste_sozinha": 0,
+     "teste_com_as_outras": 0,
+     "por_no": {}
+    },
+    {
+     "rotulo": "L=202607",
+     "rodadas": 1,
+     "teste_sozinha": 0,
+     "teste_com_as_outras": 0,
+     "por_no": {}
+    }
+   ],
+   "pares": {
+    "0-1": {"diferencas_pequenas_diretas": 0, "diferencas_pequenas_pela_cadeia": 0, "em_nos_publicados": 0},
+    "1-2": {"diferencas_pequenas_diretas": 0, "diferencas_pequenas_pela_cadeia": 0, "em_nos_publicados": 0},
+    "0-2": {"diferencas_pequenas_diretas": 0, "diferencas_pequenas_pela_cadeia": 0, "em_nos_publicados": 0}
+   }
+  }
+ ]
+}

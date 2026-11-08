@@ -1,0 +1,228 @@
+{
+ "medido_em": "2026-11-08T16:02:31Z",
+ "comando": "python -m pipeline sih --coleta <coleta do Publicar 42442355751> --trabalho <pasta> --saida <pasta> --origem-local <.dbc da versão de 16/10/2026> --processos 6",
+ "janela": {
+  "ultima_no_ftp": 202608,
+  "ultima_completa": 202607,
+  "ultimo_mes_fechado": 202503,
+  "anos_abertos": [2025, 2026]
+ },
+ "coleta_s": 314.4,
+ "total_s": 519.7,
+ "colunas_de_supressao_com_todos": ["linhas", "pct_celulas_ocultas", "pct_internacoes_ocultas"],
+ "anos": {
+  "2021": {
+   "internacoes": 11559233,
+   "preliminares": 0,
+   "teste": {
+    "passou": true,
+    "rodadas": [
+     [0, 106, 373519],
+     [1, 0, 374019]
+    ],
+    "obitos_passou": true
+   },
+   "publicados": ["sih_res_ano", "sih_hosp_ano", "sih_res_mes", "sih_hosp_mes", "sih_res_mes_sexo", "sih_res_mes_faixa5", "sih_res_ano_capitulo", "sih_res_ano_faixa12_sexo", "sih_res_ano_raca", "sih_res_tri_capitulo", "sih_hosp_ano_especialidade", "sih_hosp_tri_capitulo"],
+   "nao_publicados": {
+    "sih_res_mes_urgencia": {"motivo": "6,7% das internações ficariam ocultas (limite: 5%)", "pct_internacoes_ocultas": 6.656, "pct_celulas_ocultas": 33.09},
+    "sih_hosp_mes_carater": {"motivo": "5,1% das internações ficariam ocultas (limite: 5%)", "pct_internacoes_ocultas": 5.069, "pct_celulas_ocultas": 19.33}
+   },
+   "supressao_com_todos": {
+    "sih_res_ano": [5570, 0.0, 0.0],
+    "sih_hosp_ano": [3126, 0.32, 0.001],
+    "sih_res_mes": [66830, 1.49, 0.047],
+    "sih_hosp_mes": [36436, 6.21, 0.094],
+    "sih_res_mes_sexo": [133365, 10.02, 0.632],
+    "sih_res_mes_urgencia": [128517, 33.09, 6.656],
+    "sih_res_mes_faixa5": [321885, 30.11, 3.146],
+    "sih_res_ano_capitulo": [103052, 21.76, 0.532],
+    "sih_res_ano_faixa12_sexo": [129880, 15.73, 0.599],
+    "sih_res_ano_raca": [27276, 25.49, 0.673],
+    "sih_res_tri_capitulo": [351163, 44.18, 3.572],
+    "sih_hosp_ano_especialidade": [10983, 13.05, 0.605],
+    "sih_hosp_tri_capitulo": [154895, 34.91, 1.177],
+    "sih_hosp_mes_carater": [53437, 19.33, 5.069]
+   },
+   "segundos": {"base": 8.3, "fechamento": 1.2, "supressao": 23.7, "deducao_obitos": 0.1, "gravar": 2.1}
+  },
+  "2022": {
+   "internacoes": 12363273,
+   "preliminares": 0,
+   "teste": {
+    "passou": true,
+    "rodadas": [
+     [0, 96, 385604],
+     [1, 0, 386101]
+    ],
+    "obitos_passou": true
+   },
+   "publicados": ["sih_res_ano", "sih_hosp_ano", "sih_res_mes", "sih_hosp_mes", "sih_res_mes_sexo", "sih_res_mes_urgencia", "sih_res_mes_faixa5", "sih_res_ano_capitulo", "sih_res_ano_faixa12_sexo", "sih_res_ano_raca", "sih_res_tri_capitulo", "sih_hosp_ano_especialidade", "sih_hosp_tri_capitulo", "sih_hosp_mes_carater"],
+   "nao_publicados": {},
+   "supressao_com_todos": {
+    "sih_res_ano": [5570, 0.0, 0.0],
+    "sih_hosp_ano": [3119, 0.1, 0.0],
+    "sih_res_mes": [66838, 0.97, 0.031],
+    "sih_hosp_mes": [36549, 5.43, 0.085],
+    "sih_res_mes_sexo": [133496, 7.7, 0.471],
+    "sih_res_mes_urgencia": [131928, 21.25, 3.287],
+    "sih_res_mes_faixa5": [325494, 26.53, 2.406],
+    "sih_res_ano_capitulo": [105213, 19.5, 0.473],
+    "sih_res_ano_faixa12_sexo": [131328, 12.98, 0.455],
+    "sih_res_ano_raca": [27267, 26.36, 0.691],
+    "sih_res_tri_capitulo": [365793, 41.38, 3.285],
+    "sih_hosp_ano_especialidade": [11051, 9.67, 0.514],
+    "sih_hosp_tri_capitulo": [161885, 32.95, 1.098],
+    "sih_hosp_mes_carater": [56270, 14.67, 2.844]
+   },
+   "segundos": {"base": 11.5, "fechamento": 1.2, "supressao": 15.5, "deducao_obitos": 0.1, "gravar": 2.0}
+  },
+  "2023": {
+   "internacoes": 13229794,
+   "preliminares": 0,
+   "teste": {
+    "passou": true,
+    "rodadas": [
+     [0, 113, 364118],
+     [1, 0, 364570]
+    ],
+    "obitos_passou": true
+   },
+   "publicados": ["sih_res_ano", "sih_hosp_ano", "sih_res_mes", "sih_hosp_mes", "sih_res_mes_sexo", "sih_res_mes_urgencia", "sih_res_mes_faixa5", "sih_res_ano_capitulo", "sih_res_ano_faixa12_sexo", "sih_res_ano_raca", "sih_res_tri_capitulo", "sih_hosp_ano_especialidade", "sih_hosp_tri_capitulo", "sih_hosp_mes_carater"],
+   "nao_publicados": {},
+   "supressao_com_todos": {
+    "sih_res_ano": [5570, 0.0, 0.0],
+    "sih_hosp_ano": [3128, 0.29, 0.002],
+    "sih_res_mes": [66836, 0.72, 0.026],
+    "sih_hosp_mes": [36710, 5.37, 0.076],
+    "sih_res_mes_sexo": [133561, 6.31, 0.38],
+    "sih_res_mes_urgencia": [132744, 15.28, 2.027],
+    "sih_res_mes_faixa5": [327119, 24.47, 2.134],
+    "sih_res_ano_capitulo": [106089, 17.88, 0.42],
+    "sih_res_ano_faixa12_sexo": [131802, 11.85, 0.397],
+    "sih_res_ano_raca": [26653, 30.06, 0.636],
+    "sih_res_tri_capitulo": [374161, 39.68, 3.057],
+    "sih_hosp_ano_especialidade": [11053, 9.64, 0.469],
+    "sih_hosp_tri_capitulo": [165773, 32.36, 1.026],
+    "sih_hosp_mes_carater": [57467, 13.14, 2.553]
+   },
+   "segundos": {"base": 15.2, "fechamento": 1.0, "supressao": 14.0, "deducao_obitos": 0.0, "gravar": 1.8}
+  },
+  "2024": {
+   "internacoes": 14029372,
+   "preliminares": 0,
+   "teste": {
+    "passou": true,
+    "rodadas": [
+     [0, 82, 344171],
+     [1, 0, 344625]
+    ],
+    "obitos_passou": true
+   },
+   "publicados": ["sih_res_ano", "sih_hosp_ano", "sih_res_mes", "sih_hosp_mes", "sih_res_mes_sexo", "sih_res_mes_urgencia", "sih_res_mes_faixa5", "sih_res_ano_capitulo", "sih_res_ano_faixa12_sexo", "sih_res_ano_raca", "sih_res_tri_capitulo", "sih_hosp_ano_especialidade", "sih_hosp_tri_capitulo", "sih_hosp_mes_carater"],
+   "nao_publicados": {},
+   "supressao_com_todos": {
+    "sih_res_ano": [5570, 0.0, 0.0],
+    "sih_hosp_ano": [3135, 0.38, 0.001],
+    "sih_res_mes": [66837, 0.49, 0.015],
+    "sih_hosp_mes": [36815, 5.12, 0.066],
+    "sih_res_mes_sexo": [133605, 5.16, 0.295],
+    "sih_res_mes_urgencia": [133105, 11.97, 1.378],
+    "sih_res_mes_faixa5": [327913, 22.99, 1.959],
+    "sih_res_ano_capitulo": [106827, 16.63, 0.37],
+    "sih_res_ano_faixa12_sexo": [132029, 10.91, 0.344],
+    "sih_res_ano_raca": [22392, 26.23, 0.698],
+    "sih_res_tri_capitulo": [379667, 38.06, 2.798],
+    "sih_hosp_ano_especialidade": [11014, 9.61, 0.461],
+    "sih_hosp_tri_capitulo": [168623, 31.41, 0.935],
+    "sih_hosp_mes_carater": [58675, 12.94, 2.636]
+   },
+   "segundos": {"base": 20.5, "fechamento": 1.1, "supressao": 14.6, "deducao_obitos": 0.0, "gravar": 1.9}
+  },
+  "2025": {
+   "internacoes": 14546743,
+   "preliminares": 9,
+   "teste": {
+    "passou": true,
+    "rodadas": [
+     [0, 0, 336455]
+    ],
+    "obitos_passou": true
+   },
+   "publicados": ["sih_res_ano", "sih_hosp_ano", "sih_res_mes", "sih_hosp_mes", "sih_res_mes_sexo", "sih_res_mes_urgencia", "sih_res_mes_faixa5", "sih_res_ano_capitulo", "sih_res_ano_faixa12_sexo", "sih_res_ano_raca", "sih_res_tri_capitulo", "sih_hosp_ano_especialidade", "sih_hosp_tri_capitulo", "sih_hosp_mes_carater"],
+   "nao_publicados": {},
+   "supressao_com_todos": {
+    "sih_res_ano": [5570, 0.0, 0.0],
+    "sih_hosp_ano": [3146, 0.13, 0.0],
+    "sih_res_mes": [66838, 0.41, 0.012],
+    "sih_hosp_mes": [37022, 4.51, 0.053],
+    "sih_res_mes_sexo": [133624, 4.78, 0.264],
+    "sih_res_mes_urgencia": [133223, 10.86, 1.198],
+    "sih_res_mes_faixa5": [328227, 21.93, 1.799],
+    "sih_res_ano_capitulo": [107226, 15.69, 0.35],
+    "sih_res_ano_faixa12_sexo": [132100, 10.32, 0.289],
+    "sih_res_ano_raca": [22551, 25.05, 0.684],
+    "sih_res_tri_capitulo": [384113, 37.26, 2.687],
+    "sih_hosp_ano_especialidade": [10998, 10.09, 0.542],
+    "sih_hosp_tri_capitulo": [172991, 31.35, 0.906],
+    "sih_hosp_mes_carater": [58874, 12.07, 2.492]
+   },
+   "segundos": {"base": 22.6, "fechamento": 1.1, "supressao": 8.5, "deducao_obitos": 0.0, "gravar": 1.9}
+  },
+  "2026": {
+   "internacoes": 7899844,
+   "preliminares": 7,
+   "teste": {
+    "passou": true,
+    "rodadas": [
+     [0, 0, 166442]
+    ],
+    "obitos_passou": true
+   },
+   "publicados": ["sih_res_ano", "sih_hosp_ano", "sih_res_mes", "sih_hosp_mes", "sih_res_mes_sexo", "sih_res_mes_urgencia", "sih_res_mes_faixa5", "sih_res_ano_capitulo", "sih_res_ano_faixa12_sexo", "sih_res_ano_raca", "sih_hosp_ano_especialidade", "sih_hosp_tri_capitulo", "sih_hosp_mes_carater"],
+   "nao_publicados": {
+    "sih_res_tri_capitulo": {"motivo": "7,6% das internações ficariam ocultas (limite: 5%) e 50,5% das células ficariam ocultas (limite: 50%)", "pct_internacoes_ocultas": 7.634, "pct_celulas_ocultas": 50.55}
+   },
+   "supressao_com_todos": {
+    "sih_res_ano": [5570, 0.0, 0.0],
+    "sih_hosp_ano": [3095, 0.42, 0.001],
+    "sih_res_mes": [38983, 1.41, 0.065],
+    "sih_hosp_mes": [20793, 5.08, 0.124],
+    "sih_res_mes_sexo": [78004, 8.35, 4.772],
+    "sih_res_mes_urgencia": [77528, 11.54, 1.201],
+    "sih_res_mes_faixa5": [190181, 25.89, 2.473],
+    "sih_res_ano_capitulo": [103571, 22.46, 0.774],
+    "sih_res_ano_faixa12_sexo": [129455, 18.63, 0.834],
+    "sih_res_ano_raca": [21722, 31.72, 1.16],
+    "sih_res_tri_capitulo": [191754, 50.55, 7.634],
+    "sih_hosp_ano_especialidade": [10578, 10.6, 0.613],
+    "sih_hosp_tri_capitulo": [85761, 31.56, 1.074],
+    "sih_hosp_mes_carater": [33363, 12.18, 2.337]
+   },
+   "segundos": {"base": 18.4, "fechamento": 0.8, "supressao": 12.6, "deducao_obitos": 0.0, "gravar": 1.3}
+  }
+ },
+ "particoes": {
+  "bytes": 41846410,
+  "gzip": 21363796,
+  "maior": [
+   "sih_res_mes/uf=31/ano=2025",
+   {"bytes": 171607, "gzip": 102250}
+  ]
+ },
+ "paginas": {
+  "limite_bytes": 100000,
+  "municipios_ate_5_mil": {"quantos": 1286, "mediana_bytes": 71714.0, "maior_bytes": 75769, "mediana_gzip": 10918.5},
+  "capitais": {
+   "São Paulo": [78791, 13380],
+   "Belo Horizonte": [79240, 13306],
+   "Rio de Janeiro": [78512, 13281],
+   "Brasília": [79167, 13315]
+  },
+  "todas": {"mediana_bytes": 75109, "maior_bytes": 79240},
+  "build": "python -m pipeline construir --coleta <coleta> --saida build/site-sih --links manifesto/links.json --sih-local <trabalho>/particoes",
+  "exemplos": {
+   "Serra da Saudade (MG), 857 habitantes": [64369, 10073],
+   "Santos (SP)": [77728, 12904]
+  }
+ }
+}
