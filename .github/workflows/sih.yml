@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
     inputs:
       ufs:
-        description: "UFs separadas por espaço; vazio mede as 27"
+        description: "UFs separadas por espaço, ou todas para as 27"
         required: false
         default: "RR"
       anos:
@@ -62,7 +62,8 @@ jobs:
           DEDUCAO: ${{ inputs.deducao }}
         run: |
           args=(--coleta build/coleta --trabalho build/sih --saida build/sih-medicao --processos 4)
-          if [ -n "$UFS" ]; then args+=(--ufs $UFS); fi
+          # Campo vazio no disparo volta ao padrão (RR), então as 27 UFs têm um valor próprio.
+          if [ "$UFS" != "todas" ]; then args+=(--ufs $UFS); fi
           if [ -n "$ANOS" ]; then args+=(--anos $ANOS); fi
           if [ "$DEDUCAO" != "true" ]; then args+=(--sem-deducao); fi
           if [ -x /usr/bin/time ]; then
