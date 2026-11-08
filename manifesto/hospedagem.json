@@ -1,0 +1,59 @@
+{
+ "conferido_em": "2026-11-08T02:36:58Z",
+ "site": "https://matheuscavalcantef.github.io/explorador-dados-publicos/",
+ "execucao": "42439217829-1",
+ "segundos_ate_a_versao_nova": 0.2,
+ "parquet_bytes_reais": 225932,
+ "testes": {
+  "gzip": {
+   "status": 200,
+   "content_encoding": "gzip",
+   "content_length": "116787",
+   "content_range": null,
+   "cache_control": "max-age=600",
+   "bytes_recebidos": 116787,
+   "esperado": "200 em gzip, com o mesmo conteúdo do build",
+   "bate_com_o_plano": true
+  },
+  "range": {
+   "status": 206,
+   "content_encoding": null,
+   "content_length": "1024",
+   "content_range": "bytes 0-1023/225932",
+   "cache_control": "max-age=600",
+   "bytes_recebidos": 1024,
+   "esperado": "206, bytes crus, Content-Range bytes 0-1023/225932",
+   "bate_com_o_plano": true
+  },
+  "head": {
+   "status": 200,
+   "content_encoding": "gzip",
+   "content_length": "116787",
+   "content_range": null,
+   "cache_control": "max-age=600",
+   "bytes_recebidos": 0,
+   "esperado": "Content-Length com o tamanho comprimido (116787), não o real (225932)",
+   "bate_com_o_plano": true
+  },
+  "range_pedindo_gzip": {
+   "status": 206,
+   "content_encoding": "gzip",
+   "content_length": "1024",
+   "content_range": "bytes 0-1023/116787",
+   "cache_control": "max-age=600",
+   "bytes_recebidos": 1024,
+   "esperado": "não medido no plano",
+   "bate_com_o_plano": null
+  },
+  "pagina": {
+   "status": 200,
+   "content_encoding": "gzip",
+   "content_length": "2084",
+   "content_range": null,
+   "cache_control": "max-age=600",
+   "bytes_recebidos": 2084,
+   "esperado": "200 em gzip, igual ao HTML do build",
+   "bate_com_o_plano": true
+  }
+ }
+}

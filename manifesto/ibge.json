@@ -1,0 +1,184 @@
+{
+ "coletado_em": "2026-11-08T02:36:11Z",
+ "fontes": {
+  "dtb": {
+   "base": "ibge_dtb",
+   "url": "https://geoftp.ibge.gov.br/organizacao_do_territorio/estrutura_territorial/divisao_territorial/2025/DTB_2025.zip",
+   "periodo": "2025",
+   "data_base": "2025-12-31",
+   "planilha": "RELATORIO_DTB_BRASIL_2025_MUNICIPIOS.ods",
+   "coletado_em": "2026-11-08T02:36:11Z",
+   "bytes": 1635600,
+   "sha256": "d077a0e48c36cf18bcc96268b4a436200c014c6b8522c1a62d894acaf39dad27",
+   "last_modified": "Thu, 26 Mar 2026 21:07:36 GMT",
+   "pastas_sem_dtb": [],
+   "municipios": 5571,
+   "sha256_valores": "25023341431210f70c237fb81c8c948d965859e2b19bc8d0155194009cda5905",
+   "em_relacao_a_coleta_anterior": "sem_coleta_anterior"
+  },
+  "estimativa": {
+   "url": "https://apisidra.ibge.gov.br/values/t/6579/n6/all/v/9324/p/last%201",
+   "coletado_em": "2026-11-08T02:36:11Z",
+   "bytes": 1508656,
+   "sha256": "2af3c54c40389e6aa25a347ae4ac023e9b1c0b5d7da7eccf76ccd85fd6716a73",
+   "base": "ibge_estimativa",
+   "periodo": "2026",
+   "sha256_valores": "ad1d9bb6dc006e7d71872e82b40a57b7adb2aca9c0ca241667d719e36fc39360",
+   "origem": "fonte",
+   "ausentes": [],
+   "em_relacao_a_coleta_anterior": "sem_coleta_anterior"
+  },
+  "censo": {
+   "base": "ibge_censo_2022",
+   "periodo": "2022",
+   "url": "https://apisidra.ibge.gov.br/values/t/4714/n6/all/v/93/p/2022",
+   "coletado_em": "2026-11-08T02:36:11Z",
+   "bytes": 1447059,
+   "sha256": "ec3c169ff4e6f59641c3ec681aabe2b96b65edf2273e2f319eaa37d565413558",
+   "sha256_valores": "0d8985b36b749500f5e8cd0c546b0eb6edc0a2067f0a9bd9936977bab3aed4cb",
+   "origem": "fonte",
+   "ausentes": [
+    "5101837"
+   ],
+   "em_relacao_a_coleta_anterior": "sem_coleta_anterior"
+  }
+ },
+ "municipios": 5571,
+ "por_uf": {
+  "AC": {
+   "municipios": 22,
+   "populacao_estimada": 887794,
+   "populacao_censo_2022": 830018
+  },
+  "AL": {
+   "municipios": 102,
+   "populacao_estimada": 3221128,
+   "populacao_censo_2022": 3127683
+  },
+  "AM": {
+   "municipios": 62,
+   "populacao_estimada": 4360926,
+   "populacao_censo_2022": 3941613
+  },
+  "AP": {
+   "municipios": 16,
+   "populacao_estimada": 809953,
+   "populacao_censo_2022": 733759
+  },
+  "BA": {
+   "municipios": 417,
+   "populacao_estimada": 14889472,
+   "populacao_censo_2022": 14141626
+  },
+  "CE": {
+   "municipios": 184,
+   "populacao_estimada": 9302211,
+   "populacao_censo_2022": 8794957
+  },
+  "DF": {
+   "municipios": 1,
+   "populacao_estimada": 3009996,
+   "populacao_censo_2022": 2817381
+  },
+  "ES": {
+   "municipios": 78,
+   "populacao_estimada": 4150692,
+   "populacao_censo_2022": 3833712
+  },
+  "GO": {
+   "municipios": 246,
+   "populacao_estimada": 7495033,
+   "populacao_censo_2022": 7056495
+  },
+  "MA": {
+   "municipios": 217,
+   "populacao_estimada": 7024557,
+   "populacao_censo_2022": 6776699
+  },
+  "MG": {
+   "municipios": 853,
+   "populacao_estimada": 21460311,
+   "populacao_censo_2022": 20539989
+  },
+  "MS": {
+   "municipios": 79,
+   "populacao_estimada": 2946317,
+   "populacao_censo_2022": 2757013
+  },
+  "MT": {
+   "municipios": 142,
+   "populacao_estimada": 3950330,
+   "populacao_censo_2022": 3658649
+  },
+  "PA": {
+   "municipios": 144,
+   "populacao_estimada": 8756324,
+   "populacao_censo_2022": 8120131
+  },
+  "PB": {
+   "municipios": 223,
+   "populacao_estimada": 4182828,
+   "populacao_censo_2022": 3974687
+  },
+  "PE": {
+   "municipios": 185,
+   "populacao_estimada": 9583176,
+   "populacao_censo_2022": 9058931
+  },
+  "PI": {
+   "municipios": 224,
+   "populacao_estimada": 3392617,
+   "populacao_censo_2022": 3271199
+  },
+  "PR": {
+   "municipios": 399,
+   "populacao_estimada": 11952456,
+   "populacao_censo_2022": 11444380
+  },
+  "RJ": {
+   "municipios": 92,
+   "populacao_estimada": 17225410,
+   "populacao_censo_2022": 16055174
+  },
+  "RN": {
+   "municipios": 167,
+   "populacao_estimada": 3463737,
+   "populacao_censo_2022": 3302729
+  },
+  "RO": {
+   "municipios": 52,
+   "populacao_estimada": 1757338,
+   "populacao_censo_2022": 1581196
+  },
+  "RR": {
+   "municipios": 15,
+   "populacao_estimada": 761012,
+   "populacao_censo_2022": 636707
+  },
+  "RS": {
+   "municipios": 497,
+   "populacao_estimada": 11233317,
+   "populacao_censo_2022": 10882965
+  },
+  "SC": {
+   "municipios": 295,
+   "populacao_estimada": 8312759,
+   "populacao_censo_2022": 7610361
+  },
+  "SE": {
+   "municipios": 75,
+   "populacao_estimada": 2307255,
+   "populacao_censo_2022": 2210004
+  },
+  "SP": {
+   "municipios": 645,
+   "populacao_estimada": 46179008,
+   "populacao_censo_2022": 44411238
+  },
+  "TO": {
+   "municipios": 139,
+   "populacao_estimada": 1595994,
+   "populacao_censo_2022": 1511460
+  }
+ }
+}

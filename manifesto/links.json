@@ -1,0 +1,504 @@
+{
+ "conferido_em": "2026-11-08T02:36:58Z",
+ "metricas": {
+  "populacao_estimada": {
+   "tabela": {
+    "url": "https://sidra.ibge.gov.br/tabela/6579",
+    "status": 200,
+    "ok": true
+   },
+   "amostra": [
+    {
+     "codigo": "3133402",
+     "url": "https://apisidra.ibge.gov.br/values/t/6579/n6/3133402/v/9324/p/2026",
+     "publicado": 14024,
+     "status": 200,
+     "na_origem": 14024,
+     "ok": true
+    },
+    {
+     "codigo": "1507409",
+     "url": "https://apisidra.ibge.gov.br/values/t/6579/n6/1507409/v/9324/p/2026",
+     "publicado": 15439,
+     "status": 200,
+     "na_origem": 15439,
+     "ok": true
+    },
+    {
+     "codigo": "1303569",
+     "url": "https://apisidra.ibge.gov.br/values/t/6579/n6/1303569/v/9324/p/2026",
+     "publicado": 25342,
+     "status": 200,
+     "na_origem": 25342,
+     "ok": true
+    },
+    {
+     "codigo": "3515004",
+     "url": "https://apisidra.ibge.gov.br/values/t/6579/n6/3515004/v/9324/p/2026",
+     "publicado": 260113,
+     "status": 200,
+     "na_origem": 260113,
+     "ok": true
+    },
+    {
+     "codigo": "2303303",
+     "url": "https://apisidra.ibge.gov.br/values/t/6579/n6/2303303/v/9324/p/2026",
+     "publicado": 17225,
+     "status": 200,
+     "na_origem": 17225,
+     "ok": true
+    },
+    {
+     "codigo": "3204104",
+     "url": "https://apisidra.ibge.gov.br/values/t/6579/n6/3204104/v/9324/p/2026",
+     "publicado": 24861,
+     "status": 200,
+     "na_origem": 24861,
+     "ok": true
+    },
+    {
+     "codigo": "4212809",
+     "url": "https://apisidra.ibge.gov.br/values/t/6579/n6/4212809/v/9324/p/2026",
+     "publicado": 31604,
+     "status": 200,
+     "na_origem": 31604,
+     "ok": true
+    },
+    {
+     "codigo": "3515350",
+     "url": "https://apisidra.ibge.gov.br/values/t/6579/n6/3515350/v/9324/p/2026",
+     "publicado": 7833,
+     "status": 200,
+     "na_origem": 7833,
+     "ok": true
+    },
+    {
+     "codigo": "3511102",
+     "url": "https://apisidra.ibge.gov.br/values/t/6579/n6/3511102/v/9324/p/2026",
+     "publicado": 119368,
+     "status": 200,
+     "na_origem": 119368,
+     "ok": true
+    },
+    {
+     "codigo": "3304508",
+     "url": "https://apisidra.ibge.gov.br/values/t/6579/n6/3304508/v/9324/p/2026",
+     "publicado": 9269,
+     "status": 200,
+     "na_origem": 9269,
+     "ok": true
+    },
+    {
+     "codigo": "3305109",
+     "url": "https://apisidra.ibge.gov.br/values/t/6579/n6/3305109/v/9324/p/2026",
+     "publicado": 466487,
+     "status": 200,
+     "na_origem": 466487,
+     "ok": true
+    },
+    {
+     "codigo": "3127388",
+     "url": "https://apisidra.ibge.gov.br/values/t/6579/n6/3127388/v/9324/p/2026",
+     "publicado": 4237,
+     "status": 200,
+     "na_origem": 4237,
+     "ok": true
+    },
+    {
+     "codigo": "2611309",
+     "url": "https://apisidra.ibge.gov.br/values/t/6579/n6/2611309/v/9324/p/2026",
+     "publicado": 29261,
+     "status": 200,
+     "na_origem": 29261,
+     "ok": true
+    },
+    {
+     "codigo": "4320453",
+     "url": "https://apisidra.ibge.gov.br/values/t/6579/n6/4320453/v/9324/p/2026",
+     "publicado": 2089,
+     "status": 200,
+     "na_origem": 2089,
+     "ok": true
+    },
+    {
+     "codigo": "5006408",
+     "url": "https://apisidra.ibge.gov.br/values/t/6579/n6/5006408/v/9324/p/2026",
+     "publicado": 6850,
+     "status": 200,
+     "na_origem": 6850,
+     "ok": true
+    },
+    {
+     "codigo": "2921104",
+     "url": "https://apisidra.ibge.gov.br/values/t/6579/n6/2921104/v/9324/p/2026",
+     "publicado": 22524,
+     "status": 200,
+     "na_origem": 22524,
+     "ok": true
+    },
+    {
+     "codigo": "4315552",
+     "url": "https://apisidra.ibge.gov.br/values/t/6579/n6/4315552/v/9324/p/2026",
+     "publicado": 2866,
+     "status": 200,
+     "na_origem": 2866,
+     "ok": true
+    },
+    {
+     "codigo": "4321808",
+     "url": "https://apisidra.ibge.gov.br/values/t/6579/n6/4321808/v/9324/p/2026",
+     "publicado": 25466,
+     "status": 200,
+     "na_origem": 25466,
+     "ok": true
+    },
+    {
+     "codigo": "1508100",
+     "url": "https://apisidra.ibge.gov.br/values/t/6579/n6/1508100/v/9324/p/2026",
+     "publicado": 96004,
+     "status": 200,
+     "na_origem": 96004,
+     "ok": true
+    },
+    {
+     "codigo": "4112207",
+     "url": "https://apisidra.ibge.gov.br/values/t/6579/n6/4112207/v/9324/p/2026",
+     "publicado": 5766,
+     "status": 200,
+     "na_origem": 5766,
+     "ok": true
+    },
+    {
+     "codigo": "4205456",
+     "url": "https://apisidra.ibge.gov.br/values/t/6579/n6/4205456/v/9324/p/2026",
+     "publicado": 35582,
+     "status": 200,
+     "na_origem": 35582,
+     "ok": true
+    },
+    {
+     "codigo": "4116802",
+     "url": "https://apisidra.ibge.gov.br/values/t/6579/n6/4116802/v/9324/p/2026",
+     "publicado": 6700,
+     "status": 200,
+     "na_origem": 6700,
+     "ok": true
+    },
+    {
+     "codigo": "3130804",
+     "url": "https://apisidra.ibge.gov.br/values/t/6579/n6/3130804/v/9324/p/2026",
+     "publicado": 2630,
+     "status": 200,
+     "na_origem": 2630,
+     "ok": true
+    },
+    {
+     "codigo": "2907806",
+     "url": "https://apisidra.ibge.gov.br/values/t/6579/n6/2907806/v/9324/p/2026",
+     "publicado": 32314,
+     "status": 200,
+     "na_origem": 32314,
+     "ok": true
+    },
+    {
+     "codigo": "3127008",
+     "url": "https://apisidra.ibge.gov.br/values/t/6579/n6/3127008/v/9324/p/2026",
+     "publicado": 14980,
+     "status": 200,
+     "na_origem": 14980,
+     "ok": true
+    },
+    {
+     "codigo": "2208205",
+     "url": "https://apisidra.ibge.gov.br/values/t/6579/n6/2208205/v/9324/p/2026",
+     "publicado": 17949,
+     "status": 200,
+     "na_origem": 17949,
+     "ok": true
+    },
+    {
+     "codigo": "3164100",
+     "url": "https://apisidra.ibge.gov.br/values/t/6579/n6/3164100/v/9324/p/2026",
+     "publicado": 5121,
+     "status": 200,
+     "na_origem": 5121,
+     "ok": true
+    },
+    {
+     "codigo": "2606903",
+     "url": "https://apisidra.ibge.gov.br/values/t/6579/n6/2606903/v/9324/p/2026",
+     "publicado": 11329,
+     "status": 200,
+     "na_origem": 11329,
+     "ok": true
+    },
+    {
+     "codigo": "2408904",
+     "url": "https://apisidra.ibge.gov.br/values/t/6579/n6/2408904/v/9324/p/2026",
+     "publicado": 22300,
+     "status": 200,
+     "na_origem": 22300,
+     "ok": true
+    },
+    {
+     "codigo": "4105607",
+     "url": "https://apisidra.ibge.gov.br/values/t/6579/n6/4105607/v/9324/p/2026",
+     "publicado": 11730,
+     "status": 200,
+     "na_origem": 11730,
+     "ok": true
+    }
+   ]
+  },
+  "populacao_censo": {
+   "tabela": {
+    "url": "https://sidra.ibge.gov.br/tabela/4714",
+    "status": 200,
+    "ok": true
+   },
+   "amostra": [
+    {
+     "codigo": "2307007",
+     "url": "https://apisidra.ibge.gov.br/values/t/4714/n6/2307007/v/93/p/2022",
+     "publicado": 31701,
+     "status": 200,
+     "na_origem": 31701,
+     "ok": true
+    },
+    {
+     "codigo": "2106904",
+     "url": "https://apisidra.ibge.gov.br/values/t/4714/n6/2106904/v/93/p/2022",
+     "publicado": 27751,
+     "status": 200,
+     "na_origem": 27751,
+     "ok": true
+    },
+    {
+     "codigo": "2202703",
+     "url": "https://apisidra.ibge.gov.br/values/t/4714/n6/2202703/v/93/p/2022",
+     "publicado": 28212,
+     "status": 200,
+     "na_origem": 28212,
+     "ok": true
+    },
+    {
+     "codigo": "2408607",
+     "url": "https://apisidra.ibge.gov.br/values/t/4714/n6/2408607/v/93/p/2022",
+     "publicado": 3934,
+     "status": 200,
+     "na_origem": 3934,
+     "ok": true
+    },
+    {
+     "codigo": "2410801",
+     "url": "https://apisidra.ibge.gov.br/values/t/4714/n6/2410801/v/93/p/2022",
+     "publicado": 4127,
+     "status": 200,
+     "na_origem": 4127,
+     "ok": true
+    },
+    {
+     "codigo": "3146305",
+     "url": "https://apisidra.ibge.gov.br/values/t/4714/n6/3146305/v/93/p/2022",
+     "publicado": 17334,
+     "status": 200,
+     "na_origem": 17334,
+     "ok": true
+    },
+    {
+     "codigo": "3548302",
+     "url": "https://apisidra.ibge.gov.br/values/t/4714/n6/3548302/v/93/p/2022",
+     "publicado": 3000,
+     "status": 200,
+     "na_origem": 3000,
+     "ok": true
+    },
+    {
+     "codigo": "2709103",
+     "url": "https://apisidra.ibge.gov.br/values/t/4714/n6/2709103/v/93/p/2022",
+     "publicado": 19032,
+     "status": 200,
+     "na_origem": 19032,
+     "ok": true
+    },
+    {
+     "codigo": "3153608",
+     "url": "https://apisidra.ibge.gov.br/values/t/4714/n6/3153608/v/93/p/2022",
+     "publicado": 11466,
+     "status": 200,
+     "na_origem": 11466,
+     "ok": true
+    },
+    {
+     "codigo": "4310462",
+     "url": "https://apisidra.ibge.gov.br/values/t/4714/n6/4310462/v/93/p/2022",
+     "publicado": 1720,
+     "status": 200,
+     "na_origem": 1720,
+     "ok": true
+    },
+    {
+     "codigo": "2307601",
+     "url": "https://apisidra.ibge.gov.br/values/t/4714/n6/2307601/v/93/p/2022",
+     "publicado": 59560,
+     "status": 200,
+     "na_origem": 59560,
+     "ok": true
+    },
+    {
+     "codigo": "2103208",
+     "url": "https://apisidra.ibge.gov.br/values/t/4714/n6/2103208/v/93/p/2022",
+     "publicado": 81386,
+     "status": 200,
+     "na_origem": 81386,
+     "ok": true
+    },
+    {
+     "codigo": "2502052",
+     "url": "https://apisidra.ibge.gov.br/values/t/4714/n6/2502052/v/93/p/2022",
+     "publicado": 3504,
+     "status": 200,
+     "na_origem": 3504,
+     "ok": true
+    },
+    {
+     "codigo": "4308854",
+     "url": "https://apisidra.ibge.gov.br/values/t/4714/n6/4308854/v/93/p/2022",
+     "publicado": 1744,
+     "status": 200,
+     "na_origem": 1744,
+     "ok": true
+    },
+    {
+     "codigo": "4300570",
+     "url": "https://apisidra.ibge.gov.br/values/t/4714/n6/4300570/v/93/p/2022",
+     "publicado": 3072,
+     "status": 200,
+     "na_origem": 3072,
+     "ok": true
+    },
+    {
+     "codigo": "4300901",
+     "url": "https://apisidra.ibge.gov.br/values/t/4714/n6/4300901/v/93/p/2022",
+     "publicado": 6483,
+     "status": 200,
+     "na_origem": 6483,
+     "ok": true
+    },
+    {
+     "codigo": "2105609",
+     "url": "https://apisidra.ibge.gov.br/values/t/4714/n6/2105609/v/93/p/2022",
+     "publicado": 14924,
+     "status": 200,
+     "na_origem": 14924,
+     "ok": true
+    },
+    {
+     "codigo": "2308807",
+     "url": "https://apisidra.ibge.gov.br/values/t/4714/n6/2308807/v/93/p/2022",
+     "publicado": 8254,
+     "status": 200,
+     "na_origem": 8254,
+     "ok": true
+    },
+    {
+     "codigo": "5202155",
+     "url": "https://apisidra.ibge.gov.br/values/t/4714/n6/5202155/v/93/p/2022",
+     "publicado": 7153,
+     "status": 200,
+     "na_origem": 7153,
+     "ok": true
+    },
+    {
+     "codigo": "3136801",
+     "url": "https://apisidra.ibge.gov.br/values/t/4714/n6/3136801/v/93/p/2022",
+     "publicado": 3768,
+     "status": 200,
+     "na_origem": 3768,
+     "ok": true
+    },
+    {
+     "codigo": "2612703",
+     "url": "https://apisidra.ibge.gov.br/values/t/4714/n6/2612703/v/93/p/2022",
+     "publicado": 14013,
+     "status": 200,
+     "na_origem": 14013,
+     "ok": true
+    },
+    {
+     "codigo": "2507200",
+     "url": "https://apisidra.ibge.gov.br/values/t/4714/n6/2507200/v/93/p/2022",
+     "publicado": 10499,
+     "status": 200,
+     "na_origem": 10499,
+     "ok": true
+    },
+    {
+     "codigo": "3101904",
+     "url": "https://apisidra.ibge.gov.br/values/t/4714/n6/3101904/v/93/p/2022",
+     "publicado": 18300,
+     "status": 200,
+     "na_origem": 18300,
+     "ok": true
+    },
+    {
+     "codigo": "2101731",
+     "url": "https://apisidra.ibge.gov.br/values/t/4714/n6/2101731/v/93/p/2022",
+     "publicado": 8460,
+     "status": 200,
+     "na_origem": 8460,
+     "ok": true
+    },
+    {
+     "codigo": "2208106",
+     "url": "https://apisidra.ibge.gov.br/values/t/4714/n6/2208106/v/93/p/2022",
+     "publicado": 11341,
+     "status": 200,
+     "na_origem": 11341,
+     "ok": true
+    },
+    {
+     "codigo": "2507903",
+     "url": "https://apisidra.ibge.gov.br/values/t/4714/n6/2507903/v/93/p/2022",
+     "publicado": 10012,
+     "status": 200,
+     "na_origem": 10012,
+     "ok": true
+    },
+    {
+     "codigo": "3171808",
+     "url": "https://apisidra.ibge.gov.br/values/t/4714/n6/3171808/v/93/p/2022",
+     "publicado": 10314,
+     "status": 200,
+     "na_origem": 10314,
+     "ok": true
+    },
+    {
+     "codigo": "5007307",
+     "url": "https://apisidra.ibge.gov.br/values/t/4714/n6/5007307/v/93/p/2022",
+     "publicado": 4841,
+     "status": 200,
+     "na_origem": 4841,
+     "ok": true
+    },
+    {
+     "codigo": "2108504",
+     "url": "https://apisidra.ibge.gov.br/values/t/4714/n6/2108504/v/93/p/2022",
+     "publicado": 31429,
+     "status": 200,
+     "na_origem": 31429,
+     "ok": true
+    },
+    {
+     "codigo": "3201308",
+     "url": "https://apisidra.ibge.gov.br/values/t/4714/n6/3201308/v/93/p/2022",
+     "publicado": 353491,
+     "status": 200,
+     "na_origem": 353491,
+     "ok": true
+    }
+   ]
+  }
+ },
+ "quebrados": 0
+}

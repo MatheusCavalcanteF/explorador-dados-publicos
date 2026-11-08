@@ -1,0 +1,14 @@
+{
+ "conferido_em": "2026-11-08T02:36:58Z",
+ "url": "https://matheuscavalcantef.github.io/explorador-dados-publicos/dados/ibge/populacao.parquet?conferencia=42439217829-1",
+ "leitor": "hyparquet 1.32.0, sem descompressor",
+ "status": 200,
+ "content_encoding": "gzip",
+ "bytes_lidos": 225932,
+ "linhas": 5571,
+ "esperadas": 5571,
+ "divergentes": 0,
+ "exemplos": [],
+ "segundos": 0.18,
+ "ok": true
+}
