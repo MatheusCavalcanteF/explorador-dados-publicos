@@ -1,10 +1,15 @@
 {
- "conferido_em": "2026-11-08T02:36:58Z",
- "site": "https://matheuscavalcantef.github.io/explorador-dados-publicos/",
- "execucao": "42439217829-1",
- "segundos_ate_a_versao_nova": 0.2,
+ "conferido_em": "2026-11-08T03:23:01Z",
+ "site": "https://matheuscavalcantef.github.io/explorador-de-dados-publicos/",
+ "execucao": "42442355751-1",
+ "segundos_ate_a_versao_nova": 0.1,
  "parquet_bytes_reais": 225932,
  "testes": {
+  "endereco": {
+   "publicado_em": "https://matheuscavalcantef.github.io/explorador-de-dados-publicos/",
+   "esperado": "o endereço de projeto.yaml, https://matheuscavalcantef.github.io/explorador-de-dados-publicos/",
+   "bate_com_o_plano": true
+  },
   "gzip": {
    "status": 200,
    "content_encoding": "gzip",
@@ -48,11 +53,21 @@
   "pagina": {
    "status": 200,
    "content_encoding": "gzip",
-   "content_length": "2084",
+   "content_length": "3038",
    "content_range": null,
    "cache_control": "max-age=600",
-   "bytes_recebidos": 2084,
+   "bytes_recebidos": 3038,
    "esperado": "200 em gzip, igual ao HTML do build",
+   "bate_com_o_plano": true
+  },
+  "sitemap": {
+   "status": 200,
+   "content_encoding": "gzip",
+   "content_length": "22813",
+   "content_range": null,
+   "cache_control": "max-age=600",
+   "bytes_recebidos": 22813,
+   "esperado": "200, igual ao sitemap do build",
    "bate_com_o_plano": true
   }
  }

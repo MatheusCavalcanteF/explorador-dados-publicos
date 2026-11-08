@@ -1,5 +1,5 @@
 {
- "coletado_em": "2026-11-08T02:36:11Z",
+ "coletado_em": "2026-11-08T03:21:57Z",
  "fontes": {
   "dtb": {
    "base": "ibge_dtb",
@@ -7,18 +7,19 @@
    "periodo": "2025",
    "data_base": "2025-12-31",
    "planilha": "RELATORIO_DTB_BRASIL_2025_MUNICIPIOS.ods",
-   "coletado_em": "2026-11-08T02:36:11Z",
+   "coletado_em": "2026-11-08T03:21:57Z",
    "bytes": 1635600,
    "sha256": "d077a0e48c36cf18bcc96268b4a436200c014c6b8522c1a62d894acaf39dad27",
    "last_modified": "Thu, 26 Mar 2026 21:07:36 GMT",
    "pastas_sem_dtb": [],
    "municipios": 5571,
    "sha256_valores": "25023341431210f70c237fb81c8c948d965859e2b19bc8d0155194009cda5905",
-   "em_relacao_a_coleta_anterior": "sem_coleta_anterior"
+   "em_relacao_a_coleta_anterior": "igual",
+   "valores_desde": "2026-11-08T02:36:11Z"
   },
   "estimativa": {
    "url": "https://apisidra.ibge.gov.br/values/t/6579/n6/all/v/9324/p/last%201",
-   "coletado_em": "2026-11-08T02:36:11Z",
+   "coletado_em": "2026-11-08T03:21:57Z",
    "bytes": 1508656,
    "sha256": "2af3c54c40389e6aa25a347ae4ac023e9b1c0b5d7da7eccf76ccd85fd6716a73",
    "base": "ibge_estimativa",
@@ -26,7 +27,10 @@
    "sha256_valores": "ad1d9bb6dc006e7d71872e82b40a57b7adb2aca9c0ca241667d719e36fc39360",
    "origem": "fonte",
    "ausentes": [],
-   "em_relacao_a_coleta_anterior": "sem_coleta_anterior"
+   "em_relacao_a_coleta_anterior": "igual",
+   "valores_desde": "2026-11-08T02:36:11Z",
+   "periodo_desde": "2026-11-08T02:36:11Z",
+   "revisoes": []
   },
   "censo": {
    "base": "ibge_censo_2022",
@@ -36,11 +40,14 @@
    "bytes": 1447059,
    "sha256": "ec3c169ff4e6f59641c3ec681aabe2b96b65edf2273e2f319eaa37d565413558",
    "sha256_valores": "0d8985b36b749500f5e8cd0c546b0eb6edc0a2067f0a9bd9936977bab3aed4cb",
-   "origem": "fonte",
+   "origem": "release",
+   "sha256_release": "2993aea87e42b2066e8c8a873dc87bfeafef285b9cec30c2c18bfd29341b081d",
+   "conferido_com_a_fonte_em": "2026-11-08T03:21:57Z",
    "ausentes": [
     "5101837"
    ],
-   "em_relacao_a_coleta_anterior": "sem_coleta_anterior"
+   "em_relacao_a_coleta_anterior": "igual",
+   "valores_desde": "2026-11-08T02:36:11Z"
   }
  },
  "municipios": 5571,
