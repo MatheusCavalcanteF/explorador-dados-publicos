@@ -86,13 +86,16 @@ def arquivos_necessarios(jan: sih_janela.Janela, anos: list[int], ufs: list[str]
     return [sih_coleta.nome_do_arquivo(uf, c) for uf in ufs for c in competencias]
 
 
+COLUNA_DA_METRICA = {"internacoes": "internacoes", "dias_permanencia": "dias", "valor_total": "valor", "obitos": "obitos"}
+
+
 def gravar_particao(suprimidas: dict, ano: int, destino: Path, municipios7: dict[str, str],
-                    motivo_por_celula: bool = False) -> dict:
+                    motivo_por_celula: bool = False, metricas: dict[str, list[str]] | None = None) -> dict:
     """Um Parquet sem compressão por cruzamento e UF, como o site vai servir, e o tamanho com gzip.
 
     O município sai com o código de 7 dígitos do IBGE. As AIHs não saem; os valores ocultos saem nulos,
     com o motivo ao lado quando o catálogo manda publicá-lo, ou só a marca de oculta. Óbitos têm máscara
-    própria.
+    própria. Cada cruzamento leva só as métricas que o catálogo declara para ele (`metricas`, por id).
     """
     import pyarrow as pa
     import pyarrow.parquet as pq
@@ -106,15 +109,16 @@ def gravar_particao(suprimidas: dict, ano: int, destino: Path, municipios7: dict
         oculto = df["oculto"].to_numpy()
         colunas = {c: pa.array(df[c], pa.string()) for c in df.columns
                    if c not in ("aihs", "internacoes", "dias", "valor", "obitos", "oculto", "estado", "estado_obitos")}
+        declaradas = {COLUNA_DA_METRICA[m] for m in (metricas or {}).get(cid, ["internacoes", "dias_permanencia", "valor_total", "obitos"])}
         for medida in ("internacoes", "dias", "valor"):
-            if medida in df and (medida == "internacoes" or "dias" in df):
+            if medida in declaradas:
                 tipo = pa.float64() if medida == "valor" else pa.int64()
                 colunas[medida] = pa.array(df[medida].where(~oculto, None), tipo)
         if motivo_por_celula:
             colunas["motivo"] = pa.array([supressao.MOTIVOS[int(e)] for e in df["estado"]], pa.string())
         else:
             colunas["oculto"] = pa.array(oculto, pa.bool_())
-        if "estado_obitos" in df:
+        if "estado_obitos" in df and "obitos" in declaradas:
             oculto_ob = df["estado_obitos"].to_numpy() != 0
             colunas["obitos"] = pa.array(df["obitos"].where(~oculto_ob, None), pa.int64())
             if motivo_por_celula:
@@ -245,7 +249,8 @@ def executar(coleta_ibge: dict, catalogo: dict, trabalho: Path, saida: Path, ufs
         _, sup, m = construir_ano(con, "aih", ano, catalogo, k, deduzir)
         t = time.perf_counter()
         tamanhos = gravar_particao(sup, ano, trabalho / "particoes", municipios7,
-                                   bool(base["supressao"]["motivo_por_celula"]))
+                                   bool(base["supressao"]["motivo_por_celula"]),
+                                   {c["id"]: c["metricas"] for c in catalogo["cruzamentos"]})
         m["segundos"]["gravar"] = round(time.perf_counter() - t, 1)
         m["preliminares"] = jan.meses_preliminares(ano)
         medicao["anos"][str(ano)] = m

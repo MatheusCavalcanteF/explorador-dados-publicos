@@ -169,3 +169,23 @@ def test_cada_aih_cai_no_mes_da_alta_e_os_tres_eixos_fecham(cat):
     # E o eixo não é o da competência nem o da internação: os meses diferem.
     por_competencia = dict(con.execute("SELECT competencia, count(*) FILTER (WHERE ident = 1) FROM aih GROUP BY 1").fetchall())
     assert dict(zip(por_mes["mes"].astype(int), por_mes["internacoes"])) != por_competencia
+
+
+def test_particao_leva_so_as_metricas_do_catalogo_e_oculta_como_nulo(cat, ano_montado, tmp_path):
+    import pyarrow.parquet as pq
+
+    from pipeline import sih
+    nos, _ = ano_montado
+    sup = supressao.suprimir(nos, cat, 5)
+    for c in cat["cruzamentos"]:
+        if "obitos" in c["metricas"]:
+            n = tab.colunas_de(c, cat)
+            sup[c["id"]]["estado_obitos"] = supressao.suprimir_obitos(nos[n], n, 5)
+    municipios7 = {m: m + "0" for m in set(nos[("mun_res",)]["mun_res"]) | set(nos[("mun_hosp",)]["mun_hosp"])}
+    sih.gravar_particao(sup, 2025, tmp_path, municipios7, False, {c["id"]: c["metricas"] for c in cat["cruzamentos"]})
+    filha = pq.read_table(tmp_path / "sih_res_mes_sexo" / "uf=35" / "ano=2025.parquet").to_pandas()
+    assert set(filha.columns) == {"mun_res", "mes", "sexo", "internacoes", "oculto"}
+    assert filha.loc[filha["oculto"], "internacoes"].isna().all() and filha["mun_res"].str.len().eq(7).all()
+    mae = pq.read_table(tmp_path / "sih_res_ano" / "uf=35" / "ano=2025.parquet").to_pandas()
+    assert {"internacoes", "dias", "valor", "obitos", "obitos_oculto"} <= set(mae.columns)
+    assert "aihs" not in mae.columns and "motivo" not in mae.columns
