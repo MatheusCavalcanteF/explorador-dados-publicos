@@ -3,12 +3,11 @@
 name: Publicar
 
 on:
-  # Agendamento desligado em 07/11/2026: na primeira execução, a API de localidades do IBGE não
-  # respondeu ao runner. Para religar, depois de uma execução manual completa, descomente as três
-  # linhas abaixo. O commit que muda o cron também reinicia a contagem de 60 dias sem atividade.
-  # schedule:
-  #   # Semanal, em minuto quebrado: na virada da hora o agendamento atrasa ou é descartado.
-  #   - cron: "47 0 * * 0"
+  # Religado em 07/11/2026, depois da execução manual 42439217829 completa, com a lista de municípios
+  # pela DTB. O commit que muda o cron também reinicia a contagem de 60 dias sem atividade.
+  schedule:
+    # Semanal, em minuto quebrado: na virada da hora o agendamento atrasa ou é descartado.
+    - cron: "47 0 * * 0"
   workflow_dispatch:
 
 permissions:
