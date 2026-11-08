@@ -1,0 +1,57 @@
+# Diagnóstico manual: cada fonte do plano, passo a passo (DNS, conexão, TLS ou FTP, resposta), com tempo curto.
+# Uma fonte fora não interrompe as outras. Não publica nada: o resultado vai para o resumo da execução e
+# para um artefato de 7 dias. O mesmo comando roda numa máquina local, para comparar.
+name: Alcance das fontes
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  diagnosticar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.14"
+          cache: pip
+
+      - name: Instalar dependências
+        run: pip install -r requirements.txt
+
+      - name: Diagnóstico
+        run: python -m pipeline diagnostico --saida build/diagnostico --resumo "$GITHUB_STEP_SUMMARY"
+
+      # Conferência independente do Python, só nas rotas do IBGE.
+      - name: curl nas rotas do IBGE
+        if: always()
+        run: |
+          {
+            echo "### curl nas rotas do IBGE"
+            echo ""
+            echo "| URL | IP | DNS | Conexão | TLS | Primeiro byte | Total | HTTP | Saída do curl |"
+            echo "|---|---|---:|---:|---:|---:|---:|---|---|"
+            for url in \
+              "https://servicodados.ibge.gov.br/api/v1/localidades/municipios" \
+              "https://apisidra.ibge.gov.br/values/t/6579/n6/3548500/v/9324/p/last%201" \
+              "https://ftp.ibge.gov.br/Estimativas_de_Populacao/" \
+              "https://geoftp.ibge.gov.br/organizacao_do_territorio/estrutura_territorial/divisao_territorial/2025/"; do
+              saida=0
+              linha=$(curl -sS -o /dev/null --compressed --connect-timeout 10 --max-time 60 \
+                -w '%{remote_ip} | %{time_namelookup} | %{time_connect} | %{time_appconnect} | %{time_starttransfer} | %{time_total} | %{http_code}' \
+                "$url" 2> curl-erro.txt) || saida=$?
+              echo "| $url | $linha | $saida $(tr '\n|' '  ' < curl-erro.txt | head -c 160) |"
+            done
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: diagnostico
+          path: build/diagnostico
+          retention-days: 7

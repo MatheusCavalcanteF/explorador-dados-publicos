@@ -2,6 +2,7 @@
 
     python -m pipeline coletar    --saida build/coleta [--censo-release arquivo]
     python -m pipeline alcance    --saida build/coleta
+    python -m pipeline diagnostico --saida build/diagnostico [--resumo arquivo.md]
     python -m pipeline construir  --coleta build/coleta --saida build/site [--links manifesto/links.json] [--execucao ID]
     python -m pipeline hospedagem --coleta build/coleta --site build/site --url URL --execucao ID
     python -m pipeline links      --coleta build/coleta
@@ -15,7 +16,7 @@ import json
 import sys
 from pathlib import Path
 
-from . import alcance, catalogo, hospedagem, ibge, links, manifesto, site
+from . import alcance, catalogo, diagnostico, hospedagem, ibge, links, manifesto, site
 
 
 def _ler(caminho: Path):
@@ -34,6 +35,9 @@ def main(argv=None) -> int:
     p.add_argument("--saida", type=Path, required=True)
     p.add_argument("--censo-release", type=Path)
     sub.add_parser("alcance").add_argument("--saida", type=Path, required=True)
+    p = sub.add_parser("diagnostico")
+    p.add_argument("--saida", type=Path, required=True)
+    p.add_argument("--resumo", type=Path)
     p = sub.add_parser("construir")
     p.add_argument("--coleta", type=Path, required=True)
     p.add_argument("--saida", type=Path, required=True)
@@ -63,6 +67,15 @@ def main(argv=None) -> int:
         _gravar(args.saida / "alcance.json", resultado)
         for nome, item in resultado["fontes"].items():
             print(f"{nome}: {'ok' if item['ok'] else 'FALHOU ' + item['erro']}")
+    elif args.comando == "diagnostico":
+        resultado = diagnostico.executar()
+        _gravar(args.saida / "diagnostico.json", resultado)
+        texto = diagnostico.resumo(resultado)
+        # No GitHub, --resumo é o $GITHUB_STEP_SUMMARY, que outros passos também escrevem.
+        with (args.resumo or args.saida / "resumo.md").open("a", encoding="utf-8") as arquivo:
+            arquivo.write(texto)
+        for nome, item in resultado["fontes"].items():
+            print(f"{nome}: {'ok' if item['ok'] else 'FALHOU em ' + item['falhou_em']} ({item['ms_total']} ms)")
     elif args.comando == "construir":
         anteriores = _ler(args.links) if args.links and args.links.exists() else None
         versao = site.construir(_ler(args.coleta / "ibge.json"), cat, args.saida, anteriores, args.execucao)
