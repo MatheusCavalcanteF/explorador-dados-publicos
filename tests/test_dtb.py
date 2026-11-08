@@ -89,6 +89,16 @@ def test_recusa_estrutura_ou_dado_errado(estrago, mensagem):
         ler(linhas)
 
 
+@pytest.mark.parametrize("data_base", ["31/02/2025", "00/12/2025", "31/13/2025", "29/02/2025"])
+def test_recusa_data_base_que_nao_existe_no_calendario(data_base):
+    with pytest.raises(ErroDeContrato, match="não existe no calendário"):
+        ler(linhas_dtb(data_base=data_base))
+
+
+def test_aceita_29_de_fevereiro_em_ano_bissexto():
+    assert ler(linhas_dtb(data_base="29/02/2024"))[1] == "2024-02-29"
+
+
 def test_recusa_zip_sem_planilha_ou_com_duas_e_planilha_que_nao_e_ods():
     with pytest.raises(ErroDeContrato, match="achei 0"):
         dtb.ler(dtb_zip(linhas_dtb(), "RELATORIO_DTB_BRASIL_2025_DISTRITOS.ods", extras=()), "t")

@@ -11,6 +11,7 @@ from __future__ import annotations
 import io
 import re
 import zipfile
+from datetime import date
 import xml.etree.ElementTree as ET
 
 from . import rede
@@ -148,6 +149,10 @@ def ler(zip_dtb: bytes, onde: str) -> tuple[str, str, list[dict]]:
     if len(datas) != 1:
         raise ErroDeContrato(f"{onde}: esperava uma 'DATA BASE: dd/mm/aaaa' acima do cabeçalho, achei {len(datas)}")
     dia, mes, ano = datas.pop()
+    try:
+        data_base = date(int(ano), int(mes), int(dia)).isoformat()
+    except ValueError:
+        raise ErroDeContrato(f"{onde}: a data-base {dia}/{mes}/{ano} não existe no calendário") from None
     posicao = {nome: linhas[inicio].index(rotulo) for nome, rotulo in COLUNAS.items()}
 
     municipios, prefixos = {}, set()
@@ -171,7 +176,7 @@ def ler(zip_dtb: bytes, onde: str) -> tuple[str, str, list[dict]]:
     ufs = {m["uf"] for m in municipios.values()}
     if len(ufs) != 27 or not 5_500 <= len(municipios) <= 5_700:
         raise ErroDeContrato(f"{onde}: {len(municipios)} municípios em {len(ufs)} UFs, fora do esperado")
-    return info.filename, f"{ano}-{mes}-{dia}", [municipios[c] for c in sorted(municipios)]
+    return info.filename, data_base, [municipios[c] for c in sorted(municipios)]
 
 
 def coletar(pedir, coletado_em: str) -> tuple[dict, list[dict]]:
