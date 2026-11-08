@@ -103,29 +103,42 @@ def guardado(valor):
 
 
 def mascarar_diferencas(resultado):
-    """Diferença de 1 a 4 entre pipeline e TabNet é um grupo pequeno de AIHs que uma fonte tem e a outra não.
+    """Nenhum par gravado pode devolver, por subtração, uma contagem de 1 a 4.
 
-    Os dois valores juntos revelariam o tamanho exato dele por subtração. Quando as internações de um
-    município, visão e competência diferem de 1 a 4, nenhuma medida desse grupo guarda valor nem diferença
-    exata: valor, dias e óbitos descrevem as mesmas AIHs. O mesmo vale para óbitos sozinhos e para o total
-    por data de internação.
+    Dois casos, os dois por município, visão e competência:
+    - a diferença entre as fontes é de 1 a 4: é um grupo pequeno de AIHs que uma tem e a outra não;
+    - uma das contagens é de 1 a 4 e saiu como "<5": com a outra e a diferença exata, ela voltaria.
+    Em qualquer linha assim, os dois valores e a diferença saem. Se for a de internações, todas as medidas
+    do grupo saem, porque valor, dias e óbitos descrevem as mesmas AIHs. O total por data de internação
+    segue a mesma regra.
     """
     pequena = lambda d: d is not None and not isinstance(d, str) and 1 <= abs(d) < 5
-    grupos = {}
+    oculta = lambda r: r["pipeline"] == "<5" or r["tabnet"] == "<5"
+    motivos = {}
     for r in resultado["por_competencia"]:
-        if r["medida"] in ("Internações", "Óbitos") and pequena(r["diferenca"]):
-            grupos.setdefault((r["municipio"], r["visao"], r["competencia"]), set()).add(r["medida"])
+        if pequena(r["diferenca"]):
+            motivos[(r["municipio"], r["visao"], r["competencia"], r["medida"])] = "1 a 4"
+        elif oculta(r):
+            motivos[(r["municipio"], r["visao"], r["competencia"], r["medida"])] = "omitida: contagem de 1 a 4"
+    grupos = {chave[:3] for chave in motivos if chave[3] == "Internações"}
     for r in resultado["por_competencia"]:
-        medidas = grupos.get((r["municipio"], r["visao"], r["competencia"]))
-        if medidas and ("Internações" in medidas or r["medida"] == "Óbitos"):
+        grupo = (r["municipio"], r["visao"], r["competencia"])
+        motivo = motivos.get(grupo + (r["medida"],))
+        if motivo or grupo in grupos:
             r["pipeline"] = r["tabnet"] = None
-            r["diferenca"] = "1 a 4" if r["medida"] in medidas else "omitida: descreve as mesmas AIHs"
+            r["diferenca"] = motivo or "omitida: descreve as mesmas AIHs"
     for r in resultado["por_data_de_internacao"]:
-        if "total_tabnet" in r and pequena(r["total_pipeline"] - r["total_tabnet"]):
-            r["diferenca_total"] = "1 a 4"
-            r["total_pipeline"] = r["total_tabnet"] = None
         if pequena(r.get("maior_diferenca")):
             r["maior_diferenca"] = "1 a 4"
+        # Sem os dois totais (eixo ausente, ou já mascarado numa passada anterior), não há o que comparar.
+        if r.get("total_tabnet") is None or r.get("total_pipeline") is None:
+            continue
+        if pequena(r["total_pipeline"] - r["total_tabnet"]):
+            r["diferenca_total"] = "1 a 4"
+            r["total_pipeline"] = r["total_tabnet"] = None
+        elif pequena(r["total_pipeline"]) or pequena(r["total_tabnet"]):
+            r["diferenca_total"] = "omitida: contagem de 1 a 4"
+            r["total_pipeline"] = r["total_tabnet"] = None
 
 
 def resumir(resultado):
