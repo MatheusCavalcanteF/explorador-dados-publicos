@@ -199,6 +199,12 @@ FAIXA12_SQL = """CASE WHEN cod_idade IN ('2','3') THEN '00' WHEN cod_idade = '5'
   ELSE 'ign' END"""
 
 
+def sexo_sql(dimensao: dict) -> str:
+    """CASE do sexo pelos códigos do catálogo; o que não estiver lá vai para `outros`, como no TabWin."""
+    casos = " ".join(f"WHEN '{codigo}' THEN '{valor}'" for codigo, valor in sorted(dimensao["codigos"].items()))
+    return f"CASE sexo {casos} ELSE '{dimensao['outros']}' END"
+
+
 def derivadas_sql(catalogo: dict) -> str:
     """Colunas das tabelas, calculadas de cada AIH do Parquet mínimo."""
     faixas = catalogo["referencias"]["cid10_capitulos"]["faixas"]
@@ -206,7 +212,7 @@ def derivadas_sql(catalogo: dict) -> str:
       mun_res, mun_hosp, substr(mun_res, 1, 2) AS uf_res, substr(mun_hosp, 1, 2) AS uf_hosp,
       CAST(dt_saida // 100 AS VARCHAR) AS mes,
       CAST(dt_saida // 10000 AS VARCHAR) || 'T' || CAST(((dt_saida // 100) % 100 + 2) // 3 AS VARCHAR) AS tri,
-      CASE sexo WHEN '1' THEN 'M' WHEN '2' THEN 'F' WHEN '3' THEN 'F' ELSE 'I' END AS sexo,
+      {sexo_sql(catalogo["dimensoes"]["sexo"])} AS sexo,
       {FAIXA12_SQL} AS faixa12,
       {faixas_sql(faixas)} AS capitulo,
       CASE car_int WHEN '01' THEN 'eletivo' WHEN '02' THEN 'urgencia' ELSE 'outros' END AS carater,

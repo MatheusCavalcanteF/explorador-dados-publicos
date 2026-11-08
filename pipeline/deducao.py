@@ -11,10 +11,11 @@ máximos das finas, e cada fina fica entre o total menos o máximo das outras e 
 delas. Isso generaliza a dedução de uma incógnita por linha, e é sólido: o valor verdadeiro sempre
 fica dentro do intervalo, o que os testes conferem.
 
-O motivo da célula oculta é público e entra no domínio: a contagem pequena está entre 0 e k-1 (0
-quando a regra oculta pelas AIHs e não há internação), e a complementar está fora de 1 a k-1. Numa
-margem com uma oculta de cada tipo e soma 6, a complementar só pode ser 5 ou 6, e a pequena, 0 ou 1;
-com soma 5, as duas ficam exatas (5 e 0).
+Quando o motivo da célula oculta é publicado, ele entra no domínio: a contagem pequena está entre 0 e
+k-1 (0 quando a regra oculta pelas AIHs e não há internação), e a complementar está fora de 1 a k-1.
+Numa margem com uma oculta de cada tipo e soma 6, a complementar só pode ser 5 ou 6, e a pequena, 0 ou
+1; com soma 5, as duas ficam exatas (5 e 0). O site não publica o motivo (decidido em 08/11/2026): a
+oculta entra como LIVRE, de 0 ao infinito, e o estado PEQUENA serve para medir o efeito do motivo.
 
 Uma contagem pequena é revelada quando o intervalo vira um ponto entre 1 e k-1.
 """
@@ -134,7 +135,7 @@ class Sistema:
             escondida = no.estado != VISIVEL
             exata = escondida & (no.lo == no.hi)
             pequena = exata & (no.lo >= 1) & (no.lo <= self.k - 1)
-            # Sem chegar ao valor exato, o ataque ainda pode estreitar uma "<5" para dois valores
+            # Sem chegar ao valor exato, o ataque ainda pode estreitar uma oculta pequena para dois valores
             # possíveis, como 0 ou 1. Não é o critério do plano, mas fica medido.
             estreitada = (no.estado == PEQUENA) & ~exata & (no.hi - no.lo <= 1)
             saida[nome] = {"celulas": int(no.lo.size), "escondidas": int(escondida.sum()),
@@ -146,6 +147,57 @@ class Sistema:
         return sum(r["pequenas_reveladas"] for r in self.reveladas().values())
 
 
+def atacar_juntos(sistemas: list[Sistema], iguais: list[tuple[int, int, str, np.ndarray]], max_voltas: int = 50) -> int:
+    """Quem guarda várias versões sabe que algumas células não mudaram entre elas: as de período que já
+    tinha fechado na versão mais nova do par, porque nenhum arquivo com altas daquele período foi
+    republicado. Alterna o aperto de cada versão com a interseção dos intervalos dessas células, até nada
+    mudar. Os sistemas têm as mesmas chaves, na mesma ordem; `iguais` traz (versão i, versão j, nó,
+    máscara das células iguais). Se a interseção ficar vazia, a premissa de igualdade estava errada, e o
+    erro diz onde. Devolve o número de voltas.
+    """
+    for volta in range(1, max_voltas + 1):
+        for s in sistemas:
+            s.propagar()
+        mudou = False
+        for i, j, nome, mascara in iguais:
+            if not mascara.any():
+                continue
+            a, b = sistemas[i].nos[nome], sistemas[j].nos[nome]
+            lo = np.maximum(a.lo[mascara], b.lo[mascara])
+            hi = np.minimum(a.hi[mascara], b.hi[mascara])
+            for s, no in ((sistemas[i], a), (sistemas[j], b)):
+                if not (np.array_equal(no.lo[mascara], lo) and np.array_equal(no.hi[mascara], hi)):
+                    no.lo[mascara], no.hi[mascara] = lo, hi
+                    s._normalizar(no)
+                    mudou = True
+        if not mudou:
+            return volta
+    raise RuntimeError(f"Ataque entre versões não parou em {max_voltas} voltas")
+
+
+def _intervalos_da_diferenca(a, b) -> tuple[dict, dict, dict]:
+    lo, hi, direta = {}, {}, {}
+    for nome in b:
+        a_lo, a_hi = a[nome]
+        b_lo, b_hi = b[nome]
+        lo[nome] = np.where((a_hi >= _METADE), -INF, b_lo - a_hi)
+        hi[nome] = np.where((b_hi >= _METADE), INF, b_hi - a_lo)
+        direta[nome] = (a_lo == a_hi) & (b_lo == b_hi)
+    return lo, hi, direta
+
+
+def _contar_diferencas(lo: dict, hi: dict, direta: dict, k: int) -> dict[str, dict]:
+    saida = {}
+    for nome in lo:
+        exata = lo[nome] == hi[nome]
+        pequena = exata & (np.abs(lo[nome]) >= 1) & (np.abs(lo[nome]) <= k - 1)
+        saida[nome] = {"celulas": int(exata.size), "diferencas_exatas": int(exata.sum()),
+                       "pequenas_diretas": int((pequena & direta[nome]).sum()),
+                       "pequenas_pela_cadeia": int((pequena & ~direta[nome]).sum()),
+                       "mudaram": int((exata & (lo[nome] != 0)).sum())}
+    return saida
+
+
 def diferencas(a: dict[str, tuple[np.ndarray, np.ndarray]], b: dict[str, tuple[np.ndarray, np.ndarray]],
                arestas: list[tuple[str, str, np.ndarray]], k: int, max_voltas: int = 200) -> dict[str, dict]:
     """Quem guarda duas versões publicadas conhece a diferença entre elas onde as duas são exatas, e pode
@@ -155,14 +207,50 @@ def diferencas(a: dict[str, tuple[np.ndarray, np.ndarray]], b: dict[str, tuple[n
     que não existe numa versão vale 0 nela). Devolve, por nó, quantas diferenças exatas de 1 a k-1 em
     módulo aparecem, separando as que vêm direto de duas células exatas das que a cadeia revelou.
     """
-    lo, hi, direta = {}, {}, {}
-    for nome in b:
-        a_lo, a_hi = a[nome]
-        b_lo, b_hi = b[nome]
-        d_lo = np.where((a_hi >= _METADE), -INF, b_lo - a_hi)
-        d_hi = np.where((b_hi >= _METADE), INF, b_hi - a_lo)
-        lo[nome], hi[nome] = d_lo, d_hi
-        direta[nome] = (a_lo == a_hi) & (b_lo == b_hi)
+    lo, hi, direta = _intervalos_da_diferenca(a, b)
+    _propagar_diferencas(lo, hi, arestas, max_voltas)
+    return _contar_diferencas(lo, hi, direta, k)
+
+
+def _somar(a_lo, a_hi, b_lo, b_hi, sinal: int):
+    """Intervalo de a + sinal*b, com os infinitos tratados como infinitos."""
+    if sinal < 0:
+        b_lo, b_hi = -b_hi, -b_lo
+    lo = np.where((a_lo <= -_METADE) | (b_lo <= -_METADE), -INF, a_lo + b_lo)
+    hi = np.where((a_hi >= _METADE) | (b_hi >= _METADE), INF, a_hi + b_hi)
+    return lo, hi
+
+
+def diferencas_em_sequencia(versoes: list[dict[str, tuple[np.ndarray, np.ndarray]]],
+                            arestas: list[tuple[str, str, np.ndarray]], k: int, max_voltas: int = 50) -> dict:
+    """Três versões seguidas, guardadas por quem tenta deduzir: as diferenças de cada par respeitam as
+    arestas, e também d(1,3) = d(1,2) + d(2,3). Aperta os três pares juntos, pelas somas e por essa
+    identidade, até nada mudar. Devolve, por par ("0-1", "1-2", "0-2"), a contagem de diferenças por nó.
+    """
+    pares = [(0, 1), (1, 2), (0, 2)]
+    estado = {p: _intervalos_da_diferenca(versoes[p[0]], versoes[p[1]]) for p in pares}
+    for _ in range(max_voltas):
+        for p in pares:
+            _propagar_diferencas(estado[p][0], estado[p][1], arestas)
+        mudou = False
+        for nome in versoes[0]:
+            (l01, h01), (l12, h12), (l02, h02) = ((estado[p][0][nome], estado[p][1][nome]) for p in pares)
+            for alvo, (lo, hi) in (((0, 2), _somar(l01, h01, l12, h12, 1)), ((0, 1), _somar(l02, h02, l12, h12, -1)),
+                                   ((1, 2), _somar(l02, h02, l01, h01, -1))):
+                novo_lo = np.maximum(estado[alvo][0][nome], lo)
+                novo_hi = np.minimum(estado[alvo][1][nome], hi)
+                if (novo_lo > novo_hi).any():
+                    raise ValueError(f"Nó {nome}: diferenças sem valor possível; as versões estão desalinhadas")
+                if not (np.array_equal(novo_lo, estado[alvo][0][nome]) and np.array_equal(novo_hi, estado[alvo][1][nome])):
+                    estado[alvo][0][nome], estado[alvo][1][nome] = novo_lo, novo_hi
+                    mudou = True
+        if not mudou:
+            return {f"{p[0]}-{p[1]}": _contar_diferencas(*estado[p], k) for p in pares}
+    raise RuntimeError(f"Diferenças em sequência não pararam em {max_voltas} voltas")
+
+
+def _propagar_diferencas(lo: dict, hi: dict, arestas: list[tuple[str, str, np.ndarray]], max_voltas: int = 200) -> int:
+    """Aperta os intervalos das diferenças pelas somas, em cadeia. Altera `lo` e `hi` no lugar."""
     for volta in range(1, max_voltas + 1):
         mudou = False
         for fino, grosso, indice in arestas:
@@ -186,19 +274,11 @@ def diferencas(a: dict[str, tuple[np.ndarray, np.ndarray]], b: dict[str, tuple[n
             n_fl = np.where(pode_lo, np.maximum(fl, n_gl[indice] - outras_hi), fl)
             n_fh = np.where(pode_hi, np.minimum(fh, n_gh[indice] - outras_lo), fh)
             for nome, novo_lo, novo_hi in ((grosso, n_gl, n_gh), (fino, n_fl, n_fh)):
+                if (novo_lo > novo_hi).any():
+                    raise ValueError(f"Nó {nome}: diferença sem valor possível; as versões estão desalinhadas")
                 if not (np.array_equal(novo_lo, lo[nome]) and np.array_equal(novo_hi, hi[nome])):
                     lo[nome], hi[nome] = novo_lo, novo_hi
                     mudou = True
         if not mudou:
-            break
-    else:
-        raise RuntimeError(f"Propagação das diferenças não parou em {max_voltas} voltas")
-    saida = {}
-    for nome in b:
-        exata = lo[nome] == hi[nome]
-        pequena = exata & (np.abs(lo[nome]) >= 1) & (np.abs(lo[nome]) <= k - 1)
-        saida[nome] = {"celulas": int(exata.size), "diferencas_exatas": int(exata.sum()),
-                       "pequenas_diretas": int((pequena & direta[nome]).sum()),
-                       "pequenas_pela_cadeia": int((pequena & ~direta[nome]).sum()),
-                       "mudaram": int((exata & (lo[nome] != 0)).sum())}
-    return saida
+            return volta
+    raise RuntimeError(f"Propagação das diferenças não parou em {max_voltas} voltas")

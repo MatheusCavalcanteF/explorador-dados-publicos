@@ -9,8 +9,10 @@ Quatro camadas, cada uma porque a anterior deixou passar algo medido (ver o plan
    de 1 a k-1. A margem conta como visível se a soma for de k para cima, mesmo quando não é publicada.
 4. O teste de dedução, em deducao.py, confere o resultado agindo como quem tenta deduzir.
 
-Cada célula oculta leva o motivo, que é público: contagem pequena, família ou complementar. O resultado
-só é determinístico com as linhas em ordem fixa, porque os empates na complementar saem pela posição.
+Cada célula oculta leva o motivo (contagem pequena, família ou complementar), que fica no pipeline: o
+catálogo decidiu não publicá-lo (supressao.motivo_por_celula), e o site mostra toda oculta do mesmo jeito.
+O resultado só é determinístico com as linhas em ordem fixa, porque os empates na complementar saem pela
+posição.
 """
 from __future__ import annotations
 
@@ -104,13 +106,31 @@ def margens_conhecidas(catalogo: dict) -> dict[str, list[tuple]]:
     return saida
 
 
+def trimestre_completo(tri: pd.Series, ultimo_mes: int | None) -> np.ndarray:
+    """Trimestres com os três meses na base. Sem `ultimo_mes`, todos."""
+    if ultimo_mes is None or tri.empty:
+        return np.ones(len(tri), dtype=bool)
+    fim = tri.str[:4].astype(int) * 100 + tri.str[5:].astype(int) * 3
+    return (fim <= int(ultimo_mes)).to_numpy()
+
+
 def suprimir(nos: dict[tuple, pd.DataFrame], catalogo: dict, k: int, forcadas: dict[str, np.ndarray] | None = None,
-             cache: dict | None = None) -> dict[str, pd.DataFrame]:
-    """Cada cruzamento do catálogo com as colunas `oculto` e `estado`. Não altera os valores.
+             cache: dict | None = None, ultimo_mes: int | None = None,
+             fixas: dict[str, tuple[np.ndarray, np.ndarray]] | None = None) -> dict[str, pd.DataFrame]:
+    """Cada cruzamento do catálogo com as colunas `oculto`, `estado` e `publicado`. Não altera os valores.
 
     `forcadas` traz, por cruzamento, células que o teste de dedução mandou ocultar a mais; entram como
     complementares, antes da complementar normal, e a família as leva para as filhas. `cache` guarda os
     grupos das margens entre uma rodada e outra.
+
+    `publicado` é falso no trimestre que ainda não tem os três meses na base (`ultimo_mes`, AAAAMM). Ele
+    não vai para o arquivo, mas a supressão o trata como publicado: o ano menos os trimestres completos o
+    devolve. Por isso a contagem pequena dele fica oculta e protegida, e ele nunca serve de complementar,
+    porque escondê-lo não tira de ninguém um valor que a subtração entrega.
+
+    `fixas` traz, por cruzamento, (ocultas, travadas) herdadas da versão publicada antes, nas células de
+    período que já fechou: a oculta continua oculta, porque mostrá-la agora entregaria o que ela protegia
+    lá; a que estava visível e exata não serve de complementar, porque o valor dela já é conhecido.
     """
     forcadas = forcadas or {}
     cache = {} if cache is None else cache
@@ -146,12 +166,20 @@ def suprimir(nos: dict[tuple, pd.DataFrame], catalogo: dict, k: int, forcadas: d
                 cache[("complementar", c["id"])] = [g for g, m in zip(cache[c["id"]], tab.todos_acima(n)) if m in conhecidas]
             else:
                 cache[("complementar", c["id"])] = cache[c["id"]]
+        publicado = trimestre_completo(df["tri"], ultimo_mes) if c["tempo"] == "tri" else np.ones(len(df), dtype=bool)
+        if not publicado.all():
+            inelegivel = ~publicado if inelegivel is None else inelegivel | ~publicado
         inicial = primaria | herdada
         if c["id"] in forcadas:
             inicial = inicial | forcadas[c["id"]]
+        if fixas and c["id"] in fixas:
+            ocultas_antes, travadas = fixas[c["id"]]
+            inicial = inicial | ocultas_antes
+            inelegivel = travadas if inelegivel is None else inelegivel | travadas
         oculto = complementar(inicial, cache[("complementar", c["id"])], [aihs, intern], k, inelegivel)
         df["oculto"] = oculto
         df["estado"] = estados(primaria, herdada, oculto)
+        df["publicado"] = publicado
         saida[c["id"]] = df
     return saida
 

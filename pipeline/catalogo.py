@@ -56,6 +56,17 @@ def validar(catalogo: dict) -> None:
             raise ErroDeCatalogo(f"Base {nome}: supressao.margens_complementar deve ser conhecidas ou todas")
         if "motivo_por_celula" in supressao and not isinstance(supressao["motivo_por_celula"], bool):
             raise ErroDeCatalogo(f"Base {nome}: supressao.motivo_por_celula deve ser true ou false")
+        criterio = supressao.get("criterio_publicacao")
+        if criterio is not None and not all(_numero(criterio.get(c)) and criterio[c] <= 100 for c in
+                                            ("internacoes_ocultas_pct_max", "celulas_ocultas_pct_max")):
+            raise ErroDeCatalogo(f"Base {nome}: criterio_publicacao precisa dos dois percentuais, de 0 a 100")
+        preliminares = base.get("preliminares")
+        if preliminares is not None:
+            multiplo = preliminares.get("arredondar_multiplo")
+            if isinstance(multiplo, bool) or not isinstance(multiplo, int) or multiplo < 2:
+                raise ErroDeCatalogo(f"Base {nome}: preliminares.arredondar_multiplo deve ser um inteiro de 2 para cima")
+            if not set(preliminares.get("contagens") or []) <= {"internacoes", "obitos"}:
+                raise ErroDeCatalogo(f"Base {nome}: preliminares.contagens só aceita internacoes e obitos")
     for nome, metrica in metricas.items():
         onde = f"Métrica {nome}"
         if metrica.get("tema") not in temas:
@@ -111,6 +122,11 @@ def _validar_cruzamentos(catalogo: dict) -> None:
     for nome, d in dimensoes.items():
         if not d.get("niveis"):
             raise ErroDeCatalogo(f"Dimensão {nome}: sem niveis")
+        if "codigos" in d:
+            # Código da fonte para valor da dimensão; o que não estiver na lista vai para `outros`.
+            valores = set(d.get("valores") or [])
+            if not set(d["codigos"].values()) | {d.get("outros")} <= valores or d.get("outros") is None:
+                raise ErroDeCatalogo(f"Dimensão {nome}: codigos e outros precisam apontar para valores da lista")
     vistos: dict[str, dict] = {}
     for c in catalogo["cruzamentos"]:
         onde = f"Cruzamento {c.get('id')}"

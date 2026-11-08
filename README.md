@@ -71,6 +71,16 @@ python -m venv .venv
 .venv/bin/python -m pipeline construir --coleta build/coleta --saida build/site
 ```
 
+As internações do SUS ainda não são publicadas (`publicacao: {site: false}` no catálogo). Para ver as páginas com elas na própria máquina, sem mudar o catálogo, com as 27 UFs (cerca de 6 GB de download):
+
+```sh
+.venv/bin/pip install -r requirements-sih.txt
+.venv/bin/python -m pipeline sih --coleta build/coleta --trabalho build/sih --saida build/sih-medicao
+.venv/bin/python -m pipeline construir --coleta build/coleta --saida build/site-sih --sih-local build/sih/particoes
+```
+
+A opção `--sih-local` para com erro no CI.
+
 Os testes bloqueiam o acesso à rede e usam dados sintéticos no formato da DTB e da SIDRA. Para publicar em outro endereço, como um fork, basta mudar `projeto.yaml`.
 
 ## Dados e licenças

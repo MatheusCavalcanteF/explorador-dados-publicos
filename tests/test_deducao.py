@@ -160,3 +160,56 @@ def test_diferenca_deduzida_quando_so_uma_celula_muda_de_valor_escondido():
     # As duas ocultas têm intervalos largos, a diferença da margem (+3) não diz qual mudou.
     r = d.diferencas(a, b, arestas, 5)
     assert r["margem"]["pequenas_diretas"] == 1 and r["celulas"]["pequenas_pela_cadeia"] == 0
+
+
+def _linha_versao(valores, estados, lo=None, hi=None, margem=None, k=5):
+    """Uma linha e a margem dela; `margem` é (estado, lo, hi) quando a margem não é exata."""
+    s = d.Sistema(k)
+    valores = np.array(valores)
+    s.no("celulas", np.array(estados), valores, publicado=True,
+         lo=None if lo is None else np.array(lo), hi=None if hi is None else np.array(hi))
+    if margem is None:
+        s.no("margem", np.array([V]), np.array([valores.sum()]), publicado=True)
+    else:
+        s.no("margem", np.array([margem[0]]), np.array([valores.sum()]), publicado=True,
+             lo=np.array([margem[1]]), hi=np.array([margem[2]]))
+    s.aresta("celulas", "margem", np.zeros(len(valores), dtype=int))
+    return s
+
+
+def test_mes_que_fecha_devolve_o_valor_arredondado_da_versao_anterior():
+    # Versão A: a célula 0 está oculta (3) e a 1, preliminar, aparece como 10 (de 8 a 12); a margem fechou e é exata.
+    # Sozinha, A só diz que a oculta está entre 3 e 7. Na versão B, a célula 1 fecha e sai exata (12). Como o
+    # arquivo dela não foi republicado entre as duas, o valor em A é o mesmo, e a oculta de A vira 3.
+    a = _linha_versao([3, 12], [L, V], lo=[0, 8], hi=[d.INF, 12])
+    b = _linha_versao([3, 12], [L, V])
+    a.propagar()
+    assert a.total_pequenas_reveladas() == 0
+    d.atacar_juntos([a, b], [(0, 1, "celulas", np.array([False, True]))])
+    a.conferir_solidez()
+    assert a.total_pequenas_reveladas() == 1 and list(a.nos["celulas"].lo) == [3, 12]
+
+
+def test_igualdade_errada_entre_versoes_e_denunciada():
+    a = _linha_versao([3, 12], [L, V])
+    b = _linha_versao([3, 14], [L, V])
+    with pytest.raises(ValueError, match="sem valor possível"):
+        d.atacar_juntos([a, b], [(0, 1, "celulas", np.array([False, True]))])
+
+
+def test_tres_versoes_juntas_nao_perdem_o_que_cada_par_revela():
+    versoes = []
+    for valores, lo, hi, margem in (([10, 20], [10, 20], [10, 20], None),
+                                    ([11, 23], [8, 0], [12, d.INF], (V, 33, 37)),
+                                    ([13, 25], [13, 25], [13, 25], None)):
+        s = _linha_versao(valores, [V, L] if margem else [V, V], lo=lo, hi=hi, margem=margem)
+        s.propagar()
+        versoes.append({n: (no.lo, no.hi) for n, no in s.nos.items()})
+    arestas = [("celulas", "margem", np.zeros(2, dtype=int))]
+    juntos = d.diferencas_em_sequencia(versoes, arestas, 5)
+    for par, (i, j) in (("0-1", (0, 1)), ("1-2", (1, 2)), ("0-2", (0, 2))):
+        sozinho = d.diferencas(versoes[i], versoes[j], arestas, 5)
+        for nome in sozinho:
+            assert juntos[par][nome]["diferencas_exatas"] >= sozinho[nome]["diferencas_exatas"]
+    # De 0 a 2, as duas versões são exatas: x mudou 3, uma diferença pequena direta.
+    assert juntos["0-2"]["celulas"]["pequenas_diretas"] == 1

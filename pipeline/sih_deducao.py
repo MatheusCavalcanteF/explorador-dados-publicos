@@ -4,8 +4,9 @@ Os nós publicados são os cruzamentos do catálogo e as margens de UF e do Bras
 fechamento entram como incógnitas. Internações e óbitos são sistemas separados, porque cada medida tem
 a própria máscara; dias e valor seguem a máscara das internações, com a mesma estrutura de somas.
 
-O arredondamento é a alternativa medida para os meses preliminares: a célula visível de um período que
-ainda pode mudar aparece em múltiplo de `base`, e quem lê só sabe que o valor está a menos de meia base.
+Meses preliminares (decidido em 08/11/2026): a célula visível de um período que ainda pode mudar aparece
+em múltiplo de `base` (bases.sih.preliminares), e quem lê só sabe que o valor está a menos de meia base.
+O teste de cada versão vê os valores como a tela os mostra.
 """
 from __future__ import annotations
 
@@ -30,7 +31,11 @@ def estados_publicados(nos: dict[tuple, pd.DataFrame], suprimidas: dict[str, pd.
             if "obitos" in c["metricas"]:
                 saida[n] = supressao.suprimir_obitos(nos[n], n, k)
         else:
-            saida[n] = suprimidas[c["id"]]["estado"].to_numpy()
+            estado = suprimidas[c["id"]]["estado"].to_numpy().copy()
+            # Linha que não vai para o arquivo (trimestre incompleto): quem lê não vê nem a chave.
+            if "publicado" in suprimidas[c["id"]]:
+                estado[~suprimidas[c["id"]]["publicado"].to_numpy()] = LIVRE
+            saida[n] = estado
     for m in catalogo["margens_publicadas"][medida]:
         n = tab.no(m)
         if n not in saida:
@@ -48,6 +53,16 @@ def periodo_aberto(df: pd.DataFrame, n: tuple, ano: int, preliminares: set[str])
         tris = {f"{m[:4]}T{(int(m[4:]) + 2) // 3}" for m in preliminares}
         return df["tri"].isin(tris).to_numpy()
     return np.ones(len(df), dtype=bool)
+
+
+def periodo_fechado(df: pd.DataFrame, n: tuple, ano: int, ate_mes: int) -> np.ndarray:
+    """Células cujo período inteiro já fechou até `ate_mes` (AAAAMM): o mês, os três do trimestre ou o ano."""
+    if "mes" in n:
+        return (df["mes"].astype(int) <= ate_mes).to_numpy()
+    if "tri" in n:
+        fim = df["tri"].str[:4].astype(int) * 100 + df["tri"].str[5:].astype(int) * 3
+        return (fim <= ate_mes).to_numpy()
+    return np.full(len(df), ano * 100 + 12 <= ate_mes)
 
 
 def arredondar(valores: np.ndarray, base: int) -> np.ndarray:
@@ -109,7 +124,8 @@ def auditar(s: deducao.Sistema) -> dict:
 
 
 def reforcar(s: deducao.Sistema, sup: dict[str, pd.DataFrame], catalogo: dict, k: int, cache: dict,
-             arestas: list, forcadas: dict[str, np.ndarray]) -> tuple[dict[str, np.ndarray], int]:
+             arestas: list, forcadas: dict[str, np.ndarray],
+             travadas: dict[str, np.ndarray] | None = None) -> tuple[dict[str, np.ndarray], int]:
     """O que ocultar a mais depois de um ataque que revelou algo. Devolve as forçadas e quantas são novas.
 
     Uma célula oculta que o ataque deixou exata está exposta, e as somas que ninguém publica, quando
@@ -118,24 +134,25 @@ def reforcar(s: deducao.Sistema, sup: dict[str, pd.DataFrame], catalogo: dict, k
     """
     ids = {tab.nome(tab.colunas_de(c, catalogo)): c["id"] for c in catalogo["cruzamentos"]}
     expostas = {}
+    # Exposta é a célula que a supressão ocultou e o ataque deixou exata. A linha visível que não vai para o
+    # arquivo (trimestre incompleto) também é incógnita para quem lê, mas não protege nada: não conta.
     for nome_no, cid in ids.items():
         no = s.nos[nome_no]
-        expostas[cid] = (no.estado != deducao.VISIVEL) & (no.lo == no.hi)
+        expostas[cid] = sup[cid]["oculto"].to_numpy() & (no.lo == no.hi)
     for fino, grosso, idx in arestas:
         g = s.nos[tab.nome(grosso)]
         if g.publicado or tab.nome(fino) not in ids:
             continue
         revelada = (g.lo == g.hi) & (g.lo >= 1) & (g.lo <= k - 1)
         if revelada.any():
-            f = s.nos[tab.nome(fino)]
-            expostas[ids[tab.nome(fino)]] |= revelada[idx] & (f.estado != deducao.VISIVEL)
+            expostas[ids[tab.nome(fino)]] |= revelada[idx] & sup[ids[tab.nome(fino)]]["oculto"].to_numpy()
     novas = 0
     saida = {cid: m.copy() for cid, m in forcadas.items()}
     for cid, exposta in expostas.items():
         if not exposta.any():
             continue
         df = sup[cid]
-        visivel = ~df["oculto"].to_numpy()
+        visivel = ~df["oculto"].to_numpy() & _publicado(df) & ~_travada(travadas, cid, df)
         aihs = df["aihs"].to_numpy()
         base = np.where(aihs > 0, aihs, np.iinfo(np.int64).max)
         marca = saida.setdefault(cid, np.zeros(len(df), dtype=bool))
@@ -149,11 +166,12 @@ def reforcar(s: deducao.Sistema, sup: dict[str, pd.DataFrame], catalogo: dict, k
             _, primeira = np.unique(g[ordem], return_index=True)
             marca[ordem[primeira]] = True
             novas += primeira.size
-    novas += _quebrar_vizinhas(s, sup, ids, arestas, k, saida)
+    novas += _quebrar_vizinhas(s, sup, ids, arestas, k, saida, travadas)
     return saida, novas
 
 
-def _quebrar_vizinhas(s: deducao.Sistema, sup: dict, ids: dict, arestas: list, k: int, saida: dict) -> int:
+def _quebrar_vizinhas(s: deducao.Sistema, sup: dict, ids: dict, arestas: list, k: int, saida: dict,
+                      travadas: dict[str, np.ndarray] | None = None) -> int:
     """Uma soma não publicada revelada costuma sair de um total menos as vizinhas exatas: o trimestre da UF
     menos os trimestres dos outros municípios, por exemplo. Ocultar mais células da própria soma não
     adianta; é preciso tirar a exatidão de uma vizinha. Para cada revelada, a vizinha exata de menor valor
@@ -174,7 +192,8 @@ def _quebrar_vizinhas(s: deducao.Sistema, sup: dict, ids: dict, arestas: list, k
         for cid, idx_pub in abaixo.get(no_nome, []):
             df = sup[cid]
             marca = saida.setdefault(cid, np.zeros(len(df), dtype=bool))
-            candidatas = np.flatnonzero((idx_pub == celula) & ~df["oculto"].to_numpy() & (df["aihs"].to_numpy() > 0) & ~marca)
+            candidatas = np.flatnonzero((idx_pub == celula) & ~df["oculto"].to_numpy() & _publicado(df)
+                                        & ~_travada(travadas, cid, df) & (df["aihs"].to_numpy() > 0) & ~marca)
             if candidatas.size:
                 marca[candidatas[np.argmin(df["aihs"].to_numpy()[candidatas])]] = True
                 feitas += 1
@@ -215,16 +234,29 @@ def _quebrar_vizinhas(s: deducao.Sistema, sup: dict, ids: dict, arestas: list, k
     return novas
 
 
+def _travada(travadas: dict | None, cid: str, df: pd.DataFrame) -> np.ndarray:
+    """Visível e exata na versão publicada antes, num período fechado: escondê-la agora não adianta."""
+    return travadas[cid] if travadas and cid in travadas else np.zeros(len(df), dtype=bool)
+
+
+def _publicado(df: pd.DataFrame) -> np.ndarray:
+    return df["publicado"].to_numpy() if "publicado" in df else np.ones(len(df), dtype=bool)
+
+
 def sem_motivo(estados: dict[tuple, np.ndarray]) -> dict[tuple, np.ndarray]:
     """Quando o motivo não é publicado, quem lê só sabe que a célula está oculta: de 0 ao infinito."""
     return {n: np.where(e == deducao.VISIVEL, deducao.VISIVEL, LIVRE).astype(np.int8) for n, e in estados.items()}
 
 
 def suprimir_ate_passar(nos: dict, catalogo: dict, k: int, motivo_publico: bool, max_rodadas: int | None = None,
-                        arestas: list | None = None, arredondamento=None) -> dict:
+                        arestas: list | None = None, arredondamento=None, ultimo_mes: int | None = None,
+                        fixas: dict | None = None) -> dict:
     """Supressão, teste de dedução e reforço, até o teste dar zero ou o reforço não ter mais o que ocultar.
 
     Sem `max_rodadas`, vale o limite do catálogo (supressao.reforco_max_rodadas), o mesmo do pipeline.
+    `arredondamento` é (base, meses preliminares, ano): o teste vê os valores como a tela os mostra.
+    `ultimo_mes` (AAAAMM) tira do arquivo o trimestre que ainda não tem os três meses na base.
+    `fixas` é o padrão herdado da versão publicada antes (supressao.suprimir); o reforço não oculta as travadas.
     Devolve os cruzamentos suprimidos, a auditoria final, o histórico por rodada e se passou. Quem chama
     decide o que fazer quando não passa; o pipeline não publica.
     """
@@ -235,7 +267,7 @@ def suprimir_ate_passar(nos: dict, catalogo: dict, k: int, motivo_publico: bool,
     arestas = arestas if arestas is not None else tab.arestas({n: nos[n] for n in fecho})
     forcadas, cache, historico = {}, {}, []
     for rodada in range(max_rodadas + 1):
-        sup = supressao.suprimir(nos, catalogo, k, forcadas, cache)
+        sup = supressao.suprimir(nos, catalogo, k, forcadas, cache, ultimo_mes, fixas)
         estados = estados_publicados(nos, sup, catalogo, k)
         vistos = estados if motivo_publico else sem_motivo(estados)
         s = sistema(nos, vistos, publicados, k, aresta_cache=arestas, arredondamento=arredondamento)
@@ -244,7 +276,8 @@ def suprimir_ate_passar(nos: dict, catalogo: dict, k: int, motivo_publico: bool,
                           "celulas_ocultas": int(sum(df["oculto"].sum() for df in sup.values()))})
         if auditoria["pequenas_reveladas"] == 0 or rodada == max_rodadas:
             break
-        forcadas, novas = reforcar(s, sup, catalogo, k, cache, arestas, forcadas)
+        forcadas, novas = reforcar(s, sup, catalogo, k, cache, arestas, forcadas,
+                                   {cid: f[1] for cid, f in (fixas or {}).items()})
         if not novas:
             break
     return {"suprimidas": sup, "estados": estados, "sistema": s, "auditoria": auditoria, "historico": historico,

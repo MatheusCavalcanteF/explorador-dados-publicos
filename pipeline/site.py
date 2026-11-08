@@ -72,9 +72,11 @@ def rodape(coleta: dict) -> str:
 
 
 def pagina(titulo: str, descricao: str, raiz: str, corpo: str, nota: str, script: bool = False,
-           endereco: str | None = None, dados: dict | None = None) -> str:
+           endereco: str | None = None, dados: dict | None = None, outro_script: str | None = None) -> str:
     """`endereco` é o caminho da página dentro do site; sem ele, a página não tem link canônico nem Open Graph."""
     cabeca = f'\n<script src="{raiz}busca.js" defer></script>' if script else ""
+    if outro_script:
+        cabeca += f'\n<script src="{raiz}{outro_script}" defer></script>'
     if endereco is not None:
         url = escape(projeto.SITE + endereco)
         cabeca += (f'\n<link rel="canonical" href="{url}">'
@@ -241,7 +243,8 @@ def _dados_municipio(m: dict, coleta: dict, catalogo: dict, alterado_em: str) ->
 
 
 def pagina_municipio(m: dict, coleta: dict, catalogo: dict, links: dict | None,
-                     revisao: dict | None = None, alterado_em: str | None = None) -> str:
+                     revisao: dict | None = None, alterado_em: str | None = None, sih: dict | None = None) -> str:
+    """`sih` são os dados do build local com --sih-local (site_sih.carregar); sem eles, a página não tem SIH."""
     fontes, metricas = coleta["fontes"], catalogo["metricas"]
     est, censo = fontes["estimativa"], fontes["censo"]
     linhas = [_linha(f"Estimativa {est['periodo']}", m["populacao_estimada"], " placa__linha--principal"),
@@ -256,6 +259,10 @@ def pagina_municipio(m: dict, coleta: dict, catalogo: dict, links: dict | None,
         avisos += (f'<p class="nota">{escape(texto_revisao(revisao, est["periodo"], m["codigo"]))} '
                    f'<a href="{MANIFESTO_IBGE}">Ver no manifesto</a>.</p>')
         extras.append(f"Revisado pelo IBGE: a mudança foi detectada na coleta de {dia(revisao['detectada_em'])}.")
+    secao_sih = fonte_sih = ""
+    if sih is not None:
+        from . import site_sih
+        secao_sih, fonte_sih = "\n" + site_sih.secao(m, sih, coleta), "\n" + site_sih.fonte(sih, coleta)
     corpo = f"""<header class="placa" id="conteudo">
 <div class="placa__face">
 <nav class="trilha" aria-label="Trilha"><a href="../../">Brasil</a> <span aria-hidden="true">/</span> <a href="../../uf/{m['uf'].lower()}/">{escape(m['uf_nome'])}</a></nav>
@@ -268,18 +275,19 @@ def pagina_municipio(m: dict, coleta: dict, catalogo: dict, links: dict | None,
 </div>
 </header>
 <main class="coluna">
-{avisos}
+{avisos}{secao_sih}
 <details class="fonte">
 <summary>Fonte e método{SETA}</summary>
 {_fonte(metricas['populacao_estimada'], 'populacao_estimada', est, m, links, extras)}
-{_fonte(metricas['populacao_censo'], 'populacao_censo', censo, m, links)}
+{_fonte(metricas['populacao_censo'], 'populacao_censo', censo, m, links)}{fonte_sih}
 {_fonte_dtb(catalogo['bases']['ibge_dtb'], fontes['dtb'])}
 </details>
 </main>"""
     descricao = f"{m['nome']} ({m['uf']}): população estimada pelo IBGE e Censo 2022, com fonte e método."
     alterado_em = alterado_em or alteracao_municipio(fontes, revisao)
     return pagina(f"{m['nome']} ({m['uf']}) · {NOME}", descricao, "../../", corpo, rodape(coleta),
-                  endereco=f"municipio/{m['codigo']}/", dados=_dados_municipio(m, coleta, catalogo, alterado_em))
+                  endereco=f"municipio/{m['codigo']}/", dados=_dados_municipio(m, coleta, catalogo, alterado_em),
+                  outro_script="sih.js" if sih is not None else None)
 
 
 def pagina_uf(uf: str, uf_nome: str, municipios: list[dict], coleta: dict, catalogo: dict) -> str:
@@ -387,6 +395,18 @@ def estimativa_publicada(corpo: bytes) -> dict[str, int]:
     return {c: v for c, v in zip(tabela["codigo"], tabela["populacao_estimada"]) if v is not None}
 
 
+class ErroBuildLocal(RuntimeError):
+    """Uma opção só para build local foi usada no CI."""
+
+
+def exigir_build_local() -> None:
+    """O SIH não vai para o site enquanto o catálogo disser publicacao.site: false. A opção --sih-local serve para
+    conferir no navegador, na máquina de quem desenvolve; no GitHub Actions, ou em qualquer CI, ela para."""
+    import os
+    if os.environ.get("GITHUB_ACTIONS") or os.environ.get("CI"):
+        raise ErroBuildLocal("--sih-local é só para build local: no CI, o SIH segue publicacao.site do catálogo")
+
+
 class ErroDeLimite(ValueError):
     """Um arquivo do site passou do limite do catálogo. O site não é publicado."""
 
@@ -417,10 +437,17 @@ def conferir_limites(saida: Path, limites: dict) -> dict:
 
 
 def construir(coleta: dict, catalogo: dict, saida: Path, links: dict | None = None, execucao: str = "local",
-              google: str | None = projeto.GOOGLE_SEARCH_CONSOLE) -> dict:
+              google: str | None = projeto.GOOGLE_SEARCH_CONSOLE, sih_local: Path | None = None) -> dict:
+    """O site inteiro. `sih_local` é a pasta de partições de uma execução local do SIH, só para conferir no
+    navegador enquanto o catálogo não manda publicar: não muda o catálogo e para com erro no CI."""
+    sih = None
+    if sih_local is not None:
+        exigir_build_local()
+        from . import site_sih
+        sih = site_sih.carregar(sih_local, catalogo)
     if saida.exists():
         shutil.rmtree(saida)
-    shutil.copytree(WEB, saida)
+    shutil.copytree(WEB, saida, ignore=None if sih else shutil.ignore_patterns("sih.js"))
     municipios, fontes = coleta["municipios"], coleta["fontes"]
 
     def gravar(caminho: str, texto: str) -> None:
@@ -439,7 +466,7 @@ def construir(coleta: dict, catalogo: dict, saida: Path, links: dict | None = No
         # Sem condição sobre o valor atual: uma estimativa retirada também é revisão, e muda o lastmod.
         revisao = revisao_do_municipio(m["codigo"], por_codigo, geral)
         alterado_em = alteracao_municipio(fontes, revisao)
-        gravar(f"municipio/{m['codigo']}/index.html", pagina_municipio(m, coleta, catalogo, links, revisao, alterado_em))
+        gravar(f"municipio/{m['codigo']}/index.html", pagina_municipio(m, coleta, catalogo, links, revisao, alterado_em, sih))
         paginas_municipio.append((f"municipio/{m['codigo']}/", alterado_em))
     for uf, lista in sorted(por_uf.items()):
         gravar(f"uf/{uf.lower()}/index.html", pagina_uf(uf, lista[0]["uf_nome"], lista, coleta, catalogo))
@@ -452,6 +479,8 @@ def construir(coleta: dict, catalogo: dict, saida: Path, links: dict | None = No
                                                ensure_ascii=False, separators=(",", ":")))
     parquet(municipios, saida / PARQUET)
     versao = {"execucao": execucao, "coletado_em": coleta["coletado_em"], "municipios": len(municipios)}
+    if sih is not None:
+        versao["sih"] = "build local, fora do catálogo publicado"
     gravar("versao.json", json.dumps(versao, ensure_ascii=False))
     # Por último, para que nenhum arquivo escape da conferência. Passou do limite, o build falha.
     return versao | {"tamanho": conferir_limites(saida, catalogo["limites"])}

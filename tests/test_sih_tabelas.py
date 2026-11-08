@@ -182,10 +182,113 @@ def test_particao_leva_so_as_metricas_do_catalogo_e_oculta_como_nulo(cat, ano_mo
             n = tab.colunas_de(c, cat)
             sup[c["id"]]["estado_obitos"] = supressao.suprimir_obitos(nos[n], n, 5)
     municipios7 = {m: m + "0" for m in set(nos[("mun_res",)]["mun_res"]) | set(nos[("mun_hosp",)]["mun_hosp"])}
-    sih.gravar_particao(sup, 2025, tmp_path, municipios7, False, {c["id"]: c["metricas"] for c in cat["cruzamentos"]})
+    # Julho a dezembro preliminares: o mês, o trimestre dele e o ano inteiro saem arredondados.
+    prelim = {f"2025{m:02d}" for m in range(7, 13)}
+    sih.gravar_particao(sup, 2025, tmp_path, municipios7, False, {c["id"]: c["metricas"] for c in cat["cruzamentos"]},
+                        prelim, 5, 5, ("internacoes", "obitos"))
     filha = pq.read_table(tmp_path / "sih_res_mes_sexo" / "uf=35" / "ano=2025.parquet").to_pandas()
-    assert set(filha.columns) == {"mun_res", "mes", "sexo", "internacoes", "oculto"}
+    assert set(filha.columns) == {"mun_res", "mes", "sexo", "internacoes", "oculto", "preliminar", "arredondado"}
     assert filha.loc[filha["oculto"], "internacoes"].isna().all() and filha["mun_res"].str.len().eq(7).all()
     mae = pq.read_table(tmp_path / "sih_res_ano" / "uf=35" / "ano=2025.parquet").to_pandas()
-    assert {"internacoes", "dias", "valor", "obitos", "obitos_oculto"} <= set(mae.columns)
-    assert "aihs" not in mae.columns and "motivo" not in mae.columns
+    assert {"internacoes", "dias", "valor", "obitos", "obitos_oculto", "obitos_arredondado"} <= set(mae.columns)
+    assert "aihs" not in mae.columns and "motivo" not in mae.columns and "publicado" not in mae.columns
+    # Preliminar visível sai em múltiplo de 5 e marcado; o mês fechado sai exato; oculta continua nula.
+    mensal = pq.read_table(tmp_path / "sih_res_mes" / "uf=35" / "ano=2025.parquet").to_pandas()
+    original = sup["sih_res_mes"].assign(mun_res=lambda d: d["mun_res"] + "0").set_index(["mun_res", "mes"])["internacoes"]
+    mensal = mensal.join(original.rename("exato"), on=["mun_res", "mes"])
+    aberto = mensal["mes"].isin(prelim)
+    assert (mensal["preliminar"] == aberto).all()
+    arred = mensal.loc[mensal["arredondado"]]
+    assert len(arred) and (arred["internacoes"] % 5 == 0).all() and ((arred["internacoes"] - arred["exato"]).abs() <= 2).all()
+    assert (mensal["arredondado"] == (aberto & ~mensal["oculto"] & (mensal["exato"] >= 5))).all()
+    fechado = mensal.loc[~aberto & ~mensal["oculto"]]
+    assert (fechado["internacoes"] == fechado["exato"]).all()
+    assert mae["preliminar"].all() and (mae.loc[mae["arredondado"], "internacoes"] % 5 == 0).all()
+    assert (mae.loc[mae["obitos_arredondado"], "obitos"] % 5 == 0).all()
+
+
+def test_trimestre_sem_os_tres_meses_nao_sai_mas_e_protegido(cat, ano_montado, tmp_path):
+    import pyarrow.parquet as pq
+
+    from pipeline import sih
+    nos, publicados = ano_montado
+    # Base até agosto: o 3º trimestre tem só julho e agosto, e o 4º nenhum mês.
+    sup = supressao.suprimir(nos, cat, 5, ultimo_mes=202508)
+    tri = sup["sih_res_tri_capitulo"]
+    assert (tri["publicado"] == tri["tri"].isin(["2025T1", "2025T2"])).all() and (~tri["publicado"]).any()
+    # Fica de fora do arquivo e do resumo, e o teste o vê como incógnita.
+    municipios7 = {m: m + "0" for m in set(nos[("mun_res",)]["mun_res"]) | set(nos[("mun_hosp",)]["mun_hosp"])}
+    sih.gravar_particao({"sih_res_tri_capitulo": tri}, 2025, tmp_path, municipios7, False)
+    lido = pq.read_table(tmp_path / "sih_res_tri_capitulo" / "uf=35" / "ano=2025.parquet").to_pandas()
+    assert set(lido["tri"]) <= {"2025T1", "2025T2"}
+    assert sih.resumo_supressao({"t": tri})["t"]["linhas"] == int(tri["publicado"].sum())
+    estados = sih_deducao.estados_publicados(nos, sup, cat, 5)
+    n = tab.colunas_de(next(c for c in cat["cruzamentos"] if c["id"] == "sih_res_tri_capitulo"), cat)
+    assert (estados[n][~tri["publicado"].to_numpy()] == deducao.LIVRE).all()
+    # A contagem pequena do trimestre incompleto continua oculta, e ele nunca serve de complementar.
+    pequeno = ~tri["publicado"] & (tri["internacoes"].between(1, 4) | tri["aihs"].between(1, 4))
+    assert tri.loc[pequeno, "oculto"].all()
+    assert not (tri["estado"].eq(deducao.COMPLEMENTAR) & ~tri["publicado"]).any()
+
+
+def test_criterio_tira_o_cruzamento_e_o_que_depende_dele(cat, ano_montado, monkeypatch):
+    from pipeline import sih
+    nos, _ = ano_montado
+    chamadas = []
+
+    def sem_teste(nos, catalogo, k, motivo, max_rodadas, arredondamento=None, ultimo_mes=None, fixas=None):
+        # Só a supressão: aqui interessa o critério, não o reforço, que tem testes próprios.
+        chamadas.append([c["id"] for c in catalogo["cruzamentos"]])
+        return {"suprimidas": supressao.suprimir(nos, catalogo, k, ultimo_mes=ultimo_mes), "auditoria": {}, "passou": True}
+    monkeypatch.setattr(sih_deducao, "suprimir_ate_passar", sem_teste)
+    limite = cat["bases"]["sih"]["supressao"] | {"criterio_publicacao": {"internacoes_ocultas_pct_max": 100,
+                                                                        "celulas_ocultas_pct_max": 10}}
+    estrito = cat | {"bases": cat["bases"] | {"sih": cat["bases"]["sih"] | {"supressao": limite}}}
+    r = sih.suprimir_publicaveis(nos, estrito, 5)
+    fora = r["nao_publicados"]
+    reprovados = {cid for cid, v in fora.items() if not v["motivo"].startswith("depende de")}
+    assert reprovados and all("das células ficariam ocultas (limite: 10%)" in fora[c]["motivo"] for c in reprovados)
+    assert set(r["suprimidas"]) == {c["id"] for c in r["catalogo"]["cruzamentos"]} and not set(fora) & set(r["suprimidas"])
+    # A segunda volta refaz a supressão sem os reprovados, e o que depende deles sai junto.
+    assert len(chamadas) >= 2 and not set(chamadas[-1]) & set(fora)
+    for cid in fora:
+        assert set(sih.dependentes(cat, cid)) <= set(fora)
+    assert set(sih.dependentes(cat, "sih_res_mes")) == {"sih_res_mes_sexo", "sih_res_mes_urgencia", "sih_res_mes_faixa5",
+                                                         "sih_res_tri_capitulo"}
+
+
+def test_sexo_fora_do_dicionario_vai_para_ignorado_como_no_tabwin(cat):
+    con = duckdb.connect()
+    linhas = aihs_sinteticas(40)
+    linhas["sexo"] = ["1", "2", "3", "4", "0"] * 8
+    con.register("aih", linhas)
+    sexo = tab.calcular_base(con, "aih", 2025, [("sexo",)], cat)[("sexo",)]
+    assert dict(zip(sexo["sexo"], sexo["aihs"])) == {"M": 8, "F": 16, "I": 16}
+    assert set(cat["dimensoes"]["sexo"]["fora_do_dicionario"]["4"]) == {"visto", "documentacao", "tratamento"}
+
+
+def test_periodo_fechado_herda_o_padrao_da_versao_anterior(cat, ano_montado):
+    from pipeline import sih
+    nos, _ = ano_montado
+    antes = supressao.suprimir(nos, cat, 5)
+    # A versão anterior mostrou janeiro a junho exatos e o resto arredondado. Fecha até junho.
+    anterior = {}
+    for c in cat["cruzamentos"]:
+        df = antes[c["id"]]
+        n = tab.colunas_de(c, cat)
+        aberto = sih_deducao.periodo_aberto(df, n, 2025, {f"2025{m:02d}" for m in range(7, 13)})
+        anterior[c["id"]] = df[list(n) + ["oculto"]].assign(arredondado=~df["oculto"].to_numpy() & aberto)
+    # Uma célula fechada que estava oculta lá e não seria oculta agora: a herança a mantém oculta.
+    mensal = anterior["sih_res_mes"]
+    alvo = mensal.index[(~mensal["oculto"]) & (mensal["mes"] <= "202506")][0]
+    anterior["sih_res_mes"].loc[alvo, "oculto"] = True
+    fixas = sih.fixas_da_anterior(nos, cat, anterior, 2025, 202506)
+    depois = supressao.suprimir(nos, cat, 5, fixas=fixas)
+    assert depois["sih_res_mes"].loc[alvo, "oculto"]
+    for cid, (ocultas, travadas) in fixas.items():
+        assert depois[cid]["oculto"].to_numpy()[ocultas].all(), cid
+        # Visível e exata na anterior, num período fechado: nunca vira complementar.
+        assert not (depois[cid]["estado"].to_numpy()[travadas] == deducao.COMPLEMENTAR).any(), cid
+    # Período aberto não herda nada.
+    aberto = sih_deducao.periodo_aberto(antes["sih_res_mes"], ("mun_res", "mes"), 2025, {f"2025{m:02d}" for m in range(7, 13)})
+    assert not (fixas["sih_res_mes"][0] | fixas["sih_res_mes"][1])[aberto].any()

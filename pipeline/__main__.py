@@ -5,12 +5,14 @@
     python -m pipeline diagnostico --saida build/diagnostico [--resumo arquivo.md] [--pular inep ...]
     python -m pipeline inep       --saida build/inep [--resumo arquivo.md]
     python -m pipeline construir  --coleta build/coleta --saida build/site [--links manifesto/links.json] [--execucao ID]
+                                  [--sih-local PASTA]  (só local: SIH nas páginas sem mudar o catálogo; para no CI)
     python -m pipeline hospedagem --coleta build/coleta --site build/site --url URL --execucao ID
     python -m pipeline links      --coleta build/coleta
     python -m pipeline manifesto  --coleta build/coleta --saida manifesto
     python -m pipeline exigir     --coleta build/coleta
     python -m pipeline sih        --coleta build/coleta --trabalho build/sih --saida build/sih-medicao
                                   [--ufs RR SP] [--anos 2025 2026] [--processos 4] [--origem-local pasta]
+                                  [--anterior particoes_publicadas]  (herda o padrão dos períodos fechados)
 
 O SIH precisa de requirements-sih.txt e só é importado no próprio comando: o Publicar não depende dele.
 """
@@ -76,6 +78,9 @@ def main(argv=None) -> int:
     p.add_argument("--saida", type=Path, required=True)
     p.add_argument("--links", type=Path)
     p.add_argument("--execucao", default="local")
+    # Partições de uma execução local do SIH (trabalho/particoes). Só para conferir no navegador: não muda o
+    # catálogo, que segue com publicacao.site: false, e para com erro no CI.
+    p.add_argument("--sih-local", type=Path)
     p = sub.add_parser("hospedagem")
     p.add_argument("--coleta", type=Path, required=True)
     p.add_argument("--site", type=Path, required=True)
@@ -97,6 +102,8 @@ def main(argv=None) -> int:
     p.add_argument("--origem-local", type=Path)
     p.add_argument("--manter-dbc", action="store_true")
     p.add_argument("--sem-deducao", action="store_true")
+    # Partições da versão publicada antes: nos períodos fechados, a nova herda o padrão de células ocultas.
+    p.add_argument("--anterior", type=Path)
     args = parser.parse_args(argv)
 
     cat = catalogo.carregar()
@@ -133,7 +140,8 @@ def main(argv=None) -> int:
         _diagnostico(diagnostico.inep_uma_vez(), args.saida, "inep", args.resumo)
     elif args.comando == "construir":
         anteriores = _ler(args.links) if args.links and args.links.exists() else None
-        versao = site.construir(_ler(args.coleta / "ibge.json"), cat, args.saida, anteriores, args.execucao)
+        versao = site.construir(_ler(args.coleta / "ibge.json"), cat, args.saida, anteriores, args.execucao,
+                                sih_local=args.sih_local)
         tamanho = versao["tamanho"]
         print(f"Site: {versao['municipios']} páginas de município em {args.saida}. Maior página: "
               f"{tamanho['maior_pagina']}, {tamanho['maior_pagina_bytes']} bytes, limite {tamanho['limite_pagina_bytes']}")
@@ -151,7 +159,8 @@ def main(argv=None) -> int:
     elif args.comando == "sih":
         from . import sih
         medicao = sih.executar(_ler(args.coleta / "ibge.json"), cat, args.trabalho, args.saida, args.ufs, args.anos,
-                               args.processos, args.origem_local, args.manter_dbc, not args.sem_deducao)
+                               args.processos, args.origem_local, args.manter_dbc, not args.sem_deducao,
+                               anterior=args.anterior)
         print(f"SIH: {medicao['etapas']['total_s']} s no total; medição em {args.saida / 'medicao.json'}")
     elif args.comando == "exigir":
         problemas = manifesto.falhas(args.coleta)

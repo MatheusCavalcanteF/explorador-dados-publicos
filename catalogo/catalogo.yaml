@@ -96,8 +96,9 @@ bases:
       # Publicar o motivo de cada célula oculta (contagem pequena, complementar, família) dá a quem tenta
       # deduzir os limites de cada uma. Medido em 08/11/2026, SIH 2025 do Brasil: com o motivo público, o
       # teste revela 4.365 contagens, e o reforço empaca em cerca de 365; sem o motivo, a mesma supressão
-      # revela 1, e uma rodada de reforço chega a zero com 39 células a mais. Proposta aguardando decisão:
-      # não publicar o motivo por célula, e mostrar toda célula oculta do mesmo jeito, nunca como "<5".
+      # revela 1, e uma rodada de reforço chega a zero com 39 células a mais. Decidido em 08/11/2026: o
+      # motivo não é publicado. Toda célula oculta aparece igual no gráfico, na tabela, no CSV e no PNG,
+      # sem texto que diga o intervalo dela; a regra fica explicada em "Fonte e método".
       motivo_por_celula: false
       # Rodadas do reforço guiado pelo teste. Na medição entre versões de 08/11/2026, 14 das 16 versões
       # montadas chegaram a zero em até 6 rodadas; as outras 2 são o mesmo estado (2026 com as competências
@@ -108,6 +109,17 @@ bases:
       # as duas passam no teste de dedução depois do reforço; "conhecidas" oculta de 10% a 12% menos
       # células e tira 2025 inteiro do limite de 5% das internações ocultas.
       margens_complementar: conhecidas
+      # Critério para publicar um cruzamento num ano, depois da supressão: no máximo estas parcelas das
+      # internações e das células da tabela ocultas, e zero no teste de dedução. O que reprova não é
+      # publicado naquele ano, com o motivo na página; o que dependia dele (mãe ou trimestre) sai junto.
+      criterio_publicacao: { internacoes_ocultas_pct_max: 5, celulas_ocultas_pct_max: 50 }
+    # Meses preliminares (decidido em 08/11/2026). Uma atualização mensal com valores exatos revela, pela
+    # diferença entre versões, de 62 a 194.045 grupos de 1 a 4 internações (medido em 08/11/2026). Por
+    # isso, enquanto o período tiver um mês ainda não fechado (o mês, o trimestre dele ou o ano aberto),
+    # cada contagem visível sai arredondada para múltiplo deste valor e marcada como preliminar e
+    # arredondada. Zero continua zero, e oculta continua oculta. Taxas usam o valor arredondado. Dias de
+    # permanência e valor pago não são contagem de pessoas e saem exatos, marcados como preliminares.
+    preliminares: { arredondar_multiplo: 5, contagens: [internacoes, obitos] }
     ressalvas:
       - "Só SUS. Internações particulares e por plano de saúde não aparecem."
       - "Os meses são os da data da alta. No TabNet, \"atendimento\" é a data de internação, e os meses não coincidem."
@@ -233,7 +245,33 @@ metricas:
 dimensoes:
   municipio_residencia: { base: sih, niveis: [mun_res, uf_res], conversao: ibge6_para_ibge7 }
   municipio_hospital: { base: sih, niveis: [mun_hosp, uf_hosp], conversao: ibge6_para_ibge7 }
-  sexo: { base: sih, niveis: [sexo], valores: [M, F, I] }
+  # SEXO no RD, como no SEXO.CNV do TabWin (TAB_SIH.zip, pasta Auxiliar do FTP, de 15/10/2026): 1 é
+  # masculino; 2 e 3, feminino; qualquer outro código vai para "Ignorado". O SQL das tabelas sai daqui.
+  sexo:
+    base: sih
+    niveis: [sexo]
+    valores: [M, F, I]
+    codigos: { "1": M, "2": F, "3": F }
+    outros: I
+    rotulos: { M: Masculino, F: Feminino, I: Ignorado }
+    # O que foi achado sobre o código 4, lido em 08/11/2026, sem atribuir significado a ele:
+    fora_do_dicionario:
+      "4":
+        visto: >-
+          Aparece a partir da competência 2606: 182 AIHs nas competências 2606 e 2607, de 133 municípios de
+          residência em 24 UFs, todas internações, com alta entre 26/02/2026 e 31/07/2026. Com a 2608, que
+          ainda não tem AC e RR, são 276 AIHs de 194 municípios.
+        documentacao: >-
+          Nenhum documento oficial lido define o código 4 no RD. O layout da reduzida (Layout_REDUZIDA.pdf,
+          SIHD, de 2012) lista só 1 = masculino e 3 = feminino; o informe técnico do FTP (IT_SIHSUS_1603.pdf)
+          diz só "Sexo do paciente"; o SEXO.CNV do TabWin manda todo código fora de 1, 2 e 3 para
+          "Ignorado". Na captação, o layout do SISAIH01 lista M e F até a competência 12/2025 e passa a
+          listar também "I- Indeterminado" a partir da 01/2026 (layouts de 01/2026 e 07/2026, no FTP do
+          SIHD). Nenhum documento liga esse "I" ao código 4 do RD, e os avisos do SIHD de 2025 e 2026 não
+          falam de mudança no sexo.
+        tratamento: >-
+          Vai para "Ignorado", como no TabWin. A categoria não é retirada: o total de outra tabela a
+          devolveria por subtração.
   faixa_12:
     base: sih
     niveis: [faixa12, faixa5]
@@ -277,8 +315,9 @@ referencias:
 
 # Cruzamentos publicáveis do SIH, um arquivo por ano. A mãe vem antes das filhas. "mae": uma célula
 # oculta na mãe esconde as filhas da mesma chave. "herda_trimestre_de": o trimestre fica oculto se algum
-# mês dele estiver oculto na tabela mensal. O critério para entrar na lista é o do plano: no máximo 5%
-# das internações e 50% das células ocultas, e zero no teste de dedução.
+# mês dele estiver oculto na tabela mensal. Um trimestre só aparece com os três meses na base: no ano
+# corrente, o que ainda não terminou fica fora do arquivo, mas a supressão o trata como publicado, porque
+# o ano menos os trimestres completos o devolve. O critério de cada ano está em supressao.criterio_publicacao.
 cruzamentos:
   - { id: sih_res_ano, dimensoes: [municipio_residencia], tempo: ano, metricas: [internacoes, dias_permanencia, valor_total, obitos] }
   - { id: sih_hosp_ano, dimensoes: [municipio_hospital], tempo: ano, metricas: [internacoes, dias_permanencia, valor_total, obitos] }

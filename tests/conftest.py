@@ -20,7 +20,7 @@ _FALTAM = [m for m in _SIH if importlib.util.find_spec(m) is None]
 if _FALTAM and os.environ.get("EXIGIR_SIH") == "1":
     raise RuntimeError(f"EXIGIR_SIH=1, mas faltam {_FALTAM}: instale requirements-sih.txt")
 collect_ignore = (["test_dbf_reader.py", "test_deducao.py", "test_medicoes.py", "test_sih_coleta.py", "test_sih_tabelas.py",
-                   "test_sih_trava.py"]
+                   "test_sih_trava.py", "test_site_sih.py"]
                   if _FALTAM else [])
 
 # Códigos reais das 27 UFs; os municípios são inventados.

@@ -131,8 +131,9 @@ def baixar(nome: str, esperado: int, destino: Path, conectar_ftp=conectar, tenta
 IDENT = {"1", "5"}
 RACA_COR = {"01", "02", "03", "04", "05", "99"}
 CAR_INT = {"01", "02", "03", "04", "05", "06"}
-# Sexo 1 é masculino; 2 e 3, feminino. O 4 aparece em 276 AIHs e não está no dicionário: vai para
-# "ignorado", como qualquer outro código, e a contagem fica no resumo do arquivo.
+# Sexo 1 é masculino; 2 e 3, feminino. O 4 aparece a partir da competência 2606 e nenhum documento oficial
+# o define: vai para "Ignorado", como qualquer outro código e como no TabWin, e a contagem fica no resumo
+# do arquivo. O que foi lido está no catálogo, em dimensoes.sexo.fora_do_dicionario.
 SEXO_CONHECIDO = {"1", "2", "3"}
 COD_IDADE_CONHECIDO = {"2", "3", "4", "5"}
 
