@@ -103,6 +103,10 @@ Os testes de tempo e de igualdade precisam dos dados no site. A partir dos Parqu
 | `derivados.json` | Somas e percentuais citados no plano, com origem e cálculo |
 | `range_hosts.json`, `motor_host_real.json`, `motor_host_real_consultas.json` | `Range` nos 3 navegadores, e o motor em host real, com e sem leitura parcial |
 
+## Levantamento do roteiro
+
+[`roteiro/`](roteiro/README.md) traz o catálogo das fontes do roteiro depois da v1, consultadas em 07/11/2026 numa máquina local, com a data, o método, o que ficou de fora e os hashes dos originais.
+
 ## Limites destas medições
 
 - Nenhum deploy próprio foi feito: a leitura em host real usou arquivos públicos de terceiros, e os tempos usam um servidor local que imita o GitHub Pages.
