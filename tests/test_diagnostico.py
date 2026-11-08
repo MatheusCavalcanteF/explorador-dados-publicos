@@ -1,4 +1,5 @@
 import hashlib
+import io
 import json
 import socket
 import time
@@ -53,29 +54,55 @@ def test_conexao_recusada_para_a_fonte_e_testa_no_maximo_dois_por_familia(monkey
     item = diagnostico.sondar_https({"url": "https://fonte.gov.br/api"})
     assert item["falhou_em"] == "conexao" and "tls" not in item["passos"]
     assert [t["endereco"] for t in item["passos"]["conexao"]["tentativas"]] == ["10.0.0.1", "10.0.0.2", "::1"]
-    # Conexão que nem abre não é problema de tamanho de pacote: não repete com MSS menor.
-    assert "com_mss_reduzido" not in item
+    # Conexão que nem abre não depende de pacote nem de ClientHello: não há repetição.
+    assert "repeticoes" not in item
 
 
-def test_tls_parado_repete_com_mss_menor_no_mesmo_endereco(monkeypatch):
+@pytest.fixture
+def tls_falha(monkeypatch):
+    """Conexão abre, TLS falha com o erro dado, salvo quando o grupo da lista resolve."""
     monkeypatch.setattr(diagnostico, "resolver", enderecos((V4, "10.0.0.1"), (V4, "10.0.0.2")))
-    abertos = []
+    monkeypatch.setattr(diagnostico, "_mss_suportado", lambda: True)
+    abertos, grupos = [], []
 
     def abrir(familia, sockaddr, mss=None):
         abertos.append(SocketFalso(familia, sockaddr, mss))
         return abertos[-1]
 
-    def tls_parado(sock, host):
-        raise TimeoutError("The handshake operation timed out")
-    monkeypatch.setattr(diagnostico, "_abrir", abrir)
-    monkeypatch.setattr(diagnostico, "_tls", tls_parado)
-    monkeypatch.setattr(diagnostico, "_mss_suportado", lambda: True)
-    item = diagnostico.sondar_https({"url": "https://fonte.gov.br/api"})
+    def usar(erro, resolve_com=None):
+        def tls(sock, host, grupo=None):
+            grupos.append(grupo)
+            if grupo is None or grupo != resolve_com:
+                raise erro
+            return sock, {"versao": "TLSv1.3"}
+
+        def pedir(sock, host, caminho, alvo):
+            return io.BytesIO(b"ok"), {"status": 200}
+        monkeypatch.setattr(diagnostico, "_abrir", abrir)
+        monkeypatch.setattr(diagnostico, "_tls", tls)
+        monkeypatch.setattr(diagnostico, "_pedir", pedir)
+        return diagnostico.sondar_https({"url": "https://fonte.gov.br/api"})
+    usar.abertos, usar.grupos = abertos, grupos
+    return usar
+
+
+def test_tls_parado_repete_no_mesmo_endereco_com_clienthello_pequeno_e_mss_menor(tls_falha):
+    item = tls_falha(TimeoutError("The handshake operation timed out"))
     assert item["falhou_em"] == "tls"
-    assert item["com_mss_reduzido"]["falhou_em"] == "tls"
-    assert [(s.sockaddr[0], s.mss) for s in abertos] == [("10.0.0.1", None), ("10.0.0.2", None),
-                                                       ("10.0.0.1", diagnostico.MSS_REDUZIDO)]
-    assert all(s.fechado for s in abertos)
+    assert {n: r["falhou_em"] for n, r in item["repeticoes"].items()} == {"so_x25519": "tls", "mss_1200": "tls"}
+    assert [(s.sockaddr[0], s.mss) for s in tls_falha.abertos] == [
+        ("10.0.0.1", None), ("10.0.0.2", None), ("10.0.0.1", None), ("10.0.0.1", diagnostico.MSS_REDUZIDO)]
+    assert tls_falha.grupos == [None, "X25519", None]
+    assert all(s.fechado for s in tls_falha.abertos)
+
+
+def test_tls_com_reset_repete_so_com_clienthello_pequeno(tls_falha):
+    item = tls_falha(ConnectionResetError(104, "Connection reset by peer"), resolve_com="X25519")
+    assert item["falhou_em"] == "tls" and list(item["repeticoes"]) == ["so_x25519"]
+    assert "falhou_em" not in item["repeticoes"]["so_x25519"]
+    assert item["repeticoes"]["so_x25519"]["passos"]["corpo"]["bytes"] == 2
+    linha = diagnostico._texto_resultado({**item, "ok": False})
+    assert linha.endswith("de novo com só X25519: ok")
 
 
 class FtpFalso:

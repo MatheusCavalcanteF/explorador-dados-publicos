@@ -27,27 +27,37 @@ jobs:
       - name: Diagnóstico
         run: python -m pipeline diagnostico --saida build/diagnostico --resumo "$GITHUB_STEP_SUMMARY"
 
-      # Conferência independente do Python, só nas rotas do IBGE.
-      - name: curl nas rotas do IBGE
+      # Conferência independente do Python nas rotas do IBGE e no INEP. No INEP, com e sem a
+      # chave híbrida no ClientHello, para separar recusa ao runner de recusa ao ClientHello grande.
+      - name: curl nas rotas do IBGE e no INEP
         if: always()
         run: |
+          medir() {
+            saida=0
+            linha=$(curl -sS -o /dev/null --compressed --connect-timeout 10 --max-time 60 \
+              -w '%{remote_ip} | %{time_namelookup} | %{time_connect} | %{time_appconnect} | %{time_starttransfer} | %{time_total} | %{http_code}' \
+              "$@" 2> curl-erro.txt) || saida=$?
+            echo "| $* | $linha | $saida $(tr '\n|' '  ' < curl-erro.txt | head -c 160) |"
+          }
+          inep="https://download.inep.gov.br/dados_abertos/microdados_censo_escolar_2024.zip"
+          mkdir -p build/diagnostico
+          # Também no artefato, porque o resumo da execução não sai pela API.
           {
-            echo "### curl nas rotas do IBGE"
+            echo "### curl nas rotas do IBGE e no INEP"
             echo ""
-            echo "| URL | IP | DNS | Conexão | TLS | Primeiro byte | Total | HTTP | Saída do curl |"
+            curl --version | head -1
+            echo ""
+            echo "| Pedido | IP | DNS | Conexão | TLS | Primeiro byte | Total | HTTP | Saída do curl |"
             echo "|---|---|---:|---:|---:|---:|---:|---|---|"
-            for url in \
-              "https://servicodados.ibge.gov.br/api/v1/localidades/municipios" \
-              "https://apisidra.ibge.gov.br/values/t/6579/n6/3548500/v/9324/p/last%201" \
-              "https://ftp.ibge.gov.br/Estimativas_de_Populacao/" \
-              "https://geoftp.ibge.gov.br/organizacao_do_territorio/estrutura_territorial/divisao_territorial/2025/"; do
-              saida=0
-              linha=$(curl -sS -o /dev/null --compressed --connect-timeout 10 --max-time 60 \
-                -w '%{remote_ip} | %{time_namelookup} | %{time_connect} | %{time_appconnect} | %{time_starttransfer} | %{time_total} | %{http_code}' \
-                "$url" 2> curl-erro.txt) || saida=$?
-              echo "| $url | $linha | $saida $(tr '\n|' '  ' < curl-erro.txt | head -c 160) |"
+            medir "https://servicodados.ibge.gov.br/api/v1/localidades/municipios"
+            medir "https://apisidra.ibge.gov.br/values/t/6579/n6/3548500/v/9324/p/last%201"
+            medir "https://ftp.ibge.gov.br/Estimativas_de_Populacao/"
+            medir "https://geoftp.ibge.gov.br/organizacao_do_territorio/estrutura_territorial/divisao_territorial/2025/"
+            for tentativa in 1 2; do
+              medir -r 0-1023 "$inep"
+              medir -r 0-1023 --curves X25519 "$inep"
             done
-          } >> "$GITHUB_STEP_SUMMARY"
+          } | tee -a "$GITHUB_STEP_SUMMARY" > build/diagnostico/curl.md
 
       - uses: actions/upload-artifact@v7
         if: always()

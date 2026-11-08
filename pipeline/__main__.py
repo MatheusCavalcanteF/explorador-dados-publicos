@@ -71,9 +71,11 @@ def main(argv=None) -> int:
         resultado = diagnostico.executar()
         _gravar(args.saida / "diagnostico.json", resultado)
         texto = diagnostico.resumo(resultado)
-        # No GitHub, --resumo é o $GITHUB_STEP_SUMMARY, que outros passos também escrevem.
-        with (args.resumo or args.saida / "resumo.md").open("a", encoding="utf-8") as arquivo:
-            arquivo.write(texto)
+        (args.saida / "resumo.md").write_text(texto, encoding="utf-8")
+        if args.resumo:
+            # No GitHub é o $GITHUB_STEP_SUMMARY, que outros passos também escrevem.
+            with args.resumo.open("a", encoding="utf-8") as arquivo:
+                arquivo.write(texto)
         for nome, item in resultado["fontes"].items():
             print(f"{nome}: {'ok' if item['ok'] else 'FALHOU em ' + item['falhou_em']} ({item['ms_total']} ms)")
     elif args.comando == "construir":

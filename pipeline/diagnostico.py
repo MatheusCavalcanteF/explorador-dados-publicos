@@ -27,9 +27,13 @@ TEMPO_CONEXAO = 10
 TEMPO_RESPOSTA = 20
 TEMPO_CORPO = 60
 ENDERECOS_POR_FAMILIA = 2
-# Se o TLS ou a resposta param depois de a conexão abrir, repetir com segmento menor separa
-# pacote grande perdido no caminho (MTU) de bloqueio na origem.
+# Quando a conexão abre e um passo seguinte para, a fonte é testada de novo no mesmo endereço,
+# mudando uma coisa por vez. Segmento menor separa pacote grande perdido no caminho (MTU) de
+# bloqueio na origem. Só X25519 tira a chave híbrida que o OpenSSL 3.5 oferece por padrão:
+# medido com o OpenSSL 3.5.9, o ClientHello cai de 1.521 para 517 bytes e cabe num segmento.
 MSS_REDUZIDO = 1200
+GRUPO_CLASSICO = "X25519"
+ROTULOS = {"so_x25519": "só X25519", f"mss_{MSS_REDUZIDO}": f"MSS {MSS_REDUZIDO}"}
 
 ALVOS = [
     {"nome": "ibge_localidades", "url": ibge.URL_LOCALIDADES},
@@ -163,10 +167,13 @@ def _conectar(enderecos, mss=None):
     return escolhido, {"endereco": escolhido[2][0], "tentativas": tentativas}
 
 
-def _tls(sock: socket.socket, host: str):
+def _tls(sock: socket.socket, host: str, grupo: str | None = None):
     sock.settimeout(TEMPO_CONEXAO)
+    contexto = ssl.create_default_context()
+    if grupo:
+        contexto.set_ecdh_curve(grupo)
     try:
-        seguro = ssl.create_default_context().wrap_socket(sock, server_hostname=host)
+        seguro = contexto.wrap_socket(sock, server_hostname=host)
     except BaseException:
         sock.close()
         raise
@@ -206,11 +213,11 @@ def _corpo(resposta):
     return None, total()
 
 
-def _https(enderecos, host, caminho, alvo, passos, mss=None):
+def _https(enderecos, host, caminho, alvo, passos, mss=None, grupo=None):
     sock = None
     try:
         sock, _, _ = _passo(passos, "conexao", lambda: _conectar(enderecos, mss))
-        sock = _passo(passos, "tls", lambda: _tls(sock, host))
+        sock = _passo(passos, "tls", lambda: _tls(sock, host, grupo))
         resposta = _passo(passos, "resposta", lambda: _pedir(sock, host, caminho, alvo))
         _passo(passos, "corpo", lambda: _corpo(resposta))
     finally:
@@ -228,14 +235,19 @@ def sondar_https(alvo: dict) -> dict:
         _https(enderecos, host, caminho, alvo, item["passos"])
     except _Interrompido as e:
         item["falhou_em"] = e.passo
+        variacoes = []
+        if e.passo == "tls":
+            variacoes.append(("so_x25519", {"grupo": GRUPO_CLASSICO}))
         if e.passo in ("tls", "resposta", "corpo") and isinstance(e.__cause__, TimeoutError) and _mss_suportado():
-            usado = item["passos"]["conexao"]["endereco"]
-            reduzido = item["com_mss_reduzido"] = {"mss": MSS_REDUZIDO, "passos": {}}
-            try:
-                _https([(f, s) for f, s in enderecos if s[0] == usado], host, caminho, alvo,
-                       reduzido["passos"], MSS_REDUZIDO)
-            except _Interrompido as e2:
-                reduzido["falhou_em"] = e2.passo
+            variacoes.append((f"mss_{MSS_REDUZIDO}", {"mss": MSS_REDUZIDO}))
+        if variacoes:
+            usado = [(f, s) for f, s in enderecos if s[0] == item["passos"]["conexao"]["endereco"]]
+            for nome, ajuste in variacoes:
+                repeticao = item.setdefault("repeticoes", {})[nome] = {**ajuste, "passos": {}}
+                try:
+                    _https(usado, host, caminho, alvo, repeticao["passos"], **ajuste)
+                except _Interrompido as e2:
+                    repeticao["falhou_em"] = e2.passo
     return item
 
 
@@ -364,10 +376,9 @@ def _texto_resultado(item: dict) -> str:
         passo = item["falhou_em"]
         erro = item.get("erro") or item["passos"].get(passo, {}).get("erro", "")
         texto = f"**falhou em {passo}**: {erro}"
-    reduzido = item.get("com_mss_reduzido")
-    if reduzido:
-        texto += f"; com MSS {reduzido['mss']}: " + (f"falhou em {reduzido['falhou_em']}"
-                                                       if "falhou_em" in reduzido else "ok")
+    for nome, repeticao in item.get("repeticoes", {}).items():
+        texto += f"; de novo com {ROTULOS.get(nome, nome)}: " + (f"falhou em {repeticao['falhou_em']}"
+                                                                  if "falhou_em" in repeticao else "ok")
     return texto
 
 
