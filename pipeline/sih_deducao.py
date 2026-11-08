@@ -220,13 +220,16 @@ def sem_motivo(estados: dict[tuple, np.ndarray]) -> dict[tuple, np.ndarray]:
     return {n: np.where(e == deducao.VISIVEL, deducao.VISIVEL, LIVRE).astype(np.int8) for n, e in estados.items()}
 
 
-def suprimir_ate_passar(nos: dict, catalogo: dict, k: int, motivo_publico: bool, max_rodadas: int = 6,
+def suprimir_ate_passar(nos: dict, catalogo: dict, k: int, motivo_publico: bool, max_rodadas: int | None = None,
                         arestas: list | None = None, arredondamento=None) -> dict:
     """Supressão, teste de dedução e reforço, até o teste dar zero ou o reforço não ter mais o que ocultar.
 
+    Sem `max_rodadas`, vale o limite do catálogo (supressao.reforco_max_rodadas), o mesmo do pipeline.
     Devolve os cruzamentos suprimidos, a auditoria final, o histórico por rodada e se passou. Quem chama
     decide o que fazer quando não passa; o pipeline não publica.
     """
+    if max_rodadas is None:
+        max_rodadas = int(catalogo["bases"]["sih"]["supressao"]["reforco_max_rodadas"])
     publicados = nos_publicados(catalogo)
     fecho = tab.fechamento(publicados)
     arestas = arestas if arestas is not None else tab.arestas({n: nos[n] for n in fecho})

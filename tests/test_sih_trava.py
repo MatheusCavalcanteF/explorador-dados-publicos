@@ -32,3 +32,13 @@ def test_queda_de_5_por_cento_numa_uf_e_falha_estrutural():
     assert any(f.startswith("RR/202605: internações caíram 6.7%") for f in falhas)
     assert any(f.startswith("AC/202604: competência publicada antes não está") for f in falhas)
     assert not any(f.startswith("SP/") for f in falhas)
+
+
+def test_municipio_que_sumiu_da_tabela_nova_conta_como_queda_para_zero():
+    # As tabelas só têm as chaves com alguma AIH: o município-mês que perdeu todos os registros some.
+    antes = tabela([("354780", "202605", 3616, False), ("354780", "202606", 150, False), ("354850", "202605", 900, False)])
+    depois = tabela([("354850", "202605", 900, False), ("354780", "202606", 3, True)])
+    marcadas = sih_trava.municipio(antes, depois, ["mun_res", "mes"], REVISAO["municipio"])
+    assert list(zip(marcadas["mun_res"], marcadas["mes"], marcadas["nova"], marcadas["queda_pct"])) == [
+        ("354780", "202605", 0, 100.0)]
+    # 202606 ficou oculta na nova: não há valor publicado para comparar, então não aciona.
