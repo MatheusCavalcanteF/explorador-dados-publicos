@@ -22,7 +22,7 @@ O plano completo, com as medições que decidiram cada escolha, está em [`docs/
 - Uma página para cada um dos **5.571 municípios** da lista do IBGE, com população estimada de 2026 e do Censo 2022, busca por nome e listas por estado.
 - Link exato da API da SIDRA para o valor de cada município, e o hash do arquivo de onde o número saiu.
 - Censo 2022 guardado como partição fechada numa Release do repositório: as coletas seguintes leem a Release e só conferem a fonte. Se a fonte mudar, o pipeline para.
-- Execução semanal agendada, que também testa se as fontes das próximas etapas respondem do runner (FTP do DATASUS, FTP do CAGED, INEP e Siconfi), confere no site publicado o comportamento de `Range`, `HEAD` e gzip, lê o Parquet publicado com o leitor em JavaScript e confere uma amostra dos links oficiais.
+- Execução semanal, que também testa se as fontes das próximas etapas respondem do runner (FTP do DATASUS, FTP do CAGED, INEP e Siconfi), confere no site publicado o comportamento de `Range`, `HEAD` e gzip, lê o Parquet publicado com o leitor em JavaScript e confere uma amostra dos links oficiais.
 - O resultado de cada execução fica no [manifesto](manifesto/), versionado no git.
 
 Medido no build de 07/11/2026: 5.607 arquivos e 25,9 MB no site; a página de município tem mediana de 4,5 KB. O leitor em JavaScript leu as 5.571 linhas do Parquet sem divergência em relação à coleta.
@@ -46,7 +46,7 @@ flowchart LR
 | Coleta e contrato | `pipeline/ibge.py` | Recusa JSON fora do formato, sinal de ausência tratado como número, município desconhecido e cobertura baixa |
 | Site | `pipeline/site.py`, `web/` | HTML gerado em Python, funciona sem JavaScript; a busca é o único script |
 | Conferências | `pipeline/alcance.py`, `hospedagem.py`, `links.py`, `ferramentas/leitor/` | Rodam no CI depois da publicação. Falha de alcance ou de hospedagem deixa a execução vermelha; link quebrado só fica marcado |
-| Workflows | `.github/workflows/` | `ci.yml` roda os testes a cada push; `publicar.yml` coleta, publica e confere toda semana |
+| Workflows | `.github/workflows/` | `ci.yml` roda os testes a cada push; `publicar.yml` coleta, publica e confere toda semana; `alcance.yml`, manual, testa cada fonte passo a passo (DNS, conexão, TLS ou FTP, resposta) e mostra o resultado no resumo da execução. O agendamento do `publicar.yml` está desligado desde 07/11/2026, porque a API de localidades do IBGE não respondeu ao runner; o próprio arquivo diz como religar |
 
 ## Rodar localmente
 
