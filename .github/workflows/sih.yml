@@ -1,0 +1,84 @@
+# SIH no runner, só para medir: tempo, disco, memória e tamanho das partições, com o teste de dedução.
+# Nada vai para o site nem para as Releases (o catálogo diz publicacao: {site: false, releases: false}).
+# O único artefato é a medição: tempos, tamanhos e contagens agregadas. Os .dbc, o Parquet mínimo (uma
+# linha por AIH) e as partições ficam na pasta de trabalho e somem com o runner.
+name: SIH (medição)
+
+on:
+  workflow_dispatch:
+    inputs:
+      ufs:
+        description: "UFs separadas por espaço; vazio mede as 27"
+        required: false
+        default: "RR"
+      anos:
+        description: "Anos da alta separados por espaço; vazio mede todos a partir do primeiro do catálogo"
+        required: false
+        default: ""
+      deducao:
+        description: "Rodar o teste de dedução com reforço"
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sih
+  cancel-in-progress: false
+
+jobs:
+  medir:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.14"
+          cache: pip
+          cache-dependency-path: requirements-sih.txt
+
+      - name: Disco e máquina antes
+        run: |
+          mkdir -p build/sih-medicao
+          { nproc; free -m; df -B1 --output=avail,size . | tail -1; } | tee build/sih-medicao/maquina_antes.txt
+
+      - name: Instalar dependências (o datasus-dbc compila no Python 3.14)
+        run: |
+          inicio=$(date +%s)
+          pip install -r requirements-sih.txt
+          echo "instalacao_s=$(( $(date +%s) - inicio ))" | tee build/sih-medicao/instalacao.txt
+
+      # A lista de municípios vem da DTB, como no Publicar. Nenhum dado do IBGE vira artefato aqui.
+      - name: Lista de municípios
+        run: python -m pipeline coletar --saida build/coleta --anterior manifesto/ibge.json
+
+      - name: SIH
+        env:
+          UFS: ${{ inputs.ufs }}
+          ANOS: ${{ inputs.anos }}
+          DEDUCAO: ${{ inputs.deducao }}
+        run: |
+          args=(--coleta build/coleta --trabalho build/sih --saida build/sih-medicao --processos 4)
+          if [ -n "$UFS" ]; then args+=(--ufs $UFS); fi
+          if [ -n "$ANOS" ]; then args+=(--anos $ANOS); fi
+          if [ "$DEDUCAO" != "true" ]; then args+=(--sem-deducao); fi
+          if [ -x /usr/bin/time ]; then
+            /usr/bin/time -v -o build/sih-medicao/time.txt python -m pipeline sih "${args[@]}"
+          else
+            python -m pipeline sih "${args[@]}"
+          fi
+
+      - name: Disco depois
+        if: always()
+        run: |
+          { df -B1 --output=avail,size . | tail -1; du -sb build/sih/* 2>/dev/null; } | tee build/sih-medicao/disco_depois.txt
+
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: sih-medicao
+          path: build/sih-medicao
+          retention-days: 30
