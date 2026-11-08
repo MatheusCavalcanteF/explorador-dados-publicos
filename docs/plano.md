@@ -6,7 +6,7 @@ Site estático e gratuito para consultar, cruzar e visualizar dados públicos do
 
 **A proposta.** Uma página por município, um construtor de dashboards e uma busca em português, todos sobre a mesma especificação de consulta. Cada número mostra fonte, período, data da coleta e ressalvas. Sem servidor, sem login, sem custo de operação.
 
-Este documento parte do que os dados mostraram. As medições foram feitas entre 06 e 07/11/2026; os scripts e os resultados estão em [`docs/medicoes/`](medicoes/README.md). Estimativa, quando há, está escrita como estimativa.
+Este documento parte do que os dados mostraram. As medições foram feitas entre 06 e 08/11/2026; os scripts e os resultados estão em [`docs/medicoes/`](medicoes/README.md). Estimativa, quando há, está escrita como estimativa.
 
 ## O que as medições mudaram
 
@@ -68,6 +68,7 @@ Cada base foi testada com dados reais. "Licença" descreve o que a própria font
 - Lida pelo pipeline, a DTB 2025 tem os mesmos 5.571 códigos, nomes e UFs da API de localidades, conferido em 07/11/2026 numa máquina local. O mesmo leitor abre as edições 2023 (5.570 municípios, data-base 22/11/2024) e 2024 (5.571, 31/12/2024); a de 2022 é recusada.
 - Os códigos do IBGE têm 7 dígitos; SIH e CAGED usam 6. Os primeiros 6 dígitos são únicos nos 5.571 municípios, então a conversão é segura.
 - Boa Esperança do Norte (MT, 5101837) existe nas localidades e na estimativa, mas não no Censo 2022, no PIB nem nas internações de 2025.
+- **Município na SIDRA que a DTB não tem para a coleta.** Decidido em 08/11/2026: em vez de publicar um número sem município na lista oficial, a coleta para com um erro que diz quantos são, os códigos, a edição da DTB e o que conferir, e o site anterior continua no ar. Um município novo só entra quando a DTB seguinte o incluir.
 
 ## Arquitetura
 
@@ -148,6 +149,29 @@ O Cloudflare não documenta isso de forma oficial na página de limites; um rela
 
 **Cloudflare na frente do GitHub Pages não deve ser usado com `Range`:** em `shell.duckdb.org`, que tem essa montagem, a leitura parcial falha com `No magic bytes found`, porque o tamanho informado é o do gzip em cache.
 
+As medições de 07/11/2026 no site próprio foram feitas no endereço anterior à renomeação, descrita a seguir. O Parquet não mudou de conteúdo, e o CI refez gzip, `Range`, `HEAD` e leitor no endereço novo em 08/11/2026, com o mesmo resultado; nos navegadores, o teste não foi refeito.
+
+### Endereço e buscadores
+
+**Endereço.** O repositório passou de `explorador-dados-publicos` para `explorador-de-dados-publicos` em 08/11/2026, e o site agora mora em https://matheuscavalcantef.github.io/explorador-de-dados-publicos/. O GitHub redireciona os links do repositório, mas não os do site de projeto. Medido às 03:23 UTC, depois da execução 42442355751 do `Publicar`: no endereço antigo, a página inicial, a de Santos e o sitemap responderam `404`, com a página padrão do GitHub; no novo, as três responderam `200`, e um caminho inexistente devolveu a página 404 do próprio site ([`endereco_e_buscadores.json`](medicoes/resultados/endereco_e_buscadores.json)). Medições e manifestos anteriores guardam o endereço da época.
+
+O endereço do site e o do repositório ficam só em `projeto.yaml`. Link canônico, Open Graph, JSON-LD, sitemap, links do rodapé, a página 404 e a identificação dos pedidos às fontes saem dali, e um teste falha se o endereço aparecer escrito em outro arquivo do pipeline, do site ou dos workflows. A conferência de hospedagem também falha se o deploy publicar em outro endereço.
+
+**O que cada página leva:**
+- Link canônico e Open Graph (`og:title`, `og:description`, `og:url`, `og:site_name`, `og:locale`), sem imagem.
+- JSON-LD do schema.org, do tipo `Dataset`. A página de município descreve o próprio município (nome, UF e código IBGE em `spatialCoverage`) e tem uma parte por fonte: a DTB, a estimativa e o Censo, cada uma com órgão, citação, licença da base, período de referência, a tabela oficial em `isBasedOn` e o link exato do valor em `distribution`. Município sem dado numa fonte não ganha a parte dela. As páginas de UF e a inicial seguem o mesmo modelo; a inicial também aponta para o Parquet e a lista de municípios.
+- A licença sai do catálogo. Nas três bases do IBGE, que não declaram licença, o JSON-LD diz "Licença não declarada na origem", em vez de inventar uma. O catálogo recusa base sem licença, e licença declarada sem endereço.
+- O pipeline valida cada bloco antes de gravar (descrição de 50 a 5.000 caracteres, como pede o Google; licença, órgão, fonte oficial, período ISO 8601, link canônico) e não publica um inválido. Nomes com `<`, `>` ou `&` saem escapados dentro do `<script>`.
+- A página 404 fica sem link canônico e sem JSON-LD. O host já responde `404`, então `meta robots` não é necessária, e nenhuma página usa.
+
+**Sitemap.** Gerado pelo pipeline em `sitemap.xml`, com as 5.599 páginas: a inicial, as 27 UFs e os 5.571 municípios. O `lastmod` é a data em que a coleta viu pela primeira vez os valores que a página mostra, não a data da execução: toda página é refeita a cada semana, com a data da coleta no rodapé, mas só muda de fato quando um valor muda. Para isso, o manifesto passou a guardar, por fonte, `valores_desde`, e na estimativa também `periodo_desde`. Um município revisado pelo IBGE ganha a data da revisão; os outros, não. Na primeira execução com o registro, todas as páginas ficaram com 08/11/2026, 02:36 UTC, a coleta mais antiga do manifesto. No site publicado, o sitemap tem exatamente as páginas esperadas pela lista de municípios, e o JSON-LD de Santos passou no validador com os mesmos valores do Parquet.
+
+**robots.txt.** O GitHub Pages serve um site de projeto numa subpasta do domínio `matheuscavalcantef.github.io`, e os buscadores só leem `robots.txt` na raiz do domínio, que pertence a um site de usuário, outro repositório. Por isso não há `robots.txt`; o sitemap é enviado direto no Search Console.
+
+**Google Search Console.** O suporte ao arquivo de verificação está pronto: com o código em `google_search_console`, no `projeto.yaml`, o pipeline grava `google<código>.html` na raiz do site, com o conteúdo que o Google pede. Hoje não há código nem arquivo. A propriedade a cadastrar é a do prefixo de URL do site, e não a do domínio inteiro.
+
+**Peso.** Com o JSON-LD, o site passou de 31,9 MB para 58,1 MB (5.608 arquivos, no build local de 08/11/2026). A página de município foi de 5,6 KB para 10,1 KB de mediana, 3,7 KB deles de JSON-LD. Servida em gzip, a mediana de 25 páginas sorteadas pelo hash do código foi de 3,0 KB; antes, 2,1 KB, noutra amostra de 25. O sitemap tem 817 KB, ou 22,8 KB em gzip.
+
 ### Carregamento
 
 **Peso em transferência:** leitor sem descompressor, 18,6 KB com gzip; leitor com descompressor, 94,7 KB; motor, 8,4 MB (8,1 MB do `.wasm` e 241 KB de JavaScript, com 35,9 MB brutos no `.wasm`).
@@ -213,7 +237,9 @@ Os dados não entram no git, e o que está publicado não serve de base para rec
 | Artefatos | Retenção de 1 a 90 dias em repositório público; download exige acesso de leitura | Nada sem supressão vira artefato, nem aparece em log |
 | Runner público | 4 CPUs, 16 GB de RAM, 14 GB de disco, 6 h por job | Basta no papel. Não foi executado lá |
 
-**INEP e IBGE.** O ano do Censo vira partição fechada na Release. O job só rebaixa se o `Last-Modified` mudar, e confere o MD5 que vem no `.zip`. Na DTB e na SIDRA, a mudança é detectada pelo hash dos valores (código, nome e UF; valor por município), comparado com o da coleta anterior gravada no manifesto. A data de modificação da SIDRA saiu do contrato, porque vem do `servicodados`, que não aceita o runner. Se essas fontes estiverem fora do ar, o site mantém o que tem e marca a coleta como atrasada. Só uma falha estrutural do SIH impede a atualização, e nesse caso o site anterior continua no ar.
+**INEP e IBGE.** O ano do Censo vira partição fechada na Release. O job só rebaixa se o `Last-Modified` mudar, e confere o MD5 que vem no `.zip`. Na DTB e na SIDRA, a mudança é detectada pelo hash dos valores (código, nome e UF; valor por município), comparado com o da coleta anterior gravada no manifesto. A data de modificação da SIDRA saiu do contrato, porque vem do `servicodados`, que não aceita o runner. Se essas fontes estiverem fora do ar, o site mantém o que tem e marca a coleta como atrasada.
+
+**Revisão da estimativa pelo IBGE.** Decidido em 08/11/2026: não bloqueia. Quando o hash da estimativa muda sem mudar o período, a coleta lê o Parquet que está no ar e só o usa se ele tiver o hash da coleta anterior do manifesto. Os municípios que mudaram ganham na página a ressalva "Revisado pelo IBGE", com a data da coleta que detectou, e o manifesto guarda o valor antes e depois de cada um, por código. Variação acima de 5%, ou município que entrou ou saiu da estimativa, vira aviso na execução do `Publicar`; o limite é regra do catálogo. Se o site anterior não responder, ou não bater com o manifesto, a revisão fica registrada sem o detalhe por município, com o motivo, e a ressalva aparece em todas as páginas. As revisões valem dentro do período: a estimativa de um ano novo começa sem nenhuma. O caminho foi testado com dados sintéticos; nenhuma revisão real aconteceu até 08/11/2026. Só uma falha estrutural do SIH impede a atualização, e nesse caso o site anterior continua no ar.
 
 **Manifesto no git.** Um JSON por base com versão, tamanho e data de cada arquivo de origem, totais por UF e competência, e a lista de meses em revisão, com o valor anterior. A comparação de versões lê as tabelas já publicadas no site, então nada sem supressão precisa ser guardado. É o único dado que entra no git, e seu histórico mostra o que mudou.
 
@@ -487,7 +513,7 @@ O teste de dedução da F1 inclui essa comparação, sobre o site publicado e a 
 
 ### Novo CAGED, Brasil, 2025
 
-**Base desta tabela: só o arquivo `MOV` de 2025.** Linhas, tamanhos e supressão dos cruzamentos não incluem `FOR` nem `EXC`, e a conferência com os ajustes, descrita em [Novo CAGED](#fontes), é só do total nacional. Com os três arquivos, esses números podem mudar, e a F5 precisa medi-los de novo.
+**Base desta tabela: só o arquivo `MOV` de 2025.** Linhas, tamanhos e supressão dos cruzamentos não incluem `FOR` nem `EXC`, e a conferência com os ajustes, descrita em [Novo CAGED](#fontes), é só do total nacional. Com os três arquivos, esses números podem mudar, e a F6 precisa medi-los de novo.
 
 O problema é o mesmo, e maior. A regra anterior decidia só pelo total de movimentos e deixava de 7.390 a 225.434 células visíveis com admissões ou desligamentos de 1 a 4, conforme a tabela. Com a regra por métrica e a família:
 
@@ -506,7 +532,7 @@ O problema é o mesmo, e maior. A regra anterior decidia só pelo total de movim
 | Município x ano x seção x sexo x faixa | 441.455 | 78,4% | 9,13% | 0,85 MB | **Não** |
 | Município x mês x seção x sexo | 932.445 | 78,8% | 11,38% | 1,58 MB | **Não** |
 
-A F5 deve testar máscara por medida, escondendo só as admissões quando elas forem pequenas e mantendo os desligamentos, o que pode recuperar parte disso. O teste de dedução da F1 ainda não cobre o CAGED.
+A F6 deve testar máscara por medida, escondendo só as admissões quando elas forem pequenas e mantendo os desligamentos, o que pode recuperar parte disso. O teste de dedução da F1 ainda não cobre o CAGED.
 
 ### Educação, Brasil, 2024
 
@@ -537,6 +563,8 @@ Os limites valem para o que é publicado. O orçamento total deixa margem no 1 G
 | Novo CAGED, agregados Parquet | 7,0 MB por ano nas tabelas aprovadas, só `MOV`, nacional com zstd | 2020 em diante (fora da v1) | ~50 MB com zstd; sem compressão, cerca do dobro | 100 MB |
 | Siconfi | Não medido em escala | Fora da v1 | Não estimado | 60 MB |
 | **Total** | | | | **595 MB** |
+
+As páginas HTML não entraram neste orçamento. Em 08/11/2026, com o JSON-LD, o build local do site inteiro tem 58,1 MB, quase todo em páginas de município (mediana de 10,1 KB). O limite delas fica para a F1b, quando a página ganhar o SIH.
 
 Limites por arquivo:
 - **Até 25 MiB para qualquer arquivo publicado, sem exceção.** Mantém a porta aberta para outro host. O `.wasm` do motor tem 35,9 MB e não entra no site; se um dia for usado, vem do CDN.
@@ -599,7 +627,7 @@ Pelo que foi possível examinar, nenhum junta os quatro pontos: temas diferentes
 | Risco | Efeito | O que fazer |
 |---|---|---|
 | **FTPs sem TLS nem hash** | Não dá para provar que o arquivo é o publicado | Validar a estrutura, comparar versões, registrar tamanho e data da origem |
-| **Fontes que recusam o runner** | Medido em 07/11/2026, em 3 execuções do workflow `Alcance das fontes`. A API de serviços do IBGE (`servicodados.ibge.gov.br`: localidades e períodos da SIDRA) não aceitou conexão TCP em nenhuma, nem pelo curl. O INEP aceitou a conexão na primeira e respondeu com reset no TLS; nas outras duas recusou a conexão, também pelo curl, com e sem a chave híbrida no ClientHello. SIDRA, FTP do IBGE, geoftp do IBGE, FTP do DATASUS (um `RD` baixado, com o mesmo SHA-256 da máquina local), FTP do PDET e Siconfi responderam nas 3. Da máquina local, a API do IBGE respondeu nas 3 rodadas; o INEP falhou no TLS nas 3 rodadas completas e respondeu em 5 de 5 tentativas isoladas | Nada da coleta depende do `servicodados`: a lista vem da DTB do geoftp, e a população e o período mais recente, da `apisidra`. Sem a data de modificação, a mudança é detectada pelo hash dos valores. O INEP fica fora do alcance obrigatório do `Publicar` até a F1c e continua no diagnóstico manual. **Hipótese, não confirmada:** bloqueio por excesso de pedidos, porque a primeira execução abriu conexão e as seguintes, feitas minutos depois, não. Testar antes da F1c com o diagnóstico espaçado |
+| **Fontes que recusam o runner** | Medido em 07/11/2026, em 3 execuções do workflow `Alcance das fontes`. A API de serviços do IBGE (`servicodados.ibge.gov.br`: localidades e períodos da SIDRA) não aceitou conexão TCP em nenhuma, nem pelo curl. O INEP aceitou a conexão na primeira e respondeu com reset no TLS; nas outras duas recusou a conexão, também pelo curl, com e sem a chave híbrida no ClientHello. SIDRA, FTP do IBGE, geoftp do IBGE, FTP do DATASUS (um `RD` baixado, com o mesmo SHA-256 da máquina local), FTP do PDET e Siconfi responderam nas 3. Da máquina local, a API do IBGE respondeu nas 3 rodadas; o INEP falhou no TLS nas 3 rodadas completas e respondeu em 5 de 5 tentativas isoladas | Nada da coleta depende do `servicodados`: a lista vem da DTB do geoftp, e a população e o período mais recente, da `apisidra`. Sem a data de modificação, a mudança é detectada pelo hash dos valores. O INEP fica fora do alcance obrigatório do `Publicar` até a F1c. **Hipótese, não confirmada:** bloqueio por excesso de pedidos, porque a primeira execução abriu conexão e as seguintes, feitas minutos depois, não. **Em teste de 08 a 14/11/2026:** o workflow `INEP diário` faz um único pedido por dia (o primeiro KB do Censo Escolar 2024), sem nova tentativa, guarda passo a passo e resultado num artefato de 90 dias e se desliga depois do último dia. Nesse período, o `Alcance das fontes` só pede ao INEP se isso for marcado no disparo. Se os 7 pedidos falharem, a hipótese cai, e a F1c parte para outra origem oficial dos arquivos |
 | **Agendamento desativado** | 60 dias sem atividade param a atualização, e a documentação não define "atividade" | Manifesto mensal no git, idade dos dados visível na página, verificação na F1. O commit que altera o `cron` reativa |
 | **Fonte republica e piora** | Santo André caiu 64,9% em uma versão | Trava de dois níveis: marca o município, só para tudo em falha estrutural. Limite a reavaliar com mais versões |
 | **Dedução entre tabelas** | Sem família, 113 contagens eram dedutíveis. O teste atual é de cadeia, com as margens declaradas, sobre o SIH de um ano | Teste na F1 sobre tudo o que for publicado, em vários anos e temas. Reprovou, não publica |
@@ -629,8 +657,9 @@ A divisão proposta (deploy e CI; SIH e catálogo; educação e IBGE) foi mantid
 - Página de cada município com nome, UF, população, fonte e data da coleta, e o painel "Fonte e método" com o link exato do IBGE para a população.
 - Conferência agendada de links, marcando os quebrados no manifesto.
 - Repetir no site real os testes de `Range`, `HEAD`, gzip e leitor. Feito em 07/11/2026, nos três navegadores; ver [Hospedagem](#hospedagem-github-pages).
+- **Fechamento, em 08/11/2026:** repositório renomeado, endereço numa configuração única, sitemap, link canônico, Open Graph e JSON-LD em cada página, suporte ao arquivo do Search Console, revisão da estimativa marcada na página, e o teste diário do INEP. Ver [Endereço e buscadores](#endereço-e-buscadores) e [Riscos](#riscos).
 
-*Pronto quando:* o workflow agendado publica sozinho, as fontes respondem do runner e os testes de hospedagem batem com este plano. Se o runner não alcançar os FTPs, parar e avisar: é o que mais pode mudar o plano.
+*Pronto quando:* o workflow agendado publica sozinho, as fontes respondem do runner e os testes de hospedagem batem com este plano. Se o runner não alcançar os FTPs, parar e avisar: é o que mais pode mudar o plano. Em 08/11/2026, só falta a primeira execução agendada, em 15/11.
 
 **F1b. SIH do Brasil, com catálogo e supressão**
 - **As 27 UFs**, partições por ano em Releases, janela aberta recalculada.
@@ -661,30 +690,42 @@ A divisão proposta (deploy e CI; SIH e catálogo; educação e IBGE) foi mantid
 
 ### Depois da v1
 
-**Nesta ordem.** Cada área começa como a Etapa 0: medir a fonte antes de prometer a tela. Não há números estimados aqui, e o acesso de cada fonte ainda não foi testado, salvo CAGED e Siconfi, descritos em [Fontes](#fontes). Em todas, a medição responde às mesmas perguntas: se o runner alcança a fonte, formato e tamanho por ano, cobertura municipal, defasagem e republicação, licença declarada, quanto a supressão oculta em cada cruzamento e com que ferramenta oficial o resultado pode ser conferido.
+**Nesta ordem, revista em 08/11/2026: agropecuária primeiro.** Cada área começa como a Etapa 0: medir a fonte antes de prometer a tela. Em todas, a medição responde às mesmas perguntas: se o runner alcança a fonte, formato e tamanho por ano, cobertura municipal, defasagem e republicação, licença declarada, quanto a supressão oculta em cada cruzamento e com que ferramenta oficial o resultado pode ser conferido.
 
-| Fase | Área | Fonte a medir |
-|---|---|---|
-| F4 | Saúde ampliada | SIM (óbitos por residência), SINASC (nascidos vivos), CNES (estabelecimentos, leitos e profissionais) e vacinação (SI-PNI), todos do Ministério da Saúde |
-| F5 | Trabalho e finanças públicas | Novo CAGED (Ministério do Trabalho e Emprego) e Siconfi (Tesouro Nacional) |
-| F6 | Agropecuária | IBGE, Produção Agrícola Municipal (PAM) e Pesquisa da Pecuária Municipal (PPM), pela SIDRA |
-| F7 | Assistência social | Ministério do Desenvolvimento e Assistência Social (MDS), dados municipais de Cadastro Único e programas |
-| F8 | Saneamento | SINISA, do Ministério das Cidades |
-| F9 | Meio ambiente | INPE: desmatamento (PRODES e DETER) e focos de queimada |
-| F10 | Eleições | TSE, Portal de Dados Abertos: eleitorado e resultados por município |
-| F11 | Segurança | SINESP, do Ministério da Justiça e Segurança Pública |
+**O levantamento de 07/11/2026.** Um levantamento à parte, feito numa máquina local e fora deste repositório, testou 15 entradas (estabelecimentos e leitos separados, assim como Bolsa Família e Cadastro Único): 13 tiveram dados baixados e inspecionados, e 2 ficaram só documentadas. A tabela segue a marcação dele: **medido** é corpo recebido e inspecionado, esquema observado ou resultado de tentativa de acesso; **documentado** é o que a origem publica, inclusive tamanho anunciado em cabeçalho HTTP, que não é arquivo baixado inteiro. CAGED e Siconfi foram medidos na Etapa 0 e estão em [Fontes](#fontes).
 
-**F4. Saúde ampliada**
+| Fase | Área e fonte | Acesso | Código do município | Tamanho | Licença declarada | Situação |
+|---|---|---|---|---|---|---|
+| F4 | **Agropecuária.** IBGE, Produção Agrícola Municipal (PAM, tabela 5457) e Pesquisa da Pecuária Municipal (PPM, tabela 3939), pela SIDRA | Medido: API da SIDRA sem chave, um município e um ano no endereço | Medido: 7 dígitos | Documentado: não determinado para o Brasil; depende das variáveis e classificações escolhidas | Documentado: não localizada, como nas outras tabelas do IBGE | **Primeira.** Já vem agregada e sai da `apisidra`, que o runner alcança na coleta semanal. Preservar unidades, ausência e sigilo do SIDRA. A tabela 3939 cobre rebanhos; leite, ovos e outros produtos ficam em outras tabelas |
+| F5 | **Saúde ampliada.** SIM e SINASC | Medido: SIM pela API sem credencial; SINASC pelo ZIP, porque a API devolveu listas vazias | Medido: 6 dígitos; residência e ocorrência separadas | Documentado: CSV nacional de 2024 com 95,4 MB (SIM) e 92,3 MB (SINASC) compactados | Documentado: CC BY no metadado, sem versão | Registros individuais: supressão por família, começando pelo total anual |
+| F5 | CNES, estabelecimentos e leitos | Medido: API sem credencial; leitos por competência | Medido: 6 dígitos na API de leitos; o CSV "Hospitais e Leitos" só tem o nome | Documentado: fotografia de estabelecimentos com 56,8 MB; CSV de leitos de 2024 com 25,2 MB | Documentado: CC BY em estabelecimentos; nenhuma específica para a API de leitos | Leito é estoque: não somar competências como total anual |
+| F5 | Vacinação (SI-PNI) | Medido: API e arquivos sem credencial | Medido: 6 dígitos, do paciente e do estabelecimento | Documentado: **cerca de 26 GB compactados por ano**, somando os 12 ZIPs mensais de 2024 | Documentado: vazia no metadado | **Cara.** Medido: uma linha por dose aplicada, com dados do paciente. Exige deduplicação, registros excluídos e proteção de casos raros, e dose não é pessoa vacinada. Fica por último na fase |
+| F6 | **Trabalho e finanças públicas.** Novo CAGED e Siconfi | Ver [Fontes](#fontes) | | | | Como antes da revisão da ordem |
+| F7 | **Assistência social.** MDS: Bolsa Família e Cadastro Único agregados (VIS DATA e Observatório) | Medido: as rotas testadas redirecionaram para um aviso de manutenção, sem dados | Documentado: recorte municipal; presença e largura do código não confirmadas | Não determinado | Documentado: não localizada | **Pendente**, só documentada. Volta quando as rotas públicas responderem, e não segura as fases seguintes. A API do Portal da Transparência pede cadastro e chave e fica fora. Documentado: o Observatório oculta menos de 100 famílias ou 200 pessoas, e essa ocultação precisa resistir a subtração aqui |
+| F8 | **Saneamento.** SINISA, Gestão Municipal | Medido: planilha baixada inteira | Medido: 7 dígitos, inclusive de municípios que não responderam | Medido: 6,0 MB do módulo Gestão Municipal; os outros quatro módulos, não | Documentado: não localizada; o CC BY-ND 3.0 do rodapé é do site | Código presente não é resposta válida, e não resposta não é zero |
+| F9 | **Meio ambiente.** INPE: PRODES, DETER e focos de queimada | Medido: WFS público (PRODES e DETER) e CSV diário (focos) | Medido: 7 dígitos no DETER e nos focos. **O PRODES não tem município**: exige interseção espacial com a camada de limites | Documentado: ZIP nacional de focos de 2024 com 117 MB; PRODES e DETER não determinados | Documentado: **PRODES e DETER sob CC BY-SA 4.0**, pelo TerraBrasilis; nos focos, nenhuma formal | A CC BY-SA pede atribuição e a mesma licença nos derivados: arquivos próprios, como os do Siconfi sob ODbL. As amostras cobrem só a Amazônia Legal |
+| F10 | **Eleições.** TSE, resultados por município | Medido: catálogo e ZIP sem credencial | Medido: **sem código IBGE**. `CD_MUNICIPIO` é código eleitoral próprio | Documentado: ZIP nacional de votação por município e zona de 2024 com 48,2 MB | Documentado: CC BY, sem versão | Exige correspondência TSE x IBGE, a construir e conferir. Não somar cargos, turnos, nem os arquivos nacional e estaduais |
+| F11 | **Segurança.** SINESP VDE, do Ministério da Justiça | Medido: planilha de 2024 baixada inteira | Medido: **sem código IBGE**. Só UF e nome do município | Medido: 24,4 MB em 2024 | Documentado: CC BY no catálogo antigo; não confirmada na planilha atual | Associação por UF e nome, com as exceções explícitas. Vítimas e ocorrências separadas; sexo e idade em cidades pequenas pedem supressão |
+
+Nenhuma dessas fontes foi testada do runner. O diagnóstico manual `Alcance das fontes` passou a pedir um endereço de cada servidor de dados delas, numa tabela à parte, sem torná-las obrigatórias: nenhuma etapa depende delas, e o `Publicar` não as testa. Ficam de fora a API do Portal da Transparência e as páginas que só documentam a fonte. Da máquina local, em 08/11/2026, as 13 rotas responderam, e as duas do MDS ainda redirecionavam para o aviso de manutenção ([`alcance_roteiro_local.json`](medicoes/resultados/alcance_roteiro_local.json)).
+
+**F4. Agropecuária**
+- PAM e PPM por município e ano, pela SIDRA, com o mesmo contrato da estimativa de população: colunas pelo cabeçalho, sinais de ausência e sigilo nunca lidos como número.
+- Antes da tela, escolher os produtos e as unidades de cada um: somar toneladas de culturas diferentes, ou cabeças de rebanhos diferentes, não tem sentido.
+
+**F5. Saúde ampliada**
+- Nesta ordem, como sugere o levantamento: CNES; SIM e SINASC; vacinação.
 - SIM e SINASC por residência, com a mesma supressão por família do SIH. Óbito por causa tem o mesmo problema medido nos óbitos hospitalares, então a medição começa pelo total anual.
 - CNES liga leitos e profissionais ao município do hospital, que o SIH já usa.
+- Os códigos de 6 dígitos passam pela mesma conversão do SIH, já conferida nos 5.571 municípios.
 
-**F5. Trabalho e finanças públicas**
+**F6. Trabalho e finanças públicas**
 - CAGED: `MOV` + `FOR` − `EXC`, máscara por medida, comparação entre cidades parecidas. Refazer tamanho e supressão dos cruzamentos com os três arquivos, porque a medição atual usa só `MOV`. O cruzamento entre saúde e educação já é possível desde a F2.
 - Siconfi, com licença ODbL em arquivos próprios.
 - Relatório municipal para imprimir.
 - **Saem daqui:** SIH do Brasil e INEP (para a F1); dados abertos e caminhos estáveis (para a F2).
 
-**F6 a F11.** Cada área entra quando a medição dela estiver pronta, com seu tema na lista fixa do catálogo.
+**F7 a F11.** Cada área entra quando a medição dela estiver pronta, com seu tema na lista fixa do catálogo.
 
 ## Reprodução
 

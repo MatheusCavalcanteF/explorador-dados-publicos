@@ -1,0 +1,830 @@
+{
+ "conferido_em": "2026-11-08T03:19:04Z",
+ "ambiente": {
+  "sistema": "Windows-11-10.0.26300-SP0",
+  "python": "3.14.8",
+  "openssl": "OpenSSL 3.5.9 29 Sep 2026",
+  "github_actions": false
+ },
+ "fontes": {
+  "ibge_sidra_pam": {
+   "url": "https://apisidra.ibge.gov.br/values/t/5457/n6/3543402/v/214/p/2024/c782/all?formato=json",
+   "host": "apisidra.ibge.gov.br",
+   "passos": {
+    "dns": {
+     "ok": true,
+     "ms": 6,
+     "enderecos": [
+      {
+       "endereco": "2606:4700::6812:2d5",
+       "familia": "IPv6"
+      },
+      {
+       "endereco": "2606:4700::6812:3d5",
+       "familia": "IPv6"
+      },
+      {
+       "endereco": "104.18.3.213",
+       "familia": "IPv4"
+      },
+      {
+       "endereco": "104.18.2.213",
+       "familia": "IPv4"
+      }
+     ]
+    },
+    "conexao": {
+     "ok": true,
+     "ms": 114,
+     "endereco": "2606:4700::6812:2d5",
+     "tentativas": [
+      {
+       "endereco": "2606:4700::6812:2d5",
+       "familia": "IPv6",
+       "ok": true,
+       "ms": 21
+      },
+      {
+       "endereco": "2606:4700::6812:3d5",
+       "familia": "IPv6",
+       "ok": true,
+       "ms": 31
+      },
+      {
+       "endereco": "104.18.3.213",
+       "familia": "IPv4",
+       "ok": true,
+       "ms": 30
+      },
+      {
+       "endereco": "104.18.2.213",
+       "familia": "IPv4",
+       "ok": true,
+       "ms": 31
+      }
+     ]
+    },
+    "tls": {
+     "ok": true,
+     "ms": 35,
+     "versao": "TLSv1.3"
+    },
+    "resposta": {
+     "ok": true,
+     "ms": 179,
+     "status": 200,
+     "content_encoding": "gzip",
+     "content_type": "application/json; charset=utf-8"
+    },
+    "corpo": {
+     "ok": true,
+     "ms": 0,
+     "bytes": 1380,
+     "sha256": "67db878af93112f09c97e016c5ff55922d947866463b4a2a1dcc62e5d300d2a8"
+    }
+   },
+   "ok": true,
+   "ms_total": 335
+  },
+  "ibge_sidra_ppm": {
+   "url": "https://apisidra.ibge.gov.br/values/t/3939/n6/3543402/v/105/p/2024/c79/all?formato=json",
+   "host": "apisidra.ibge.gov.br",
+   "passos": {
+    "dns": {
+     "ok": true,
+     "ms": 1,
+     "enderecos": [
+      {
+       "endereco": "2606:4700::6812:2d5",
+       "familia": "IPv6"
+      },
+      {
+       "endereco": "2606:4700::6812:3d5",
+       "familia": "IPv6"
+      },
+      {
+       "endereco": "104.18.3.213",
+       "familia": "IPv4"
+      },
+      {
+       "endereco": "104.18.2.213",
+       "familia": "IPv4"
+      }
+     ]
+    },
+    "conexao": {
+     "ok": true,
+     "ms": 113,
+     "endereco": "2606:4700::6812:2d5",
+     "tentativas": [
+      {
+       "endereco": "2606:4700::6812:2d5",
+       "familia": "IPv6",
+       "ok": true,
+       "ms": 19
+      },
+      {
+       "endereco": "2606:4700::6812:3d5",
+       "familia": "IPv6",
+       "ok": true,
+       "ms": 31
+      },
+      {
+       "endereco": "104.18.3.213",
+       "familia": "IPv4",
+       "ok": true,
+       "ms": 31
+      },
+      {
+       "endereco": "104.18.2.213",
+       "familia": "IPv4",
+       "ok": true,
+       "ms": 31
+      }
+     ]
+    },
+    "tls": {
+     "ok": true,
+     "ms": 25,
+     "versao": "TLSv1.3"
+    },
+    "resposta": {
+     "ok": true,
+     "ms": 117,
+     "status": 200,
+     "content_encoding": "gzip",
+     "content_type": "application/json; charset=utf-8"
+    },
+    "corpo": {
+     "ok": true,
+     "ms": 0,
+     "bytes": 417,
+     "sha256": "090b957285dae711ba346c91087b2aae57d14ae3aece5ffaeb59c410d3fb42f1"
+    }
+   },
+   "ok": true,
+   "ms_total": 256
+  },
+  "saude_api": {
+   "url": "https://apidadosabertos.saude.gov.br/cnes/estabelecimentos?limit=1&offset=0",
+   "host": "apidadosabertos.saude.gov.br",
+   "passos": {
+    "dns": {
+     "ok": true,
+     "ms": 35,
+     "enderecos": [
+      {
+       "endereco": "189.28.130.6",
+       "familia": "IPv4"
+      }
+     ]
+    },
+    "conexao": {
+     "ok": true,
+     "ms": 55,
+     "endereco": "189.28.130.6",
+     "tentativas": [
+      {
+       "endereco": "189.28.130.6",
+       "familia": "IPv4",
+       "ok": true,
+       "ms": 55
+      }
+     ]
+    },
+    "tls": {
+     "ok": true,
+     "ms": 50,
+     "versao": "TLSv1.3"
+    },
+    "resposta": {
+     "ok": true,
+     "ms": 159,
+     "status": 200,
+     "content_encoding": "gzip",
+     "content_type": "application/json"
+    },
+    "corpo": {
+     "ok": true,
+     "ms": 0,
+     "bytes": 673,
+     "sha256": "77e9861a71d1ba3b69555832a6f7c7a5eb9889de815825c4b95402d7b109594f"
+    }
+   },
+   "ok": true,
+   "ms_total": 300
+  },
+  "saude_catalogo": {
+   "url": "https://dadosabertos.saude.gov.br/dataset/sim",
+   "host": "dadosabertos.saude.gov.br",
+   "passos": {
+    "dns": {
+     "ok": true,
+     "ms": 40,
+     "enderecos": [
+      {
+       "endereco": "189.28.130.6",
+       "familia": "IPv4"
+      }
+     ]
+    },
+    "conexao": {
+     "ok": true,
+     "ms": 50,
+     "endereco": "189.28.130.6",
+     "tentativas": [
+      {
+       "endereco": "189.28.130.6",
+       "familia": "IPv4",
+       "ok": true,
+       "ms": 49
+      }
+     ]
+    },
+    "tls": {
+     "ok": true,
+     "ms": 58,
+     "versao": "TLSv1.3"
+    },
+    "resposta": {
+     "ok": true,
+     "ms": 185,
+     "status": 200,
+     "content_encoding": "gzip",
+     "content_type": "text/html; charset=utf-8"
+    },
+    "corpo": {
+     "ok": true,
+     "ms": 35,
+     "bytes": 21996,
+     "sha256": "ee0240537a9f88f74e051d1f56a958f618de816b5f4e461b9475515c36e7c903"
+    }
+   },
+   "ok": true,
+   "ms_total": 368
+  },
+  "saude_arquivos": {
+   "url": "https://s3.sa-east-1.amazonaws.com/ckan.saude.gov.br/SINASC/csv/SINASC_2024_csv.zip",
+   "host": "s3.sa-east-1.amazonaws.com",
+   "passos": {
+    "dns": {
+     "ok": true,
+     "ms": 15,
+     "enderecos": [
+      {
+       "endereco": "3.5.233.105",
+       "familia": "IPv4"
+      },
+      {
+       "endereco": "3.5.232.117",
+       "familia": "IPv4"
+      },
+      {
+       "endereco": "3.5.233.82",
+       "familia": "IPv4"
+      },
+      {
+       "endereco": "3.5.234.93",
+       "familia": "IPv4"
+      },
+      {
+       "endereco": "3.5.233.149",
+       "familia": "IPv4"
+      },
+      {
+       "endereco": "3.5.232.37",
+       "familia": "IPv4"
+      },
+      {
+       "endereco": "3.5.232.218",
+       "familia": "IPv4"
+      },
+      {
+       "endereco": "3.5.232.22",
+       "familia": "IPv4"
+      }
+     ]
+    },
+    "conexao": {
+     "ok": true,
+     "ms": 47,
+     "endereco": "3.5.233.105",
+     "tentativas": [
+      {
+       "endereco": "3.5.233.105",
+       "familia": "IPv4",
+       "ok": true,
+       "ms": 31
+      },
+      {
+       "endereco": "3.5.232.117",
+       "familia": "IPv4",
+       "ok": true,
+       "ms": 16
+      }
+     ]
+    },
+    "tls": {
+     "ok": true,
+     "ms": 27,
+     "versao": "TLSv1.3"
+    },
+    "resposta": {
+     "ok": true,
+     "ms": 107,
+     "status": 206,
+     "content_encoding": null,
+     "content_type": "binary/octet-stream",
+     "content_range": "bytes 0-1023/92289354",
+     "last_modified": "Fri, 08 May 2026 17:40:56 GMT"
+    },
+    "corpo": {
+     "ok": true,
+     "ms": 0,
+     "bytes": 1024,
+     "sha256": "d35dd91a6f4b8c71c212a7fd0419377788f367de195902f66a622051daa33ee1"
+    }
+   },
+   "ok": true,
+   "ms_total": 196
+  },
+  "mds_vis_data": {
+   "url": "https://aplicacoes.cidadania.gov.br/vis/data3/data-explorer.php",
+   "host": "aplicacoes.cidadania.gov.br",
+   "passos": {
+    "dns": {
+     "ok": true,
+     "ms": 109,
+     "enderecos": [
+      {
+       "endereco": "200.198.205.39",
+       "familia": "IPv4"
+      }
+     ]
+    },
+    "conexao": {
+     "ok": true,
+     "ms": 37,
+     "endereco": "200.198.205.39",
+     "tentativas": [
+      {
+       "endereco": "200.198.205.39",
+       "familia": "IPv4",
+       "ok": true,
+       "ms": 37
+      }
+     ]
+    },
+    "tls": {
+     "ok": true,
+     "ms": 69,
+     "versao": "TLSv1.2"
+    },
+    "resposta": {
+     "ok": true,
+     "ms": 37,
+     "status": 302,
+     "content_encoding": null,
+     "content_type": null,
+     "location": "https://www.gov.br/mds/pt-br/avisos"
+    },
+    "corpo": {
+     "ok": true,
+     "ms": 0,
+     "bytes": 0,
+     "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+   },
+   "ok": true,
+   "ms_total": 253
+  },
+  "mds_cecad": {
+   "url": "https://cecad.cidadania.gov.br/",
+   "host": "cecad.cidadania.gov.br",
+   "passos": {
+    "dns": {
+     "ok": true,
+     "ms": 31,
+     "enderecos": [
+      {
+       "endereco": "200.198.205.27",
+       "familia": "IPv4"
+      }
+     ]
+    },
+    "conexao": {
+     "ok": true,
+     "ms": 35,
+     "endereco": "200.198.205.27",
+     "tentativas": [
+      {
+       "endereco": "200.198.205.27",
+       "familia": "IPv4",
+       "ok": true,
+       "ms": 35
+      }
+     ]
+    },
+    "tls": {
+     "ok": true,
+     "ms": 68,
+     "versao": "TLSv1.2"
+    },
+    "resposta": {
+     "ok": true,
+     "ms": 35,
+     "status": 302,
+     "content_encoding": null,
+     "content_type": null,
+     "location": "https://www.gov.br/mds/pt-br/avisos"
+    },
+    "corpo": {
+     "ok": true,
+     "ms": 0,
+     "bytes": 0,
+     "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+   },
+   "ok": true,
+   "ms_total": 170
+  },
+  "sinisa": {
+   "url": "https://www.gov.br/cidades/pt-br/acesso-a-informacao/acoes-e-programas/saneamento/sinisa/resultados-sinisa/copy_of_SINISA_GESTAO_MUNICIPAL_Informacoes_2024.xlsx",
+   "host": "www.gov.br",
+   "passos": {
+    "dns": {
+     "ok": true,
+     "ms": 1,
+     "enderecos": [
+      {
+       "endereco": "2804:151:3:2:161:148:164:31",
+       "familia": "IPv6"
+      },
+      {
+       "endereco": "161.148.164.31",
+       "familia": "IPv4"
+      }
+     ]
+    },
+    "conexao": {
+     "ok": true,
+     "ms": 78,
+     "endereco": "2804:151:3:2:161:148:164:31",
+     "tentativas": [
+      {
+       "endereco": "2804:151:3:2:161:148:164:31",
+       "familia": "IPv6",
+       "ok": true,
+       "ms": 53
+      },
+      {
+       "endereco": "161.148.164.31",
+       "familia": "IPv4",
+       "ok": true,
+       "ms": 25
+      }
+     ]
+    },
+    "tls": {
+     "ok": true,
+     "ms": 42,
+     "versao": "TLSv1.3"
+    },
+    "resposta": {
+     "ok": true,
+     "ms": 59,
+     "status": 206,
+     "content_encoding": null,
+     "content_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+     "content_range": "bytes 0-1023/6048522"
+    },
+    "corpo": {
+     "ok": true,
+     "ms": 0,
+     "bytes": 1024,
+     "sha256": "1e1df32da1d3132f491b7b16ef771316285f70a5028c43688eacfe791bdc6173"
+    }
+   },
+   "ok": true,
+   "ms_total": 181
+  },
+  "sinesp": {
+   "url": "https://www.gov.br/mj/pt-br/assuntos/sua-seguranca/seguranca-publica/estatistica/download/dnsp-base-de-dados/bancovde-2024.xlsx/@@download/file",
+   "host": "www.gov.br",
+   "passos": {
+    "dns": {
+     "ok": true,
+     "ms": 1,
+     "enderecos": [
+      {
+       "endereco": "2804:151:3:2:161:148:164:31",
+       "familia": "IPv6"
+      },
+      {
+       "endereco": "161.148.164.31",
+       "familia": "IPv4"
+      }
+     ]
+    },
+    "conexao": {
+     "ok": true,
+     "ms": 75,
+     "endereco": "2804:151:3:2:161:148:164:31",
+     "tentativas": [
+      {
+       "endereco": "2804:151:3:2:161:148:164:31",
+       "familia": "IPv6",
+       "ok": true,
+       "ms": 27
+      },
+      {
+       "endereco": "161.148.164.31",
+       "familia": "IPv4",
+       "ok": true,
+       "ms": 48
+      }
+     ]
+    },
+    "tls": {
+     "ok": true,
+     "ms": 42,
+     "versao": "TLSv1.3"
+    },
+    "resposta": {
+     "ok": true,
+     "ms": 59,
+     "status": 206,
+     "content_encoding": null,
+     "content_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+     "content_range": "bytes 0-1023/24388241"
+    },
+    "corpo": {
+     "ok": true,
+     "ms": 0,
+     "bytes": 1024,
+     "sha256": "735ce351afc67a1e7457713b618a9d3a41c2b79c9a792cdbc29a36c375f88638"
+    }
+   },
+   "ok": true,
+   "ms_total": 177
+  },
+  "inpe_terrabrasilis": {
+   "url": "https://terrabrasilis.dpi.inpe.br/geoserver/ows?service=WFS&version=2.0.0&request=GetFeature&typeNames=prodes-legal-amz%3Ayearly_deforestation&count=1&outputFormat=application%2Fjson",
+   "host": "terrabrasilis.dpi.inpe.br",
+   "passos": {
+    "dns": {
+     "ok": true,
+     "ms": 11,
+     "enderecos": [
+      {
+       "endereco": "150.163.2.5",
+       "familia": "IPv4"
+      }
+     ]
+    },
+    "conexao": {
+     "ok": true,
+     "ms": 28,
+     "endereco": "150.163.2.5",
+     "tentativas": [
+      {
+       "endereco": "150.163.2.5",
+       "familia": "IPv4",
+       "ok": true,
+       "ms": 28
+      }
+     ]
+    },
+    "tls": {
+     "ok": true,
+     "ms": 72,
+     "versao": "TLSv1.3"
+    },
+    "resposta": {
+     "ok": true,
+     "ms": 101,
+     "status": 200,
+     "content_encoding": "gzip",
+     "content_type": "application/json;charset=UTF-8"
+    },
+    "corpo": {
+     "ok": true,
+     "ms": 0,
+     "bytes": 615,
+     "sha256": "dac34b0a8a17565b3c87b8f88bf823aa3851e1933772a640551eda18effdba86"
+    }
+   },
+   "ok": true,
+   "ms_total": 213
+  },
+  "inpe_focos": {
+   "url": "https://dataserver-coids.inpe.br/queimadas/queimadas/focos/csv/diario/Brasil/",
+   "host": "dataserver-coids.inpe.br",
+   "passos": {
+    "dns": {
+     "ok": true,
+     "ms": 13,
+     "enderecos": [
+      {
+       "endereco": "150.163.218.16",
+       "familia": "IPv4"
+      }
+     ]
+    },
+    "conexao": {
+     "ok": true,
+     "ms": 11,
+     "endereco": "150.163.218.16",
+     "tentativas": [
+      {
+       "endereco": "150.163.218.16",
+       "familia": "IPv4",
+       "ok": true,
+       "ms": 11
+      }
+     ]
+    },
+    "tls": {
+     "ok": true,
+     "ms": 33,
+     "versao": "TLSv1.3"
+    },
+    "resposta": {
+     "ok": true,
+     "ms": 31,
+     "status": 200,
+     "content_encoding": "gzip",
+     "content_type": "text/html;charset=UTF-8"
+    },
+    "corpo": {
+     "ok": true,
+     "ms": 0,
+     "bytes": 1240,
+     "sha256": "2ec6d1ce26c69aff20e9435c4b03954aa0249d824fd9e0060c5e86a587f7ea86"
+    }
+   },
+   "ok": true,
+   "ms_total": 89
+  },
+  "tse_cdn": {
+   "url": "https://cdn.tse.jus.br/estatistica/sead/odsele/votacao_candidato_munzona/votacao_candidato_munzona_2024.zip",
+   "host": "cdn.tse.jus.br",
+   "passos": {
+    "dns": {
+     "ok": true,
+     "ms": 12,
+     "enderecos": [
+      {
+       "endereco": "2600:1419:4e00:1e::17d3:6db7",
+       "familia": "IPv6"
+      },
+      {
+       "endereco": "2600:1419:4e00:1e::17d3:6db6",
+       "familia": "IPv6"
+      },
+      {
+       "endereco": "2.17.45.25",
+       "familia": "IPv4"
+      },
+      {
+       "endereco": "2.17.45.5",
+       "familia": "IPv4"
+      }
+     ]
+    },
+    "conexao": {
+     "ok": true,
+     "ms": 100,
+     "endereco": "2600:1419:4e00:1e::17d3:6db7",
+     "tentativas": [
+      {
+       "endereco": "2600:1419:4e00:1e::17d3:6db7",
+       "familia": "IPv6",
+       "ok": true,
+       "ms": 23
+      },
+      {
+       "endereco": "2600:1419:4e00:1e::17d3:6db6",
+       "familia": "IPv6",
+       "ok": true,
+       "ms": 15
+      },
+      {
+       "endereco": "2.17.45.25",
+       "familia": "IPv4",
+       "ok": true,
+       "ms": 31
+      },
+      {
+       "endereco": "2.17.45.5",
+       "familia": "IPv4",
+       "ok": true,
+       "ms": 31
+      }
+     ]
+    },
+    "tls": {
+     "ok": true,
+     "ms": 28,
+     "versao": "TLSv1.3"
+    },
+    "resposta": {
+     "ok": true,
+     "ms": 24,
+     "status": 206,
+     "content_encoding": null,
+     "content_type": "application/zip",
+     "content_range": "bytes 0-1023/48213408",
+     "last_modified": "Sat, 07 Nov 2026 05:34:02 GMT"
+    },
+    "corpo": {
+     "ok": true,
+     "ms": 0,
+     "bytes": 1024,
+     "sha256": "d459ed20fd3daeabf5b8055a18ffe51781d97a2fc80c6694737a1d048f6446bb"
+    }
+   },
+   "ok": true,
+   "ms_total": 164
+  },
+  "tse_catalogo": {
+   "url": "https://dadosabertos.tse.jus.br/dataset/resultados-2024",
+   "host": "dadosabertos.tse.jus.br",
+   "passos": {
+    "dns": {
+     "ok": true,
+     "ms": 12,
+     "enderecos": [
+      {
+       "endereco": "2600:1419:4e00:1e::17d3:6db6",
+       "familia": "IPv6"
+      },
+      {
+       "endereco": "2600:1419:4e00:1e::17d3:6daf",
+       "familia": "IPv6"
+      },
+      {
+       "endereco": "2.17.45.17",
+       "familia": "IPv4"
+      },
+      {
+       "endereco": "2.17.45.8",
+       "familia": "IPv4"
+      }
+     ]
+    },
+    "conexao": {
+     "ok": true,
+     "ms": 78,
+     "endereco": "2600:1419:4e00:1e::17d3:6db6",
+     "tentativas": [
+      {
+       "endereco": "2600:1419:4e00:1e::17d3:6db6",
+       "familia": "IPv6",
+       "ok": true,
+       "ms": 29
+      },
+      {
+       "endereco": "2600:1419:4e00:1e::17d3:6daf",
+       "familia": "IPv6",
+       "ok": true,
+       "ms": 16
+      },
+      {
+       "endereco": "2.17.45.17",
+       "familia": "IPv4",
+       "ok": true,
+       "ms": 16
+      },
+      {
+       "endereco": "2.17.45.8",
+       "familia": "IPv4",
+       "ok": true,
+       "ms": 17
+      }
+     ]
+    },
+    "tls": {
+     "ok": true,
+     "ms": 30,
+     "versao": "TLSv1.3"
+    },
+    "resposta": {
+     "ok": true,
+     "ms": 34,
+     "status": 200,
+     "content_encoding": "gzip",
+     "content_type": "text/html; charset=utf-8"
+    },
+    "corpo": {
+     "ok": true,
+     "ms": 1,
+     "bytes": 20511,
+     "sha256": "859ba4aa013a428715c1d5e3999ea32e64328cb0b5f866fba186665eefdeb2e0"
+    }
+   },
+   "ok": true,
+   "ms_total": 155
+  }
+ }
+}

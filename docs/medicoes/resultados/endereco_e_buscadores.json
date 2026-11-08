@@ -1,0 +1,137 @@
+{
+ "conferido_em": "2026-11-08T03:23:45Z",
+ "antigo": "https://matheuscavalcantef.github.io/explorador-dados-publicos/",
+ "novo": "https://matheuscavalcantef.github.io/explorador-de-dados-publicos/",
+ "pedidos": {
+  "antigo:inicio": {
+   "url": "https://matheuscavalcantef.github.io/explorador-dados-publicos/?conferencia=20261108T032345",
+   "status": 404,
+   "content_type": "text/html; charset=utf-8",
+   "content_encoding": "gzip",
+   "bytes_transferidos": 5142,
+   "bytes": 9115,
+   "sha256": "70d613e3acfba24fd2876fcbacaf639e1e111ef4d54baf70761c47673f37d6a3"
+  },
+  "antigo:municipio/3548500/": {
+   "url": "https://matheuscavalcantef.github.io/explorador-dados-publicos/municipio/3548500/?conferencia=20261108T032345",
+   "status": 404,
+   "content_type": "text/html; charset=utf-8",
+   "content_encoding": "gzip",
+   "bytes_transferidos": 5142,
+   "bytes": 9115,
+   "sha256": "70d613e3acfba24fd2876fcbacaf639e1e111ef4d54baf70761c47673f37d6a3"
+  },
+  "antigo:sitemap.xml": {
+   "url": "https://matheuscavalcantef.github.io/explorador-dados-publicos/sitemap.xml?conferencia=20261108T032345",
+   "status": 404,
+   "content_type": "text/html; charset=utf-8",
+   "content_encoding": "gzip",
+   "bytes_transferidos": 5142,
+   "bytes": 9115,
+   "sha256": "70d613e3acfba24fd2876fcbacaf639e1e111ef4d54baf70761c47673f37d6a3"
+  },
+  "novo:inicio": {
+   "url": "https://matheuscavalcantef.github.io/explorador-de-dados-publicos/?conferencia=20261108T032345",
+   "status": 200,
+   "content_type": "text/html; charset=utf-8",
+   "content_encoding": "gzip",
+   "bytes_transferidos": 2554,
+   "bytes": 10432,
+   "sha256": "fa9834e53cec4ae3663c7a4bce6744031404acb8c1f1bb853af9f8521b535d83"
+  },
+  "novo:municipio/3548500/": {
+   "url": "https://matheuscavalcantef.github.io/explorador-de-dados-publicos/municipio/3548500/?conferencia=20261108T032345",
+   "status": 200,
+   "content_type": "text/html; charset=utf-8",
+   "content_encoding": "gzip",
+   "bytes_transferidos": 3038,
+   "bytes": 10284,
+   "sha256": "959586f3051dc04f85c5ff5e4f134fbd48546782ba67a49f62d9ac9c50096ec5"
+  },
+  "novo:sitemap.xml": {
+   "url": "https://matheuscavalcantef.github.io/explorador-de-dados-publicos/sitemap.xml?conferencia=20261108T032345",
+   "status": 200,
+   "content_type": "application/xml",
+   "content_encoding": "gzip",
+   "bytes_transferidos": 22813,
+   "bytes": 817222,
+   "sha256": "6ad029a4b7d4959795739d52c61c636a01f544a5e9f0b1af80a9e898f95a80c2"
+  },
+  "novo:nao-existe/": {
+   "url": "https://matheuscavalcantef.github.io/explorador-de-dados-publicos/nao-existe/?conferencia=20261108T032345",
+   "status": 404,
+   "content_type": "text/html; charset=utf-8",
+   "content_encoding": "gzip",
+   "bytes_transferidos": 766,
+   "bytes": 1586,
+   "sha256": "21166cd1a92d97deb568109226f86be82b452546f578969720d7a1c4dff0a302"
+  }
+ },
+ "sitemap": {
+  "enderecos": 5599,
+  "esperados": 5599,
+  "iguais_aos_esperados": true,
+  "lastmod": [
+   "2026-11-08T02:36:11Z"
+  ]
+ },
+ "santos": {
+  "canonico": true,
+  "og_url": true,
+  "json_ld_valido": true,
+  "json_ld_bytes": 3641,
+  "partes": [
+   "2022",
+   "2025-12-31",
+   "2026"
+  ],
+  "date_modified": "2026-11-08T02:36:11Z",
+  "valores_iguais_ao_parquet": true,
+  "licenca": {
+   "@type": "CreativeWork",
+   "name": "Licença não declarada na origem"
+  },
+  "fontes_oficiais": [
+   "https://geoftp.ibge.gov.br/organizacao_do_territorio/estrutura_territorial/divisao_territorial/",
+   "https://sidra.ibge.gov.br/tabela/6579",
+   "https://sidra.ibge.gov.br/tabela/4714"
+  ]
+ },
+ "paginas_amostra": {
+  "codigos": [
+   "4128708",
+   "2413805",
+   "3539400",
+   "4314159",
+   "4128609",
+   "4202156",
+   "2308906",
+   "2707800",
+   "3105400",
+   "3303203",
+   "3140852",
+   "4306502",
+   "2100907",
+   "2932606",
+   "4125803",
+   "2304905",
+   "3103009",
+   "3146008",
+   "2916807",
+   "2503209",
+   "1500909",
+   "4202131",
+   "3512902",
+   "3501152",
+   "3502754"
+  ],
+  "todas_200_em_gzip": true,
+  "mediana_bytes": 10335,
+  "mediana_bytes_transferidos": 3041
+ },
+ "versao_publicada": {
+  "execucao": "42442355751-1",
+  "coletado_em": "2026-11-08T03:21:57Z",
+  "municipios": 5571
+ }
+}

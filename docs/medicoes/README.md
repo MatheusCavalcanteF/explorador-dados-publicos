@@ -1,6 +1,6 @@
 # Medições
 
-Scripts e resultados por trás dos números de [`docs/plano.md`](../plano.md), coletados entre 06 e 07/11/2026. Não fazem parte do site nem do pipeline. Foram escritos para responder a perguntas pontuais, então cada um recebe caminhos pela linha de comando e não há um comando único que rode tudo.
+Scripts e resultados por trás dos números de [`docs/plano.md`](../plano.md), coletados entre 06 e 08/11/2026. Não fazem parte do site nem do pipeline. Foram escritos para responder a perguntas pontuais, então cada um recebe caminhos pela linha de comando e não há um comando único que rode tudo.
 
 ## Dependências
 
@@ -35,6 +35,7 @@ Node: `@duckdb/duckdb-wasm@1.33.1-dev57.0`, `playwright-core@1.65.0`, `hyparquet
 | `scripts/medir_siconfi.py` | Cobertura em 60 municípios sorteados, a 1 consulta por segundo |
 | `scripts/testar_inep_conexao.py` | Taxa de falha de conexão no INEP e em outras fontes |
 | `scripts/limitar_cpu.py` | Teto de CPU por Job Object do Windows |
+| `scripts/conferir_endereco.py` | Depois da renomeação do repositório: o endereço antigo do site dá 404 e o novo responde; o sitemap publicado tem exatamente as páginas esperadas; o JSON-LD de Santos passa no validador do pipeline e bate com o Parquet; peso servido de 25 páginas. Roda da raiz do repositório |
 | `scripts/resumo.py`, `resumo_carga.py` | Tabelas-resumo dos agregados e do carregamento |
 | `scripts/derivar_numeros.py` | Números do plano que são contas sobre outros resultados, com origem e cálculo |
 | `scripts/verificar_resultados.py` | Caminhos da máquina em `docs/` e contagens abaixo de 5 por município nos resultados. O que é próprio da máquina vem por `--termo-local`, nunca fica no código: `verificar_resultados.py <resultados> <municipios.json> --texto docs --termo-local <usuário>` |
@@ -97,6 +98,8 @@ Os testes de tempo e de igualdade precisam dos dados no site. A partir dos Parqu
 | `fontes.json`, `hosts.json` | Saída de `conferir_fontes.py` e `conferir_hosts.py` |
 | `calibracao_cpu.json` | Quanto cada forma de limitar a CPU desacelera a thread principal e o worker |
 | `site_publicado_navegadores.json` | Saída de `testar_site_publicado.mjs` sobre a execução 42439217829 do `Publicar`, com os cabeçalhos de cada pedido |
+| `endereco_e_buscadores.json` | Saída de `conferir_endereco.py` sobre a execução 42442355751 do `Publicar`, a primeira no endereço novo |
+| `alcance_roteiro_local.json` | `diagnostico.executar(diagnostico.ROTEIRO)` numa máquina local, em 08/11/2026: as rotas das fontes do roteiro depois da v1, só com tamanho e hash de cada corpo |
 | `derivados.json` | Somas e percentuais citados no plano, com origem e cálculo |
 | `range_hosts.json`, `motor_host_real.json`, `motor_host_real_consultas.json` | `Range` nos 3 navegadores, e o motor em host real, com e sem leitura parcial |
 

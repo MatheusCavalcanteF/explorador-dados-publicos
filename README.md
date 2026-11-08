@@ -19,14 +19,15 @@ O plano completo, com as medições que decidiram cada escolha, está em [`docs/
 
 ## O que já está no ar (etapa F1a)
 
-Publicado em 07/11/2026 pela execução manual [42439217829](https://github.com/MatheusCavalcanteF/explorador-de-dados-publicos/actions/runs/42439217829) do workflow `Publicar`:
+Publicado em 08/11/2026 pela execução manual [42442355751](https://github.com/MatheusCavalcanteF/explorador-de-dados-publicos/actions/runs/42442355751) do workflow `Publicar`, a primeira no endereço novo:
 
 - Uma página para cada um dos **5.571 municípios** da Divisão Territorial Brasileira 2025 do IBGE, com data-base em 31/12/2025, informada no rodapé de cada página. Cada página traz a população estimada de 2026 e a do Censo 2022. Há busca por nome e listas por estado.
 - No painel **Fonte e método**: link exato da API da SIDRA para o valor de cada município, período de referência, data da coleta e SHA-256 da resposta de onde o número saiu, e o arquivo da DTB de onde vêm código, nome e UF.
+- Para buscadores: [sitemap](https://matheuscavalcantef.github.io/explorador-de-dados-publicos/sitemap.xml) com as 5.599 páginas, link canônico, Open Graph e JSON-LD do tipo `Dataset` em cada uma, com fonte oficial, licença da base, período e município.
 - O Censo 2022 ficou guardado como partição fechada na Release [`ibge-censo-2022`](https://github.com/MatheusCavalcanteF/explorador-de-dados-publicos/releases/tag/ibge-censo-2022). As próximas execuções leem a Release e só a conferem com a fonte; se a fonte mudar, o pipeline para.
 - O [manifesto](manifesto/) da execução está no git: arquivos coletados com hash, totais por UF, hash dos valores de cada fonte e o resultado das conferências.
 
-Conferido no site publicado. O CI pediu ao site, em Python e Node, o Parquet da população e a página de Santos: gzip, `Range`, `HEAD` e leitor bateram com o plano, e 30 links exatos sorteados por métrica devolveram o valor publicado. Depois, em Chrome 157, Firefox 159 e WebKit 27.2, o Parquet de 225.932 bytes chegou com 116.787 em gzip e o mesmo SHA-256 do build. `Range` voltou `206` com bytes crus, e o leitor em JavaScript leu as 5.571 linhas sem divergência da coleta. O site tem 5.607 arquivos e 31,9 MB. A página de município tem mediana de 5,6 KB; servida em gzip, 2,1 KB numa amostra de 25 páginas.
+Conferido no site publicado. O CI pediu ao site, em Python e Node, o Parquet da população, a página de Santos e o sitemap: endereço, gzip, `Range`, `HEAD`, sitemap e leitor bateram com o plano, e 30 links exatos sorteados por métrica devolveram o valor publicado. Depois, fora do CI, o sitemap trouxe exatamente as páginas esperadas pela lista de municípios, e o JSON-LD de Santos passou no validador do pipeline com os mesmos valores do Parquet ([`endereco_e_buscadores.json`](docs/medicoes/resultados/endereco_e_buscadores.json)). Em 07/11/2026, ainda no endereço anterior, Chrome 157, Firefox 159 e WebKit 27.2 receberam o Parquet de 225.932 bytes com 116.787 em gzip e o mesmo SHA-256 do build, `Range` voltou `206` com bytes crus, e o leitor em JavaScript leu as 5.571 linhas sem divergência da coleta; esse teste nos navegadores não foi refeito no endereço novo. O build do site tem 5.608 arquivos e 58,1 MB. A página de município tem mediana de 10,1 KB, 3,7 KB deles de JSON-LD; servida em gzip, 3,0 KB numa amostra de 25 páginas.
 
 A publicação semanal foi religada em 07/11/2026, aos domingos às 00:47 UTC. A primeira execução agendada ainda não aconteceu.
 
