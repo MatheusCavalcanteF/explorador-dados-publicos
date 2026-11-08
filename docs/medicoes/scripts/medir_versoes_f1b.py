@@ -13,7 +13,10 @@ Pares medidos, todos com as 27 UFs e a supressão do pipeline (motivo não publi
 Políticas: exato; e valores visíveis dos períodos com mês preliminar arredondados para múltiplos de 5 ou 10.
 Nada por município sai daqui: só contagens por nó e medidas de erro agregadas.
 
-Uso: python medir_versoes_f1b.py <pasta_min> <pasta_min_sp_setembro> <saida.json>
+Uso: python medir_versoes_f1b.py <pasta_min> <pasta_min_sp_setembro> <saida.json> [par:ano ...]
+
+Com pares na linha de comando, só eles são refeitos e substituídos no resultado que já existe.
+O reforço usa o limite de rodadas do catálogo, o mesmo do pipeline.
 """
 import json
 import sys
@@ -28,6 +31,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
 from pipeline import catalogo, deducao, sih_deducao, sih_janela, sih_tabelas as tab  # noqa: E402
 
 PASTA, SETEMBRO, SAIDA = Path(sys.argv[1]), Path(sys.argv[2]), Path(sys.argv[3])
+SO = {tuple(x.rsplit(":", 1)) for x in sys.argv[4:]}
 CAT = catalogo.carregar()
 K = 5
 TEMPO = CAT["bases"]["sih"]["tempo"]
@@ -151,23 +155,39 @@ def comparar(nome_par, ano, a, b):
     return linha
 
 
-resultado = {"medido_em": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "k": K, "pares": []}
+resultado = {"medido_em": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "k": K,
+             "reforco_max_rodadas": CAT["bases"]["sih"]["supressao"]["reforco_max_rodadas"], "pares": []}
+if SO:
+    resultado = json.loads(SAIDA.read_text(encoding="utf-8")) | {"reforco_max_rodadas": resultado["reforco_max_rodadas"]}
+
+
+def guardar(linha):
+    chave = (linha["par"], linha["ano"])
+    resultado["pares"] = [p for p in resultado["pares"] if (p["par"], p["ano"]) != chave] + [linha]
+    resultado["pares"].sort(key=lambda p: (not p["par"].startswith("real"), p["par"], p["ano"]))
+    SAIDA.write_text(json.dumps(resultado, ensure_ascii=False, indent=1), encoding="utf-8")
+
+
+def pedido(par, ano):
+    return not SO or (par, str(ano)) in SO
 # Par real: SP de setembro (última competência 2607) contra outubro (última 2608, mas 2608 sem AC e RR).
 trocados = sorted(set(arquivos(202607, setembro=True)) - set(arquivos(202607)))
 assert len(trocados) == len(SP_REPUBLICADAS), f"esperava trocar {len(SP_REPUBLICADAS)} arquivos de SP, troquei {len(trocados)}"
 for ano in (2025, 2026):
+    if not pedido("real_sp_setembro_outubro", ano):
+        continue
     a = versao(arquivos(202607, setembro=True), ano, 202607)
     b = versao(arquivos(202607), ano, 202608)
-    resultado["pares"].append(comparar("real_sp_setembro_outubro", ano, a, b))
-    SAIDA.write_text(json.dumps(resultado, ensure_ascii=False, indent=1), encoding="utf-8")
+    guardar(comparar("real_sp_setembro_outubro", ano, a, b))
 # Pares simulados: a versão com L contra a com L-1.
 for ultima in (202604, 202605, 202606, 202607):
     anterior = sih_janela.somar(ultima, -1)
     for ano in (2025, 2026):
         if ano == 2025 and ultima > 202605:
             continue  # as altas de 2025 só chegam até a competência 2605
+        if not pedido(f"simulado_{anterior}_{ultima}", ano):
+            continue
         a = versao(arquivos(anterior), ano, anterior, ate=anterior)
         b = versao(arquivos(ultima), ano, ultima, ate=ultima)
-        resultado["pares"].append(comparar(f"simulado_{anterior}_{ultima}", ano, a, b))
-        SAIDA.write_text(json.dumps(resultado, ensure_ascii=False, indent=1), encoding="utf-8")
+        guardar(comparar(f"simulado_{anterior}_{ultima}", ano, a, b))
 print("fim")

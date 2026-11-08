@@ -35,9 +35,8 @@ padroes = [r"(?<![A-Za-z])[A-Z]:[\\/]", r"/home/", r"/Users/"] + [f"(?i:{re.esca
 CAMINHO = re.compile("|".join(padroes))
 URL = re.compile(r"(?:https?|ftp)://\S+")
 SUFIXOS_TEXTO = {".py", ".mjs", ".js", ".md", ".json", ".html", ".sh", ".txt", ".yml", ".yaml"}
-# Não são contagem de pessoas: meses comparados, requisições HTTP, linhas de relatório fiscal, bytes, status, população,
-# e a maior diferença entre duas fontes para o mesmo conjunto de AIHs, que é discrepância, não grupo de pessoas
-NAO_CONTAGEM = re.compile(r"^(meses|meses_lidos_do_tabnet|meses_iguais|iguais_data_de_saida|iguais_data_de_internacao|maior_diferenca_saida|maior_diferenca|req|r206|status\d*|bytes.*|dca\d+|rreo.*|pop|uf)$")
+# Não são contagem de pessoas: meses comparados, requisições HTTP, linhas de relatório fiscal, bytes, status, população
+NAO_CONTAGEM = re.compile(r"^(meses|meses_lidos_do_tabnet|meses_iguais|iguais_data_de_saida|iguais_data_de_internacao|maior_diferenca_saida|req|r206|status\d*|bytes.*|dca\d+|rreo.*|pop|uf)$")
 
 problemas = []
 ignorados = {}

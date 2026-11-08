@@ -1,5 +1,101 @@
 {
- "regra": {"municipio": {"queda_pct": 30, "minimo_internacoes": 100, "acao": "marcar_em_revisao"}, "publicacao": {"queda_uf_competencia_pct": 5, "acao": "manter_site_anterior"}},
- "municipio": {"sih_res_mes/2025": {"pares_visiveis_nas_duas": 66562, "mudaram": 2, "acionaram": 0, "acionamentos": []}, "sih_hosp_mes/2025": {"pares_visiveis_nas_duas": 35353, "mudaram": 1, "acionaram": 0, "acionamentos": []}, "sih_res_mes/2026": {"pares_visiveis_nas_duas": 38412, "mudaram": 139, "acionaram": 4, "acionamentos": [{"municipio": "354780", "mes": "202604", "anterior": 3108, "nova": 1801, "queda_pct": 42.1}, {"municipio": "354780", "mes": "202605", "anterior": 3072, "nova": 893, "queda_pct": 70.9}, {"municipio": "354780", "mes": "202606", "anterior": 2739, "nova": 849, "queda_pct": 69.0}, {"municipio": "354780", "mes": "202607", "anterior": 1695, "nova": 755, "queda_pct": 55.5}]}, "sih_hosp_mes/2026": {"pares_visiveis_nas_duas": 19703, "mudaram": 18, "acionaram": 4, "acionamentos": [{"municipio": "354780", "mes": "202604", "anterior": 3657, "nova": 2247, "queda_pct": 38.6}, {"municipio": "354780", "mes": "202605", "anterior": 3605, "nova": 1276, "queda_pct": 64.6}, {"municipio": "354780", "mes": "202606", "anterior": 3375, "nova": 1356, "queda_pct": 59.8}, {"municipio": "354780", "mes": "202607", "anterior": 2301, "nova": 1295, "queda_pct": 43.7}]}},
- "publicacao": {"falhas": [], "maior_queda_pct_uf_competencia": 0.88}
+ "regra": {
+  "municipio": {
+   "queda_pct": 30,
+   "minimo_internacoes": 100,
+   "acao": "marcar_em_revisao"
+  },
+  "publicacao": {
+   "queda_uf_competencia_pct": 5,
+   "acao": "manter_site_anterior"
+  }
+ },
+ "municipio": {
+  "sih_res_mes/2025": {
+   "pares_visiveis_nas_duas": 66562,
+   "mudaram": 2,
+   "acionaram": 0,
+   "acionamentos": []
+  },
+  "sih_hosp_mes/2025": {
+   "pares_visiveis_nas_duas": 35353,
+   "mudaram": 1,
+   "acionaram": 0,
+   "acionamentos": []
+  },
+  "sih_res_mes/2026": {
+   "pares_visiveis_nas_duas": 38412,
+   "mudaram": 139,
+   "acionaram": 4,
+   "acionamentos": [
+    {
+     "municipio": "354780",
+     "mes": "202604",
+     "anterior": 3108,
+     "nova": 1801,
+     "queda_pct": 42.1
+    },
+    {
+     "municipio": "354780",
+     "mes": "202605",
+     "anterior": 3072,
+     "nova": 893,
+     "queda_pct": 70.9
+    },
+    {
+     "municipio": "354780",
+     "mes": "202606",
+     "anterior": 2739,
+     "nova": 849,
+     "queda_pct": 69.0
+    },
+    {
+     "municipio": "354780",
+     "mes": "202607",
+     "anterior": 1695,
+     "nova": 755,
+     "queda_pct": 55.5
+    }
+   ]
+  },
+  "sih_hosp_mes/2026": {
+   "pares_visiveis_nas_duas": 19703,
+   "mudaram": 18,
+   "acionaram": 4,
+   "acionamentos": [
+    {
+     "municipio": "354780",
+     "mes": "202604",
+     "anterior": 3657,
+     "nova": 2247,
+     "queda_pct": 38.6
+    },
+    {
+     "municipio": "354780",
+     "mes": "202605",
+     "anterior": 3605,
+     "nova": 1276,
+     "queda_pct": 64.6
+    },
+    {
+     "municipio": "354780",
+     "mes": "202606",
+     "anterior": 3375,
+     "nova": 1356,
+     "queda_pct": 59.8
+    },
+    {
+     "municipio": "354780",
+     "mes": "202607",
+     "anterior": 2301,
+     "nova": 1295,
+     "queda_pct": 43.7
+    }
+   ]
+  }
+ },
+ "publicacao": {
+  "falhas": [],
+  "maior_queda_pct_uf_competencia": 0.88
+ }
 }

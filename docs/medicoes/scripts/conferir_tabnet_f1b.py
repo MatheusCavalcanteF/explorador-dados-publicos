@@ -8,7 +8,7 @@ AIHs, pelos dois eixos que ele oferece:
 Visão de hospital: formulário ni{uf}, coluna MUNIC_MOV. Visão de residência: nr{uf}, coluna MUNIC_RES,
 com os arquivos das 27 UFs, porque o TabNet de residência conta quem foi internado em outro estado.
 
-Valores de 1 a 4 não são gravados: o resultado guarda só se bateu e a diferença.
+Valores de 1 a 4 não são gravados, nem os pares cuja diferença seja de 1 a 4 (ver mascarar_diferencas).
 
 Uso: python conferir_tabnet_f1b.py <pasta_min_do_pipeline> <saida.json>
 """
@@ -149,6 +149,35 @@ for regiao, municipios in AMOSTRA.items():
             print(json.dumps(linha, ensure_ascii=False), flush=True)
             time.sleep(0.5)
 
+
+
+def mascarar_diferencas(resultado):
+    """Diferença de 1 a 4 entre pipeline e TabNet é um grupo pequeno de AIHs que uma fonte tem e a outra não.
+
+    Os dois valores juntos revelariam o tamanho exato dele por subtração. Quando as internações de um
+    município, visão e competência diferem de 1 a 4, nenhuma medida desse grupo guarda valor nem diferença
+    exata: valor, dias e óbitos descrevem as mesmas AIHs. O mesmo vale para óbitos sozinhos e para o total
+    por data de internação.
+    """
+    pequena = lambda d: d is not None and not isinstance(d, str) and 1 <= abs(d) < 5
+    grupos = {}
+    for r in resultado["por_competencia"]:
+        if r["medida"] in ("Internações", "Óbitos") and pequena(r["diferenca"]):
+            grupos.setdefault((r["municipio"], r["visao"], r["competencia"]), set()).add(r["medida"])
+    for r in resultado["por_competencia"]:
+        medidas = grupos.get((r["municipio"], r["visao"], r["competencia"]))
+        if medidas and ("Internações" in medidas or r["medida"] == "Óbitos"):
+            r["pipeline"] = r["tabnet"] = None
+            r["diferenca"] = "1 a 4" if r["medida"] in medidas else "omitida: descreve as mesmas AIHs"
+    for r in resultado["por_data_de_internacao"]:
+        if "total_tabnet" in r and pequena(r["total_pipeline"] - r["total_tabnet"]):
+            r["diferenca_total"] = "1 a 4"
+            r["total_pipeline"] = r["total_tabnet"] = None
+        if pequena(r.get("maior_diferenca")):
+            r["maior_diferenca"] = "1 a 4"
+
+
+mascarar_diferencas(resultado)
 pc = resultado["por_competencia"]
 resultado["resumo"] = {"comparacoes_por_competencia": len(pc), "iguais": sum(r["igual"] for r in pc),
                        "sem_resposta": sum(r["tabnet"] is None for r in pc),

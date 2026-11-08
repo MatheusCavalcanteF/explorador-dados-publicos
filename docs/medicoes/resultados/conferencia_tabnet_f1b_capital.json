@@ -1,14 +1,14 @@
 {
  "pergunta": "Por que o pipeline tem algumas internações a mais que o TabNet na capital de SP?",
  "consultado_em": "2026-11-08",
- "caso": {"municipio": "355030", "visao": "hospital", "competencia": "202503", "internacoes_pipeline": 61044, "internacoes_tabnet": 61041},
+ "caso": {"municipio": "355030", "visao": "hospital", "competencia": "202503", "diferenca": "o pipeline tem de 1 a 4 internações a mais"},
  "passos": [
-  {"teste": "Internações por estabelecimento, TabNet nisp2503 filtrado pelo município, contra o pipeline", "resultado": "101 estabelecimentos com internação no pipeline; só 2 diferem: CNES 9465464 (1.185 no pipeline, 1.183 no TabNet) e CNES 2078287 (1.061 e 1.060)"},
-  {"teste": "Os mesmos dois estabelecimentos no TabNet sem filtro de município", "resultado": "1.183 e 1.060: as AIHs a mais não foram atribuídas a outro município, ficaram fora do TabNet"},
+  {"teste": "Internações por estabelecimento, TabNet nisp2503 filtrado pelo município, contra o pipeline", "resultado": "101 estabelecimentos com internação no pipeline; só 2 diferem, com o pipeline acima nos dois. Os estabelecimentos e os valores não são gravados: a diferença entre eles seria um grupo de menos de 5 internações"},
+  {"teste": "Os mesmos dois estabelecimentos no TabNet sem filtro de município", "resultado": "os mesmos valores do TabNet com filtro: as AIHs a mais não foram atribuídas a outro município, ficaram fora do TabNet"},
   {"teste": "N_AIH repetido no mesmo arquivo com IDENT 1", "resultado": "nenhum, nos quatro casos com diferença e em dois sem diferença"},
   {"teste": "N_AIH da capital em 2503 que reaparece em outra competência de SP", "resultado": "nenhum"},
   {"teste": "Valores raros (até 50 AIHs no estado) de 11 campos administrativos do RD nos dois estabelecimentos: COBRANCA, COMPLEX, FINANC, NATUREZA, NAT_JUR, GESTAO, FAEC_TP, REGCT, MARCA_UTI, IND_VDRL, INFEHOSP", "resultado": "nenhum"},
-  {"teste": "Distribuição do estabelecimento por dimensão do TabNet (atendimento, caráter, sexo, faixa, capítulo, cor/raça)", "resultado": "a diferença cai num mesmo grupo em cada dimensão; os detalhes não são gravados porque descreveriam 2 internações"}
+  {"teste": "Distribuição do estabelecimento por dimensão do TabNet (atendimento, caráter, sexo, faixa, capítulo, cor/raça)", "resultado": "a diferença cai num mesmo grupo em cada dimensão; os detalhes não são gravados"}
  ],
- "conclusao": "Causa não identificada. A diferença está localizada (2 estabelecimentos, 3 AIHs nesta competência) e o TabNet exclui essas AIHs, sem atribuí-las a outro município. Nenhum campo administrativo do RD as distingue. A hipótese que resta, não testável daqui, é o TabNet ter sido gerado de outra versão do arquivo da competência."
+ "conclusao": "Causa não identificada. A diferença está localizada em 2 estabelecimentos, e o TabNet exclui essas AIHs, sem atribuí-las a outro município. Nenhum campo administrativo do RD as distingue. A hipótese que resta, não testável daqui, é o TabNet ter sido gerado de outra versão do arquivo da competência."
 }
