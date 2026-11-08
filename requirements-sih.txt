@@ -1,0 +1,10 @@
+# Só para o SIH e os testes dele. O Publicar instala apenas requirements.txt e não importa nada daqui.
+-r requirements.txt
+numpy==2.5.4
+pandas==3.0.6
+duckdb==2.0.0
+# Descompressão .dbc -> .dbf. Sem wheel para o Python 3.14: o pip compila do código-fonte, em Rust.
+datasus-dbc==0.1.3
+# Referência e teste de propriedade do leitor DBF, como no projeto de origem.
+hypothesis==6.170.14
+dbfread==2.0.7

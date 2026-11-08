@@ -1,7 +1,9 @@
 """Dados sintéticos no formato das fontes do IBGE (DTB e SIDRA). Nenhum teste usa rede: o socket é bloqueado."""
 import functools
+import importlib.util
 import io
 import json
+import os
 import socket
 import zipfile
 from xml.sax.saxutils import escape
@@ -9,6 +11,16 @@ from xml.sax.saxutils import escape
 import pytest
 
 from pipeline import rede
+
+# Os testes do SIH precisam de requirements-sih.txt. O Publicar instala só requirements.txt e não roda
+# o SIH, então neles esses módulos ficam de fora. O CI define EXIGIR_SIH=1: lá, faltar dependência é erro,
+# para que nenhum teste do SIH seja pulado sem aviso.
+_SIH = ("numpy", "pandas", "duckdb", "dbfread", "hypothesis")
+_FALTAM = [m for m in _SIH if importlib.util.find_spec(m) is None]
+if _FALTAM and os.environ.get("EXIGIR_SIH") == "1":
+    raise RuntimeError(f"EXIGIR_SIH=1, mas faltam {_FALTAM}: instale requirements-sih.txt")
+collect_ignore = (["test_dbf_reader.py", "test_deducao.py", "test_sih_coleta.py", "test_sih_tabelas.py"]
+                  if _FALTAM else [])
 
 # Códigos reais das 27 UFs; os municípios são inventados.
 UFS = {11: "RO", 12: "AC", 13: "AM", 14: "RR", 15: "PA", 16: "AP", 17: "TO", 21: "MA", 22: "PI", 23: "CE",

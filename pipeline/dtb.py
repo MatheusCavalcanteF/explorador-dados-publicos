@@ -8,6 +8,7 @@ pipeline com erro claro, em vez de virar lista errada.
 """
 from __future__ import annotations
 
+import functools
 import io
 import re
 import zipfile
@@ -92,7 +93,15 @@ def _texto(elemento) -> str:
 
 
 def linhas_ods(ods: bytes, onde: str) -> list[list[str]]:
-    """Linhas não vazias da primeira folha, como texto. Células repetidas e mescladas mantêm a posição."""
+    """Linhas não vazias da primeira folha, como texto. Células repetidas e mescladas mantêm a posição.
+
+    A leitura do XML é o que mais pesa; a mesma planilha lida de novo vem do cache, como cópia.
+    """
+    return [list(linha) for linha in _linhas_ods(ods, onde)]
+
+
+@functools.lru_cache(maxsize=4)
+def _linhas_ods(ods: bytes, onde: str) -> tuple[tuple[str, ...], ...]:
     try:
         with zipfile.ZipFile(io.BytesIO(ods)) as z:
             info = z.getinfo("content.xml")
@@ -123,7 +132,7 @@ def linhas_ods(ods: bytes, onde: str) -> list[list[str]]:
         if celulas:
             # Linha com conteúdo repetida duplicaria municípios; o contrato pega a repetição.
             linhas.extend([celulas] * min(int(linha.get(f"{{{_TABELA}}}number-rows-repeated", "1")), 2))
-    return linhas
+    return tuple(tuple(linha) for linha in linhas)
 
 
 def ler(zip_dtb: bytes, onde: str) -> tuple[str, str, list[dict]]:

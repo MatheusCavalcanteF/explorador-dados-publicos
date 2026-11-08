@@ -44,8 +44,18 @@ def validar(catalogo: dict) -> None:
         if licenca["id"] != LICENCA_NAO_DECLARADA and not str(licenca.get("url", "")).startswith("https://"):
             raise ErroDeCatalogo(f"Base {nome}: licença {licenca['id']} declarada precisa do endereço em licenca.url")
         revisao = base.get("revisao")
-        if revisao is not None and not isinstance(revisao.get("aviso_variacao_pct"), (int, float)):
-            raise ErroDeCatalogo(f"Base {nome}: revisao.aviso_variacao_pct deve ser um número")
+        if revisao is not None:
+            if "municipio" in revisao:
+                _validar_trava(nome, revisao)
+            elif not isinstance(revisao.get("aviso_variacao_pct"), (int, float)):
+                raise ErroDeCatalogo(f"Base {nome}: revisao.aviso_variacao_pct deve ser um número")
+        supressao = base.get("supressao") or {}
+        if supressao.get("aplica") and (not isinstance(supressao.get("k"), int) or supressao["k"] < 2):
+            raise ErroDeCatalogo(f"Base {nome}: supressao.k deve ser um inteiro de 2 para cima")
+        if "margens_complementar" in supressao and supressao["margens_complementar"] not in ("conhecidas", "todas"):
+            raise ErroDeCatalogo(f"Base {nome}: supressao.margens_complementar deve ser conhecidas ou todas")
+        if "motivo_por_celula" in supressao and not isinstance(supressao["motivo_por_celula"], bool):
+            raise ErroDeCatalogo(f"Base {nome}: supressao.motivo_por_celula deve ser true ou false")
     for nome, metrica in metricas.items():
         onde = f"Métrica {nome}"
         if metrica.get("tema") not in temas:
@@ -75,3 +85,67 @@ def validar(catalogo: dict) -> None:
             raise ErroDeCatalogo(f"{onde}: fonte sem órgão ou pesquisa")
         if not metrica.get("ressalvas"):
             raise ErroDeCatalogo(f"{onde}: toda métrica publicada diz suas ressalvas")
+    if "cruzamentos" in catalogo:
+        _validar_cruzamentos(catalogo)
+
+
+TEMPOS = ("mes", "tri", "ano")
+
+
+def _numero(valor) -> bool:
+    return isinstance(valor, (int, float)) and not isinstance(valor, bool) and valor > 0
+
+
+def _validar_trava(nome: str, revisao: dict) -> None:
+    municipio, publicacao = revisao.get("municipio") or {}, revisao.get("publicacao") or {}
+    if not (_numero(municipio.get("queda_pct")) and _numero(municipio.get("minimo_internacoes"))
+            and _numero(publicacao.get("queda_uf_competencia_pct"))):
+        raise ErroDeCatalogo(f"Base {nome}: a trava de queda precisa de queda_pct, minimo_internacoes e "
+                             "queda_uf_competencia_pct positivos")
+
+
+def _validar_cruzamentos(catalogo: dict) -> None:
+    """Cruzamentos, dimensões, margens e capítulos da CID: o que a supressão e o teste de dedução leem."""
+    dimensoes = catalogo.get("dimensoes") or {}
+    niveis = {n for d in dimensoes.values() for n in d.get("niveis") or []}
+    for nome, d in dimensoes.items():
+        if not d.get("niveis"):
+            raise ErroDeCatalogo(f"Dimensão {nome}: sem niveis")
+    vistos: dict[str, dict] = {}
+    for c in catalogo["cruzamentos"]:
+        onde = f"Cruzamento {c.get('id')}"
+        if not c.get("id") or c["id"] in vistos:
+            raise ErroDeCatalogo(f"{onde}: id ausente ou repetido")
+        if c.get("tempo") not in TEMPOS:
+            raise ErroDeCatalogo(f"{onde}: tempo deve ser um de {TEMPOS}")
+        if not c.get("dimensoes") or any(d not in dimensoes for d in c["dimensoes"]):
+            raise ErroDeCatalogo(f"{onde}: dimensão fora do catálogo")
+        if any(m not in catalogo["metricas"] for m in c.get("metricas") or [None]):
+            raise ErroDeCatalogo(f"{onde}: métrica fora do catálogo")
+        for chave in ("mae", "herda_trimestre_de"):
+            if chave in c and c[chave] not in vistos:
+                raise ErroDeCatalogo(f"{onde}: {chave} {c[chave]!r} precisa vir antes na lista")
+        if "mae" in c:
+            mae = vistos[c["mae"]]
+            if not set(mae["dimensoes"]) <= set(c["dimensoes"]) or TEMPOS.index(mae["tempo"]) < TEMPOS.index(c["tempo"]):
+                raise ErroDeCatalogo(f"{onde}: a mãe {c['mae']} precisa ser uma soma desta tabela")
+        if "herda_trimestre_de" in c:
+            mensal = vistos[c["herda_trimestre_de"]]
+            if c["tempo"] != "tri" or mensal["tempo"] != "mes" or mensal["dimensoes"][0] != c["dimensoes"][0]:
+                raise ErroDeCatalogo(f"{onde}: herda_trimestre_de liga um trimestre a um mês do mesmo município")
+        vistos[c["id"]] = c
+    for metrica, margens in (catalogo.get("margens_publicadas") or {}).items():
+        if metrica not in catalogo["metricas"]:
+            raise ErroDeCatalogo(f"Margens de {metrica}: métrica fora do catálogo")
+        for margem in margens:
+            if any(col not in niveis and col not in TEMPOS for col in margem):
+                raise ErroDeCatalogo(f"Margens de {metrica}: coluna fora das dimensões em {margem}")
+    faixas = ((catalogo.get("referencias") or {}).get("cid10_capitulos") or {}).get("faixas") or []
+    if catalogo["cruzamentos"] and not faixas:
+        raise ErroDeCatalogo("referencias.cid10_capitulos sem faixas")
+    # Na ordem das categorias, não dos capítulos: o XXII (U04 a U99) vem antes do XX (V01 a Y98).
+    anterior = ""
+    for numero, inicio, fim, _ in sorted(faixas, key=lambda f: f[1]):
+        if not (len(inicio) == len(fim) == 3 and inicio <= fim and inicio > anterior):
+            raise ErroDeCatalogo(f"Capítulo {numero} da CID-10: faixa {inicio}-{fim} inválida ou sobreposta")
+        anterior = fim

@@ -56,6 +56,58 @@ bases:
     revisao: { acao: marcar_revisado, aviso_variacao_pct: 5 }   # acima de 5%, aviso no workflow
     # Município na SIDRA que a DTB não tem para a coleta com erro claro (decisão de 08/11/2026).
     supressao: { aplica: false }   # população não é contagem de atendimentos
+  sih:
+    nome: Sistema de Informações Hospitalares do SUS (AIH Reduzida)
+    orgao: Ministério da Saúde / DATASUS
+    # O FTP não declara licença. O site do ministério declara CC BY-ND 3.0 para o próprio conteúdo e
+    # "licença aberta" para dados abertos, sem dizer qual vale para estes arquivos.
+    licenca: { id: nao-declarada-na-origem, atribuicao: "Ministério da Saúde/DATASUS, SIH/SUS" }
+    # Até o OK do dono do projeto, nada do SIH vai para o site nem para as Releases: o pipeline roda,
+    # mede e testa, e os agregados ficam no runner.
+    publicacao: { site: false, releases: false }
+    coleta:
+      origem: "ftp://ftp.datasus.gov.br/dissemin/publicos/SIHSUS/200801_/Dados"
+      padrao: "RD{uf}{aamm}.dbc"
+      # Só estas colunas saem do .dbf. CEP, nascimento e CPFs nunca são lidos.
+      colunas: [N_AIH, ANO_CMPT, MES_CMPT, IDENT, CNES, MUNIC_MOV, MUNIC_RES, DIAG_PRINC, DT_INTER, DT_SAIDA,
+                DIAS_PERM, VAL_TOT, MORTE, ESPEC, CAR_INT, SEXO, IDADE, COD_IDADE, RACA_COR]
+      so_para_validar: [N_AIH]     # confere a chave dentro do arquivo e não chega ao Parquet mínimo
+      so_para_conferir: [DT_INTER] # eixo do TabNet; nenhum agregado publicado usa
+      todas_as_ufs: true           # a residência depende de internações em outros estados
+      primeiro_ano: 2021
+    tempo:
+      eixo: mes_da_alta            # DT_SAIDA, incorporando o processamento tardio
+      janela_republicada_meses: 12
+      defasagem_maxima_meses: 5    # o mês M fecha quando M + 5 <= última competência - 12
+    # Meses em que 99% ou mais das altas já foram processadas, medido nas competências de 2025.
+    maturacao:
+      meses_padrao: 3
+      por_uf: { AL: 6, BA: 4 }
+    revisao:
+      municipio: { queda_pct: 30, minimo_internacoes: 100, acao: marcar_em_revisao }
+      publicacao: { queda_uf_competencia_pct: 5, acao: manter_site_anterior }
+    supressao:
+      aplica: true
+      k: 5
+      contagens: [aihs, internacoes]  # oculta se qualquer uma estiver entre 1 e k-1
+      nao_publicar: [aihs]            # a diferença entre as duas seria outra contagem pequena
+      complementar: true
+      familia: true
+      # Publicar o motivo de cada célula oculta (contagem pequena, complementar, família) dá a quem tenta
+      # deduzir os limites de cada uma. Medido em 08/11/2026, SIH 2025 do Brasil: com o motivo público, o
+      # teste revela 4.365 contagens, e o reforço empaca em cerca de 365; sem o motivo, a mesma supressão
+      # revela 1, e uma rodada de reforço chega a zero com 39 células a mais. Proposta aguardando decisão:
+      # não publicar o motivo por célula, e mostrar toda célula oculta do mesmo jeito, nunca como "<5".
+      motivo_por_celula: false
+      reforco_max_rodadas: 6
+      # Margens que a complementar protege: as publicadas e as que saem de outra tabela publicada
+      # ("conhecidas"), ou toda soma de uma coluna ("todas"). Medido em 08/11/2026 (2021, 2025 e 2026):
+      # as duas passam no teste de dedução depois do reforço; "conhecidas" oculta de 10% a 12% menos
+      # células e tira 2025 inteiro do limite de 5% das internações ocultas.
+      margens_complementar: conhecidas
+    ressalvas:
+      - "Só SUS. Internações particulares e por plano de saúde não aparecem."
+      - "Os meses são os da data da alta. No TabNet, \"atendimento\" é a data de internação, e os meses não coincidem."
   ibge_censo_2022:
     nome: Censo Demográfico 2022
     orgao: IBGE
@@ -97,3 +149,151 @@ metricas:
       tabela: "https://sidra.ibge.gov.br/tabela/4714"
     ressalvas:
       - "Contagem feita em 2022. Um município da lista atual do IBGE sem dado no Censo aparece como ausente, nunca como zero."
+  internacoes:
+    tema: saude
+    etiquetas: []
+    base: sih
+    rotulo: Internações
+    unidade: internações
+    sinonimos: [internação, hospitalização, baixa hospitalar]
+    regra: "AIH com IDENT = 1; as de IDENT = 5 são prorrogações da mesma internação"
+    fonte:
+      orgao: Ministério da Saúde / DATASUS
+      pesquisa: "SIH/SUS, AIH Reduzida (arquivos RD por UF e competência)"
+      acesso:
+        tipo: receita
+        url: "http://tabnet.datasus.gov.br/cgi/deftohtm.exe?sih/cnv/nrbr.def"
+        receita: "Linha: Município; Conteúdo: Internações; Períodos disponíveis: as competências do ano"
+    conferencia: { ferramenta: TabNet, medida: "Internações", eixos: [competencia, data_de_internacao] }
+    ressalvas:
+      - "Conta internações, não pessoas: quem foi internado duas vezes conta duas."
+  dias_permanencia:
+    tema: saude
+    etiquetas: []
+    base: sih
+    rotulo: Dias de permanência
+    unidade: dias
+    regra: "soma de DIAS_PERM de todas as AIHs, inclusive as prorrogações"
+    fonte:
+      orgao: Ministério da Saúde / DATASUS
+      pesquisa: "SIH/SUS, AIH Reduzida (arquivos RD por UF e competência)"
+      acesso:
+        tipo: receita
+        url: "http://tabnet.datasus.gov.br/cgi/deftohtm.exe?sih/cnv/nrbr.def"
+        receita: "Linha: Município; Conteúdo: Dias de permanência; Períodos disponíveis: as competências do ano"
+    ressalvas:
+      - "A média de permanência divide estes dias pelas internações, não pelas AIHs."
+  valor_total:
+    tema: saude
+    etiquetas: [financas_publicas]
+    base: sih
+    rotulo: Valor pago
+    unidade: reais
+    regra: "soma de VAL_TOT"
+    fonte:
+      orgao: Ministério da Saúde / DATASUS
+      pesquisa: "SIH/SUS, AIH Reduzida (arquivos RD por UF e competência)"
+      acesso:
+        tipo: receita
+        url: "http://tabnet.datasus.gov.br/cgi/deftohtm.exe?sih/cnv/nrbr.def"
+        receita: "Linha: Município; Conteúdo: Valor total; Períodos disponíveis: as competências do ano"
+    ressalvas:
+      - "É o valor pago pela tabela SIGTAP, não o custo do hospital."
+      - "O ticket médio exclui as AIHs de valor zero, quase todas de leitos de saúde mental."
+  obitos:
+    tema: saude
+    etiquetas: []
+    base: sih
+    rotulo: Óbitos hospitalares
+    unidade: óbitos
+    regra: "soma de MORTE"
+    cruzamentos: [sih_res_ano, sih_hosp_ano]   # só o total anual por município
+    fonte:
+      orgao: Ministério da Saúde / DATASUS
+      pesquisa: "SIH/SUS, AIH Reduzida (arquivos RD por UF e competência)"
+      acesso:
+        tipo: receita
+        url: "http://tabnet.datasus.gov.br/cgi/deftohtm.exe?sih/cnv/nrbr.def"
+        receita: "Linha: Município; Conteúdo: Óbitos; Períodos disponíveis: as competências do ano"
+    ressalvas:
+      - "Hospitais de referência recebem os casos mais graves. A taxa sozinha não mede qualidade."
+  taxa_internacao:
+    tema: saude
+    etiquetas: [populacao]
+    rotulo: Internações por mil habitantes
+    formula: "internacoes / populacao_estimada * 1000"
+    fontes: [internacoes, populacao_estimada]   # calculada: cada parcela traz a própria fonte
+    oculta_se: [internacoes]                     # herda a máscara do numerador
+
+# Dimensões dos cruzamentos do SIH. "niveis" vai do mais fino ao mais grosso: somar uma dimensão é
+# subir um nível, e o teste de dedução considera todas as somas que alguém pode montar.
+dimensoes:
+  municipio_residencia: { base: sih, niveis: [mun_res, uf_res], conversao: ibge6_para_ibge7 }
+  municipio_hospital: { base: sih, niveis: [mun_hosp, uf_hosp], conversao: ibge6_para_ibge7 }
+  sexo: { base: sih, niveis: [sexo], valores: [M, F, I] }
+  faixa_12:
+    base: sih
+    niveis: [faixa12, faixa5]
+    valores: ["00", "01-04", "05-09", "10-14", "15-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70-79", "80+", ign]
+  faixa_5: { base: sih, niveis: [faixa5], valores: [00-14, 15-29, 30-49, 50-69, 70+, ign], aninhada_em: faixa_12 }
+  capitulo_cid: { base: sih, niveis: [capitulo] }
+  urgencia: { base: sih, niveis: [urgencia], valores: [urgencia, demais] }
+  carater: { base: sih, niveis: [carater, urgencia], valores: [eletivo, urgencia, outros] }
+  raca_cor: { base: sih, niveis: [raca] }
+  especialidade: { base: sih, niveis: [espec] }
+
+# Capítulos da CID-10 por faixa de categorias, da tabela do DATASUS (CID-10-CAPITULOS.CSV dentro de
+# CID10CSV.zip). Categoria fora de todas as faixas, como U00 a U03, fica no capítulo 0, "sem capítulo".
+referencias:
+  cid10_capitulos:
+    origem: "http://www2.datasus.gov.br/cid10/V2008/downloads/CID10CSV.zip"
+    sha256: 84f23809275575f751255048064bbb244b0de33fd5987ab98df0f98e5f5d2c95
+    faixas:
+      - [1, A00, B99, "Algumas doenças infecciosas e parasitárias"]
+      - [2, C00, D48, "Neoplasias (tumores)"]
+      - [3, D50, D89, "Doenças do sangue e dos órgãos hematopoéticos e alguns transtornos imunitários"]
+      - [4, E00, E90, "Doenças endócrinas, nutricionais e metabólicas"]
+      - [5, F00, F99, "Transtornos mentais e comportamentais"]
+      - [6, G00, G99, "Doenças do sistema nervoso"]
+      - [7, H00, H59, "Doenças do olho e anexos"]
+      - [8, H60, H95, "Doenças do ouvido e da apófise mastoide"]
+      - [9, I00, I99, "Doenças do aparelho circulatório"]
+      - [10, J00, J99, "Doenças do aparelho respiratório"]
+      - [11, K00, K93, "Doenças do aparelho digestivo"]
+      - [12, L00, L99, "Doenças da pele e do tecido subcutâneo"]
+      - [13, M00, M99, "Doenças do sistema osteomuscular e do tecido conjuntivo"]
+      - [14, N00, N99, "Doenças do aparelho geniturinário"]
+      - [15, O00, O99, "Gravidez, parto e puerpério"]
+      - [16, P00, P96, "Algumas afecções originadas no período perinatal"]
+      - [17, Q00, Q99, "Malformações congênitas, deformidades e anomalias cromossômicas"]
+      - [18, R00, R99, "Sintomas, sinais e achados anormais de exames clínicos e de laboratório"]
+      - [19, S00, T98, "Lesões, envenenamento e algumas outras consequências de causas externas"]
+      - [20, V01, Y98, "Causas externas de morbidade e de mortalidade"]
+      - [21, Z00, Z99, "Fatores que influenciam o estado de saúde e o contato com os serviços de saúde"]
+      - [22, U04, U99, "Códigos para propósitos especiais"]
+
+# Cruzamentos publicáveis do SIH, um arquivo por ano. A mãe vem antes das filhas. "mae": uma célula
+# oculta na mãe esconde as filhas da mesma chave. "herda_trimestre_de": o trimestre fica oculto se algum
+# mês dele estiver oculto na tabela mensal. O critério para entrar na lista é o do plano: no máximo 5%
+# das internações e 50% das células ocultas, e zero no teste de dedução.
+cruzamentos:
+  - { id: sih_res_ano, dimensoes: [municipio_residencia], tempo: ano, metricas: [internacoes, dias_permanencia, valor_total, obitos] }
+  - { id: sih_hosp_ano, dimensoes: [municipio_hospital], tempo: ano, metricas: [internacoes, dias_permanencia, valor_total, obitos] }
+  - { id: sih_res_mes, dimensoes: [municipio_residencia], tempo: mes, metricas: [internacoes, dias_permanencia, valor_total] }
+  - { id: sih_hosp_mes, dimensoes: [municipio_hospital], tempo: mes, metricas: [internacoes, dias_permanencia, valor_total] }
+  - { id: sih_res_mes_sexo, mae: sih_res_mes, dimensoes: [municipio_residencia, sexo], tempo: mes, metricas: [internacoes] }
+  - { id: sih_res_mes_urgencia, mae: sih_res_mes, dimensoes: [municipio_residencia, urgencia], tempo: mes, metricas: [internacoes] }
+  - { id: sih_res_mes_faixa5, mae: sih_res_mes, dimensoes: [municipio_residencia, faixa_5], tempo: mes, metricas: [internacoes] }
+  - { id: sih_res_ano_capitulo, mae: sih_res_ano, dimensoes: [municipio_residencia, capitulo_cid], tempo: ano, metricas: [internacoes] }
+  - { id: sih_res_ano_faixa12_sexo, mae: sih_res_ano, dimensoes: [municipio_residencia, faixa_12, sexo], tempo: ano, metricas: [internacoes] }
+  - { id: sih_res_ano_raca, mae: sih_res_ano, dimensoes: [municipio_residencia, raca_cor], tempo: ano, metricas: [internacoes] }
+  - { id: sih_res_tri_capitulo, mae: sih_res_ano_capitulo, herda_trimestre_de: sih_res_mes, dimensoes: [municipio_residencia, capitulo_cid], tempo: tri, metricas: [internacoes] }
+  - { id: sih_hosp_ano_especialidade, mae: sih_hosp_ano, dimensoes: [municipio_hospital, especialidade], tempo: ano, metricas: [internacoes] }
+  - { id: sih_hosp_tri_capitulo, herda_trimestre_de: sih_hosp_mes, dimensoes: [municipio_hospital, capitulo_cid], tempo: tri, metricas: [internacoes] }
+  - { id: sih_hosp_mes_carater, mae: sih_hosp_mes, dimensoes: [municipio_hospital, carater], tempo: mes, metricas: [internacoes] }
+
+# Somas publicadas fora dos cruzamentos: as páginas de UF e do Brasil. Cada uma é uma lista de colunas;
+# a vazia é o total do Brasil no ano. Margem nova só entra depois de passar no teste de dedução.
+margens_publicadas:
+  internacoes: [[uf_res, mes], [uf_res], [uf_hosp, mes], [uf_hosp], [mes], []]
+  obitos: [[uf_res], [uf_hosp], []]
