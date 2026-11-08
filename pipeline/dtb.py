@@ -106,15 +106,20 @@ def linhas_ods(ods: bytes, onde: str) -> list[list[str]]:
         raise ErroDeContrato(f"{onde}: planilha sem folha")
     linhas = []
     for linha in folha.iter(f"{{{_TABELA}}}table-row"):
-        celulas = []
+        # Células vazias só entram quando uma com texto vem depois: as do fim da linha, repetidas
+        # até a última coluna da planilha, nunca chegam a ser criadas.
+        celulas, vazias = [], 0
         for celula in linha:
             if celula.tag not in _CELULAS:
                 continue
             texto = "\n".join(_texto(p) for p in celula.iter(f"{{{_TEXTO}}}p")).strip()
             repetir = int(celula.get(f"{{{_TABELA}}}number-columns-repeated", "1"))
+            if not texto:
+                vazias += repetir
+                continue
+            celulas.extend([""] * min(vazias, MAX_COLUNAS - len(celulas)))
+            vazias = 0
             celulas.extend([texto] * min(repetir, MAX_COLUNAS - len(celulas)))
-        while celulas and not celulas[-1]:
-            celulas.pop()
         if celulas:
             # Linha com conteúdo repetida duplicaria municípios; o contrato pega a repetição.
             linhas.extend([celulas] * min(int(linha.get(f"{{{_TABELA}}}number-rows-repeated", "1")), 2))

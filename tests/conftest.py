@@ -1,4 +1,5 @@
 """Dados sintéticos no formato das fontes do IBGE (DTB e SIDRA). Nenhum teste usa rede: o socket é bloqueado."""
+import functools
 import io
 import json
 import socket
@@ -23,10 +24,15 @@ def sem_rede(monkeypatch):
     monkeypatch.setattr(socket, "create_connection", recusar)
 
 
-def codigos(n=5571):
-    """n códigos de 7 dígitos, distribuídos pelas 27 UFs, com prefixo de 6 dígitos único."""
+@functools.lru_cache(maxsize=4)
+def _codigos(n):
     ufs = list(UFS)
-    return [f"{ufs[i % 27]}{(i // 27) * 10:05d}" for i in range(n)]
+    return tuple(f"{ufs[i % 27]}{(i // 27) * 10:05d}" for i in range(n))
+
+
+def codigos(n=5571):
+    """n códigos de 7 dígitos, distribuídos pelas 27 UFs, com prefixo de 6 dígitos único. Cada chamada ganha uma lista nova."""
+    return list(_codigos(n))
 
 
 NOMES_UF = {"RO": "Rondônia", "AC": "Acre", "AM": "Amazonas", "RR": "Roraima", "PA": "Pará", "AP": "Amapá",
@@ -100,6 +106,12 @@ def indice(nomes):
             f'{itens}</table></body></html>').encode("latin-1")
 
 
+@functools.lru_cache(maxsize=8)
+def _dtb_zip_de(lista):
+    """O mesmo .zip para a mesma lista: gerar a planilha com 5.571 linhas é o que mais pesa nos testes."""
+    return dtb_zip(linhas_dtb(list(lista) if lista else None))
+
+
 def fonte_dtb(lista=None, pastas=None, corpo=None):
     """Respostas do geoftp: raiz com as pastas de ano e o .zip da mais recente."""
     from pipeline import dtb
@@ -108,7 +120,7 @@ def fonte_dtb(lista=None, pastas=None, corpo=None):
     for ano, arquivos in pastas.items():
         respostas[f"{dtb.RAIZ}{ano}/"] = resposta(indice(arquivos))
         for arquivo in arquivos:
-            respostas[f"{dtb.RAIZ}{ano}/{arquivo}"] = resposta(corpo or dtb_zip(linhas_dtb(lista)),
+            respostas[f"{dtb.RAIZ}{ano}/{arquivo}"] = resposta(corpo or _dtb_zip_de(tuple(lista) if lista else None),
                                                                cabecalhos={"Last-Modified": "Thu, 26 Mar 2026 21:07:36 GMT"})
     return respostas
 
