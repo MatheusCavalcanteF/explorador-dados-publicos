@@ -98,7 +98,7 @@ def gravar_particao(suprimidas: dict, ano: int, destino: Path, municipios7: dict
                     motivo_por_celula: bool = False, metricas: dict[str, list[str]] | None = None,
                     preliminares: set[str] | frozenset = frozenset(), multiplo: int = 0, k: int = 5,
                     contagens: tuple = ("internacoes", "obitos")) -> dict:
-    """Um Parquet sem compressão por cruzamento e UF, como o site vai servir, e o tamanho com gzip.
+    """Um Parquet sem compressão por cruzamento e UF, em `destino` (a pasta do ano), e o tamanho com gzip.
 
     O município sai com o código de 7 dígitos do IBGE. As AIHs não saem; os valores ocultos saem nulos,
     com o motivo ao lado quando o catálogo manda publicá-lo, ou só a marca de oculta. Óbitos têm máscara
@@ -107,7 +107,10 @@ def gravar_particao(suprimidas: dict, ano: int, destino: Path, municipios7: dict
     O trimestre sem os três meses na base não sai. Nas linhas cujo período inclui um mês de
     `preliminares` (AAAAMM), `preliminar` é verdadeiro, e cada contagem visível de k para cima sai
     arredondada para múltiplo de `multiplo`, com `arredondado` (internações) e `obitos_arredondado`.
+    Devolve, por arquivo ("<cruzamento>/uf=<UF>.parquet"), bytes, bytes com gzip e SHA-256.
     """
+    import hashlib
+
     import numpy as np
     import pyarrow as pa
     import pyarrow.parquet as pq
@@ -151,12 +154,69 @@ def gravar_particao(suprimidas: dict, ano: int, destino: Path, municipios7: dict
         uf_col = df[geo].str[:2]
         for uf in sorted(uf_col.unique()):
             parte = tabela.filter(pa.array((uf_col == uf).to_numpy()))
-            caminho = destino / cid / f"uf={uf}" / f"ano={ano}.parquet"
+            caminho = destino / cid / f"uf={uf}.parquet"
             caminho.parent.mkdir(parents=True, exist_ok=True)
             pq.write_table(parte, caminho, compression="NONE")
             bruto = caminho.read_bytes()
-            tamanhos[f"{cid}/uf={uf}/ano={ano}"] = {"bytes": len(bruto), "gzip": len(gzip.compress(bruto, 6))}
+            tamanhos[f"{cid}/uf={uf}.parquet"] = {"bytes": len(bruto), "gzip": len(gzip.compress(bruto, 6)),
+                                                  "sha256": hashlib.sha256(bruto).hexdigest()}
     return tamanhos
+
+
+class ErroDeParticao(ErroDeContrato):
+    """As partições de um ano não batem com a situação gravada junto delas."""
+
+
+def gravar_ano(particoes: Path, ano: int, gravar, situacao: dict) -> dict:
+    """Troca o conjunto inteiro de partições de um ano, de uma vez.
+
+    `gravar(pasta)` escreve os arquivos do ano numa pasta nova e devolve o que gravar_particao devolve. A
+    situação do ano (o que foi publicado, o que não foi e por quê) vai junto, com a lista de arquivos, e só
+    então a pasta nova toma o lugar da antiga: um cruzamento que deixou de passar não deixa sobra, e quem
+    lê nunca vê metade de uma versão e metade de outra. A troca são duas renomeações de pasta.
+    """
+    final = particoes / f"ano={ano}"
+    novo, antigo = particoes / f".ano={ano}.novo", particoes / f".ano={ano}.antigo"
+    for pasta in (novo, antigo):
+        if pasta.exists():
+            shutil.rmtree(pasta)
+    novo.mkdir(parents=True)
+    arquivos = gravar(novo)
+    situacao = situacao | {"arquivos": {nome: {c: v for c, v in info.items() if c != "gzip"}
+                                        for nome, info in sorted(arquivos.items())}}
+    (novo / "situacao.json").write_text(json.dumps(situacao, ensure_ascii=False, indent=1), encoding="utf-8")
+    if final.exists():
+        final.rename(antigo)
+    novo.rename(final)
+    if antigo.exists():
+        shutil.rmtree(antigo)
+    return arquivos
+
+
+def ler_situacao(particoes: Path, ano: int, conferir: bool = True) -> dict:
+    """A situação de um ano e a conferência dos arquivos que ela lista: cada um tem de existir, com o mesmo
+    tamanho e SHA-256. Arquivo ausente é erro; ausência de linha dentro de um arquivo (município sem
+    hospital, mês sem internação) não é. Arquivo a mais, que a situação não lista, não é lido."""
+    import hashlib
+    pasta = Path(particoes) / f"ano={ano}"
+    caminho = pasta / "situacao.json"
+    if not caminho.exists():
+        raise ErroDeParticao(f"{pasta}: sem situacao.json; não dá para saber o que foi publicado em {ano}")
+    situacao = json.loads(caminho.read_text(encoding="utf-8"))
+    if "arquivos" not in situacao:
+        raise ErroDeParticao(f"{caminho}: sem a lista de arquivos do ano")
+    for cid in situacao["publicados"]:
+        if not any(nome.startswith(cid + "/") for nome in situacao["arquivos"]):
+            raise ErroDeParticao(f"{caminho}: {cid} consta como publicado, mas nenhum arquivo dele está na lista")
+    if conferir:
+        for nome, info in situacao["arquivos"].items():
+            arquivo = pasta / nome
+            if not arquivo.exists():
+                raise ErroDeParticao(f"{arquivo}: listado em situacao.json de {ano}, mas ausente")
+            bruto = arquivo.read_bytes()
+            if len(bruto) != info["bytes"] or hashlib.sha256(bruto).hexdigest() != info["sha256"]:
+                raise ErroDeParticao(f"{arquivo}: diferente do que situacao.json de {ano} registra")
+    return situacao
 
 
 def resumo_supressao(suprimidas: dict) -> dict:
@@ -257,7 +317,7 @@ def fixas_da_anterior(nos: dict, catalogo: dict, anterior: dict, ano: int, fecha
 
 
 def suprimir_publicaveis(nos: dict, catalogo: dict, k: int, ultimo_mes: int | None = None, arredondamento=None,
-                         max_rodadas: int | None = None, fixas: dict | None = None) -> dict:
+                         max_rodadas: int | None = None, fixas: dict | None = None, fixo: dict | None = None) -> dict:
     """Supressão com reforço até o teste de dedução dar zero, e o critério de publicação do ano.
 
     O cruzamento que passa do critério sai do ano, com o motivo, e o que depende dele sai junto. A
@@ -265,9 +325,16 @@ def suprimir_publicaveis(nos: dict, catalogo: dict, k: int, ultimo_mes: int | No
     `fixas` é o padrão herdado da versão publicada antes (fixas_da_anterior). Devolve o resultado de
     suprimir_ate_passar mais o catálogo do ano, os não publicados e o resumo da primeira volta, com todos
     os cruzamentos.
+
+    `fixo` é a situação da primeira publicação de um ano ainda aberto (decidido em 08/11/2026): publica
+    exatamente os cruzamentos dela, sem refazer o critério, e só o teste de dedução tira algum: o
+    cruzamento com contagem revelada sai, com o que depende dele. Se o teste não passar e não der para
+    dizer qual tirar, o resultado sai com `passou` falso, e o ano não é publicado.
     """
     from . import sih_deducao
     regras = catalogo["bases"]["sih"]["supressao"]
+    if fixo is not None:
+        return _suprimir_com_situacao_fixa(nos, catalogo, k, ultimo_mes, arredondamento, max_rodadas, fixas, fixo)
     criterio = regras.get("criterio_publicacao")
     fora: dict[str, dict] = {}
     cat, primeira = catalogo, None
@@ -287,6 +354,31 @@ def suprimir_publicaveis(nos: dict, catalogo: dict, k: int, ultimo_mes: int | No
     return r | {"catalogo": cat, "nao_publicados": fora, "resumo": resumo, "resumo_com_todos": primeira}
 
 
+def _suprimir_com_situacao_fixa(nos, catalogo, k, ultimo_mes, arredondamento, max_rodadas, fixas, fixo) -> dict:
+    from . import sih_deducao, sih_tabelas as tab
+    regras = catalogo["bases"]["sih"]["supressao"]
+    fora = {c["id"]: fixo["nao_publicados"].get(c["id"], {"motivo": "não foi publicado na primeira versão do ano"})
+            for c in catalogo["cruzamentos"] if c["id"] not in fixo["publicados"]}
+    for _ in range(len(catalogo["cruzamentos"]) + 1):
+        cat = catalogo_sem(catalogo, fora)
+        r = sih_deducao.suprimir_ate_passar(nos, cat, k, bool(regras["motivo_por_celula"]), max_rodadas,
+                                            arredondamento=arredondamento, ultimo_mes=ultimo_mes, fixas=fixas)
+        if r["passou"]:
+            break
+        nos_dos = {tab.nome(tab.colunas_de(c, cat)): c["id"] for c in cat["cruzamentos"]}
+        revelados = sorted({nos_dos[n] for n, x in r["auditoria"].get("por_no", {}).items()
+                            if n in nos_dos and x["pequenas_reveladas"]})
+        if not revelados:
+            break
+        for cid in revelados:
+            fora[cid] = {"motivo": "o teste de dedução revelou contagens com ele no ano"}
+            for d in dependentes(catalogo, cid):
+                fora.setdefault(d, {"motivo": f"depende de {d_de(catalogo, d)}, que saiu pelo teste de dedução"})
+    resumo = resumo_supressao(r["suprimidas"])
+    return r | {"catalogo": cat, "nao_publicados": fora, "resumo": resumo, "resumo_com_todos": resumo,
+                "situacao_fixa": True}
+
+
 def d_de(catalogo: dict, cid: str) -> str:
     c = next(x for x in catalogo["cruzamentos"] if x["id"] == cid)
     return c.get("mae") or c.get("herda_trimestre_de")
@@ -294,13 +386,15 @@ def d_de(catalogo: dict, cid: str) -> str:
 
 def construir_ano(con, tabela: str, ano: int, catalogo: dict, k: int, deduzir: bool = True,
                   ultimo_mes: int | None = None, preliminares: set[str] | frozenset = frozenset(),
-                  anterior: dict | None = None, fechado_ate: int | None = None) -> tuple[dict, dict, dict]:
+                  anterior: dict | None = None, fechado_ate: int | None = None,
+                  fixo: dict | None = None) -> tuple[dict, dict, dict]:
     """Nós do fechamento, cruzamentos suprimidos (só os publicáveis) e medição de um ano.
 
     `ultimo_mes` (AAAAMM) é o último mês da alta na base: trimestre sem os três meses fica fora do
     arquivo. `preliminares` são os meses que ainda podem mudar: o teste os vê arredondados, como a tela.
     `anterior` traz o que a versão publicada antes mostrou deste ano (ler_anterior): nas células de período
-    fechado até `fechado_ate`, a nova herda o padrão dela (fixas_da_anterior).
+    fechado até `fechado_ate`, a nova herda o padrão dela (fixas_da_anterior). `fixo` é a situação da
+    primeira publicação do ano, que vale enquanto ele está aberto (suprimir_publicaveis).
     """
     from . import sih_deducao, sih_tabelas as tab, supressao
     t = {"inicio": time.perf_counter()}
@@ -318,7 +412,7 @@ def construir_ano(con, tabela: str, ano: int, catalogo: dict, k: int, deduzir: b
         # Supressão, teste de dedução e reforço até passar, e o critério de publicação. O teste vê o que a
         # tela mostraria: só "oculta", sem o motivo, e os preliminares arredondados.
         fixas = fixas_da_anterior(nos, catalogo, anterior, ano, fechado_ate) if anterior and fechado_ate else None
-        r = suprimir_publicaveis(nos, catalogo, k, ultimo_mes, arred, int(regras["reforco_max_rodadas"]), fixas)
+        r = suprimir_publicaveis(nos, catalogo, k, ultimo_mes, arred, int(regras["reforco_max_rodadas"]), fixas, fixo)
         sup, cat_ano, nao_publicados = r["suprimidas"], r["catalogo"], r["nao_publicados"]
     else:
         sup = supressao.suprimir(nos, catalogo, k, ultimo_mes=ultimo_mes)
@@ -331,7 +425,8 @@ def construir_ano(con, tabela: str, ano: int, catalogo: dict, k: int, deduzir: b
                "nos_no_fechamento": len(tab.fechamento(pub_int)), "supressao": resumo_supressao(sup),
                "publicados": [c["id"] for c in cat_ano["cruzamentos"]], "nao_publicados": nao_publicados,
                "preliminares": sorted(preliminares), "ultimo_mes": ultimo_mes,
-               "herdou_da_anterior": sorted(anterior) if anterior and fechado_ate else []}
+               "herdou_da_anterior": sorted(anterior) if anterior and fechado_ate else [],
+               "situacao_fixa": fixo is not None}
     if deduzir:
         medicao["supressao_com_todos"] = r["resumo_com_todos"]
         medicao["deducao_internacoes"] = r["auditoria"] | {"rodadas": r["historico"], "passou": r["passou"],
@@ -349,24 +444,43 @@ def construir_ano(con, tabela: str, ano: int, catalogo: dict, k: int, deduzir: b
     return nos, sup, medicao
 
 
-def ler_anterior(pasta: Path, ano: int, catalogo: dict) -> dict:
-    """O que a versão publicada antes mostrou de um ano: por cruzamento, as chaves (município com 6 dígitos,
-    como no pipeline) e as colunas oculto e arredondado. Partição sem `arredondado` conta como exata."""
+def ler_anterior(pasta: Path, ano: int, catalogo: dict) -> tuple[dict, dict]:
+    """O que a versão publicada antes mostrou de um ano, e a situação dela.
+
+    Só lê o que a situação daquela versão diz que foi publicado, e confere cada arquivo com ela: versão
+    anterior que não pode ser lida, ou que não bate com o que foi publicado, para o pipeline, e o site
+    anterior continua no ar. Por cruzamento, devolve as chaves (município com 6 dígitos, como no pipeline)
+    e as colunas oculto e arredondado. Partição sem `arredondado` conta como exata."""
     import pandas as pd
 
     from . import sih_tabelas as tab
+    situacao = ler_situacao(pasta, ano)
     saida = {}
     for c in catalogo["cruzamentos"]:
-        arquivos = sorted((Path(pasta) / c["id"]).glob(f"uf=*/ano={ano}.parquet"))
-        if not arquivos:
+        if c["id"] not in situacao["publicados"]:
             continue
-        df = pd.concat([pd.read_parquet(a) for a in arquivos], ignore_index=True)
+        nomes = sorted(n for n in situacao["arquivos"] if n.startswith(c["id"] + "/"))
+        df = pd.concat([pd.read_parquet(Path(pasta) / f"ano={ano}" / n) for n in nomes], ignore_index=True)
         geo = "mun_res" if "mun_res" in df else "mun_hosp"
         df[geo] = df[geo].str[:6]
         if "arredondado" not in df:
             df["arredondado"] = False
         saida[c["id"]] = df[list(tab.colunas_de(c, catalogo)) + ["oculto", "arredondado"]]
-    return saida
+    return saida, situacao
+
+
+def anterior_do_ano(anterior: Path, ano: int, catalogo: dict, fechado: bool) -> tuple[dict | None, dict | None]:
+    """O padrão e a situação da versão publicada antes, para um ano. Ano que ela não tinha, e é mais novo
+    que todos os dela, é a primeira publicação dele: nada a herdar. Ano que falta no meio é erro."""
+    anos = sorted(int(p.name[4:]) for p in Path(anterior).glob("ano=*") if p.is_dir())
+    if ano not in anos:
+        if anos and ano > anos[-1]:
+            return None, None
+        raise ErroDeParticao(f"{anterior}: a versão anterior não tem o ano {ano}, que não é o mais novo")
+    padrao, situacao = ler_anterior(anterior, ano, catalogo)
+    versoes = catalogo["bases"]["sih"].get("versoes") or {}
+    fixo = situacao if versoes.get("situacao_fixa_no_ano_aberto") and not fechado else None
+    return (padrao if versoes.get("herdar_padrao_fechado", True) else None), fixo
 
 
 def executar(coleta_ibge: dict, catalogo: dict, trabalho: Path, saida: Path, ufs: list[str] | None = None,
@@ -421,27 +535,25 @@ def executar(coleta_ibge: dict, catalogo: dict, trabalho: Path, saida: Path, ufs
     versao_arquivos = max(r["modificado_no_ftp"] for r in coleta["arquivos"])
     for ano in anos:
         preliminares = {str(mes) for mes in jan.meses_preliminares(ano)}
-        antes = ler_anterior(anterior, ano, catalogo) if anterior else None
+        antes, fixo = anterior_do_ano(anterior, ano, catalogo, jan.ano_fechado(ano)) if anterior else (None, None)
         _, sup, m = construir_ano(con, "aih", ano, catalogo, k, deduzir, jan.ultimo_mes, preliminares,
-                                  antes, jan.ultimo_mes_fechado)
+                                  antes, jan.ultimo_mes_fechado, fixo)
         t = time.perf_counter()
-        tamanhos = gravar_particao(sup, ano, trabalho / "particoes", municipios7,
-                                   bool(base["supressao"]["motivo_por_celula"]),
-                                   {c["id"]: c["metricas"] for c in catalogo["cruzamentos"]},
-                                   preliminares, int(prelim_regra.get("arredondar_multiplo", 0)), k,
-                                   tuple(prelim_regra.get("contagens", ())))
-        m["segundos"]["gravar"] = round(time.perf_counter() - t, 1)
         ded = m.get("deducao_internacoes", {})
-        # O que o site precisa saber do ano: o que foi publicado, o que não foi e por quê, e o teste.
+        # O que o site precisa saber do ano: o que foi publicado, o que não foi e por quê, o teste e os arquivos.
         situacao = {"ano": ano, "coletado_em": coletado_em, "versao_dos_arquivos": versao_arquivos,
                     "ultimo_mes": jan.ultimo_mes, "ultimo_mes_fechado": jan.ultimo_mes_fechado,
                     "preliminares": sorted(preliminares), "arredondar_multiplo": prelim_regra.get("arredondar_multiplo"),
                     "publicados": m["publicados"], "nao_publicados": m["nao_publicados"],
+                    "situacao_fixa": m["situacao_fixa"],
                     "deducao": {"rodou": deduzir, "passou": ded.get("passou", False),
                                 "pequenas_reveladas": ded.get("pequenas_reveladas"),
                                 "obitos_passou": m.get("deducao_obitos", {}).get("passou", False)}}
-        (trabalho / "particoes" / f"situacao_{ano}.json").write_text(json.dumps(situacao, ensure_ascii=False, indent=1),
-                                                                    encoding="utf-8")
+        tamanhos = gravar_ano(trabalho / "particoes", ano, lambda pasta: gravar_particao(
+            sup, ano, pasta, municipios7, bool(base["supressao"]["motivo_por_celula"]),
+            {c["id"]: c["metricas"] for c in catalogo["cruzamentos"]}, preliminares,
+            int(prelim_regra.get("arredondar_multiplo", 0)), k, tuple(prelim_regra.get("contagens", ()))), situacao)
+        m["segundos"]["gravar"] = round(time.perf_counter() - t, 1)
         medicao["anos"][str(ano)] = m
         medicao["particoes"][str(ano)] = {"arquivos": len(tamanhos), "bytes": sum(v["bytes"] for v in tamanhos.values()),
                                           "gzip": sum(v["gzip"] for v in tamanhos.values()),

@@ -186,14 +186,14 @@ def test_particao_leva_so_as_metricas_do_catalogo_e_oculta_como_nulo(cat, ano_mo
     prelim = {f"2025{m:02d}" for m in range(7, 13)}
     sih.gravar_particao(sup, 2025, tmp_path, municipios7, False, {c["id"]: c["metricas"] for c in cat["cruzamentos"]},
                         prelim, 5, 5, ("internacoes", "obitos"))
-    filha = pq.read_table(tmp_path / "sih_res_mes_sexo" / "uf=35" / "ano=2025.parquet").to_pandas()
+    filha = pq.read_table(tmp_path / "sih_res_mes_sexo" / "uf=35.parquet").to_pandas()
     assert set(filha.columns) == {"mun_res", "mes", "sexo", "internacoes", "oculto", "preliminar", "arredondado"}
     assert filha.loc[filha["oculto"], "internacoes"].isna().all() and filha["mun_res"].str.len().eq(7).all()
-    mae = pq.read_table(tmp_path / "sih_res_ano" / "uf=35" / "ano=2025.parquet").to_pandas()
+    mae = pq.read_table(tmp_path / "sih_res_ano" / "uf=35.parquet").to_pandas()
     assert {"internacoes", "dias", "valor", "obitos", "obitos_oculto", "obitos_arredondado"} <= set(mae.columns)
     assert "aihs" not in mae.columns and "motivo" not in mae.columns and "publicado" not in mae.columns
     # Preliminar visível sai em múltiplo de 5 e marcado; o mês fechado sai exato; oculta continua nula.
-    mensal = pq.read_table(tmp_path / "sih_res_mes" / "uf=35" / "ano=2025.parquet").to_pandas()
+    mensal = pq.read_table(tmp_path / "sih_res_mes" / "uf=35.parquet").to_pandas()
     original = sup["sih_res_mes"].assign(mun_res=lambda d: d["mun_res"] + "0").set_index(["mun_res", "mes"])["internacoes"]
     mensal = mensal.join(original.rename("exato"), on=["mun_res", "mes"])
     aberto = mensal["mes"].isin(prelim)
@@ -219,7 +219,7 @@ def test_trimestre_sem_os_tres_meses_nao_sai_mas_e_protegido(cat, ano_montado, t
     # Fica de fora do arquivo e do resumo, e o teste o vê como incógnita.
     municipios7 = {m: m + "0" for m in set(nos[("mun_res",)]["mun_res"]) | set(nos[("mun_hosp",)]["mun_hosp"])}
     sih.gravar_particao({"sih_res_tri_capitulo": tri}, 2025, tmp_path, municipios7, False)
-    lido = pq.read_table(tmp_path / "sih_res_tri_capitulo" / "uf=35" / "ano=2025.parquet").to_pandas()
+    lido = pq.read_table(tmp_path / "sih_res_tri_capitulo" / "uf=35.parquet").to_pandas()
     assert set(lido["tri"]) <= {"2025T1", "2025T2"}
     assert sih.resumo_supressao({"t": tri})["t"]["linhas"] == int(tri["publicado"].sum())
     estados = sih_deducao.estados_publicados(nos, sup, cat, 5)
@@ -292,3 +292,85 @@ def test_periodo_fechado_herda_o_padrao_da_versao_anterior(cat, ano_montado):
     # Período aberto não herda nada.
     aberto = sih_deducao.periodo_aberto(antes["sih_res_mes"], ("mun_res", "mes"), 2025, {f"2025{m:02d}" for m in range(7, 13)})
     assert not (fixas["sih_res_mes"][0] | fixas["sih_res_mes"][1])[aberto].any()
+
+
+PEQUENO = ("sih_res_ano", "sih_res_mes", "sih_res_ano_capitulo", "sih_res_tri_capitulo")
+
+
+def _gravar_versao(sih, nos, cat, particoes, publicados, nao_publicados):
+    """Uma versão do ano 2025 com só os cruzamentos de `publicados`, gravada pela troca do conjunto."""
+    cat = cat | {"cruzamentos": [c for c in cat["cruzamentos"] if c["id"] in PEQUENO]}
+    sup = supressao.suprimir(nos, sih.catalogo_sem(cat, set(nao_publicados)), 5)
+    municipios7 = {m: m + "0" for m in set(nos[("mun_res",)]["mun_res"]) | set(nos[("mun_hosp",)]["mun_hosp"])}
+    situacao = {"ano": 2025, "publicados": publicados, "nao_publicados": nao_publicados,
+                "deducao": {"rodou": True, "passou": True, "obitos_passou": True}}
+    return sih.gravar_ano(particoes, 2025, lambda pasta: sih.gravar_particao(sup, 2025, pasta, municipios7), situacao)
+
+
+def test_ano_trocado_de_uma_vez_sem_sobra_do_cruzamento_que_deixou_de_passar(cat, ano_montado, tmp_path):
+    from pipeline import sih
+    nos, _ = ano_montado
+    todos = list(PEQUENO)
+    # Primeira versão: o trimestre por capítulo passa. Na seguinte, reprova no critério e sai do ano.
+    _gravar_versao(sih, nos, cat, tmp_path, todos, {})
+    assert list((tmp_path / "ano=2025" / "sih_res_tri_capitulo").glob("uf=*.parquet"))
+    fora = {"sih_res_tri_capitulo": {"motivo": "7,6% das internações ficariam ocultas (limite: 5%)"}}
+    _gravar_versao(sih, nos, cat, tmp_path, [c for c in todos if c not in fora], fora)
+    assert not (tmp_path / "ano=2025" / "sih_res_tri_capitulo").exists()
+    assert sorted(p.name for p in tmp_path.iterdir()) == ["ano=2025"]      # nem a pasta nova, nem a antiga sobram
+    situacao = sih.ler_situacao(tmp_path, 2025)
+    assert "sih_res_tri_capitulo" not in situacao["publicados"] and situacao["nao_publicados"] == fora
+    # ler_anterior só lê o que a situação daquela versão diz que foi publicado, mesmo com um arquivo a mais.
+    sobra = tmp_path / "ano=2025" / "sih_res_tri_capitulo" / "uf=35.parquet"
+    sobra.parent.mkdir(parents=True)
+    sobra.write_bytes(b"sobra de outra versao")
+    padrao, lida = sih.ler_anterior(tmp_path, 2025, cat | {"cruzamentos": [c for c in cat["cruzamentos"] if c["id"] in PEQUENO]})
+    assert "sih_res_tri_capitulo" not in padrao and set(padrao) == set(lida["publicados"])
+    assert {"oculto", "arredondado"} <= set(padrao["sih_res_mes"].columns) and padrao["sih_res_mes"]["mun_res"].str.len().eq(6).all()
+
+
+def test_versao_anterior_que_nao_bate_com_a_situacao_para_o_pipeline(cat, ano_montado, tmp_path):
+    from pipeline import sih
+    nos, _ = ano_montado
+    _gravar_versao(sih, nos, cat, tmp_path, list(PEQUENO), {})
+    arquivo = next((tmp_path / "ano=2025" / "sih_res_mes").glob("uf=*.parquet"))
+    arquivo.write_bytes(arquivo.read_bytes() + b"x")
+    with pytest.raises(sih.ErroDeParticao, match="diferente do que situacao.json"):
+        sih.ler_anterior(tmp_path, 2025, cat)
+    arquivo.unlink()
+    with pytest.raises(sih.ErroDeParticao, match="ausente"):
+        sih.ler_situacao(tmp_path, 2025)
+    # Ano que a versão anterior não tem: se for o mais novo, é a primeira publicação dele; no meio, é erro.
+    assert sih.anterior_do_ano(tmp_path, 2026, cat, fechado=False) == (None, None)
+    with pytest.raises(sih.ErroDeParticao, match="não tem o ano 2024"):
+        sih.anterior_do_ano(tmp_path, 2024, cat, fechado=False)
+
+
+def test_ano_aberto_mantem_a_situacao_da_primeira_publicacao(cat, ano_montado, monkeypatch):
+    from pipeline import sih
+    nos, _ = ano_montado
+    respostas = []
+    pronta = supressao.suprimir(nos, cat, 5)
+
+    def teste_falso(nos, catalogo, k, motivo, max_rodadas, arredondamento=None, ultimo_mes=None, fixas=None):
+        ids = [c["id"] for c in catalogo["cruzamentos"]]
+        respostas.append(ids)
+        # O teste revela uma contagem em mês x sexo enquanto ele está publicado.
+        revela = "sih_res_mes_sexo" in ids
+        return {"suprimidas": {i: pronta[i] for i in ids}, "passou": not revela,
+                "auditoria": {"por_no": {"mun_res+mes+sexo": {"pequenas_reveladas": 1}} if revela else {}}}
+    monkeypatch.setattr(sih_deducao, "suprimir_ate_passar", teste_falso)
+    # A primeira publicação do ano deixou o trimestre por capítulo de fora e publicou o resto.
+    fixo = {"publicados": [c["id"] for c in cat["cruzamentos"] if c["id"] != "sih_res_tri_capitulo"],
+            "nao_publicados": {"sih_res_tri_capitulo": {"motivo": "7,6% das internações ficariam ocultas (limite: 5%)"}}}
+    # Critério que reprovaria quase tudo: com a situação fixa, ele não é refeito.
+    limite = cat["bases"]["sih"]["supressao"] | {"criterio_publicacao": {"internacoes_ocultas_pct_max": 100, "celulas_ocultas_pct_max": 1}}
+    estrito = cat | {"bases": cat["bases"] | {"sih": cat["bases"]["sih"] | {"supressao": limite}}}
+    r = sih.suprimir_publicaveis(nos, estrito, 5, fixo=fixo)
+    # Só o teste de dedução tira: mês x sexo sai; o trimestre continua fora com o motivo da primeira publicação.
+    assert set(r["nao_publicados"]) == {"sih_res_tri_capitulo", "sih_res_mes_sexo"}
+    assert r["nao_publicados"]["sih_res_mes_sexo"]["motivo"] == "o teste de dedução revelou contagens com ele no ano"
+    assert r["nao_publicados"]["sih_res_tri_capitulo"] == fixo["nao_publicados"]["sih_res_tri_capitulo"]
+    assert r["passou"] and set(respostas[-1]) == set(fixo["publicados"]) - {"sih_res_mes_sexo"}
+    assert cat["bases"]["sih"]["versoes"] == {"herdar_padrao_fechado": True, "ataque_conjunto_obrigatorio": True,
+                                              "situacao_fixa_no_ano_aberto": True}

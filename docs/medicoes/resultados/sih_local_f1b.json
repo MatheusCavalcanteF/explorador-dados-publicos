@@ -211,18 +211,36 @@
  },
  "paginas": {
   "limite_bytes": 100000,
-  "municipios_ate_5_mil": {"quantos": 1286, "mediana_bytes": 71714.0, "maior_bytes": 75769, "mediana_gzip": 10918.5},
-  "capitais": {
-   "São Paulo": [78791, 13380],
-   "Belo Horizonte": [79240, 13306],
-   "Rio de Janeiro": [78512, 13281],
-   "Brasília": [79167, 13315]
+  "antes_svg_no_html": {
+   "municipios_ate_5_mil": {"quantos": 1286, "mediana_bytes": 71714.0, "maior_bytes": 75769, "mediana_gzip": 10918.5},
+   "capitais": {
+    "São Paulo": [78791, 13380],
+    "Belo Horizonte": [79240, 13306],
+    "Rio de Janeiro": [78512, 13281],
+    "Brasília": [79167, 13315]
+   },
+   "todas": {"mediana_bytes": 75109, "maior_bytes": 79240},
+   "exemplos": {
+    "Serra da Saudade (MG), 857 habitantes": [64369, 10073],
+    "Santos (SP)": [77728, 12904]
+   }
   },
-  "todas": {"mediana_bytes": 75109, "maior_bytes": 79240},
-  "build": "python -m pipeline construir --coleta <coleta> --saida build/site-sih --links manifesto/links.json --sih-local <trabalho>/particoes",
-  "exemplos": {
-   "Serra da Saudade (MG), 857 habitantes": [64369, 10073],
-   "Santos (SP)": [77728, 12904]
-  }
+  "depois_grafico_no_navegador": {
+   "municipios_ate_5_mil": {"quantos": 1286, "mediana_bytes": 47249.0, "maior_bytes": 49091, "mediana_gzip": 8053.0},
+   "capitais": {
+    "São Paulo": [50470, 9482],
+    "Belo Horizonte": [50660, 9358],
+    "Rio de Janeiro": [50393, 9374],
+    "Brasília": [50529, 9318]
+   },
+   "todas": {"mediana_bytes": 48544, "maior_bytes": 50660},
+   "exemplos": {
+    "Serra da Saudade (MG), 857 habitantes": [44740, 7662],
+    "Santos (SP)": [49546, 8957]
+   },
+   "sih_js": [15640, 5371],
+   "municipios_sem_internacao_em_hospital_proprio": 2341
+  },
+  "build": "python -m pipeline construir --coleta <coleta> --saida build/site-sih --links manifesto/links.json --sih-local build/sih/particoes"
  }
 }

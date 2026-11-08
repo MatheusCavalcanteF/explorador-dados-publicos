@@ -366,10 +366,11 @@ a:hover { text-decoration-thickness: 2px; }
 .tabela thead th { font-size: 0.85rem; color: var(--tinta-suave); font-weight: 700; }
 .tabela tbody th { font-weight: 600; white-space: nowrap; }
 .tabela .oculto, .tabela .situacao { color: var(--tinta-suave); }
+.tabela .situacao { white-space: nowrap; }
 .sih-figura { margin: 0.5rem 0 1rem; }
-.sih-figura > svg, .detalhe svg { display: block; width: 100%; height: auto; min-width: 520px; }
-.sih-figura { overflow-x: auto; }
-.sih-figura > svg.grafico--estreito { max-width: 640px; min-width: 460px; }
+/* O script desenha cada gráfico na largura da caixa, com texto de 12 px: nada rola nem é reduzido. */
+.grafico-sih { width: 100%; max-width: 760px; }
+.grafico-sih svg { display: block; width: 100%; height: auto; overflow: visible; }
 .grafico text { font-family: inherit; font-size: 12px; }
 .grafico .eixo { fill: var(--tinta-suave); }
 .grafico .rotulo, .grafico .valor { fill: var(--tinta); }
@@ -382,11 +383,12 @@ a:hover { text-decoration-thickness: 2px; }
 .grafico .oculta { fill: none; stroke: var(--tinta-suave); stroke-width: 1.5; }
 .grafico .faixa { fill: var(--faixa); }
 .grafico [data-tip]:hover { fill-opacity: 0.8; }
-.legenda-sih { display: flex; flex-wrap: wrap; align-items: center; gap: 0.3rem 0.5rem; margin-top: 0.4rem; font-size: 0.9rem; color: var(--tinta-suave); }
-.chave { display: inline-block; width: 0.9rem; height: 0.9rem; border-radius: 3px; background: var(--serie); }
+.legenda-sih { display: flex; flex-wrap: wrap; align-items: center; gap: 0.3rem 1rem; margin-top: 0.4rem; font-size: 0.9rem; color: var(--tinta-suave); }
+.legenda-sih .item { display: inline-flex; align-items: center; gap: 0.4rem; }
+.chave { flex: none; display: inline-block; width: 0.9rem; height: 0.9rem; border-radius: 3px; background: var(--serie); }
+.legenda-sih--piramide .chave { background: linear-gradient(90deg, var(--serie-1) 50%, var(--serie-2) 50%); }
 .chave--prelim { opacity: 0.45; }
-.chave--oculta { background: none; border: 1.5px solid var(--tinta-suave); border-radius: 50%; width: 0.7rem; height: 0.7rem; }
-.chave + .chave, .legenda-sih .chave:not(:first-child) { margin-left: 0.6rem; }
+.legenda-sih .chave--oculta { background: none; border: 1.5px solid var(--tinta-suave); border-radius: 50%; width: 0.7rem; height: 0.7rem; }
 .exportar { display: flex; gap: 0.5rem; margin: 0.5rem 0; }
 .exportar button, .anos label {
   font: inherit; font-size: 0.9rem; font-weight: 700; padding: 0.35rem 0.8rem 0.25rem;

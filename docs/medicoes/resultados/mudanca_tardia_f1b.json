@@ -4,143 +4,16 @@
  "depois_do_fechamento": {
   "ultima_no_ftp": 202608,
   "listagem_mais_recente": "2026-10-16T17:31:00",
-  "por_uf": {
-   "AC": {
-    "6": {"meses_fechados_ha_pelo_menos": 45, "com_competencia_regravada": 0},
-    "9": {"meses_fechados_ha_pelo_menos": 42, "com_competencia_regravada": 0},
-    "12": {"meses_fechados_ha_pelo_menos": 39, "com_competencia_regravada": 0}
-   },
-   "AL": {
-    "6": {"meses_fechados_ha_pelo_menos": 45, "com_competencia_regravada": 0},
-    "9": {"meses_fechados_ha_pelo_menos": 42, "com_competencia_regravada": 0},
-    "12": {"meses_fechados_ha_pelo_menos": 39, "com_competencia_regravada": 0}
-   },
-   "AM": {
-    "6": {"meses_fechados_ha_pelo_menos": 45, "com_competencia_regravada": 0},
-    "9": {"meses_fechados_ha_pelo_menos": 42, "com_competencia_regravada": 0},
-    "12": {"meses_fechados_ha_pelo_menos": 39, "com_competencia_regravada": 0}
-   },
-   "AP": {
-    "6": {"meses_fechados_ha_pelo_menos": 45, "com_competencia_regravada": 0},
-    "9": {"meses_fechados_ha_pelo_menos": 42, "com_competencia_regravada": 0},
-    "12": {"meses_fechados_ha_pelo_menos": 39, "com_competencia_regravada": 0}
-   },
-   "BA": {
-    "6": {"meses_fechados_ha_pelo_menos": 45, "com_competencia_regravada": 0},
-    "9": {"meses_fechados_ha_pelo_menos": 42, "com_competencia_regravada": 0},
-    "12": {"meses_fechados_ha_pelo_menos": 39, "com_competencia_regravada": 0}
-   },
-   "CE": {
-    "6": {"meses_fechados_ha_pelo_menos": 45, "com_competencia_regravada": 0},
-    "9": {"meses_fechados_ha_pelo_menos": 42, "com_competencia_regravada": 0},
-    "12": {"meses_fechados_ha_pelo_menos": 39, "com_competencia_regravada": 0}
-   },
-   "DF": {
-    "6": {"meses_fechados_ha_pelo_menos": 45, "com_competencia_regravada": 0},
-    "9": {"meses_fechados_ha_pelo_menos": 42, "com_competencia_regravada": 0},
-    "12": {"meses_fechados_ha_pelo_menos": 39, "com_competencia_regravada": 0}
-   },
-   "ES": {
-    "6": {"meses_fechados_ha_pelo_menos": 45, "com_competencia_regravada": 0},
-    "9": {"meses_fechados_ha_pelo_menos": 42, "com_competencia_regravada": 0},
-    "12": {"meses_fechados_ha_pelo_menos": 39, "com_competencia_regravada": 0}
-   },
-   "GO": {
-    "6": {"meses_fechados_ha_pelo_menos": 45, "com_competencia_regravada": 0},
-    "9": {"meses_fechados_ha_pelo_menos": 42, "com_competencia_regravada": 0},
-    "12": {"meses_fechados_ha_pelo_menos": 39, "com_competencia_regravada": 0}
-   },
-   "MA": {
-    "6": {"meses_fechados_ha_pelo_menos": 45, "com_competencia_regravada": 0},
-    "9": {"meses_fechados_ha_pelo_menos": 42, "com_competencia_regravada": 0},
-    "12": {"meses_fechados_ha_pelo_menos": 39, "com_competencia_regravada": 0}
-   },
-   "MG": {
-    "6": {"meses_fechados_ha_pelo_menos": 45, "com_competencia_regravada": 0},
-    "9": {"meses_fechados_ha_pelo_menos": 42, "com_competencia_regravada": 0},
-    "12": {"meses_fechados_ha_pelo_menos": 39, "com_competencia_regravada": 0}
-   },
-   "MS": {
-    "6": {"meses_fechados_ha_pelo_menos": 45, "com_competencia_regravada": 0},
-    "9": {"meses_fechados_ha_pelo_menos": 42, "com_competencia_regravada": 0},
-    "12": {"meses_fechados_ha_pelo_menos": 39, "com_competencia_regravada": 0}
-   },
-   "MT": {
-    "6": {"meses_fechados_ha_pelo_menos": 45, "com_competencia_regravada": 0},
-    "9": {"meses_fechados_ha_pelo_menos": 42, "com_competencia_regravada": 0},
-    "12": {"meses_fechados_ha_pelo_menos": 39, "com_competencia_regravada": 0}
-   },
-   "PA": {
-    "6": {"meses_fechados_ha_pelo_menos": 45, "com_competencia_regravada": 0},
-    "9": {"meses_fechados_ha_pelo_menos": 42, "com_competencia_regravada": 0},
-    "12": {"meses_fechados_ha_pelo_menos": 39, "com_competencia_regravada": 0}
-   },
-   "PB": {
-    "6": {"meses_fechados_ha_pelo_menos": 45, "com_competencia_regravada": 0},
-    "9": {"meses_fechados_ha_pelo_menos": 42, "com_competencia_regravada": 0},
-    "12": {"meses_fechados_ha_pelo_menos": 39, "com_competencia_regravada": 0}
-   },
-   "PE": {
-    "6": {"meses_fechados_ha_pelo_menos": 45, "com_competencia_regravada": 0},
-    "9": {"meses_fechados_ha_pelo_menos": 42, "com_competencia_regravada": 0},
-    "12": {"meses_fechados_ha_pelo_menos": 39, "com_competencia_regravada": 0}
-   },
-   "PI": {
-    "6": {"meses_fechados_ha_pelo_menos": 45, "com_competencia_regravada": 0},
-    "9": {"meses_fechados_ha_pelo_menos": 42, "com_competencia_regravada": 0},
-    "12": {"meses_fechados_ha_pelo_menos": 39, "com_competencia_regravada": 0}
-   },
-   "PR": {
-    "6": {"meses_fechados_ha_pelo_menos": 45, "com_competencia_regravada": 0},
-    "9": {"meses_fechados_ha_pelo_menos": 42, "com_competencia_regravada": 0},
-    "12": {"meses_fechados_ha_pelo_menos": 39, "com_competencia_regravada": 0}
-   },
-   "RJ": {
-    "6": {"meses_fechados_ha_pelo_menos": 45, "com_competencia_regravada": 0},
-    "9": {"meses_fechados_ha_pelo_menos": 42, "com_competencia_regravada": 0},
-    "12": {"meses_fechados_ha_pelo_menos": 39, "com_competencia_regravada": 0}
-   },
-   "RN": {
-    "6": {"meses_fechados_ha_pelo_menos": 45, "com_competencia_regravada": 0},
-    "9": {"meses_fechados_ha_pelo_menos": 42, "com_competencia_regravada": 0},
-    "12": {"meses_fechados_ha_pelo_menos": 39, "com_competencia_regravada": 0}
-   },
-   "RO": {
-    "6": {"meses_fechados_ha_pelo_menos": 45, "com_competencia_regravada": 0},
-    "9": {"meses_fechados_ha_pelo_menos": 42, "com_competencia_regravada": 0},
-    "12": {"meses_fechados_ha_pelo_menos": 39, "com_competencia_regravada": 0}
-   },
-   "RR": {
-    "6": {"meses_fechados_ha_pelo_menos": 45, "com_competencia_regravada": 0},
-    "9": {"meses_fechados_ha_pelo_menos": 42, "com_competencia_regravada": 0},
-    "12": {"meses_fechados_ha_pelo_menos": 39, "com_competencia_regravada": 0}
-   },
-   "RS": {
-    "6": {"meses_fechados_ha_pelo_menos": 45, "com_competencia_regravada": 0},
-    "9": {"meses_fechados_ha_pelo_menos": 42, "com_competencia_regravada": 0},
-    "12": {"meses_fechados_ha_pelo_menos": 39, "com_competencia_regravada": 0}
-   },
-   "SC": {
-    "6": {"meses_fechados_ha_pelo_menos": 45, "com_competencia_regravada": 0},
-    "9": {"meses_fechados_ha_pelo_menos": 42, "com_competencia_regravada": 0},
-    "12": {"meses_fechados_ha_pelo_menos": 39, "com_competencia_regravada": 0}
-   },
-   "SE": {
-    "6": {"meses_fechados_ha_pelo_menos": 45, "com_competencia_regravada": 0},
-    "9": {"meses_fechados_ha_pelo_menos": 42, "com_competencia_regravada": 0},
-    "12": {"meses_fechados_ha_pelo_menos": 39, "com_competencia_regravada": 0}
-   },
-   "SP": {
-    "6": {"meses_fechados_ha_pelo_menos": 45, "com_competencia_regravada": 0},
-    "9": {"meses_fechados_ha_pelo_menos": 42, "com_competencia_regravada": 0},
-    "12": {"meses_fechados_ha_pelo_menos": 39, "com_competencia_regravada": 0}
-   },
-   "TO": {
-    "6": {"meses_fechados_ha_pelo_menos": 45, "com_competencia_regravada": 0},
-    "9": {"meses_fechados_ha_pelo_menos": 42, "com_competencia_regravada": 0},
-    "12": {"meses_fechados_ha_pelo_menos": 39, "com_competencia_regravada": 0}
+  "por_uf": [
+   {
+    "ufs": ["AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", "GO", "MA", "MG", "MS", "MT", "PA", "PB", "PE", "PI", "PR", "RJ", "RN", "RO", "RR", "RS", "SC", "SE", "SP", "TO"],
+    "meses": {
+     "12": {"com_competencia_regravada": 0, "meses_fechados_ha_pelo_menos": 39},
+     "6": {"com_competencia_regravada": 0, "meses_fechados_ha_pelo_menos": 45},
+     "9": {"com_competencia_regravada": 0, "meses_fechados_ha_pelo_menos": 42}
+    }
    }
-  },
+  ],
   "meses_de_2021_em_diante_que_mudaram_depois_de_fechar": 0,
   "antes_de_2021_regravadas_mais_de_15_meses_depois": 3186,
   "antes_de_2021_datas": ["2013-11-01", "2014-09-25", "2015-10-05", "2016-10-04", "2017-04-10", "2018-01-08", "2019-04-10", "2019-07-08", "2019-08-05", "2020-01-09", "2020-06-04", "2020-10-06", "2021-04-05", "2021-05-07", "2022-01-10", "2022-02-07", "2022-03-07", "2024-05-22"]

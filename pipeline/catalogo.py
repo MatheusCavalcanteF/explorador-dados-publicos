@@ -67,6 +67,11 @@ def validar(catalogo: dict) -> None:
                 raise ErroDeCatalogo(f"Base {nome}: preliminares.arredondar_multiplo deve ser um inteiro de 2 para cima")
             if not set(preliminares.get("contagens") or []) <= {"internacoes", "obitos"}:
                 raise ErroDeCatalogo(f"Base {nome}: preliminares.contagens só aceita internacoes e obitos")
+        versoes = base.get("versoes")
+        if versoes is not None and (set(versoes) - {"herdar_padrao_fechado", "ataque_conjunto_obrigatorio",
+                                                    "situacao_fixa_no_ano_aberto"}
+                                    or not all(isinstance(v, bool) for v in versoes.values())):
+            raise ErroDeCatalogo(f"Base {nome}: versoes só aceita as três regras, como true ou false")
     for nome, metrica in metricas.items():
         onde = f"Métrica {nome}"
         if metrica.get("tema") not in temas:

@@ -120,6 +120,21 @@ bases:
     # arredondada. Zero continua zero, e oculta continua oculta. Taxas usam o valor arredondado. Dias de
     # permanência e valor pago não são contagem de pessoas e saem exatos, marcados como preliminares.
     preliminares: { arredondar_multiplo: 5, contagens: [internacoes, obitos] }
+    # Versões (decidido em 08/11/2026). Quem guarda duas versões do site cruza uma com a outra: medido em
+    # 2024, o fechamento do ano revelava 18 contagens assim.
+    versoes:
+      # Nas células de período fechado, a versão nova herda o padrão da publicada: a oculta continua
+      # oculta, e a visível e exata não vira complementar (sih.fixas_da_anterior).
+      herdar_padrao_fechado: true
+      # Antes de toda publicação, o teste ataca a versão no ar e a candidata juntas. Se ele não rodar, se
+      # revelar alguma contagem, ou se a versão no ar não puder ser lida ou não bater com a situação dela,
+      # nada é publicado e o site anterior fica no ar. A etapa no pipeline ainda não existe: até ela
+      # existir, o SIH não pode ser publicado.
+      ataque_conjunto_obrigatorio: true
+      # Em ano aberto, o que é publicado de cada cruzamento fica o da primeira publicação daquele ano até o
+      # ano fechar, sem refazer o critério a cada mês. A única exceção é o teste de dedução revelar algo
+      # com o cruzamento, que sempre o tira.
+      situacao_fixa_no_ano_aberto: true
     ressalvas:
       - "Só SUS. Internações particulares e por plano de saúde não aparecem."
       - "Os meses são os da data da alta. No TabNet, \"atendimento\" é a data de internação, e os meses não coincidem."

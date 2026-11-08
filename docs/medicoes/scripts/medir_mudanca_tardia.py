@@ -72,9 +72,14 @@ def depois_do_fechamento(listagem: dict) -> dict:
             ano, mes = divmod(c, 100)
             if u == uf and c < 202101 and meses_entre(datetime(ano, mes, 1), quando) > 15:
                 antigas.append(f"{u}{c % 10000:04d}:{quando:%Y-%m-%d}")
+    # O resultado costuma ser o mesmo nas 27 UFs: grava uma vez, com as UFs, e à parte as que diferem.
+    grupos = {}
+    for uf, meses in por_uf.items():
+        grupos.setdefault(json.dumps(meses, sort_keys=True), []).append(uf)
+    por_uf = [{"ufs": ufs, "meses": json.loads(chave)} for chave, ufs in grupos.items()]
     return {"ultima_no_ftp": ultima, "listagem_mais_recente": agora.isoformat(), "por_uf": por_uf,
-            "meses_de_2021_em_diante_que_mudaram_depois_de_fechar": sum(v[str(i)]["com_competencia_regravada"]
-                                                                        for v in por_uf.values() for i in IDADES),
+            "meses_de_2021_em_diante_que_mudaram_depois_de_fechar": sum(g["meses"][str(i)]["com_competencia_regravada"] * len(g["ufs"])
+                                                                        for g in por_uf for i in IDADES),
             "antes_de_2021_regravadas_mais_de_15_meses_depois": len(antigas),
             "antes_de_2021_datas": sorted({a.split(":")[1] for a in antigas})}
 
