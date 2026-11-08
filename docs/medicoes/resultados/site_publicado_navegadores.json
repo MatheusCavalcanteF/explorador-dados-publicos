@@ -1,0 +1,326 @@
+{
+ "site": "https://matheuscavalcantef.github.io/explorador-dados-publicos/",
+ "parquet_bytes_reais": 225932,
+ "parquet_sha256": "a9e8708c9e5fbb4e60963ce35c78451d268bc12344ec2600faa1f35fe0846ece",
+ "navegadores": {
+  "chromium": {
+   "versao": "157.0.8103.38",
+   "confere": {
+    "pagina": true,
+    "gzip": true,
+    "range": true,
+    "range_rodape": true,
+    "head": true,
+    "leitor": true
+   },
+   "medido": {
+    "gzip": {
+     "status": 200,
+     "content_encoding": "gzip",
+     "content_length": "116787",
+     "bytes": 225932,
+     "sha256": "a9e8708c9e5fbb4e60963ce35c78451d268bc12344ec2600faa1f35fe0846ece",
+     "inicio": "PAR1",
+     "fim": "PAR1"
+    },
+    "range": {
+     "status": 206,
+     "content_encoding": null,
+     "content_range": "bytes 0-1023/225932",
+     "bytes": 1024,
+     "sha256": "9215d9eb0322df32f810d7bc212c65965844edf991e725ea49ab1c5e681298d7"
+    },
+    "range_rodape": {
+     "status": 206,
+     "content_encoding": null,
+     "content_range": "bytes 225924-225931/225932",
+     "bytes": 8,
+     "fim": "PAR1"
+    },
+    "head": {
+     "status": 200,
+     "content_encoding": "gzip",
+     "content_length": "116787"
+    },
+    "leitor": {
+     "status": 200,
+     "segundos": 0.068
+    }
+   },
+   "leitor_linhas": 5571,
+   "leitor_divergentes": 0,
+   "exemplos_divergentes": [],
+   "gzip_transferido_bytes": 117402,
+   "pedidos": [
+    {
+     "url": "dados/ibge/populacao.parquet?teste=chromium-1794105501620-gzip",
+     "metodo": "GET",
+     "range": null,
+     "accept_encoding": null,
+     "status": 200,
+     "content_encoding": "gzip",
+     "content_length": "116787",
+     "content_range": null,
+     "corpo_transferido": 117402
+    },
+    {
+     "url": "dados/ibge/populacao.parquet?teste=chromium-1794105501620-range",
+     "metodo": "GET",
+     "range": "bytes=0-1023",
+     "accept_encoding": null,
+     "status": 206,
+     "content_encoding": null,
+     "content_length": "1024",
+     "content_range": "bytes 0-1023/225932",
+     "corpo_transferido": 1607
+    },
+    {
+     "url": "dados/ibge/populacao.parquet?teste=chromium-1794105501620-rodape",
+     "metodo": "GET",
+     "range": "bytes=225924-225931",
+     "accept_encoding": null,
+     "status": 206,
+     "content_encoding": null,
+     "content_length": "8",
+     "content_range": "bytes 225924-225931/225932",
+     "corpo_transferido": 592
+    },
+    {
+     "url": "dados/ibge/populacao.parquet?teste=chromium-1794105501620-head",
+     "metodo": "HEAD",
+     "range": null,
+     "accept_encoding": null,
+     "status": 200,
+     "content_encoding": "gzip",
+     "content_length": "116787",
+     "content_range": null,
+     "corpo_transferido": 540
+    },
+    {
+     "url": "dados/ibge/populacao.parquet?teste=chromium-1794105501620-leitor",
+     "metodo": "GET",
+     "range": null,
+     "accept_encoding": null,
+     "status": 200,
+     "content_encoding": "gzip",
+     "content_length": "116787",
+     "content_range": null,
+     "corpo_transferido": 117399
+    }
+   ]
+  },
+  "firefox": {
+   "versao": "159.0",
+   "confere": {
+    "pagina": true,
+    "gzip": true,
+    "range": true,
+    "range_rodape": true,
+    "head": true,
+    "leitor": true
+   },
+   "medido": {
+    "gzip": {
+     "status": 200,
+     "content_encoding": "gzip",
+     "content_length": "116787",
+     "bytes": 225932,
+     "sha256": "a9e8708c9e5fbb4e60963ce35c78451d268bc12344ec2600faa1f35fe0846ece",
+     "inicio": "PAR1",
+     "fim": "PAR1"
+    },
+    "range": {
+     "status": 206,
+     "content_encoding": null,
+     "content_range": "bytes 0-1023/225932",
+     "bytes": 1024,
+     "sha256": "9215d9eb0322df32f810d7bc212c65965844edf991e725ea49ab1c5e681298d7"
+    },
+    "range_rodape": {
+     "status": 206,
+     "content_encoding": null,
+     "content_range": "bytes 225924-225931/225932",
+     "bytes": 8,
+     "fim": "PAR1"
+    },
+    "head": {
+     "status": 200,
+     "content_encoding": "gzip",
+     "content_length": "116787"
+    },
+    "leitor": {
+     "status": 200,
+     "segundos": 0.308
+    }
+   },
+   "leitor_linhas": 5571,
+   "leitor_divergentes": 0,
+   "exemplos_divergentes": [],
+   "gzip_transferido_bytes": 116787,
+   "pedidos": [
+    {
+     "url": "dados/ibge/populacao.parquet?teste=firefox-1794105506405-gzip",
+     "metodo": "GET",
+     "range": null,
+     "accept_encoding": "gzip, deflate, br, zstd",
+     "status": 200,
+     "content_encoding": "gzip",
+     "content_length": "116787",
+     "content_range": null,
+     "corpo_transferido": 116787
+    },
+    {
+     "url": "dados/ibge/populacao.parquet?teste=firefox-1794105506405-range",
+     "metodo": "GET",
+     "range": "bytes=0-1023",
+     "accept_encoding": "gzip, deflate, br, zstd",
+     "status": 206,
+     "content_encoding": null,
+     "content_length": "1024",
+     "content_range": "bytes 0-1023/225932",
+     "corpo_transferido": 1024
+    },
+    {
+     "url": "dados/ibge/populacao.parquet?teste=firefox-1794105506405-rodape",
+     "metodo": "GET",
+     "range": "bytes=225924-225931",
+     "accept_encoding": "gzip, deflate, br, zstd",
+     "status": 206,
+     "content_encoding": null,
+     "content_length": "8",
+     "content_range": "bytes 225924-225931/225932",
+     "corpo_transferido": 8
+    },
+    {
+     "url": "dados/ibge/populacao.parquet?teste=firefox-1794105506405-head",
+     "metodo": "HEAD",
+     "range": null,
+     "accept_encoding": "gzip, deflate, br, zstd",
+     "status": 200,
+     "content_encoding": "gzip",
+     "content_length": "116787",
+     "content_range": null,
+     "corpo_transferido": 0
+    },
+    {
+     "url": "dados/ibge/populacao.parquet?teste=firefox-1794105506405-leitor",
+     "metodo": "GET",
+     "range": null,
+     "accept_encoding": "gzip, deflate, br, zstd",
+     "status": 200,
+     "content_encoding": "gzip",
+     "content_length": "116787",
+     "content_range": null,
+     "corpo_transferido": 116787
+    }
+   ]
+  },
+  "webkit": {
+   "versao": "27.2",
+   "confere": {
+    "pagina": true,
+    "gzip": true,
+    "range": true,
+    "range_rodape": true,
+    "head": true,
+    "leitor": true
+   },
+   "medido": {
+    "gzip": {
+     "status": 200,
+     "content_encoding": "gzip",
+     "content_length": "116787",
+     "bytes": 225932,
+     "sha256": "a9e8708c9e5fbb4e60963ce35c78451d268bc12344ec2600faa1f35fe0846ece",
+     "inicio": "PAR1",
+     "fim": "PAR1"
+    },
+    "range": {
+     "status": 206,
+     "content_encoding": null,
+     "content_range": "bytes 0-1023/225932",
+     "bytes": 1024,
+     "sha256": "9215d9eb0322df32f810d7bc212c65965844edf991e725ea49ab1c5e681298d7"
+    },
+    "range_rodape": {
+     "status": 206,
+     "content_encoding": null,
+     "content_range": "bytes 225924-225931/225932",
+     "bytes": 8,
+     "fim": "PAR1"
+    },
+    "head": {
+     "status": 200,
+     "content_encoding": "gzip",
+     "content_length": "116787"
+    },
+    "leitor": {
+     "status": 200,
+     "segundos": 0.147
+    }
+   },
+   "leitor_linhas": 5571,
+   "leitor_divergentes": 0,
+   "exemplos_divergentes": [],
+   "gzip_transferido_bytes": 116787,
+   "pedidos": [
+    {
+     "url": "dados/ibge/populacao.parquet?teste=webkit-1794105509272-gzip",
+     "metodo": "GET",
+     "range": null,
+     "accept_encoding": null,
+     "status": 200,
+     "content_encoding": "gzip",
+     "content_length": "116787",
+     "content_range": null,
+     "corpo_transferido": 116787
+    },
+    {
+     "url": "dados/ibge/populacao.parquet?teste=webkit-1794105509272-range",
+     "metodo": "GET",
+     "range": "bytes=0-1023",
+     "accept_encoding": "identity",
+     "status": 206,
+     "content_encoding": null,
+     "content_length": "1024",
+     "content_range": "bytes 0-1023/225932",
+     "corpo_transferido": 1024
+    },
+    {
+     "url": "dados/ibge/populacao.parquet?teste=webkit-1794105509272-rodape",
+     "metodo": "GET",
+     "range": "bytes=225924-225931",
+     "accept_encoding": "identity",
+     "status": 206,
+     "content_encoding": null,
+     "content_length": "8",
+     "content_range": "bytes 225924-225931/225932",
+     "corpo_transferido": 8
+    },
+    {
+     "url": "dados/ibge/populacao.parquet?teste=webkit-1794105509272-head",
+     "metodo": "HEAD",
+     "range": null,
+     "accept_encoding": null,
+     "status": 200,
+     "content_encoding": "gzip",
+     "content_length": "116787",
+     "content_range": null,
+     "corpo_transferido": 0
+    },
+    {
+     "url": "dados/ibge/populacao.parquet?teste=webkit-1794105509272-leitor",
+     "metodo": "GET",
+     "range": null,
+     "accept_encoding": null,
+     "status": 200,
+     "content_encoding": "gzip",
+     "content_length": "116787",
+     "content_range": null,
+     "corpo_transferido": 116787
+    }
+   ]
+  }
+ },
+ "tudo_confere": true
+}

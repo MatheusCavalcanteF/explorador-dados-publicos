@@ -128,7 +128,7 @@ Com cruzamentos pré-calculados, a tela só precisa filtrar um arquivo por munic
 | Maior arquivo por UF e ano | 488 KB (280 KB com gzip) | 279 KB |
 | Igual ao motor | 12 de 12 tabelas inteiras, nos 3 navegadores | 72 de 72 comparações, mais 24 em Firefox e 24 em WebKit |
 
-O preço é ocupar o dobro no site, o que cabe no orçamento. O risco é depender do gzip do host: o GitHub Pages comprimiu `.parquet` nos arquivos testados, e o site real precisa confirmar. Se deixar de comprimir, o formato é um parâmetro do build, e basta voltar ao zstd.
+O preço é ocupar o dobro no site, o que cabe no orçamento. O risco é depender do gzip do host: o GitHub Pages comprimiu `.parquet` nos arquivos testados, e o site deste projeto confirmou em 07/11/2026: o `populacao.parquet` sem compressão, de 225.932 bytes, saiu com 116.787 em gzip nos três navegadores e no teste do CI. Se deixar de comprimir, o formato é um parâmetro do build, e basta voltar ao zstd.
 
 **O motor (DuckDB-WASM) fica fora da v1.** Só volta se uma função concreta provar que precisa dele, por exemplo análise em várias tabelas que o leitor não consiga fazer em tempo razoável. Nesse caso: carregamento sob demanda, só naquela função, vindo do jsDelivr (6,2 a 7,1 MB com brotli, conforme a CDN que atende) em vez do site, porque o arquivo de 35,9 MB passa do limite de 25 MiB por arquivo. O teste de aceitação é o mesmo: dados iguais aos do leitor e tempo medido em 4G lento.
 
@@ -144,7 +144,7 @@ O que decidiu foi o comportamento medido em navegador real:
 | Amostras | 2 arquivos e 1 Parquet (leitor e motor) nos 3 navegadores | 1 arquivo nos 3 navegadores, mais 3 arquivos `.js` testados fora do navegador, de 4 sites |
 | `HEAD` | Devolve o tamanho **comprimido** | Sem `Content-Length` |
 
-O Cloudflare não documenta isso de forma oficial na página de limites; um relato no repositório das ferramentas dele descreve o mesmo. Como o leitor padrão baixa o arquivo inteiro, a escolha não depende mais de `Range`, e outro host continua possível. Confirmar em deploy próprio é a primeira tarefa da F1.
+O Cloudflare não documenta isso de forma oficial na página de limites; um relato no repositório das ferramentas dele descreve o mesmo. Como o leitor padrão baixa o arquivo inteiro, a escolha não depende mais de `Range`, e outro host continua possível. **Confirmado no deploy próprio em 07/11/2026**, com o Parquet do IBGE, em Chrome 157, Firefox 159 e WebKit 27.2: `206` com bytes crus e `Content-Range` sobre o tamanho real (225.932), também no rodapé do arquivo; `HEAD` com o tamanho do gzip (116.787); e o leitor leu as 5.571 linhas sem divergência da coleta. Fora do navegador há uma diferença: pedindo `Range` com `Accept-Encoding: gzip`, o teste do CI, em Python, recebeu `206` com uma fatia do gzip e `Content-Range` sobre o tamanho comprimido. O Firefox manda `Range` com `gzip, deflate, br, zstd` e recebe bytes crus; o WebKit manda `identity`. Os cabeçalhos de cada pedido estão em [`site_publicado_navegadores.json`](medicoes/resultados/site_publicado_navegadores.json).
 
 **Cloudflare na frente do GitHub Pages não deve ser usado com `Range`:** em `shell.duckdb.org`, que tem essa montagem, a leitura parcial falha com `No magic bytes found`, porque o tamanho informado é o do gzip em cache.
 
@@ -604,7 +604,7 @@ Pelo que foi possível examinar, nenhum junta os quatro pontos: temas diferentes
 | **Fonte republica e piora** | Santo André caiu 64,9% em uma versão | Trava de dois níveis: marca o município, só para tudo em falha estrutural. Limite a reavaliar com mais versões |
 | **Dedução entre tabelas** | Sem família, 113 contagens eram dedutíveis. O teste atual é de cadeia, com as margens declaradas, sobre o SIH de um ano | Teste na F1 sobre tudo o que for publicado, em vários anos e temas. Reprovou, não publica |
 | **Dedução entre versões** | Em SP, 77 pares por residência revelaram diferença de 1 a 4 entre duas versões | Medir no teste da F1 e decidir o tratamento dos meses preliminares antes de publicar |
-| **Comportamento do host muda** | O `HEAD` já informa tamanho comprimido, `Range` depende de detalhes não documentados, e o formato escolhido conta com o gzip do host | Leitor padrão baixa o arquivo inteiro. Teste automático no site publicado. Se o gzip sumir, o build volta ao zstd |
+| **Comportamento do host muda** | O `HEAD` já informa tamanho comprimido, `Range` depende de detalhes não documentados, e o formato escolhido conta com o gzip do host. Pedido com `Range` e `Accept-Encoding: gzip` recebe uma fatia do gzip, medido em Python | Leitor padrão baixa o arquivo inteiro. Teste semanal no site publicado, em Python e Node, no CI; nos navegadores, o teste é manual. Se o gzip sumir, o build volta ao zstd |
 | **Site e TabNet em eixos diferentes** | O site usa a data da alta, e o TabNet, a de internação. Quem comparar um mês vai ver números diferentes e pode achar que é erro | Ressalva junto ao número, explicando a diferença. Conferência pública por competência e por data de internação |
 | **Mês da alta sem conferência oficial** | Nenhuma ferramenta oficial testada oferece esse eixo | Conferir as mesmas AIHs pelos outros dois eixos e testar a data da alta no pipeline. Fica registrado como limite |
 | **Leitor sem motor de consulta** | Filtrar, ordenar e juntar com população viram código do projeto | Só filtro e desenho sobre cruzamentos prontos; teste de igualdade com o motor no CI, usando-o só como referência |
@@ -628,7 +628,7 @@ A divisão proposta (deploy e CI; SIH e catálogo; educação e IBGE) foi mantid
 - Coleta real pelo runner: lista de municípios pela DTB do geoftp, população pela SIDRA, e um teste de alcance de cada fonte (um `RD` pequeno do DATASUS, a listagem do CAGED, uma consulta do Siconfi). **O INEP saiu do teste semanal até a F1c:** recusou o runner nas 3 execuções do diagnóstico manual, que continua a testá-lo.
 - Página de cada município com nome, UF, população, fonte e data da coleta, e o painel "Fonte e método" com o link exato do IBGE para a população.
 - Conferência agendada de links, marcando os quebrados no manifesto.
-- Repetir no site real os testes de `Range`, `HEAD`, gzip e leitor.
+- Repetir no site real os testes de `Range`, `HEAD`, gzip e leitor. Feito em 07/11/2026, nos três navegadores; ver [Hospedagem](#hospedagem-github-pages).
 
 *Pronto quando:* o workflow agendado publica sozinho, as fontes respondem do runner e os testes de hospedagem batem com este plano. Se o runner não alcançar os FTPs, parar e avisar: é o que mais pode mudar o plano.
 

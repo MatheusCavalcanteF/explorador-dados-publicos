@@ -55,6 +55,8 @@ node servidor.mjs site 8931
 
 `teste_real3.mjs` e `teste_real4.mjs` usam `site/app_teste.js`, gerado de `entrada_teste_real.js`: é a entrada do motor mais o registro de arquivo por URL. Esses dois, `range_real.mjs` e `calibra2.mjs` não precisam de dados locais.
 
+`testar_site_publicado.mjs` só usa `playwright-core` e `hyparquet`, e lê o `ibge.json` e o `site/dados/ibge/populacao.parquet` do artefato `coleta` da execução do `Publicar` que gerou o site em teste.
+
 Os testes de tempo e de igualdade precisam dos dados no site. A partir dos Parquet de `medir_sih.py`, `particoes.py` e `tamanho_sem_compressao.py` gravam em `site/dados/`, e `rg2000.py` gera o arquivo com grupos de 2 mil linhas. `gerar_json_municipios.py` grava em `site/json/`. Os argumentos estão no início de cada script. Fora o `app_teste.js`, os bundles desta preparação são idênticos aos usados nas medições; a pasta limpa não refez a bateria de tempos, que continua em `carga.json`.
 
 | Arquivo | Responde a |
@@ -64,6 +66,7 @@ Os testes de tempo e de igualdade precisam dos dados no site. A partir dos Parqu
 | `carregamento/testar_leitor.mjs` | Se o leitor em JavaScript devolve o mesmo que o motor, linha a linha, nos três navegadores |
 | `carregamento/testar_formato.mjs` | O mesmo, com o leitor leve e o Parquet sem compressão, em tabelas inteiras |
 | `carregamento/testar_host_real.mjs` | Leitor no GitHub Pages real, na mesma origem do arquivo |
+| `carregamento/testar_site_publicado.mjs` | O site deste projeto, depois de publicado: página, gzip, `Range`, `HEAD` e leitor, nos três navegadores, comparados com o build e a coleta |
 | `carregamento/calibra2.mjs` | Se a limitação de CPU alcança a thread principal e o worker, pelas ferramentas do navegador e por Job Object |
 | `carregamento/servidor.mjs` | Servidor local que reproduz o comportamento medido no GitHub Pages e limita a banda |
 | `carregamento/medir_carga.mjs` | A bateria de tempos e bytes |
@@ -93,6 +96,7 @@ Os testes de tempo e de igualdade precisam dos dados no site. A partir dos Parqu
 | `sih_perda_so_uf.json` | O que se perde na visão de residência ao ler só o arquivo de SP, com população, período e cálculo |
 | `fontes.json`, `hosts.json` | Saída de `conferir_fontes.py` e `conferir_hosts.py` |
 | `calibracao_cpu.json` | Quanto cada forma de limitar a CPU desacelera a thread principal e o worker |
+| `site_publicado_navegadores.json` | Saída de `testar_site_publicado.mjs` sobre a execução 42439217829 do `Publicar`, com os cabeçalhos de cada pedido |
 | `derivados.json` | Somas e percentuais citados no plano, com origem e cálculo |
 | `range_hosts.json`, `motor_host_real.json`, `motor_host_real_consultas.json` | `Range` nos 3 navegadores, e o motor em host real, com e sem leitura parcial |
 

@@ -13,40 +13,45 @@ Os dados públicos dos municípios existem, mas cada base mora num sistema difer
 
 ## A solução
 
-Um pipeline em Python que baixa as fontes oficiais, recusa dado fora do contrato e gera um site estático no GitHub Pages, sem servidor, login ou custo de operação. Cada número na tela abre o painel **Fonte e método**: órgão e pesquisa, link exato para o valor na origem (ou os passos para chegar a ele), período, data de atualização na origem, data e hash SHA-256 do arquivo coletado, e ressalvas.
+Um pipeline em Python que baixa as fontes oficiais, recusa dado fora do contrato e gera um site estático no GitHub Pages, sem servidor, login ou custo de operação. Cada número na tela abre o painel **Fonte e método**: órgão e pesquisa, link exato para o valor na origem (ou os passos para chegar a ele), período de referência, data da coleta, hash SHA-256 do arquivo coletado e ressalvas.
 
 O plano completo, com as medições que decidiram cada escolha, está em [`docs/plano.md`](docs/plano.md).
 
 ## O que já está no ar (etapa F1a)
 
-- Uma página para cada um dos **5.571 municípios** da lista do IBGE, com população estimada de 2026 e do Censo 2022, busca por nome e listas por estado.
-- Link exato da API da SIDRA para o valor de cada município, e o hash do arquivo de onde o número saiu.
-- Censo 2022 guardado como partição fechada numa Release do repositório: as coletas seguintes leem a Release e só conferem a fonte. Se a fonte mudar, o pipeline para.
-- Execução semanal, que também testa se as fontes das próximas etapas respondem do runner (FTP do DATASUS, FTP do CAGED, INEP e Siconfi), confere no site publicado o comportamento de `Range`, `HEAD` e gzip, lê o Parquet publicado com o leitor em JavaScript e confere uma amostra dos links oficiais.
-- O resultado de cada execução fica no [manifesto](manifesto/), versionado no git.
+Publicado em 07/11/2026 pela execução manual [42439217829](https://github.com/MatheusCavalcanteF/explorador-dados-publicos/actions/runs/42439217829) do workflow `Publicar`:
 
-Medido no build de 07/11/2026: 5.607 arquivos e 25,9 MB no site; a página de município tem mediana de 4,5 KB. O leitor em JavaScript leu as 5.571 linhas do Parquet sem divergência em relação à coleta.
+- Uma página para cada um dos **5.571 municípios** da Divisão Territorial Brasileira 2025 do IBGE, com data-base em 31/12/2025, informada no rodapé de cada página. Cada página traz a população estimada de 2026 e a do Censo 2022. Há busca por nome e listas por estado.
+- No painel **Fonte e método**: link exato da API da SIDRA para o valor de cada município, período de referência, data da coleta e SHA-256 da resposta de onde o número saiu, e o arquivo da DTB de onde vêm código, nome e UF.
+- O Censo 2022 ficou guardado como partição fechada na Release [`ibge-censo-2022`](https://github.com/MatheusCavalcanteF/explorador-dados-publicos/releases/tag/ibge-censo-2022). As próximas execuções leem a Release e só a conferem com a fonte; se a fonte mudar, o pipeline para.
+- O [manifesto](manifesto/) da execução está no git: arquivos coletados com hash, totais por UF, hash dos valores de cada fonte e o resultado das conferências.
+
+Conferido no site publicado. O CI pediu ao site, em Python e Node, o Parquet da população e a página de Santos: gzip, `Range`, `HEAD` e leitor bateram com o plano, e 30 links exatos sorteados por métrica devolveram o valor publicado. Depois, em Chrome 157, Firefox 159 e WebKit 27.2, o Parquet de 225.932 bytes chegou com 116.787 em gzip e o mesmo SHA-256 do build. `Range` voltou `206` com bytes crus, e o leitor em JavaScript leu as 5.571 linhas sem divergência da coleta. O site tem 5.607 arquivos e 31,9 MB. A página de município tem mediana de 5,6 KB; servida em gzip, 2,1 KB numa amostra de 25 páginas.
+
+A publicação semanal foi religada em 07/11/2026, aos domingos às 00:47 UTC. A primeira execução agendada ainda não aconteceu.
 
 ## Como funciona
 
 ```mermaid
 flowchart LR
-    I[("IBGE<br/>localidades e SIDRA")] -->|"contrato de dados"| C["Coleta<br/>hash e data"]
+    I[("IBGE<br/>DTB no geoftp e SIDRA")] -->|"contrato de dados"| C["Coleta<br/>hash e data"]
     R[("Release<br/>Censo 2022")] --> C
     K["Catálogo<br/>fonte, tema, ressalvas"] --> S
     C --> S["Site estático<br/>uma página por município"]
     S --> P[("GitHub Pages")]
     P -->|"gzip, Range, HEAD, leitor, links"| M["Manifesto no git"]
-    A[("DATASUS, CAGED,<br/>INEP, Siconfi")] -->|"teste de alcance"| M
+    A[("DATASUS, CAGED,<br/>Siconfi")] -->|"teste de alcance"| M
 ```
 
 | Parte | Onde | O que faz |
 |---|---|---|
 | Catálogo | `catalogo/catalogo.yaml` | Temas, bases e métricas, com fonte, tipo de acesso e ressalvas. Validado antes de cada execução |
-| Coleta e contrato | `pipeline/ibge.py` | Recusa JSON fora do formato, sinal de ausência tratado como número, município desconhecido e cobertura baixa |
+| Coleta e contrato | `pipeline/dtb.py`, `pipeline/ibge.py` | Acha a DTB mais recente no geoftp e recusa planilha fora da estrutura esperada. Recusa JSON fora do formato, sinal de ausência tratado como número, município fora da DTB e cobertura baixa. Compara o hash dos valores com a coleta anterior |
 | Site | `pipeline/site.py`, `web/` | HTML gerado em Python, funciona sem JavaScript; a busca é o único script |
 | Conferências | `pipeline/alcance.py`, `hospedagem.py`, `links.py`, `ferramentas/leitor/` | Rodam no CI depois da publicação. Falha de alcance ou de hospedagem deixa a execução vermelha; link quebrado só fica marcado |
-| Workflows | `.github/workflows/` | `ci.yml` roda os testes a cada push; `publicar.yml` coleta, publica e confere toda semana; `alcance.yml`, manual, testa cada fonte passo a passo (DNS, conexão, TLS ou FTP, resposta) e mostra o resultado no resumo da execução. O agendamento do `publicar.yml` está desligado desde 07/11/2026, porque a API de localidades do IBGE não respondeu ao runner; o próprio arquivo diz como religar |
+| Workflows | `.github/workflows/` | `ci.yml` roda os testes a cada push; `publicar.yml` coleta, publica e confere toda semana; `alcance.yml`, manual, testa cada fonte passo a passo (DNS, conexão, TLS ou FTP, resposta) e mostra o resultado no resumo da execução |
+
+**Fontes que o runner não alcança.** Em 07/11/2026, a API de serviços do IBGE (`servicodados.ibge.gov.br`) e o INEP recusaram conexão do runner do GitHub. A coleta não usa mais essa API: a lista de municípios vem da DTB, e a população e o período mais recente, da SIDRA. O INEP só entra na etapa de educação (F1c); até lá, só o diagnóstico manual `alcance.yml` testa o INEP e essa API.
 
 ## Rodar localmente
 
@@ -58,7 +63,7 @@ python -m venv .venv
 .venv/bin/python -m pipeline construir --coleta build/coleta --saida build/site
 ```
 
-Os testes bloqueiam o acesso à rede e usam dados sintéticos no formato das APIs do IBGE.
+Os testes bloqueiam o acesso à rede e usam dados sintéticos no formato da DTB e da SIDRA.
 
 ## Dados e licenças
 
