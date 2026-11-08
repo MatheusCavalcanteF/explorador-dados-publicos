@@ -103,7 +103,7 @@ Os testes de tempo e de igualdade precisam dos dados no site. A partir dos Parqu
 | `site_publicado_navegadores.json` | Saída de `testar_site_publicado.mjs` sobre a execução 42439217829 do `Publicar`, com os cabeçalhos de cada pedido |
 | `endereco_e_buscadores.json` | Saída de `conferir_endereco.py` sobre a execução 42442355751 do `Publicar`, a primeira no endereço novo |
 | `alcance_roteiro_local.json` | `diagnostico.executar(diagnostico.ROTEIRO)` numa máquina local, em 08/11/2026: as rotas das fontes do roteiro depois da v1, só com tamanho e hash de cada corpo |
-| `conferencia_tabnet_f1b.json` | Saída de `conferir_tabnet_f1b.py`: 160 comparações por competência e 20 por data de internação, nas 5 regiões. O bloco por competência foi regravado em colunas e linhas, sem mudar os valores |
+| `conferencia_tabnet_f1b.json` | Saída de `conferir_tabnet_f1b.py`: 160 comparações por competência e 20 por data de internação, nas 5 regiões. O bloco por competência foi regravado em colunas e linhas, com nome e região num mapa por código, sem mudar os valores; diferenças de 1 a 4 entre as fontes saem sem os dois valores |
 | `conferencia_tabnet_f1b_capital.json` | O que foi testado para achar a diferença da capital de SP, sem atributos das AIHs envolvidas |
 | `versoes_f1b.json` | Saída de `medir_versoes_f1b.py`: diferenças exatas de 1 a 4 entre versões, por política, e o erro do arredondamento |
 | `trava_f1b.json` | Saída de `medir_trava_f1b.py` |

@@ -23,7 +23,6 @@ from pathlib import Path
 
 import duckdb
 
-PASTA, SAIDA = Path(sys.argv[1]), Path(sys.argv[2])
 BASE = "http://tabnet.datasus.gov.br/cgi"
 UA = {"User-Agent": "Mozilla/5.0"}
 # Dois por região: a capital e um município do interior com mais de 100 internações por mês.
@@ -103,54 +102,6 @@ def guardado(valor):
     return "<5" if valor is not None and 1 <= valor < 5 else valor
 
 
-con = duckdb.connect()
-con.execute(f"CREATE VIEW aih AS SELECT * FROM read_parquet('{PASTA.as_posix()}/RD*.parquet')")
-resultado = {"consultado_em": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "competencias": COMPETENCIAS,
-             "por_competencia": [], "por_data_de_internacao": []}
-for regiao, municipios in AMOSTRA.items():
-    for uf, mun, nome in municipios:
-        for visao, prefixo, coluna in (("hospital", "ni", "mun_hosp"), ("residencia", "nr", "mun_res")):
-            defn = f"{prefixo}{uf}"
-            texto = formulario(defn)
-            for comp in COMPETENCIAS:
-                for medida, expr in MEDIDAS.items():
-                    calc = con.execute(f"SELECT {expr} FROM aih WHERE {coluna} = '{mun}' AND competencia = 20{comp}").fetchone()[0]
-                    calc = float(calc or 0)
-                    try:
-                        oficial = total(consultar(defn, texto, mun, "Município", medida, [f"{defn}{comp}.dbf"]))
-                    except Exception as erro:  # o TabNet cai às vezes; fica registrado como sem resposta
-                        oficial = None
-                        print("sem resposta", defn, mun, comp, medida, repr(erro)[:100], flush=True)
-                    igual = oficial is not None and abs(calc - oficial) < 0.011
-                    linha = {"regiao": regiao, "municipio": mun, "nome": nome, "visao": visao, "competencia": "20" + comp,
-                             "medida": medida, "igual": igual,
-                             "pipeline": guardado(calc), "tabnet": guardado(oficial),
-                             "diferenca": None if oficial is None else round(calc - oficial, 2)}
-                    resultado["por_competencia"].append(linha)
-                    print(json.dumps(linha, ensure_ascii=False), flush=True)
-                    time.sleep(0.5)
-            arquivos = [f"{defn}25{m:02d}.dbf" for m in range(1, 13)]
-            linha_tempo = next((v for v, rot in re.findall(r'<option[^>]*value=["\']?([^"\'>]+)["\']?[^>]*>\s*([^<]*)', texto, re.I)
-                                if re.search(r"Ano/m.s atendimento", html.unescape(rot), re.I)), None)
-            if linha_tempo is None:
-                resultado["por_data_de_internacao"].append({"municipio": mun, "visao": visao, "erro": "eixo ausente"})
-                continue
-            oficial = por_mes(consultar(defn, texto, mun, linha_tempo, "Internações", arquivos))
-            calc = dict(con.execute(f"SELECT CAST(dt_inter // 100 AS VARCHAR), count(*) FILTER (WHERE ident = 1) FROM aih "
-                                    f"WHERE {coluna} = '{mun}' AND competencia BETWEEN 202501 AND 202512 GROUP BY 1").fetchall())
-            # O TabNet lista todos os meses desde 2008, quase todos vazios: só contam os que têm valor em um dos dois.
-            meses = sorted({m for m, v in oficial.items() if v} | {m for m, v in calc.items() if v})
-            iguais = sum(oficial.get(m, 0) == calc.get(m, 0) for m in meses)
-            # Sem valores por mês: o total menos os meses listados revelaria os pequenos.
-            linha = {"regiao": regiao, "municipio": mun, "nome": nome, "visao": visao, "meses": len(meses),
-                     "meses_iguais": iguais, "maior_diferenca": max((abs(oficial.get(m, 0) - calc.get(m, 0)) for m in meses), default=0),
-                     "total_tabnet": sum(oficial.values()), "total_pipeline": sum(calc.values())}
-            resultado["por_data_de_internacao"].append(linha)
-            print(json.dumps(linha, ensure_ascii=False), flush=True)
-            time.sleep(0.5)
-
-
-
 def mascarar_diferencas(resultado):
     """Diferença de 1 a 4 entre pipeline e TabNet é um grupo pequeno de AIHs que uma fonte tem e a outra não.
 
@@ -177,12 +128,68 @@ def mascarar_diferencas(resultado):
             r["maior_diferenca"] = "1 a 4"
 
 
-mascarar_diferencas(resultado)
-pc = resultado["por_competencia"]
-resultado["resumo"] = {"comparacoes_por_competencia": len(pc), "iguais": sum(r["igual"] for r in pc),
-                       "sem_resposta": sum(r["tabnet"] is None for r in pc),
-                       "por_data_de_internacao": len(resultado["por_data_de_internacao"]),
-                       "meses_iguais": sum(r.get("meses_iguais", 0) for r in resultado["por_data_de_internacao"]),
-                       "meses": sum(r.get("meses", 0) for r in resultado["por_data_de_internacao"])}
-SAIDA.write_text(json.dumps(resultado, ensure_ascii=False, indent=1), encoding="utf-8")
-print(json.dumps(resultado["resumo"]))
+def resumir(resultado):
+    """Contagens do resumo, calculadas antes da máscara: depois dela, valor ausente não quer dizer sem resposta."""
+    pc = resultado["por_competencia"]
+    return {"comparacoes_por_competencia": len(pc), "iguais": sum(r["igual"] for r in pc),
+            "sem_resposta": sum(r["tabnet"] is None for r in pc),
+            "por_data_de_internacao": len(resultado["por_data_de_internacao"]),
+            "meses_iguais": sum(r.get("meses_iguais", 0) for r in resultado["por_data_de_internacao"]),
+            "meses": sum(r.get("meses", 0) for r in resultado["por_data_de_internacao"])}
+
+
+def main():
+    pasta, saida = Path(sys.argv[1]), Path(sys.argv[2])
+    con = duckdb.connect()
+    con.execute(f"CREATE VIEW aih AS SELECT * FROM read_parquet('{pasta.as_posix()}/RD*.parquet')")
+    resultado = {"consultado_em": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "competencias": COMPETENCIAS,
+                 "por_competencia": [], "por_data_de_internacao": []}
+    for regiao, municipios in AMOSTRA.items():
+        for uf, mun, nome in municipios:
+            for visao, prefixo, coluna in (("hospital", "ni", "mun_hosp"), ("residencia", "nr", "mun_res")):
+                defn = f"{prefixo}{uf}"
+                texto = formulario(defn)
+                for comp in COMPETENCIAS:
+                    for medida, expr in MEDIDAS.items():
+                        calc = con.execute(f"SELECT {expr} FROM aih WHERE {coluna} = '{mun}' AND competencia = 20{comp}").fetchone()[0]
+                        calc = float(calc or 0)
+                        try:
+                            oficial = total(consultar(defn, texto, mun, "Município", medida, [f"{defn}{comp}.dbf"]))
+                        except Exception as erro:  # o TabNet cai às vezes; fica registrado como sem resposta
+                            oficial = None
+                            print("sem resposta", defn, mun, comp, medida, type(erro).__name__, flush=True)
+                        igual = oficial is not None and abs(calc - oficial) < 0.011
+                        resultado["por_competencia"].append({
+                            "regiao": regiao, "municipio": mun, "nome": nome, "visao": visao, "competencia": "20" + comp,
+                            "medida": medida, "igual": igual, "pipeline": guardado(calc), "tabnet": guardado(oficial),
+                            "diferenca": None if oficial is None else round(calc - oficial, 2)})
+                        # Só o progresso: os valores saem depois da máscara, no arquivo.
+                        print(defn, mun, comp, medida, "igual" if igual else "diferente", flush=True)
+                        time.sleep(0.5)
+                arquivos = [f"{defn}25{m:02d}.dbf" for m in range(1, 13)]
+                linha_tempo = next((v for v, rot in re.findall(r'<option[^>]*value=["\']?([^"\'>]+)["\']?[^>]*>\s*([^<]*)', texto, re.I)
+                                    if re.search(r"Ano/m.s atendimento", html.unescape(rot), re.I)), None)
+                if linha_tempo is None:
+                    resultado["por_data_de_internacao"].append({"municipio": mun, "visao": visao, "erro": "eixo ausente"})
+                    continue
+                oficial = por_mes(consultar(defn, texto, mun, linha_tempo, "Internações", arquivos))
+                calc = dict(con.execute(f"SELECT CAST(dt_inter // 100 AS VARCHAR), count(*) FILTER (WHERE ident = 1) FROM aih "
+                                        f"WHERE {coluna} = '{mun}' AND competencia BETWEEN 202501 AND 202512 GROUP BY 1").fetchall())
+                # O TabNet lista todos os meses desde 2008, quase todos vazios: só contam os que têm valor em um dos dois.
+                meses = sorted({m for m, v in oficial.items() if v} | {m for m, v in calc.items() if v})
+                iguais = sum(oficial.get(m, 0) == calc.get(m, 0) for m in meses)
+                # Sem valores por mês: o total menos os meses listados revelaria os pequenos.
+                resultado["por_data_de_internacao"].append({
+                    "regiao": regiao, "municipio": mun, "nome": nome, "visao": visao, "meses": len(meses), "meses_iguais": iguais,
+                    "maior_diferenca": max((abs(oficial.get(m, 0) - calc.get(m, 0)) for m in meses), default=0),
+                    "total_tabnet": sum(oficial.values()), "total_pipeline": sum(calc.values())})
+                print(defn, mun, "por data de internação:", iguais, "de", len(meses), "meses iguais", flush=True)
+                time.sleep(0.5)
+    resultado["resumo"] = resumir(resultado)
+    mascarar_diferencas(resultado)
+    saida.write_text(json.dumps(resultado, ensure_ascii=False, indent=1), encoding="utf-8", newline="\n")
+    print(json.dumps(resultado["resumo"]))
+
+
+if __name__ == "__main__":
+    main()
