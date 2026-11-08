@@ -133,11 +133,14 @@ def avisos_de_revisao(evento: dict, limite_pct: float, nomes: dict[str, str]) ->
     linhas = []
     for item in evento["municipios"]:
         quem = f"{nomes.get(item['codigo'], '?')} ({item['codigo']})"
-        if item["variacao_pct"] is None:
-            linhas.append(f"{quem}: {item['antes']} para {item['depois']}, município que entrou ou saiu da estimativa")
-        elif abs(item["variacao_pct"]) > limite_pct:
-            linhas.append(f"{quem}: {item['antes']} para {item['depois']} ({item['variacao_pct']:+.2f}%), "
-                          f"acima do limite de {limite_pct}%")
+        antes, depois = item["antes"], item["depois"]
+        if antes is None or depois is None:
+            linhas.append(f"{quem}: {antes} para {depois}, município que entrou ou saiu da estimativa")
+            continue
+        # O limite compara a variação exata: a do manifesto é arredondada e esconderia 5,001% como 5,0.
+        variacao = (depois - antes) / antes * 100
+        if abs(variacao) > limite_pct:
+            linhas.append(f"{quem}: {antes} para {depois} ({variacao:+.3f}%), acima do limite de {limite_pct}%")
     return linhas
 
 

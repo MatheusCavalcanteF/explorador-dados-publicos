@@ -242,6 +242,13 @@ def test_revisao_sem_o_site_anterior_fica_registrada_sem_detalhe(tmp_path, publi
     assert evento["municipios"] is None and motivo in evento["sem_detalhe_porque"]
 
 
+def test_revisao_registra_municipio_que_saiu_ou_entrou_na_estimativa():
+    antes = {"sha256_valores": sha256_valores({"1": 100, "2": 200})}
+    evento = ibge.revisar(antes, {"2": 200, "3": 300}, "2026-11-15T00:47:00Z", lambda: {"1": 100, "2": 200})
+    assert evento["municipios"] == [{"codigo": "1", "antes": 100, "depois": None, "variacao_pct": None},
+                                    {"codigo": "3", "antes": None, "depois": 300, "variacao_pct": None}]
+
+
 def test_site_anterior_so_e_lido_quando_a_estimativa_muda(tmp_path):
     lidos = []
     primeira = ibge.coletar(tmp_path / "a", pedir=fonte(), agora=AGORA, publicados=lambda: lidos.append(1))
@@ -255,10 +262,13 @@ def test_aviso_no_workflow_so_acima_do_limite():
         {"codigo": "1", "antes": 100, "depois": 106, "variacao_pct": 6.0},
         {"codigo": "2", "antes": 100, "depois": 105, "variacao_pct": 5.0},
         {"codigo": "3", "antes": 100, "depois": 94, "variacao_pct": -6.0},
-        {"codigo": "4", "antes": None, "depois": 50, "variacao_pct": None}]}
-    linhas = ibge.avisos_de_revisao(evento, 5, {"1": "Um", "3": "Três", "4": "Quatro"})
-    assert linhas == ["Um (1): 100 para 106 (+6.00%), acima do limite de 5%",
-                      "Três (3): 100 para 94 (-6.00%), acima do limite de 5%",
-                      "Quatro (4): None para 50, município que entrou ou saiu da estimativa"]
+        {"codigo": "4", "antes": None, "depois": 50, "variacao_pct": None},
+        # 5,001%: arredondada para o manifesto, fica 5,0; o aviso usa a variação exata.
+        {"codigo": "5", "antes": 100000, "depois": 105001, "variacao_pct": 5.0}]}
+    linhas = ibge.avisos_de_revisao(evento, 5, {"1": "Um", "3": "Três", "4": "Quatro", "5": "Cinco"})
+    assert linhas == ["Um (1): 100 para 106 (+6.000%), acima do limite de 5%",
+                      "Três (3): 100 para 94 (-6.000%), acima do limite de 5%",
+                      "Quatro (4): None para 50, município que entrou ou saiu da estimativa",
+                      "Cinco (5): 100000 para 105001 (+5.001%), acima do limite de 5%"]
     (sem_detalhe,) = ibge.avisos_de_revisao({"municipios": None, "sem_detalhe_porque": "x"}, 5, {})
     assert "sem o detalhe por município: x" in sem_detalhe

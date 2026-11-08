@@ -194,12 +194,19 @@ def revisao_do_municipio(codigo: str, por_codigo: dict, geral: dict | None) -> d
     return max(candidatos, key=lambda e: e["detectada_em"]) if candidatos else None
 
 
-def texto_revisao(evento: dict, periodo: str) -> str:
+def texto_revisao(evento: dict, periodo: str, codigo: str) -> str:
     quando = dia(evento["detectada_em"])
     if evento.get("municipios") is None:
         return (f"Revisado pelo IBGE. A coleta de {quando} encontrou valores diferentes dos que a SIDRA informava antes "
                 f"para a estimativa de {periodo}, mas não conseguiu identificar quais municípios mudaram. "
                 f"Por isso o aviso aparece em todas as páginas.")
+    item = next(i for i in evento["municipios"] if i["codigo"] == codigo)
+    if item["depois"] is None:
+        return (f"Revisado pelo IBGE. Na coleta de {quando}, a SIDRA deixou de trazer este município na estimativa "
+                f"de {periodo}, que antes tinha valor. O valor anterior está no manifesto das coletas.")
+    if item["antes"] is None:
+        return (f"Revisado pelo IBGE. Na coleta de {quando}, a SIDRA passou a trazer este município na estimativa "
+                f"de {periodo}, que antes não tinha valor.")
     return (f"Revisado pelo IBGE. A coleta de {quando} encontrou, para a estimativa de {periodo}, um valor diferente "
             f"do que a SIDRA informava antes. O valor anterior está no manifesto das coletas.")
 
@@ -244,8 +251,9 @@ def pagina_municipio(m: dict, coleta: dict, catalogo: dict, links: dict | None,
     avisos = "".join(f'<p class="nota">{escape(f)} não traz dado para este município. A ausência não é zero.</p>'
                      for f in faltam)
     extras = []
-    if revisao and m["populacao_estimada"]:
-        avisos += (f'<p class="nota">{escape(texto_revisao(revisao, est["periodo"]))} '
+    # Vale também quando o valor saiu da estimativa: a página passa a mostrar "sem dado" e precisa dizer por quê.
+    if revisao:
+        avisos += (f'<p class="nota">{escape(texto_revisao(revisao, est["periodo"], m["codigo"]))} '
                    f'<a href="{MANIFESTO_IBGE}">Ver no manifesto</a>.</p>')
         extras.append(f"Revisado pelo IBGE: a mudança foi detectada na coleta de {dia(revisao['detectada_em'])}.")
     corpo = f"""<header class="placa" id="conteudo">
@@ -399,7 +407,8 @@ def construir(coleta: dict, catalogo: dict, saida: Path, links: dict | None = No
     paginas_municipio = []
     for m in municipios:
         por_uf.setdefault(m["uf"], []).append(m)
-        revisao = revisao_do_municipio(m["codigo"], por_codigo, geral) if m["populacao_estimada"] else None
+        # Sem condição sobre o valor atual: uma estimativa retirada também é revisão, e muda o lastmod.
+        revisao = revisao_do_municipio(m["codigo"], por_codigo, geral)
         alterado_em = alteracao_municipio(fontes, revisao)
         gravar(f"municipio/{m['codigo']}/index.html", pagina_municipio(m, coleta, catalogo, links, revisao, alterado_em))
         paginas_municipio.append((f"municipio/{m['codigo']}/", alterado_em))

@@ -266,6 +266,26 @@ def test_revisao_sem_detalhe_por_municipio_avisa_em_todas_as_paginas(tmp_path):
     assert {lastmods(saida)[projeto.SITE + f"municipio/{c}/"] for c in ("3548500", "4206504")} == {"2026-11-15T00:47:00Z"}
 
 
+def test_estimativa_retirada_no_mesmo_periodo_avisa_e_muda_o_lastmod(tmp_path):
+    retirada = [{"detectada_em": "2026-11-15T00:47:00Z", "sem_detalhe_porque": None,
+                 "municipios": [{"codigo": "4206504", "antes": 22000, "depois": None, "variacao_pct": None}]}]
+    dados = coleta_com_historico(retirada)
+    next(m for m in dados["municipios"] if m["codigo"] == "4206504")["populacao_estimada"] = None
+    saida = tmp_path / "site"
+    site.construir(dados, catalogo.carregar(), saida)
+    html = ler(saida, "municipio/4206504/index.html")
+    assert "A estimativa de 2026 não traz dado para este município. A ausência não é zero." in html
+    assert ("Revisado pelo IBGE. Na coleta de 14/11/2026, a SIDRA deixou de trazer este município na estimativa "
+            "de 2026, que antes tinha valor.") in html
+    assert lastmods(saida)[projeto.SITE + "municipio/4206504/"] == "2026-11-15T00:47:00Z"
+    dado = jsonld(html)
+    assert dado["dateModified"] == "2026-11-15T00:47:00Z"
+    assert {p["temporalCoverage"] for p in dado["hasPart"]} == {"2025-12-31", "2022"}
+    # Os outros municípios não mudaram.
+    assert "Revisado pelo IBGE" not in ler(saida, "municipio/3548500/index.html")
+    assert lastmods(saida)[projeto.SITE + "municipio/3548500/"] == "2026-11-01T00:47:00Z"
+
+
 def test_arquivo_do_search_console_so_com_codigo(tmp_path):
     sem = tmp_path / "sem"
     site.construir(coleta(), catalogo.carregar(), sem, google=None)
