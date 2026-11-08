@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 
 import pytest
 
-from pipeline import ibge
+from pipeline import ibge, rede
 from pipeline.contrato import sha256_valores
 from conftest import FonteFalsa, codigos, fonte_dtb, resposta, sidra
 
@@ -160,7 +160,105 @@ def test_release_com_valores_que_nao_batem_com_o_proprio_hash_para(tmp_path):
         ibge.coletar(tmp_path / "segunda", release, pedir=fonte(censo_fora=True))
 
 
-def test_municipio_da_sidra_fora_da_dtb_para(tmp_path):
+def test_municipio_da_sidra_fora_da_dtb_para_com_erro_claro(tmp_path):
     estimativa = {c: 1000 + i for i, c in enumerate(codigos())} | {"5300109": 10}
-    with pytest.raises(ibge.ErroDeContrato, match="fora da lista da DTB"):
+    with pytest.raises(ibge.ErroDeContrato) as erro:
         ibge.coletar(tmp_path, pedir=fonte(estimativa=estimativa))
+    texto = str(erro.value)
+    assert "Estimativa de população: 1 município(s) na SIDRA fora da lista da DTB 2025: ['5300109']" in texto
+    assert "Nada foi publicado, e o site anterior continua no ar" in texto
+    assert not (tmp_path / "ibge.json").exists()
+
+
+# Histórico dos valores e revisões da estimativa no mesmo período.
+
+DEPOIS = datetime(2026, 11, 15, 0, 47, tzinfo=timezone.utc)
+ORIGINAL = {c: 1000 + i for i, c in enumerate(codigos())}
+
+
+def revisada():
+    valores = dict(ORIGINAL)
+    valores[codigos()[3]] = 1100   # de 1003: +9,67%
+    valores[codigos()[5]] = 1006   # de 1005: +0,10%
+    return valores
+
+
+def test_valores_desde_atravessa_coletas_iguais(tmp_path):
+    primeira = ibge.coletar(tmp_path / "a", pedir=fonte(), agora=AGORA)
+    est = primeira["fontes"]["estimativa"]
+    assert est["valores_desde"] == est["periodo_desde"] == "2026-11-07T23:30:00Z" and est["revisoes"] == []
+    segunda = ibge.coletar(tmp_path / "b", tmp_path / "a" / "censo-2022.json", primeira["fontes"], pedir=fonte(), agora=DEPOIS)
+    assert {k: f["valores_desde"] for k, f in segunda["fontes"].items()} == {
+        "dtb": "2026-11-07T23:30:00Z", "estimativa": "2026-11-07T23:30:00Z", "censo": "2026-11-07T23:30:00Z"}
+
+
+def test_manifesto_sem_historico_usa_a_data_da_coleta_anterior(tmp_path):
+    # O manifesto de 08/11/2026 não tem valores_desde: a primeira coleta registrada vale como início.
+    primeira = ibge.coletar(tmp_path / "a", pedir=fonte(), agora=AGORA)
+    antigo = json.loads(json.dumps(primeira["fontes"]))
+    for f in antigo.values():
+        f.pop("valores_desde")
+    antigo["estimativa"].pop("periodo_desde")
+    antigo["estimativa"].pop("revisoes")
+    segunda = ibge.coletar(tmp_path / "b", tmp_path / "a" / "censo-2022.json", antigo, pedir=fonte(), agora=DEPOIS)
+    assert segunda["fontes"]["estimativa"]["periodo_desde"] == "2026-11-07T23:30:00Z"
+    assert segunda["fontes"]["dtb"]["valores_desde"] == "2026-11-07T23:30:00Z"
+
+
+def test_revisao_no_mesmo_periodo_guarda_antes_e_depois_sem_bloquear(tmp_path):
+    release = tmp_path / "a" / "censo-2022.json"
+    primeira = ibge.coletar(tmp_path / "a", pedir=fonte(), agora=AGORA)
+    segunda = ibge.coletar(tmp_path / "b", release, primeira["fontes"], pedir=fonte(estimativa=revisada()),
+                           agora=DEPOIS, publicados=lambda: dict(ORIGINAL))
+    est = segunda["fontes"]["estimativa"]
+    assert est["em_relacao_a_coleta_anterior"] == "valores_mudaram"
+    assert est["valores_desde"] == "2026-11-15T00:47:00Z" and est["periodo_desde"] == "2026-11-07T23:30:00Z"
+    (evento,) = est["revisoes"]
+    assert evento["detectada_em"] == "2026-11-15T00:47:00Z" and evento["sem_detalhe_porque"] is None
+    assert evento["municipios"] == [
+        {"codigo": codigos()[3], "antes": 1003, "depois": 1100, "variacao_pct": 9.67},
+        {"codigo": codigos()[5], "antes": 1005, "depois": 1006, "variacao_pct": 0.1}]
+    assert evento["sha256_valores_antes"] == primeira["fontes"]["estimativa"]["sha256_valores"]
+    assert next(m for m in segunda["municipios"] if m["codigo"] == codigos()[3])["populacao_estimada"] == 1100
+
+    # Na coleta seguinte, igual, a revisão continua valendo; com um período novo, some.
+    terceira = ibge.coletar(tmp_path / "c", release, segunda["fontes"], pedir=fonte(estimativa=revisada()), agora=DEPOIS)
+    assert terceira["fontes"]["estimativa"]["revisoes"] == [evento]
+    assert terceira["fontes"]["estimativa"]["valores_desde"] == "2026-11-15T00:47:00Z"
+    nova = ibge.coletar(tmp_path / "d", release, terceira["fontes"], pedir=fonte(periodo="2027"), agora=DEPOIS)
+    assert nova["fontes"]["estimativa"]["revisoes"] == [] and nova["fontes"]["estimativa"]["periodo_desde"] == "2026-11-15T00:47:00Z"
+
+
+@pytest.mark.parametrize("publicados, motivo", [
+    (None, "sem leitura do site anterior"),
+    (lambda: (_ for _ in ()).throw(rede.ErroDeRede("fora do ar")), "o site anterior não respondeu (ErroDeRede: fora do ar)"),
+    (lambda: {**ORIGINAL, codigos()[0]: 1}, "não tem o hash da coleta anterior"),
+])
+def test_revisao_sem_o_site_anterior_fica_registrada_sem_detalhe(tmp_path, publicados, motivo):
+    primeira = ibge.coletar(tmp_path / "a", pedir=fonte(), agora=AGORA)
+    segunda = ibge.coletar(tmp_path / "b", tmp_path / "a" / "censo-2022.json", primeira["fontes"],
+                           pedir=fonte(estimativa=revisada()), agora=DEPOIS, publicados=publicados)
+    (evento,) = segunda["fontes"]["estimativa"]["revisoes"]
+    assert evento["municipios"] is None and motivo in evento["sem_detalhe_porque"]
+
+
+def test_site_anterior_so_e_lido_quando_a_estimativa_muda(tmp_path):
+    lidos = []
+    primeira = ibge.coletar(tmp_path / "a", pedir=fonte(), agora=AGORA, publicados=lambda: lidos.append(1))
+    ibge.coletar(tmp_path / "b", tmp_path / "a" / "censo-2022.json", primeira["fontes"], pedir=fonte(), agora=DEPOIS,
+                 publicados=lambda: lidos.append(1))
+    assert lidos == []
+
+
+def test_aviso_no_workflow_so_acima_do_limite():
+    evento = {"municipios": [
+        {"codigo": "1", "antes": 100, "depois": 106, "variacao_pct": 6.0},
+        {"codigo": "2", "antes": 100, "depois": 105, "variacao_pct": 5.0},
+        {"codigo": "3", "antes": 100, "depois": 94, "variacao_pct": -6.0},
+        {"codigo": "4", "antes": None, "depois": 50, "variacao_pct": None}]}
+    linhas = ibge.avisos_de_revisao(evento, 5, {"1": "Um", "3": "Três", "4": "Quatro"})
+    assert linhas == ["Um (1): 100 para 106 (+6.00%), acima do limite de 5%",
+                      "Três (3): 100 para 94 (-6.00%), acima do limite de 5%",
+                      "Quatro (4): None para 50, município que entrou ou saiu da estimativa"]
+    (sem_detalhe,) = ibge.avisos_de_revisao({"municipios": None, "sem_detalhe_porque": "x"}, 5, {})
+    assert "sem o detalhe por município: x" in sem_detalhe

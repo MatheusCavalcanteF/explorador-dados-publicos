@@ -198,3 +198,69 @@ def test_resumo_escapa_barra_vertical_do_erro():
                                 "erro": "a | b", "passos": {}, "ms_total": 5}
     linha = next(linha for linha in diagnostico.resumo(resultado).splitlines() if linha.startswith("| `x`"))
     assert "a \\| b" in linha and linha.count(" | ") == 6
+
+
+def test_inep_uma_vez_faz_um_pedido_so_no_primeiro_ipv4_sem_repeticao(monkeypatch):
+    monkeypatch.setattr(diagnostico, "resolver", enderecos((V6, "::1"), (V4, "10.0.0.1"), (V4, "10.0.0.2")))
+    abertos, pedidos = [], []
+
+    def abrir(familia, sockaddr, mss=None):
+        abertos.append(SocketFalso(familia, sockaddr, mss))
+        return abertos[-1]
+
+    def tls(sock, host, grupo=None):
+        raise ConnectionResetError(104, "Connection reset by peer")
+    monkeypatch.setattr(diagnostico, "_abrir", abrir)
+    monkeypatch.setattr(diagnostico, "_tls", tls)
+    item = diagnostico.inep_uma_vez()["fontes"]["inep"]
+    assert item["falhou_em"] == "tls" and "repeticoes" not in item and item["ok"] is False
+    assert [s.sockaddr[0] for s in abertos] == ["10.0.0.1"] and abertos[0].fechado
+
+    abertos.clear()
+
+    def pedir(sock, host, caminho, alvo):
+        pedidos.append((caminho, alvo.get("cabecalhos")))
+        return io.BytesIO(b"PK\x03\x04"), {"status": 206, "content_range": "bytes 0-1023/999"}
+    monkeypatch.setattr(diagnostico, "_tls", lambda sock, host, grupo=None: (sock, {"versao": "TLSv1.3"}))
+    monkeypatch.setattr(diagnostico, "_pedir", pedir)
+    item = diagnostico.inep_uma_vez()["fontes"]["inep"]
+    assert item["ok"] is True and len(abertos) == 1
+    assert pedidos == [("/dados_abertos/microdados_censo_escolar_2024.zip", {"Range": "bytes=0-1023"})]
+
+
+def test_fontes_do_roteiro_sao_informativas_e_tem_tabela_propria():
+    from pipeline import alcance
+    roteiro = [a for a in diagnostico.ALVOS if a.get("grupo") == "roteiro"]
+    nomes = {a["nome"] for a in roteiro}
+    assert {"ibge_sidra_pam", "ibge_sidra_ppm", "saude_api", "saude_arquivos", "mds_vis_data", "sinisa", "sinesp",
+            "inpe_terrabrasilis", "inpe_focos", "tse_cdn"} <= nomes
+    assert len({a["nome"] for a in diagnostico.ALVOS}) == len(diagnostico.ALVOS)
+    # Nada do roteiro entra no alcance obrigatório do Publicar, e nada pede chave.
+    assert not nomes & set(alcance.ALVOS)
+    assert all(a["url"].startswith("https://") and "portaldatransparencia" not in a["url"] for a in roteiro)
+
+    def sonda(alvo):
+        return {"url": alvo["url"], "host": "x", "passos": {}}
+    resultado = diagnostico.executar([diagnostico.ALVOS[0], roteiro[0]], {"https": sonda, "ftp": sonda})
+    assert resultado["fontes"][roteiro[0]["nome"]]["grupo"] == "roteiro"
+    texto = diagnostico.resumo(resultado)
+    assert "**Fontes do plano**" in texto and "**Fontes do roteiro depois da v1" in texto
+    assert texto.index(f"`{diagnostico.ALVOS[0]['nome']}`") < texto.index("**Fontes do roteiro") < texto.index(f"`{roteiro[0]['nome']}`")
+
+
+def test_resumo_mostra_para_onde_a_fonte_redireciona():
+    passos = {"resposta": {"ok": True, "ms": 120, "status": 302, "location": "https://www.gov.br/mds/pt-br/avisos"}}
+    assert diagnostico._texto_resposta(passos) == "HTTP 302 para https://www.gov.br/mds/pt-br/avisos em 0,1 s"
+
+
+def test_diagnostico_manual_pode_deixar_o_inep_de_fora(monkeypatch, tmp_path):
+    from pipeline.__main__ import main
+    vistos = []
+
+    def executar(alvos):
+        vistos.extend(a["nome"] for a in alvos)
+        return {"conferido_em": "2026-11-08T00:00:00Z", "fontes": {},
+                "ambiente": {"sistema": "Linux", "python": "3.14", "openssl": "OpenSSL 3", "github_actions": True}}
+    monkeypatch.setattr(diagnostico, "executar", executar)
+    assert main(["diagnostico", "--saida", str(tmp_path), "--pular", "inep"]) == 0
+    assert "inep" not in vistos and "datasus_ftp" in vistos and "tse_cdn" in vistos

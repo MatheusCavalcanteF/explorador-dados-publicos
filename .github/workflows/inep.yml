@@ -1,0 +1,71 @@
+# Diagnóstico diário do INEP, de 08 a 14/11/2026: um único pedido por execução (o primeiro KB do
+# Censo Escolar 2024), sem nova tentativa e sem repetição com outro ClientHello. Testa a hipótese de
+# que o INEP recusa o runner por excesso de pedidos (ver Riscos no plano). Não publica nada: o
+# resultado vai para o resumo da execução e para um artefato de 90 dias.
+# Depois do último dia, nenhum pedido sai, e o workflow se desliga sozinho.
+name: INEP diário
+
+on:
+  schedule:
+    # Minuto quebrado, longe da virada da hora. Sem disparo manual: um pedido a mais mudaria o teste.
+    - cron: "23 14 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: inep-diario
+  cancel-in-progress: false
+
+env:
+  ULTIMO_DIA: "2026-11-14"
+
+jobs:
+  inep:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      actions: write   # só para desligar o próprio workflow depois do último dia
+    steps:
+      - name: Dia do teste
+        id: dia
+        run: |
+          hoje=$(date -u +%F)
+          echo "hoje=$hoje" >> "$GITHUB_OUTPUT"
+          # Datas ISO comparam como texto.
+          if [[ "$hoje" > "$ULTIMO_DIA" ]]; then pedir=false; else pedir=true; fi
+          if [[ "$hoje" < "$ULTIMO_DIA" ]]; then desligar=false; else desligar=true; fi
+          echo "pedir=$pedir" >> "$GITHUB_OUTPUT"
+          echo "desligar=$desligar" >> "$GITHUB_OUTPUT"
+          echo "Dia $hoje: pedido ao INEP=$pedir, desligar depois=$desligar"
+
+      - uses: actions/checkout@v7
+        if: steps.dia.outputs.pedir == 'true'
+
+      - uses: actions/setup-python@v7
+        if: steps.dia.outputs.pedir == 'true'
+        with:
+          python-version: "3.14"
+          cache: pip
+
+      - name: Instalar dependências
+        if: steps.dia.outputs.pedir == 'true'
+        run: pip install -r requirements.txt
+
+      - name: Um pedido ao INEP
+        if: steps.dia.outputs.pedir == 'true'
+        run: python -m pipeline inep --saida build/inep --resumo "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v7
+        if: always() && steps.dia.outputs.pedir == 'true'
+        with:
+          name: inep-${{ steps.dia.outputs.hoje }}
+          path: build/inep
+          retention-days: 90
+
+      - name: Desligar depois do último dia
+        if: always() && steps.dia.outputs.desligar == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow disable inep.yml --repo "$GITHUB_REPOSITORY"

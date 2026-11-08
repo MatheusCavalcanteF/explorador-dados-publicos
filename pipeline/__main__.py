@@ -2,7 +2,8 @@
 
     python -m pipeline coletar    --saida build/coleta [--censo-release arquivo] [--anterior manifesto/ibge.json]
     python -m pipeline alcance    --saida build/coleta
-    python -m pipeline diagnostico --saida build/diagnostico [--resumo arquivo.md]
+    python -m pipeline diagnostico --saida build/diagnostico [--resumo arquivo.md] [--pular inep ...]
+    python -m pipeline inep       --saida build/inep [--resumo arquivo.md]
     python -m pipeline construir  --coleta build/coleta --saida build/site [--links manifesto/links.json] [--execucao ID]
     python -m pipeline hospedagem --coleta build/coleta --site build/site --url URL --execucao ID
     python -m pipeline links      --coleta build/coleta
@@ -14,9 +15,31 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
-from . import alcance, catalogo, diagnostico, hospedagem, ibge, links, manifesto, site
+from . import alcance, catalogo, diagnostico, hospedagem, ibge, links, manifesto, projeto, rede, site
+
+
+def _estimativa_no_site():
+    """O Parquet que está no ar, para achar os municípios revisados. Só é pedido quando a estimativa mudou."""
+    url = f"{projeto.SITE}{site.PARQUET}?coleta={datetime.now(timezone.utc):%Y%m%dT%H%M%S}"
+    resposta = rede.pedir(url)
+    if resposta.status != 200:
+        raise rede.ErroDeRede(f"HTTP {resposta.status} em {url}")
+    return site.estimativa_publicada(resposta.corpo)
+
+
+def _diagnostico(resultado: dict, saida: Path, nome: str, resumo: Path | None) -> None:
+    _gravar(saida / f"{nome}.json", resultado)
+    texto = diagnostico.resumo(resultado)
+    (saida / "resumo.md").write_text(texto, encoding="utf-8")
+    if resumo:
+        # No GitHub é o $GITHUB_STEP_SUMMARY, que outros passos também escrevem.
+        with resumo.open("a", encoding="utf-8") as arquivo:
+            arquivo.write(texto)
+    for chave, item in resultado["fontes"].items():
+        print(f"{chave}: {'ok' if item['ok'] else 'FALHOU em ' + item['falhou_em']} ({item['ms_total']} ms)")
 
 
 def _ler(caminho: Path):
@@ -40,6 +63,10 @@ def main(argv=None) -> int:
     p = sub.add_parser("diagnostico")
     p.add_argument("--saida", type=Path, required=True)
     p.add_argument("--resumo", type=Path)
+    p.add_argument("--pular", nargs="*", default=[], choices=[a["nome"] for a in diagnostico.ALVOS])
+    p = sub.add_parser("inep")
+    p.add_argument("--saida", type=Path, required=True)
+    p.add_argument("--resumo", type=Path)
     p = sub.add_parser("construir")
     p.add_argument("--coleta", type=Path, required=True)
     p.add_argument("--saida", type=Path, required=True)
@@ -61,29 +88,34 @@ def main(argv=None) -> int:
     if args.comando == "coletar":
         release = args.censo_release if args.censo_release and args.censo_release.exists() else None
         anterior = _ler(args.anterior)["fontes"] if args.anterior and args.anterior.exists() else None
-        resultado = ibge.coletar(args.saida, release, anterior)
+        resultado = ibge.coletar(args.saida, release, anterior, publicados=_estimativa_no_site)
         fontes = resultado["fontes"]
         print(f"IBGE: {len(resultado['municipios'])} municípios da DTB {fontes['dtb']['periodo']} "
               f"(data-base {fontes['dtb']['data_base']}); estimativa {fontes['estimativa']['periodo']}; "
               f"Censo 2022 da {fontes['censo']['origem']}")
         for nome, fonte in fontes.items():
             print(f"{nome}: em relação à coleta anterior, {fonte['em_relacao_a_coleta_anterior']}")
+        # Revisão não bloqueia: aparece como aviso no workflow, além da ressalva na página.
+        limite = cat["bases"]["ibge_estimativa"]["revisao"]["aviso_variacao_pct"]
+        nomes = {m["codigo"]: m["nome"] for m in resultado["municipios"]}
+        for evento in fontes["estimativa"]["revisoes"]:
+            if evento["detectada_em"] != resultado["coletado_em"]:
+                continue
+            if evento["municipios"] is not None:
+                print(f"Revisão do IBGE: {len(evento['municipios'])} municípios mudaram na estimativa "
+                      f"{fontes['estimativa']['periodo']}; antes e depois vão para o manifesto")
+            for linha in ibge.avisos_de_revisao(evento, limite, nomes):
+                print(f"::warning title=Revisão da estimativa do IBGE::{linha}")
     elif args.comando == "alcance":
         resultado = alcance.executar()
         _gravar(args.saida / "alcance.json", resultado)
         for nome, item in resultado["fontes"].items():
             print(f"{nome}: {'ok' if item['ok'] else 'FALHOU ' + item['erro']}")
     elif args.comando == "diagnostico":
-        resultado = diagnostico.executar()
-        _gravar(args.saida / "diagnostico.json", resultado)
-        texto = diagnostico.resumo(resultado)
-        (args.saida / "resumo.md").write_text(texto, encoding="utf-8")
-        if args.resumo:
-            # No GitHub é o $GITHUB_STEP_SUMMARY, que outros passos também escrevem.
-            with args.resumo.open("a", encoding="utf-8") as arquivo:
-                arquivo.write(texto)
-        for nome, item in resultado["fontes"].items():
-            print(f"{nome}: {'ok' if item['ok'] else 'FALHOU em ' + item['falhou_em']} ({item['ms_total']} ms)")
+        alvos = [a for a in diagnostico.ALVOS if a["nome"] not in args.pular]
+        _diagnostico(diagnostico.executar(alvos), args.saida, "diagnostico", args.resumo)
+    elif args.comando == "inep":
+        _diagnostico(diagnostico.inep_uma_vez(), args.saida, "inep", args.resumo)
     elif args.comando == "construir":
         anteriores = _ler(args.links) if args.links and args.links.exists() else None
         versao = site.construir(_ler(args.coleta / "ibge.json"), cat, args.saida, anteriores, args.execucao)
@@ -92,7 +124,7 @@ def main(argv=None) -> int:
         resultado = hospedagem.conferir(args.url, args.site, args.execucao)
         _gravar(args.coleta / "hospedagem.json", resultado)
         for nome, item in resultado["testes"].items():
-            print(f"{nome}: {item['status']} {item['content_encoding'] or '-'} bate={item['bate_com_o_plano']}")
+            print(f"{nome}: {item.get('status', '-')} {item.get('content_encoding') or '-'} bate={item['bate_com_o_plano']}")
     elif args.comando == "links":
         resultado = links.conferir(_ler(args.coleta / "ibge.json"), cat)
         _gravar(args.coleta / "links.json", resultado)

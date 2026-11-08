@@ -41,6 +41,10 @@ bases:
     coleta:
       origem: "https://apisidra.ibge.gov.br/values/t/6579/n6/all/v/9324/p/last%201"   # a SIDRA diz o período mais recente
     mudanca: hash_dos_valores   # a SIDRA revisa estimativas; o hash compara com a coleta anterior
+    # Valor que muda no mesmo período: a página ganha a ressalva "revisado pelo IBGE", com a data da
+    # coleta que detectou, e o manifesto guarda antes e depois de cada município. Não bloqueia.
+    revisao: { acao: marcar_revisado, aviso_variacao_pct: 5 }   # acima de 5%, aviso no workflow
+    # Município na SIDRA que a DTB não tem para a coleta com erro claro (decisão de 08/11/2026).
     supressao: { aplica: false }   # população não é contagem de atendimentos
   ibge_censo_2022:
     nome: Censo Demográfico 2022

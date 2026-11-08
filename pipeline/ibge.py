@@ -8,6 +8,10 @@ hash dos valores, comparado com a coleta anterior registrada no manifesto.
 O contrato recusa resposta fora do formato, valor não numérico, município desconhecido
 e cobertura baixa. O Censo 2022 é partição fechada: depois da primeira coleta, vem da
 Release do repositório e só é conferido com a fonte.
+
+A estimativa pode ser revisada pelo IBGE no mesmo período. Quando o hash muda sem mudar o
+período, a coleta compara com o Parquet já publicado no site e registra, por município, o valor
+antes e depois. A revisão não bloqueia a publicação: a página ganha a ressalva.
 """
 from __future__ import annotations
 
@@ -26,7 +30,7 @@ CENSO = {"tabela": 4714, "variavel": 93, "periodo": "2022"}
 # Um município novo pode entrar na lista antes de ter estimativa; mais do que isso é falha da fonte.
 MAX_AUSENTES = 10
 
-__all__ = ["ErroDeContrato", "coletar", "comparar", "conferir_cobertura", "ler_sidra"]
+__all__ = ["ErroDeContrato", "avisos_de_revisao", "coletar", "comparar", "conferir_cobertura", "ler_sidra", "revisar"]
 
 
 def _json(corpo: bytes, onde: str):
@@ -70,10 +74,14 @@ def ler_sidra(corpo: bytes, variavel: int, onde: str) -> tuple[str, dict[str, in
     return periodo, valores
 
 
-def conferir_cobertura(codigos: set[str], valores: dict[str, int], onde: str) -> list[str]:
+def conferir_cobertura(codigos: set[str], valores: dict[str, int], onde: str, lista: str = "DTB") -> list[str]:
     desconhecidos = sorted(set(valores) - codigos)
     if desconhecidos:
-        raise ErroDeContrato(f"{onde}: municípios fora da lista da DTB: {desconhecidos[:5]}")
+        # Decisão do projeto: parar, em vez de publicar um número sem município na lista oficial.
+        raise ErroDeContrato(
+            f"{onde}: {len(desconhecidos)} município(s) na SIDRA fora da lista da {lista}: {desconhecidos[:5]}. "
+            f"Nada foi publicado, e o site anterior continua no ar. Um município novo só entra quando a DTB seguinte "
+            f"o incluir; confira o código na SIDRA e a pasta de edições da DTB no geoftp.")
     ausentes = sorted(codigos - set(valores))
     if len(ausentes) > MAX_AUSENTES:
         raise ErroDeContrato(f"{onde}: {len(ausentes)} municípios sem valor, mais que o limite de {MAX_AUSENTES}")
@@ -90,6 +98,55 @@ def comparar(anterior: dict | None, chave: str, periodo: str, hash_valores: str)
     return "igual" if antes["sha256_valores"] == hash_valores else "valores_mudaram"
 
 
+def revisar(antes: dict, novos: dict[str, int], coletado_em: str, publicados) -> dict:
+    """Revisão no mesmo período: quais municípios mudaram, com o valor antes e depois.
+
+    `publicados` devolve a estimativa do Parquet que está no site. Ela só serve se tiver o mesmo hash
+    da coleta anterior do manifesto; se não tiver, ou se o site não responder, a revisão fica
+    registrada sem o detalhe por município, e o motivo vai junto.
+    """
+    evento = {"detectada_em": coletado_em, "sha256_valores_antes": antes["sha256_valores"],
+              "sha256_valores_depois": sha256_valores(novos), "municipios": None, "sem_detalhe_porque": None}
+    try:
+        velhos = publicados() if publicados else None
+    except Exception as e:
+        evento["sem_detalhe_porque"] = f"o site anterior não respondeu ({type(e).__name__}: {str(e)[:200]})"
+        return evento
+    if velhos is None:
+        evento["sem_detalhe_porque"] = "sem leitura do site anterior nesta execução"
+    elif sha256_valores(velhos) != antes["sha256_valores"]:
+        evento["sem_detalhe_porque"] = "o Parquet publicado não tem o hash da coleta anterior do manifesto"
+    else:
+        mudaram = sorted(c for c in set(velhos) | set(novos) if velhos.get(c) != novos.get(c))
+        evento["municipios"] = [
+            {"codigo": c, "antes": velhos.get(c), "depois": novos.get(c),
+             "variacao_pct": round((novos[c] - velhos[c]) / velhos[c] * 100, 2) if c in velhos and c in novos else None}
+            for c in mudaram]
+    return evento
+
+
+def avisos_de_revisao(evento: dict, limite_pct: float, nomes: dict[str, str]) -> list[str]:
+    """Linhas de aviso para o workflow: variação acima do limite, município que entrou ou saiu, ou revisão sem detalhe."""
+    if evento["municipios"] is None:
+        return [f"A estimativa mudou desde a coleta anterior, sem o detalhe por município: {evento['sem_detalhe_porque']}. "
+                f"Todas as páginas recebem a ressalva de revisão."]
+    linhas = []
+    for item in evento["municipios"]:
+        quem = f"{nomes.get(item['codigo'], '?')} ({item['codigo']})"
+        if item["variacao_pct"] is None:
+            linhas.append(f"{quem}: {item['antes']} para {item['depois']}, município que entrou ou saiu da estimativa")
+        elif abs(item["variacao_pct"]) > limite_pct:
+            linhas.append(f"{quem}: {item['antes']} para {item['depois']} ({item['variacao_pct']:+.2f}%), "
+                          f"acima do limite de {limite_pct}%")
+    return linhas
+
+
+def _historico(fonte: dict, antes: dict) -> None:
+    """Desde quando os valores atuais existem, para o lastmod do sitemap e o dateModified do JSON-LD."""
+    igual = fonte["em_relacao_a_coleta_anterior"] == "igual"
+    fonte["valores_desde"] = (antes.get("valores_desde") or antes["coletado_em"]) if igual else fonte["coletado_em"]
+
+
 def _baixar(url: str, pedir, onde: str) -> rede.Resposta:
     resposta = pedir(url)
     if resposta.status != 200:
@@ -101,7 +158,7 @@ def _origem(url: str, resposta: rede.Resposta, coletado_em: str) -> dict:
     return {"url": url, "coletado_em": coletado_em, "bytes": len(resposta.corpo), "sha256": rede.sha256(resposta.corpo)}
 
 
-def _censo(codigos, pedir, release: Path | None, coletado_em: str) -> tuple[dict, dict | None]:
+def _censo(codigos, pedir, release: Path | None, coletado_em: str, lista: str) -> tuple[dict, dict | None]:
     """Devolve (fonte, arquivo novo para a Release ou None se a Release já existe)."""
     url = URL_SIDRA.format(**CENSO)
     try:
@@ -125,20 +182,22 @@ def _censo(codigos, pedir, release: Path | None, coletado_em: str) -> tuple[dict
                                  f"(ex.: {mudaram[:3]}). A Release não foi substituída; decida antes de publicar.")
         fonte = guardado | {"origem": "release", "sha256_valores": hash_guardado, "sha256_release": rede.sha256(bruto),
                             "conferido_com_a_fonte_em": coletado_em if valores is not None else None}
-        fonte["ausentes"] = conferir_cobertura(codigos, fonte["valores"], "Censo 2022")
+        fonte["ausentes"] = conferir_cobertura(codigos, fonte["valores"], "Censo 2022", lista)
         return fonte, None
     novo = {"base": "ibge_censo_2022", "periodo": CENSO["periodo"], **_origem(url, resposta, coletado_em),
             "sha256_valores": sha256_valores(valores), "valores": valores}
-    fonte = {**novo, "origem": "fonte", "ausentes": conferir_cobertura(codigos, valores, "Censo 2022")}
+    fonte = {**novo, "origem": "fonte", "ausentes": conferir_cobertura(codigos, valores, "Censo 2022", lista)}
     return fonte, novo
 
 
 def coletar(saida: Path, release_censo: Path | None = None, anterior: dict | None = None,
-            pedir=rede.pedir, agora=None) -> dict:
-    """`anterior` são as fontes do manifesto da última coleta, para dizer o que mudou desde ela."""
+            pedir=rede.pedir, agora=None, publicados=None) -> dict:
+    """`anterior` são as fontes do manifesto da última coleta, para dizer o que mudou desde ela.
+    `publicados` lê a estimativa do site no ar; só é chamado quando a estimativa mudou no mesmo período."""
     coletado_em = (agora or datetime.now(timezone.utc)).strftime("%Y-%m-%dT%H:%M:%SZ")
     fonte_dtb, municipios = dtb.coletar(pedir, coletado_em)
     codigos = {m["codigo"] for m in municipios}
+    lista = f"DTB {fonte_dtb['periodo']}"
 
     url_est = URL_SIDRA.format(**ESTIMATIVA)
     est = _baixar(url_est, pedir, "Estimativa de população")
@@ -147,13 +206,23 @@ def coletar(saida: Path, release_censo: Path | None = None, anterior: dict | Non
         "dtb": fonte_dtb,
         "estimativa": _origem(url_est, est, coletado_em) | {
             "base": "ibge_estimativa", "periodo": periodo, "sha256_valores": sha256_valores(estimativa),
-            "origem": "fonte", "ausentes": conferir_cobertura(codigos, estimativa, "Estimativa de população")},
+            "origem": "fonte", "ausentes": conferir_cobertura(codigos, estimativa, "Estimativa de população", lista)},
     }
-    censo, novo = _censo(codigos, pedir, release_censo, coletado_em)
+    censo, novo = _censo(codigos, pedir, release_censo, coletado_em, lista)
     valores_censo = censo.pop("valores")
     fontes["censo"] = censo
     for chave, fonte in fontes.items():
         fonte["em_relacao_a_coleta_anterior"] = comparar(anterior, chave, fonte["periodo"], fonte["sha256_valores"])
+        _historico(fonte, (anterior or {}).get(chave) or {})
+    # Revisões valem dentro do período: um período novo começa sem nenhuma.
+    est_fonte, est_antes = fontes["estimativa"], (anterior or {}).get("estimativa") or {}
+    if est_fonte["em_relacao_a_coleta_anterior"] in ("igual", "valores_mudaram"):
+        est_fonte["periodo_desde"] = est_antes.get("periodo_desde") or est_antes["coletado_em"]
+        est_fonte["revisoes"] = list(est_antes.get("revisoes") or [])
+    else:
+        est_fonte["periodo_desde"], est_fonte["revisoes"] = coletado_em, []
+    if est_fonte["em_relacao_a_coleta_anterior"] == "valores_mudaram":
+        est_fonte["revisoes"].append(revisar(est_antes, estimativa, coletado_em, publicados))
     for m in municipios:
         m["populacao_estimada"] = estimativa.get(m["codigo"])
         m["populacao_censo"] = valores_censo.get(m["codigo"])

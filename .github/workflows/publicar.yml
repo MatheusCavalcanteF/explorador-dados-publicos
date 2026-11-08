@@ -48,7 +48,9 @@ jobs:
           fi
 
       # Lista pela DTB do geoftp e população pela SIDRA. O manifesto da coleta anterior, no git,
-      # serve para dizer o que mudou, pelo hash dos valores.
+      # serve para dizer o que mudou, pelo hash dos valores. Se a estimativa mudar no mesmo período,
+      # a coleta lê o Parquet do site no ar para achar os municípios revisados; variação acima do
+      # limite do catálogo vira aviso nesta execução, sem bloquear.
       - name: Coleta do IBGE
         run: >
           python -m pipeline coletar --saida build/coleta --censo-release build/release/censo-2022.json
@@ -64,6 +66,7 @@ jobs:
           mkdir -p build/coleta/site/dados/ibge build/coleta/site/municipio/3548500
           cp build/site/dados/ibge/populacao.parquet build/coleta/site/dados/ibge/
           cp build/site/municipio/3548500/index.html build/coleta/site/municipio/3548500/
+          cp build/site/sitemap.xml build/coleta/site/
 
       - uses: actions/upload-pages-artifact@v5
         with:
@@ -122,7 +125,9 @@ jobs:
           name: coleta
           path: build/coleta
 
-      - name: Hospedagem no site publicado (gzip, Range, HEAD, página)
+      # Também confere que o deploy publicou no endereço de projeto.yaml, para onde apontam o link
+      # canônico, o sitemap e o JSON-LD.
+      - name: Hospedagem no site publicado (endereço, gzip, Range, HEAD, página, sitemap)
         continue-on-error: true
         run: python -m pipeline hospedagem --coleta build/coleta --site build/coleta/site --url "${{ needs.publicar.outputs.url }}" --execucao "$EXECUCAO"
 

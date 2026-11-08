@@ -1,10 +1,19 @@
 # Diagnóstico manual: cada fonte do plano, passo a passo (DNS, conexão, TLS ou FTP, resposta), com tempo curto.
 # Uma fonte fora não interrompe as outras. Não publica nada: o resultado vai para o resumo da execução e
 # para um artefato de 7 dias. O mesmo comando roda numa máquina local, para comparar.
+# As fontes do roteiro depois da v1 aparecem numa tabela à parte: são informativas, e nenhuma etapa
+# depende delas.
 name: Alcance das fontes
 
 on:
   workflow_dispatch:
+    inputs:
+      inep:
+        # Fora por padrão: o workflow INEP diário testa se pedidos repetidos levam à recusa, e cada
+        # pedido a mais mudaria o teste.
+        description: "Incluir o INEP (6 pedidos)"
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -13,6 +22,8 @@ jobs:
   diagnosticar:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    env:
+      INCLUIR_INEP: ${{ inputs.inep }}
     steps:
       - uses: actions/checkout@v7
 
@@ -25,9 +36,12 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Diagnóstico
-        run: python -m pipeline diagnostico --saida build/diagnostico --resumo "$GITHUB_STEP_SUMMARY"
+        run: |
+          pular=()
+          if [ "$INCLUIR_INEP" != "true" ]; then pular=(--pular inep); fi
+          python -m pipeline diagnostico --saida build/diagnostico --resumo "$GITHUB_STEP_SUMMARY" "${pular[@]}"
 
-      # Conferência independente do Python nas rotas do IBGE e no INEP. No INEP, com e sem a
+      # Conferência independente do Python nas rotas do IBGE e, se pedido, no INEP. No INEP, com e sem a
       # chave híbrida no ClientHello, para separar recusa ao runner de recusa ao ClientHello grande.
       - name: curl nas rotas do IBGE e no INEP
         if: always()
@@ -53,10 +67,12 @@ jobs:
             medir "https://apisidra.ibge.gov.br/values/t/6579/n6/3548500/v/9324/p/last%201"
             medir "https://ftp.ibge.gov.br/Estimativas_de_Populacao/"
             medir "https://geoftp.ibge.gov.br/organizacao_do_territorio/estrutura_territorial/divisao_territorial/2025/"
-            for tentativa in 1 2; do
-              medir -r 0-1023 "$inep"
-              medir -r 0-1023 --curves X25519 "$inep"
-            done
+            if [ "$INCLUIR_INEP" = "true" ]; then
+              for tentativa in 1 2; do
+                medir -r 0-1023 "$inep"
+                medir -r 0-1023 --curves X25519 "$inep"
+              done
+            fi
           } | tee -a "$GITHUB_STEP_SUMMARY" > build/diagnostico/curl.md
 
       - uses: actions/upload-artifact@v7

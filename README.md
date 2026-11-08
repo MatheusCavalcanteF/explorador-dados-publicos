@@ -1,11 +1,11 @@
 # Explorador de Dados Públicos
 
-[![CI](https://github.com/MatheusCavalcanteF/explorador-dados-publicos/actions/workflows/ci.yml/badge.svg)](https://github.com/MatheusCavalcanteF/explorador-dados-publicos/actions/workflows/ci.yml)
-[![Publicar](https://github.com/MatheusCavalcanteF/explorador-dados-publicos/actions/workflows/publicar.yml/badge.svg)](https://github.com/MatheusCavalcanteF/explorador-dados-publicos/actions/workflows/publicar.yml)
+[![CI](https://github.com/MatheusCavalcanteF/explorador-de-dados-publicos/actions/workflows/ci.yml/badge.svg)](https://github.com/MatheusCavalcanteF/explorador-de-dados-publicos/actions/workflows/ci.yml)
+[![Publicar](https://github.com/MatheusCavalcanteF/explorador-de-dados-publicos/actions/workflows/publicar.yml/badge.svg)](https://github.com/MatheusCavalcanteF/explorador-de-dados-publicos/actions/workflows/publicar.yml)
 
 Site estático e gratuito com dados oficiais de cada município brasileiro, em que cada número mostra de onde veio, quando foi coletado e como conferir na fonte.
 
-**Site:** https://matheuscavalcantef.github.io/explorador-dados-publicos/
+**Site:** https://matheuscavalcantef.github.io/explorador-de-dados-publicos/
 
 ## O problema
 
@@ -19,11 +19,11 @@ O plano completo, com as medições que decidiram cada escolha, está em [`docs/
 
 ## O que já está no ar (etapa F1a)
 
-Publicado em 07/11/2026 pela execução manual [42439217829](https://github.com/MatheusCavalcanteF/explorador-dados-publicos/actions/runs/42439217829) do workflow `Publicar`:
+Publicado em 07/11/2026 pela execução manual [42439217829](https://github.com/MatheusCavalcanteF/explorador-de-dados-publicos/actions/runs/42439217829) do workflow `Publicar`:
 
 - Uma página para cada um dos **5.571 municípios** da Divisão Territorial Brasileira 2025 do IBGE, com data-base em 31/12/2025, informada no rodapé de cada página. Cada página traz a população estimada de 2026 e a do Censo 2022. Há busca por nome e listas por estado.
 - No painel **Fonte e método**: link exato da API da SIDRA para o valor de cada município, período de referência, data da coleta e SHA-256 da resposta de onde o número saiu, e o arquivo da DTB de onde vêm código, nome e UF.
-- O Censo 2022 ficou guardado como partição fechada na Release [`ibge-censo-2022`](https://github.com/MatheusCavalcanteF/explorador-dados-publicos/releases/tag/ibge-censo-2022). As próximas execuções leem a Release e só a conferem com a fonte; se a fonte mudar, o pipeline para.
+- O Censo 2022 ficou guardado como partição fechada na Release [`ibge-censo-2022`](https://github.com/MatheusCavalcanteF/explorador-de-dados-publicos/releases/tag/ibge-censo-2022). As próximas execuções leem a Release e só a conferem com a fonte; se a fonte mudar, o pipeline para.
 - O [manifesto](manifesto/) da execução está no git: arquivos coletados com hash, totais por UF, hash dos valores de cada fonte e o resultado das conferências.
 
 Conferido no site publicado. O CI pediu ao site, em Python e Node, o Parquet da população e a página de Santos: gzip, `Range`, `HEAD` e leitor bateram com o plano, e 30 links exatos sorteados por métrica devolveram o valor publicado. Depois, em Chrome 157, Firefox 159 e WebKit 27.2, o Parquet de 225.932 bytes chegou com 116.787 em gzip e o mesmo SHA-256 do build. `Range` voltou `206` com bytes crus, e o leitor em JavaScript leu as 5.571 linhas sem divergência da coleta. O site tem 5.607 arquivos e 31,9 MB. A página de município tem mediana de 5,6 KB; servida em gzip, 2,1 KB numa amostra de 25 páginas.
@@ -48,10 +48,16 @@ flowchart LR
 | Catálogo | `catalogo/catalogo.yaml` | Temas, bases e métricas, com fonte, tipo de acesso e ressalvas. Validado antes de cada execução |
 | Coleta e contrato | `pipeline/dtb.py`, `pipeline/ibge.py` | Acha a DTB mais recente no geoftp e recusa planilha fora da estrutura esperada. Recusa JSON fora do formato, sinal de ausência tratado como número, município fora da DTB e cobertura baixa. Compara o hash dos valores com a coleta anterior |
 | Site | `pipeline/site.py`, `web/` | HTML gerado em Python, funciona sem JavaScript; a busca é o único script |
+| Buscadores | `pipeline/buscadores.py` | Sitemap, link canônico, Open Graph e JSON-LD do schema.org (`Dataset`) em cada página, com fonte oficial, licença da base, período e município. O pipeline valida cada bloco e não publica um inválido |
+| Endereços | `projeto.yaml` | Única configuração com o endereço do site e do repositório, e o código de verificação do Google Search Console, quando houver |
 | Conferências | `pipeline/alcance.py`, `hospedagem.py`, `links.py`, `ferramentas/leitor/` | Rodam no CI depois da publicação. Falha de alcance ou de hospedagem deixa a execução vermelha; link quebrado só fica marcado |
-| Workflows | `.github/workflows/` | `ci.yml` roda os testes a cada push; `publicar.yml` coleta, publica e confere toda semana; `alcance.yml`, manual, testa cada fonte passo a passo (DNS, conexão, TLS ou FTP, resposta) e mostra o resultado no resumo da execução |
+| Workflows | `.github/workflows/` | `ci.yml` roda os testes a cada push; `publicar.yml` coleta, publica e confere toda semana; `alcance.yml`, manual, testa cada fonte passo a passo (DNS, conexão, TLS ou FTP, resposta), inclusive as do roteiro depois da v1, numa tabela à parte; `inep.yml` faz um único pedido por dia ao INEP, de 08 a 14/11/2026, e depois se desliga |
 
-**Fontes que o runner não alcança.** Em 07/11/2026, a API de serviços do IBGE (`servicodados.ibge.gov.br`) e o INEP recusaram conexão do runner do GitHub. A coleta não usa mais essa API: a lista de municípios vem da DTB, e a população e o período mais recente, da SIDRA. O INEP só entra na etapa de educação (F1c); até lá, só o diagnóstico manual `alcance.yml` testa o INEP e essa API.
+**Fontes que o runner não alcança.** Em 07/11/2026, a API de serviços do IBGE (`servicodados.ibge.gov.br`) e o INEP recusaram conexão do runner do GitHub. A coleta não usa mais essa API: a lista de municípios vem da DTB, e a população e o período mais recente, da SIDRA. O INEP só entra na etapa de educação (F1c). Até lá, o `inep.yml` testa se a recusa vem do excesso de pedidos, e o `alcance.yml` só pede ao INEP quando isso é marcado no disparo.
+
+**Revisões do IBGE.** Se a estimativa de população mudar sem mudar o período, a coleta compara com o Parquet que está no ar. O município revisado ganha a ressalva "revisado pelo IBGE", com a data da coleta que detectou, e o [manifesto](manifesto/ibge.json) guarda o valor antes e depois. A publicação não para; variação acima de 5% gera aviso na execução. Um município que a SIDRA traga e a DTB não tenha para a coleta, com erro que diz o código e o que conferir.
+
+**Nome do repositório.** Até 08/11/2026, o repositório se chamava `explorador-dados-publicos`. O GitHub redireciona os links do repositório, mas não os do site: o endereço antigo do site responde 404. Medições e manifestos anteriores guardam o endereço da época.
 
 ## Rodar localmente
 
@@ -63,7 +69,7 @@ python -m venv .venv
 .venv/bin/python -m pipeline construir --coleta build/coleta --saida build/site
 ```
 
-Os testes bloqueiam o acesso à rede e usam dados sintéticos no formato da DTB e da SIDRA.
+Os testes bloqueiam o acesso à rede e usam dados sintéticos no formato da DTB e da SIDRA. Para publicar em outro endereço, como um fork, basta mudar `projeto.yaml`.
 
 ## Dados e licenças
 

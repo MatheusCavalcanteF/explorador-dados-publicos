@@ -8,7 +8,9 @@ import urllib.error
 import urllib.request
 from dataclasses import dataclass
 
-AGENTE = "explorador-dados-publicos (+https://github.com/MatheusCavalcanteF/explorador-dados-publicos)"
+from . import projeto
+
+AGENTE = f"{projeto.NOME_CURTO} (+{projeto.REPOSITORIO})"
 
 
 class ErroDeRede(RuntimeError):

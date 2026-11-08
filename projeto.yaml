@@ -1,0 +1,10 @@
+# Onde o projeto mora. É a única configuração com o endereço do site e do repositório: links das
+# páginas, link canônico, sitemap, JSON-LD e a identificação dos pedidos às fontes saem daqui.
+# Medições e manifestos antigos guardam o endereço da época e não mudam.
+repositorio: https://github.com/MatheusCavalcanteF/explorador-de-dados-publicos
+site: https://matheuscavalcantef.github.io/explorador-de-dados-publicos/
+
+# Verificação do Google Search Console pelo arquivo HTML. Com o código que o Search Console mostra
+# (algo como google0123456789abcdef), o pipeline grava google0123456789abcdef.html na raiz do site,
+# com o conteúdo que o Google pede. Vazio: nenhum arquivo.
+google_search_console:

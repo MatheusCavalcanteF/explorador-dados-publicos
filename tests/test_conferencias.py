@@ -73,9 +73,30 @@ def site_construido(tmp_path):
 
 def test_hospedagem_igual_ao_plano(site_construido):
     resultado = hospedagem.conferir("https://exemplo.github.io/projeto", site_construido, "77",
-                                    PagesFalso(site_construido, "77"), dormir=lambda s: None, agora=AGORA)
+                                    PagesFalso(site_construido, "77"), dormir=lambda s: None, agora=AGORA,
+                                    esperado="https://exemplo.github.io/projeto/")
     assert {k: v["bate_com_o_plano"] for k, v in resultado["testes"].items()} == {
-        "gzip": True, "range": True, "head": True, "range_pedindo_gzip": None, "pagina": True}
+        "endereco": True, "gzip": True, "range": True, "head": True, "range_pedindo_gzip": None, "pagina": True,
+        "sitemap": True}
+
+
+def test_hospedagem_aponta_deploy_fora_do_endereco_configurado(site_construido, tmp_path):
+    # Link canônico, sitemap e JSON-LD apontam para projeto.yaml: publicar em outro endereço deixa tudo errado.
+    resultado = hospedagem.conferir("https://exemplo.github.io/nome-antigo/", site_construido, "77",
+                                    PagesFalso(site_construido, "77"), dormir=lambda s: None)
+    assert resultado["testes"]["endereco"]["bate_com_o_plano"] is False
+    (tmp_path / "hospedagem.json").write_text(json.dumps(resultado), encoding="utf-8")
+    assert "Hospedagem: endereco não bate com o plano" in manifesto.falhas(tmp_path)
+
+
+def test_hospedagem_aponta_sitemap_diferente_do_build(site_construido, tmp_path):
+    servido = tmp_path / "servido"
+    import shutil
+    shutil.copytree(site_construido, servido)
+    (servido / "sitemap.xml").write_text("<urlset/>", encoding="utf-8")
+    resultado = hospedagem.conferir("https://exemplo.github.io/projeto/", site_construido, "77",
+                                    PagesFalso(servido, "77"), dormir=lambda s: None)
+    assert resultado["testes"]["sitemap"]["bate_com_o_plano"] is False
 
 
 def test_hospedagem_aponta_range_que_devolve_o_arquivo_inteiro(site_construido):

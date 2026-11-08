@@ -27,6 +27,23 @@ def test_catalogo_aponta_para_onde_o_pipeline_coleta(cat):
     assert "servicodados" not in str(bases)
 
 
+def test_licenca_da_base_vai_para_o_json_ld_e_precisa_estar_completa(cat):
+    sem = copy.deepcopy(cat)
+    del sem["bases"]["ibge_dtb"]["licenca"]
+    with pytest.raises(catalogo.ErroDeCatalogo, match="licenca precisa de id e atribuicao"):
+        catalogo.validar(sem)
+    declarada = copy.deepcopy(cat)
+    declarada["bases"]["ibge_dtb"]["licenca"]["id"] = "cc-by-sa-4.0"
+    with pytest.raises(catalogo.ErroDeCatalogo, match="precisa do endereço"):
+        catalogo.validar(declarada)
+    declarada["bases"]["ibge_dtb"]["licenca"]["url"] = "https://creativecommons.org/licenses/by-sa/4.0/"
+    catalogo.validar(declarada)
+
+
+def test_revisao_da_estimativa_e_regra_do_catalogo(cat):
+    assert cat["bases"]["ibge_estimativa"]["revisao"] == {"acao": "marcar_revisado", "aviso_variacao_pct": 5}
+
+
 def test_base_sem_origem_e_recusada(cat):
     novo = copy.deepcopy(cat)
     novo["bases"]["ibge_dtb"]["coleta"] = {}

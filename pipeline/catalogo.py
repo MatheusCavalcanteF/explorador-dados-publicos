@@ -7,6 +7,7 @@ import yaml
 
 CAMINHO = Path(__file__).resolve().parent.parent / "catalogo" / "catalogo.yaml"
 TIPOS_DE_ACESSO = {"exato", "tabela", "arquivo", "receita"}
+LICENCA_NAO_DECLARADA = "nao-declarada-na-origem"
 
 
 class ErroDeCatalogo(ValueError):
@@ -31,6 +32,15 @@ def validar(catalogo: dict) -> None:
         origem = str((base.get("coleta") or {}).get("origem", ""))
         if not base.get("nome") or not base.get("orgao") or not origem.startswith(("https://", "http://", "ftp://")):
             raise ErroDeCatalogo(f"Base {nome}: sem nome, órgão ou coleta.origem")
+        # A licença vai para o JSON-LD de cada página: sem ela, ou declarada sem endereço, não publica.
+        licenca = base.get("licenca") or {}
+        if not licenca.get("id") or not licenca.get("atribuicao"):
+            raise ErroDeCatalogo(f"Base {nome}: licenca precisa de id e atribuicao")
+        if licenca["id"] != LICENCA_NAO_DECLARADA and not str(licenca.get("url", "")).startswith("https://"):
+            raise ErroDeCatalogo(f"Base {nome}: licença {licenca['id']} declarada precisa do endereço em licenca.url")
+        revisao = base.get("revisao")
+        if revisao is not None and not isinstance(revisao.get("aviso_variacao_pct"), (int, float)):
+            raise ErroDeCatalogo(f"Base {nome}: revisao.aviso_variacao_pct deve ser um número")
     for nome, metrica in metricas.items():
         onde = f"Métrica {nome}"
         if metrica.get("tema") not in temas:

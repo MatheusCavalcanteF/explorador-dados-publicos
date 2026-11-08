@@ -1,7 +1,9 @@
-"""Testes de hospedagem no site publicado: gzip, Range, HEAD e uma página, comparados com o plano.
+"""Testes de hospedagem no site publicado: endereço, gzip, Range, HEAD, uma página e o sitemap, comparados com o plano.
 
 O plano mediu no GitHub Pages, em sites de terceiros: `Range` volta 206 com bytes crus e o
 tamanho real em Content-Range; `HEAD` informa o tamanho comprimido; `.parquet` sai em gzip.
+O endereço em que o deploy publicou precisa ser o de projeto.yaml, porque o link canônico,
+o sitemap e o JSON-LD apontam para ele.
 """
 from __future__ import annotations
 
@@ -11,10 +13,11 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 
-from . import rede
+from . import projeto, rede
+from .site import PARQUET
 
-PARQUET = "dados/ibge/populacao.parquet"
 PAGINA = "municipio/3548500/index.html"
+SITEMAP = "sitemap.xml"
 
 
 def _sem_gzip(r: rede.Resposta) -> bytes:
@@ -43,13 +46,14 @@ def esperar_versao(base: str, execucao: str, pedir, limite: float, dormir) -> fl
 
 
 def conferir(url_base: str, site: Path, execucao: str, pedir=rede.pedir, limite: float = 300,
-             dormir=time.sleep, agora=None) -> dict:
+             dormir=time.sleep, agora=None, esperado: str = projeto.SITE) -> dict:
     base = url_base.rstrip("/") + "/"
     espera = esperar_versao(base, execucao, pedir, limite, dormir)
     # A consulta muda a chave de cache do CDN, para não medir a versão anterior.
     url = f"{base}{PARQUET}?conferencia={execucao}"
     local = (site / PARQUET).read_bytes()
-    testes = {}
+    testes = {"endereco": {"publicado_em": base, "esperado": f"o endereço de projeto.yaml, {esperado}",
+                           "bate_com_o_plano": base == esperado}}
 
     r = pedir(url, cabecalhos={"Accept-Encoding": "gzip"}, descomprimir=False)
     comprimido = len(r.corpo)
@@ -78,6 +82,12 @@ def conferir(url_base: str, site: Path, execucao: str, pedir=rede.pedir, limite:
     testes["pagina"] = _registro(r) | {
         "esperado": "200 em gzip, igual ao HTML do build",
         "bate_com_o_plano": r.status == 200 and r.cabecalho("Content-Encoding") == "gzip" and _sem_gzip(r) == pagina}
+
+    mapa = (site / SITEMAP).read_bytes()
+    r = pedir(f"{base}{SITEMAP}?conferencia={execucao}", cabecalhos={"Accept-Encoding": "gzip"}, descomprimir=False)
+    testes["sitemap"] = _registro(r) | {
+        "esperado": "200, igual ao sitemap do build",
+        "bate_com_o_plano": r.status == 200 and _sem_gzip(r) == mapa}
 
     return {"conferido_em": (agora or datetime.now(timezone.utc)).strftime("%Y-%m-%dT%H:%M:%SZ"),
             "site": base, "execucao": execucao, "segundos_ate_a_versao_nova": espera,

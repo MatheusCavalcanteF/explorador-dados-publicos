@@ -1,6 +1,7 @@
 """Manifesto no git: o que foi baixado, de onde, quando e com que hash, e o resultado das conferências.
 
-Só metadados e totais. Os valores por município ficam no site e na Release, não aqui.
+Só metadados e totais. Os valores por município ficam no site e na Release, não aqui. A exceção são
+as revisões da estimativa do IBGE: para cada município revisado, o valor antes e depois, por código.
 """
 from __future__ import annotations
 

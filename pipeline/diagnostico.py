@@ -2,8 +2,11 @@
 
 Separa DNS, conexão, TLS (ou boas-vindas do FTP) e resposta, para dizer em que passo a fonte
 deixa de responder. Roda igual no runner e numa máquina local, para comparar os dois.
-Uma fonte que falha não interrompe as outras. O arquivo do SIH fica só na memória:
-sai daqui apenas tamanho e hash.
+Uma fonte que falha não interrompe as outras. Todo corpo recebido fica só na memória:
+sai daqui apenas tamanho e hash, inclusive nas fontes com registros individuais.
+
+As fontes do grupo "roteiro" são as das fases depois da v1, do levantamento de 07/11/2026.
+São informativas: nenhuma etapa depende delas, e o Publicar não as testa.
 """
 from __future__ import annotations
 
@@ -56,6 +59,42 @@ ALVOS = [
     # Controle: se nem o GitHub responde, o problema é do ambiente, não da fonte.
     {"nome": "controle_github", "url": "https://api.github.com/zen"},
 ]
+
+# Um endereço por servidor de dados do levantamento, com a rota que respondeu na máquina local.
+# Arquivos grandes só têm o primeiro KB pedido; nas APIs, uma linha. Ficam de fora a API do Portal
+# da Transparência (pede cadastro e chave) e as páginas que só documentam a fonte.
+UM_KB = {"Range": "bytes=0-1023"}
+ROTEIRO = [
+    # Agropecuária: PAM e PPM, um município e um ano, como no levantamento.
+    {"nome": "ibge_sidra_pam", "url": "https://apisidra.ibge.gov.br/values/t/5457/n6/3543402/v/214/p/2024/c782/all?formato=json"},
+    {"nome": "ibge_sidra_ppm", "url": "https://apisidra.ibge.gov.br/values/t/3939/n6/3543402/v/105/p/2024/c79/all?formato=json"},
+    # Saúde ampliada: API (um estabelecimento do CNES), catálogo e arquivos (SINASC e vacinação ficam no S3).
+    {"nome": "saude_api", "url": "https://apidadosabertos.saude.gov.br/cnes/estabelecimentos?limit=1&offset=0"},
+    {"nome": "saude_catalogo", "url": "https://dadosabertos.saude.gov.br/dataset/sim"},
+    {"nome": "saude_arquivos", "url": "https://s3.sa-east-1.amazonaws.com/ckan.saude.gov.br/SINASC/csv/SINASC_2024_csv.zip",
+     "cabecalhos": UM_KB},
+    # Assistência social: as rotas redirecionavam para um aviso de manutenção em 07/11/2026.
+    {"nome": "mds_vis_data", "url": "https://aplicacoes.cidadania.gov.br/vis/data3/data-explorer.php"},
+    {"nome": "mds_cecad", "url": "https://cecad.cidadania.gov.br/"},
+    # Saneamento e segurança: planilhas no www.gov.br.
+    {"nome": "sinisa", "url": "https://www.gov.br/cidades/pt-br/acesso-a-informacao/acoes-e-programas/saneamento/sinisa/"
+                              "resultados-sinisa/copy_of_SINISA_GESTAO_MUNICIPAL_Informacoes_2024.xlsx", "cabecalhos": UM_KB},
+    {"nome": "sinesp", "url": "https://www.gov.br/mj/pt-br/assuntos/sua-seguranca/seguranca-publica/estatistica/download/"
+                              "dnsp-base-de-dados/bancovde-2024.xlsx/@@download/file", "cabecalhos": UM_KB},
+    # Meio ambiente: PRODES e DETER no geoserver do TerraBrasilis; focos no servidor de dados do INPE.
+    {"nome": "inpe_terrabrasilis", "url": "https://terrabrasilis.dpi.inpe.br/geoserver/ows?service=WFS&version=2.0.0"
+                                          "&request=GetFeature&typeNames=prodes-legal-amz%3Ayearly_deforestation&count=1"
+                                          "&outputFormat=application%2Fjson"},
+    {"nome": "inpe_focos", "url": "https://dataserver-coids.inpe.br/queimadas/queimadas/focos/csv/diario/Brasil/"},
+    # Eleições: arquivo nacional de votação no CDN e o catálogo do TSE.
+    {"nome": "tse_cdn", "url": "https://cdn.tse.jus.br/estatistica/sead/odsele/votacao_candidato_munzona/"
+                               "votacao_candidato_munzona_2024.zip", "cabecalhos": UM_KB},
+    {"nome": "tse_catalogo", "url": "https://dadosabertos.tse.jus.br/dataset/resultados-2024"},
+]
+ALVOS += [{**alvo, "grupo": "roteiro"} for alvo in ROTEIRO]
+
+# Diagnóstico diário do INEP: um único pedido, sem nova tentativa nem repetição com outro ClientHello.
+INEP_UMA_VEZ = {"nome": "inep", "url": alcance.INEP_URL, "cabecalhos": UM_KB}
 
 _FAMILIA = {socket.AF_INET: "IPv4", socket.AF_INET6: "IPv6"}
 
@@ -194,6 +233,10 @@ def _pedir(sock, host: str, caminho: str, alvo: dict):
     resposta = conexao.getresponse()
     detalhe = {"status": resposta.status, "content_encoding": resposta.getheader("Content-Encoding"),
                "content_type": resposta.getheader("Content-Type")}
+    # Redirecionamento não é seguido: o destino fica registrado, porque pode ser um aviso de manutenção.
+    for chave, cabecalho in (("content_range", "Content-Range"), ("last_modified", "Last-Modified"), ("location", "Location")):
+        if resposta.getheader(cabecalho):
+            detalhe[chave] = resposta.getheader(cabecalho)[:300]
     if resposta.status >= 400:
         raise _Falha(f"HTTP {resposta.status}", **detalhe)
     return resposta, detalhe
@@ -230,16 +273,21 @@ def _https(enderecos, host, caminho, alvo, passos, mss=None, grupo=None):
             sock.close()
 
 
-def sondar_https(alvo: dict) -> dict:
+def sondar_https(alvo: dict, unico: bool = False) -> dict:
+    """`unico`: uma só conexão, no primeiro endereço do DNS, e nenhuma repetição se falhar."""
     partes = urlsplit(alvo["url"])
     host, porta = partes.hostname, partes.port or 443
     caminho = partes.path + (f"?{partes.query}" if partes.query else "")
     item = {"url": alvo["url"], "host": host, "passos": {}}
     try:
         enderecos = _passo(item["passos"], "dns", lambda: resolver(host, porta))
-        _https(enderecos, host, caminho, alvo, item["passos"])
+        # Num pedido único, IPv4 primeiro: o runner não tem rota IPv6, e uma tentativa perdida ali gastaria o pedido do dia.
+        primeiro = [next((e for e in enderecos if e[0] == socket.AF_INET), enderecos[0])]
+        _https(primeiro if unico else enderecos, host, caminho, alvo, item["passos"])
     except _Interrompido as e:
         item["falhou_em"] = e.passo
+        if unico:
+            return item
         variacoes = []
         if e.passo == "tls":
             variacoes.append(("so_x25519", {"grupo": GRUPO_CLASSICO}))
@@ -310,8 +358,15 @@ def executar(alvos=ALVOS, sondas=SONDAS, agora=None) -> dict:
             item = {"url": alvo["url"], "passos": {}, "falhou_em": "diagnostico", "erro": _erro(e)}
         item["ok"] = "falhou_em" not in item
         item["ms_total"] = _ms(inicio)
+        if alvo.get("grupo"):
+            item["grupo"] = alvo["grupo"]
         resultado["fontes"][alvo["nome"]] = item
     return resultado
+
+
+def inep_uma_vez(agora=None) -> dict:
+    """O teste da hipótese de bloqueio por excesso de pedidos: um pedido por dia, nada além dele."""
+    return executar([INEP_UMA_VEZ], {"https": lambda alvo: sondar_https(alvo, unico=True)}, agora)
 
 
 # Resumo em Markdown, para o resumo da execução no GitHub e para comparar com a máquina local.
@@ -364,6 +419,8 @@ def _texto_resposta(p: dict) -> str:
     if "resposta" in p:
         resposta, corpo = p["resposta"], p.get("corpo")
         texto = f"HTTP {resposta['status']}" if "status" in resposta else "sem resposta"
+        if resposta.get("location"):
+            texto += f" para {resposta['location'][:80]}"
         texto += f" em {_s(resposta['ms'])}"
         if corpo is not None:
             texto += f" · {_tamanho(corpo['bytes'])} em {_s(corpo['ms'])}" if corpo["ok"] else " · corpo incompleto"
@@ -391,14 +448,19 @@ def resumo(resultado: dict) -> str:
     ambiente = resultado["ambiente"]
     onde = "GitHub Actions" if ambiente["github_actions"] else "máquina local"
     linhas = [f"### Alcance das fontes ({onde})", "",
-              f"{resultado['conferido_em']} · {ambiente['sistema']} · Python {ambiente['python']} · {ambiente['openssl']}",
-              "", "| Fonte | DNS | Conexão | TLS ou FTP | Resposta | Total | Resultado |",
-              "|---|---|---|---|---|---:|---|"]
-    for nome, item in resultado["fontes"].items():
-        p = item["passos"]
-        celulas = [f"`{nome}`", _texto_dns(p), _texto_conexao(p), _texto_meio(p), _texto_resposta(p),
-                   _s(item["ms_total"]), _texto_resultado(item)]
-        linhas.append("| " + " | ".join(_celula(c) for c in celulas) + " |")
+              f"{resultado['conferido_em']} · {ambiente['sistema']} · Python {ambiente['python']} · {ambiente['openssl']}"]
+    grupos = {"plano": "Fontes do plano", "roteiro": "Fontes do roteiro depois da v1 (informativo, nenhuma etapa depende delas)"}
+    for grupo, titulo in grupos.items():
+        fontes = {n: i for n, i in resultado["fontes"].items() if i.get("grupo", "plano") == grupo}
+        if not fontes:
+            continue
+        linhas += ["", f"**{titulo}**", "", "| Fonte | DNS | Conexão | TLS ou FTP | Resposta | Total | Resultado |",
+                   "|---|---|---|---|---|---:|---|"]
+        for nome, item in fontes.items():
+            p = item["passos"]
+            celulas = [f"`{nome}`", _texto_dns(p), _texto_conexao(p), _texto_meio(p), _texto_resposta(p),
+                       _s(item["ms_total"]), _texto_resultado(item)]
+            linhas.append("| " + " | ".join(_celula(c) for c in celulas) + " |")
     linhas += ["", "Endereços usados:", ""]
     for nome, item in resultado["fontes"].items():
         conexao = item["passos"].get("conexao", {})
