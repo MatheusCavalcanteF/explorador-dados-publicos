@@ -120,10 +120,11 @@ def processamento_tardio(con) -> dict:
         if 1 <= falta <= 4:
             return None
         return round(100 * (falta if resto else total[uf] - falta) / total[uf], 1)
-    por_uf = {uf: {"pct_ate_a_idade": {str(a): pct(uf, a) for a in (0, 1, 2, 3, 4, 5, 6, 9, 12)},
-                   "pct_que_ainda_chega_depois_de": {str(a): pct(uf, a, True) for a in IDADES}}
-              for uf in sorted(total)}
-    return {"meses": "altas de 2025, competências até 2607", "aihs_com_alta_mais_de_5_meses_antes": int(acima), "por_uf_do_hospital": por_uf}
+    # De 0 a 5 meses, por UF; depois de 6, 9 e 12, o maior resto entre as 27 UFs (zero pelo contrato).
+    por_uf = {uf: [pct(uf, a) for a in range(6)] for uf in sorted(total)}
+    depois = {str(a): max(pct(uf, a, True) or 0 for uf in total) for a in IDADES}
+    return {"meses": "altas de 2025, competências até 2607", "aihs_com_alta_mais_de_5_meses_antes": int(acima),
+            "pct_ate_a_idade_0_a_5_por_uf_do_hospital": por_uf, "maior_pct_que_ainda_chega_depois_de": depois}
 
 
 def correcao_sp(con) -> dict:
@@ -146,7 +147,9 @@ def correcao_sp(con) -> dict:
                         "internacoes_antes": pequeno(dif["antes"].sum()), "variacao_liquida": pequeno(d.sum()),
                         "soma_das_mudancas_em_modulo": pequeno(np.abs(d).sum())}
         saida[str(idade)] = {"mes": mes} | r
-    return saida
+    # Ficam as idades pedidas (6, 9 e 12 meses); das outras, só se o mês mudou.
+    mudaram = [int(i) for i, v in saida.items() if v["residencia"]["mudaram"] or v["hospital"]["mudaram"]]
+    return {"idades_com_mudanca": mudaram} | {str(i): saida[str(i)] for i in IDADES}
 
 
 inicio = time.perf_counter()

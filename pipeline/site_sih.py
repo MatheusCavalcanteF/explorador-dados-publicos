@@ -10,7 +10,10 @@ página mostra, e como:
 - célula oculta aparece sempre do mesmo jeito, "oculto", sem motivo nem intervalo, na tabela, no CSV, no
   gráfico (um anel na linha de base) e no PNG;
 - contagem de período com mês preliminar aparece arredondada para múltiplo de 5 e marcada como
-  "preliminar, arredondado" na tabela e no CSV, e com o tom atenuado e a faixa "preliminar" no gráfico;
+  "preliminar, arredondado" na tabela e no CSV, e no gráfico com listras sobre a cor cheia da série (o
+  contraste de 3:1 com o fundo continua) e a faixa "preliminar";
+- cruzamento não publicado num ano aparece como "não publicado", com o motivo, na tabela e no CSV, e fica
+  sem marca no gráfico: zero é só a chave ausente de um cruzamento publicado;
 - a taxa por mil habitantes usa o valor publicado, arredondado quando ele é, e só aparece em ano completo
   com população do mesmo ano;
 - um cruzamento que não passou no critério do ano não aparece naquele ano, e a página diz por quê;
@@ -47,6 +50,8 @@ NOMES_CRUZAMENTO = {
     "sih_hosp_mes_carater": "Hospitais do município por mês e caráter da internação"}
 OCULTO = "oculto"
 ARREDONDADO = "preliminar, arredondado"
+NAO_PUBLICADO = "não publicado"
+FORA = {"v": None, "s": NAO_PUBLICADO}
 LEGENDA = ('<span class="item"><span class="chave"></span>exato</span><span class="item"><span class="chave chave--prelim">'
            '</span>preliminar, arredondado para múltiplo de 5</span><span class="item"><span class="chave chave--oculta"></span>'
            'oculto pela regra de privacidade</span>')
@@ -122,11 +127,14 @@ def celula(linha, medida: str = "internacoes") -> dict:
 
 
 def texto(c: dict) -> str:
-    return OCULTO if c["v"] is None else numero(c["v"])
+    if c["v"] is None:
+        return NAO_PUBLICADO if c["s"] == NAO_PUBLICADO else OCULTO
+    return numero(c["v"])
 
 
 def td(c: dict) -> str:
-    """Célula de tabela com o valor e a situação nos atributos, que o gráfico e o CSV leem."""
+    """Célula de tabela com o valor e a situação nos atributos, que o gráfico e o CSV leem. Cruzamento que
+    não foi publicado no ano aparece como "não publicado", com o motivo na nota da tabela, e nunca como zero."""
     valor = "" if c["v"] is None else str(c["v"])
     classe = ' class="oculto"' if c["v"] is None else ""
     return f'<td data-v="{valor}" data-s="{escape(c["s"])}"{classe}>{escape(texto(c))}</td>'
@@ -188,14 +196,20 @@ def secao(m: dict, dados: dict, coleta: dict) -> str:
         populacao[int(est["periodo"])] = (m["populacao_estimada"], f"estimativa {est['periodo']}")
     res = _por_chave(_linhas(dados, "sih_res_ano", codigo), ["ano"])
     hosp = _por_chave(_linhas(dados, "sih_hosp_ano", codigo), ["ano"])
-    tem_hospital = bool(hosp)
+    # Zero só vale para chave ausente num cruzamento publicado; no ano em que ele não foi publicado, o motivo.
+    fora = {(cid, ano): _nao_publicado(dados, cid, ano) for cid in ("sih_res_ano", "sih_hosp_ano", "sih_res_mes") for ano in anos}
+    fora = {chave: motivo for chave, motivo in fora.items() if motivo}
+    tem_hospital = bool(hosp) or any(cid == "sih_hosp_ano" for cid, _ in fora)
     linhas_ano = []
     for ano in anos:
         r, h = res.get((str(ano),)), hosp.get((str(ano),))
-        c_int = celula(r)
-        c_ob = celula(r, "obitos") if r is not None else {"v": 0, "s": ""}
+        res_fora = ("sih_res_ano", ano) in fora
+        c_int = FORA if res_fora else celula(r)
+        c_ob = FORA if res_fora else (celula(r, "obitos") if r is not None else {"v": 0, "s": ""})
         taxa = "<td>—</td>"
-        if completo(dados, ano) and ano in populacao and populacao[ano][0]:
+        if res_fora:
+            taxa = td(FORA)
+        elif completo(dados, ano) and ano in populacao and populacao[ano][0]:
             pop, fonte_pop = populacao[ano]
             if c_int["v"] is None:
                 taxa = f'<td data-v="" data-s="{OCULTO}" class="oculto">{OCULTO}</td>'
@@ -203,7 +217,7 @@ def secao(m: dict, dados: dict, coleta: dict) -> str:
                 t = 1000 * c_int["v"] / pop
                 taxa = f'<td data-v="{t:.1f}" data-s="{escape(c_int["s"])}" title="{escape(fonte_pop)}">{decimal(t)}</td>'
         situacao = c_int["s"] or ("fechado" if not dados["situacoes"][ano]["preliminares"] else "")
-        coluna_hosp = td(celula(h)) if tem_hospital else ""
+        coluna_hosp = (td(FORA if ("sih_hosp_ano", ano) in fora else celula(h))) if tem_hospital else ""
         linhas_ano.append(f'<tr><th scope="row" data-v="{ano}">{escape(rotulo_ano(dados, ano))}</th>{td(c_int)}{taxa}'
                           f'{td(c_ob)}{coluna_hosp}<td class="situacao">{escape(situacao)}</td></tr>')
     primeiro, ultimo = anos[0] * 100 + 1, s_ultimo["ultimo_mes"]
@@ -213,6 +227,10 @@ def secao(m: dict, dados: dict, coleta: dict) -> str:
                   '<th scope="col">Por mil habitantes</th><th scope="col">Óbitos de moradores</th>'
                   f'{cab_hosp}<th scope="col">Situação</th></tr></thead>'
                   f'<tbody>{"".join(linhas_ano)}</tbody></table>')
+    nomes_fora = {"sih_res_ano": "Moradores por ano", "sih_hosp_ano": "Hospitais do município por ano",
+                  "sih_res_mes": "Moradores por mês"}
+    nota_fora = "".join(f'<p class="nota-sih"><strong>{escape(nomes_fora[cid])}:</strong> não publicado em {ano}, porque '
+                        f'{escape(motivo)}.</p>\n' for (cid, ano), motivo in sorted(fora.items(), key=lambda kv: (kv[0][1], kv[0][0])))
     sem_hospital = ("" if tem_hospital else
                     f'<p class="nota-sih">Nenhuma internação pelo SUS em hospital de {escape(m["nome"])} de '
                     f'{nome_mes(primeiro)} a {nome_mes(ultimo)}. Os moradores foram internados em hospitais de outros municípios.</p>\n')
@@ -222,11 +240,11 @@ def secao(m: dict, dados: dict, coleta: dict) -> str:
     pontos = []
     for ano in anos:
         for mes in range(ano * 100 + 1, ultimo_do_ano(dados, ano) + 1):
-            c = celula(mensal.get((str(mes),)))
+            c = dict(FORA) if ("sih_res_mes", ano) in fora else celula(mensal.get((str(mes),)))
             if c["s"] == "" and str(mes) in prelim:
                 c["s"] = "preliminar"
             pontos.append(c | {"rotulo": mes, "prelim": str(mes) in prelim})
-    ocultos = sum(1 for p in pontos if p["v"] is None)
+    ocultos = sum(1 for p in pontos if p["v"] is None and p["s"] == OCULTO)
     linhas_mes = "".join(f'<tr{" data-p=1" if p["prelim"] else ""}><th scope="row" data-v="{p["rotulo"]}">'
                          f'{nome_mes(p["rotulo"])}</th>{td(p)}{situacao_td(p)}</tr>' for p in pontos)
     tabela_mes = (f'<table id="sih-mes-tab" class="tabela" data-csv-nome="internacoes-por-mes"><thead><tr><th scope="col">Mês da alta</th>'
@@ -252,7 +270,7 @@ def secao(m: dict, dados: dict, coleta: dict) -> str:
 <p class="sih-lead">Internações de moradores de {escape(m['nome'])} em qualquer hospital do país{", e as que aconteceram nos hospitais do município" if tem_hospital else ""}, pela data da alta, de {nome_mes(primeiro)} a {nome_mes(ultimo)}. {desde}</p>
 <h3>Por ano da alta</h3>
 <div class="rolagem">{tabela_ano}</div>
-{sem_hospital}<p class="nota-sih">A taxa por mil habitantes aparece só em ano completo com população do mesmo ano no site, o Censo 2022 ou a estimativa {escape(est['periodo'])} do IBGE. Num ano em andamento, ela compararia meses com um ano inteiro.</p>
+{nota_fora}{sem_hospital}<p class="nota-sih">A taxa por mil habitantes aparece só em ano completo com população do mesmo ano no site, o Censo 2022 ou a estimativa {escape(est['periodo'])} do IBGE. Num ano em andamento, ela compararia meses com um ano inteiro.</p>
 <div class="exportar" hidden><button type="button" data-csv="sih-ano-tab">Baixar CSV</button></div>
 {bloco_mes}
 <h3>Diagnóstico, idade e sexo</h3>

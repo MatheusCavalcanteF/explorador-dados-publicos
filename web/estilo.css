@@ -347,7 +347,7 @@ a:hover { text-decoration-thickness: 2px; }
 :root {
   --serie: #2b8a5c;
   --serie-1: #2a78d6;
-  --serie-2: #eb6834;
+  --serie-2: #d9581f;
   --faixa: rgb(26 29 27 / 0.05);
 }
 @media (prefers-color-scheme: dark) {
@@ -379,7 +379,9 @@ a:hover { text-decoration-thickness: 2px; }
 .grafico .barra { fill: var(--serie); }
 .grafico .serie-1 { fill: var(--serie-1); }
 .grafico .serie-2 { fill: var(--serie-2); }
-.grafico .barra--prelim { fill-opacity: 0.45; }
+/* Preliminar: a cor cheia da série com listras na cor do fundo por cima (web/sih.js). */
+.grafico .listra { fill: var(--chao); }
+.grafico .hachura { stroke: none; }
 .grafico .oculta { fill: none; stroke: var(--tinta-suave); stroke-width: 1.5; }
 .grafico .faixa { fill: var(--faixa); }
 .grafico [data-tip]:hover { fill-opacity: 0.8; }
@@ -387,7 +389,11 @@ a:hover { text-decoration-thickness: 2px; }
 .legenda-sih .item { display: inline-flex; align-items: center; gap: 0.4rem; }
 .chave { flex: none; display: inline-block; width: 0.9rem; height: 0.9rem; border-radius: 3px; background: var(--serie); }
 .legenda-sih--piramide .chave { background: linear-gradient(90deg, var(--serie-1) 50%, var(--serie-2) 50%); }
-.chave--prelim { opacity: 0.45; }
+.legenda-sih .chave--prelim { background: repeating-linear-gradient(45deg, var(--serie) 0 3px, var(--chao) 3px 5px); }
+.legenda-sih--piramide .chave--prelim {
+  background: repeating-linear-gradient(45deg, transparent 0 3px, var(--chao) 3px 5px),
+    linear-gradient(90deg, var(--serie-1) 50%, var(--serie-2) 50%);
+}
 .legenda-sih .chave--oculta { background: none; border: 1.5px solid var(--tinta-suave); border-radius: 50%; width: 0.7rem; height: 0.7rem; }
 .exportar { display: flex; gap: 0.5rem; margin: 0.5rem 0; }
 .exportar button, .anos label {
@@ -405,5 +411,5 @@ a:hover { text-decoration-thickness: 2px; }
 }
 @media (forced-colors: active) {
   .grafico .barra, .grafico .serie-1, .grafico .serie-2 { fill: CanvasText; }
-  .grafico .barra--prelim { fill: GrayText; fill-opacity: 1; }
+  .grafico .listra { fill: Canvas; }
 }

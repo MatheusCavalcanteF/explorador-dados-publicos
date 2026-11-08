@@ -238,9 +238,33 @@
     "Serra da Saudade (MG), 857 habitantes": [44740, 7662],
     "Santos (SP)": [49546, 8957]
    },
-   "sih_js": [15640, 5371],
+   "sih_js": [17114, 5938],
    "municipios_sem_internacao_em_hospital_proprio": 2341
   },
   "build": "python -m pipeline construir --coleta <coleta> --saida build/site-sih --links manifesto/links.json --sih-local build/sih/particoes"
+ },
+ "contraste_contra_o_fundo": {
+  "regra": "WCAG 2.1, razão de contraste; mínimo de 3:1 para elementos gráficos",
+  "preliminar": "cor cheia da série com listras a 45 graus na cor do fundo",
+  "depois": {
+   "claro": {
+    "serie": ["#2b8a5c", 3.8],
+    "masculino": ["#2a78d6", 3.91],
+    "feminino": ["#d9581f", 3.46],
+    "anel_oculto": ["#4b524d", 7.11],
+    "fundo": "#f3f1ea"
+   },
+   "escuro": {
+    "serie": ["#3fa374", 5.92],
+    "masculino": ["#3987e5", 5.1],
+    "feminino": ["#d95926", 4.77],
+    "anel_oculto": ["#a9b2ac", 8.52],
+    "fundo": "#111412"
+   }
+  },
+  "antes_com_opacidade": {
+   "claro": {"serie_com_opacidade_0,45": 1.73, "feminino_cheio_#eb6834": 2.83},
+   "escuro": {"serie_com_opacidade_0,45": 2.14, "masculino_com_opacidade_0,45": 1.97, "feminino_com_opacidade_0,45": 1.87}
+  }
  }
 }

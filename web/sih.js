@@ -8,7 +8,8 @@
   if (!secao) return;
   var SVG = "http://www.w3.org/2000/svg";
   var FONTE = 12;
-  var OCULTO = "oculto", ARREDONDADO = "preliminar, arredondado";
+  var OCULTO = "oculto", ARREDONDADO = "preliminar, arredondado", NAO_PUBLICADO = "não publicado";
+  var listras = 0;
 
   function numero(n) { return Math.round(n).toLocaleString("pt-BR"); }
 
@@ -43,16 +44,32 @@
 
   function marcaEixo(n) { return n < 10000 ? numero(n) : (n / 1000).toLocaleString("pt-BR") + " mil"; }
 
+  // Cada gráfico leva o próprio padrão de listras: o preliminar é a barra na cor cheia da série, com listras
+  // a 45 graus na cor do fundo por cima. A cor cheia mantém o contraste de 3:1 com o fundo nos dois temas, e
+  // as listras distinguem o preliminar do exato sem depender de cor.
   function svgNovo(largura, altura) {
-    return el("svg", { viewBox: "0 0 " + largura + " " + altura, width: largura, height: altura, "aria-hidden": "true",
+    var svg = el("svg", { viewBox: "0 0 " + largura + " " + altura, width: largura, height: altura, "aria-hidden": "true",
       class: "grafico" });
+    var id = "listras-" + (++listras);
+    var padrao = el("pattern", { id: id, patternUnits: "userSpaceOnUse", width: 5, height: 5, patternTransform: "rotate(45)" },
+      el("defs", {}, svg));
+    el("rect", { class: "listra", x: 0, y: 0, width: 2, height: 5 }, padrao);
+    svg.dataset.listras = id;
+    return svg;
+  }
+
+  // Marca de preliminar: o mesmo desenho da barra, coberto pelas listras.
+  function marcar(svg, forma, atributos) {
+    el(forma, Object.assign({}, atributos, { class: "hachura", fill: "url(#" + svg.dataset.listras + ")" }), svg);
   }
 
   // Coluna com o canto de cima arredondado, crescendo da linha de base.
-  function coluna(pai, x, base, largura, altura, classe, texto) {
+  function coluna(pai, x, base, largura, altura, prelim, texto) {
     var r = Math.min(4, largura / 2, altura);
-    el("path", { class: classe, "data-tip": texto, d: "M" + x + "," + base + "v" + (-(altura - r)) + "q0," + (-r) + " " + r + "," + (-r) +
-      "h" + (largura - 2 * r) + "q" + r + ",0 " + r + "," + r + "v" + (altura - r) + "z" }, pai);
+    var d = "M" + x + "," + base + "v" + (-(altura - r)) + "q0," + (-r) + " " + r + "," + (-r) +
+      "h" + (largura - 2 * r) + "q" + r + ",0 " + r + "," + r + "v" + (altura - r) + "z";
+    el("path", { class: "barra", "data-tip": texto, d: d }, pai);
+    if (prelim) marcar(pai, "path", { d: d, "data-tip": texto });
   }
 
   function anel(pai, x, y, raio, texto) {
@@ -90,8 +107,9 @@
     var cada = passo * 12 < 34 ? 2 : 1, contados = 0;
     pontos.forEach(function (p, i) {
       var x = esq + i * passo + (passo - largura) / 2;
-      if (p.v === null) anel(svg, x + largura / 2, base - raio - 1, raio, dica(p.rotulo, p));
-      else if (p.v > 0) coluna(svg, x, base, largura, base - y(p.v), p.s === ARREDONDADO ? "barra barra--prelim" : "barra", dica(p.rotulo, p));
+      // Mês de cruzamento não publicado no ano fica sem marca: não é célula oculta, e a tabela diz por quê.
+      if (p.v === null && p.s !== NAO_PUBLICADO) anel(svg, x + largura / 2, base - raio - 1, raio, dica(p.rotulo, p));
+      else if (p.v > 0) coluna(svg, x, base, largura, base - y(p.v), p.s === ARREDONDADO, dica(p.rotulo, p));
       if (p.mes % 100 === 1 && (contados++ % cada === 0 || anos === 1)) {
         el("text", { class: "eixo", x: esq + i * passo, y: base + 17 }, svg, String(Math.floor(p.mes / 100)));
       }
@@ -122,9 +140,10 @@
       var w = item.v ? Math.max(1, util * item.v / maximo) : 0;
       if (w) {
         var r = Math.min(4, w);
-        el("path", { class: item.s === ARREDONDADO ? "barra barra--prelim" : "barra", "data-tip": dica(item.rotulo, item),
-          d: "M" + esq + "," + yBarra + "h" + (w - r) + "q" + r + ",0 " + r + "," + r + "v" + (16 - 2 * r) + "q0," + r + " " + (-r) + "," + r +
-            "h" + (-(w - r)) + "z" }, svg);
+        var d = "M" + esq + "," + yBarra + "h" + (w - r) + "q" + r + ",0 " + r + "," + r + "v" + (16 - 2 * r) + "q0," + r + " " + (-r) + "," + r +
+          "h" + (-(w - r)) + "z";
+        el("path", { class: "barra", "data-tip": dica(item.rotulo, item), d: d }, svg);
+        if (item.s === ARREDONDADO) marcar(svg, "path", { d: d, "data-tip": dica(item.rotulo, item) });
       }
       el("text", { class: "valor", x: esq + w + 6, y: yBarra + 12 }, svg, numero(item.v));
     });
@@ -154,8 +173,9 @@
         if (c.v === null) { anel(svg, inicio + sentido * 6, y + 10, 4, texto); return; }
         var w = c.v ? util * c.v / maximo : 0;
         if (!w) return;
-        el("rect", { class: lado[2] + (c.s === ARREDONDADO ? " barra--prelim" : ""), x: sentido > 0 ? inicio : inicio - w, y: y + 3,
-          width: w, height: 15, rx: 3, "data-tip": texto }, svg);
+        var caixa = { x: sentido > 0 ? inicio : inicio - w, y: y + 3, width: w, height: 15, rx: 3, "data-tip": texto };
+        el("rect", Object.assign({ class: lado[2] }, caixa), svg);
+        if (c.s === ARREDONDADO) marcar(svg, "rect", caixa);
       });
     });
     return svg;
@@ -247,16 +267,22 @@
 
   var PROPS = ["fill", "fill-opacity", "stroke", "stroke-width", "opacity", "font-size", "font-family", "font-weight"];
 
+  // A hachura aponta para o padrão do próprio gráfico pelo atributo fill: o estilo copiado não o substitui.
+  function estiloInline(original, copia) {
+    var estilo = getComputedStyle(original), inline = "";
+    for (var p = 0; p < PROPS.length; p++) {
+      if (PROPS[p] === "fill" && original.getAttribute("fill")) continue;
+      inline += PROPS[p] + ":" + estilo.getPropertyValue(PROPS[p]) + ";";
+    }
+    copia.setAttribute("style", inline);
+  }
+
   // PNG: o gráfico desenhado, com os estilos calculados copiados, título no alto e fonte, legenda e endereço embaixo.
   function png(caixa) {
     var svg = caixa.querySelector("svg");
     var clone = svg.cloneNode(true);
     var originais = svg.querySelectorAll("*"), copias = clone.querySelectorAll("*");
-    for (var i = 0; i < originais.length; i++) {
-      var estilo = getComputedStyle(originais[i]), inline = "";
-      for (var p = 0; p < PROPS.length; p++) inline += PROPS[p] + ":" + estilo.getPropertyValue(PROPS[p]) + ";";
-      copias[i].setAttribute("style", inline);
-    }
+    for (var i = 0; i < originais.length; i++) estiloInline(originais[i], copias[i]);
     var caixaSvg = svg.viewBox.baseVal, escala2 = 2;
     clone.setAttribute("width", caixaSvg.width * escala2);
     clone.setAttribute("height", caixaSvg.height * escala2);
@@ -265,7 +291,7 @@
     var imagem = new Image();
     imagem.onload = function () {
       var margem = 24, topo = 56, titulo = "700 26px Overpass, system-ui, sans-serif", corpo = "20px Overpass, system-ui, sans-serif";
-      var notas = ["Barra atenuada: preliminar, arredondado para múltiplo de 5.", "Anel: oculto pela regra de privacidade.",
+      var notas = ["Barra listrada: preliminar, arredondado para múltiplo de 5.", "Anel: oculto pela regra de privacidade.",
         "Fonte: " + secao.dataset.fonte + ". Processado em " + secao.dataset.coleta + ".", location.href.split("#")[0]];
       var tela = document.createElement("canvas"), ctx = tela.getContext("2d");
       // A largura cabe o gráfico e cada linha de texto, medida antes de desenhar.

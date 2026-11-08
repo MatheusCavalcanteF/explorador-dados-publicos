@@ -28,28 +28,30 @@ def _celula(internacoes, oculto=False, prelim=True, arred=None, **extra):
     return {"internacoes": None if oculto else internacoes, "oculto": oculto, "preliminar": prelim, "arredondado": arred} | extra
 
 
-def particoes(pasta: Path) -> Path:
+def particoes(pasta: Path, fora_2025: dict | None = None) -> Path:
     """2025 (abril a dezembro preliminares) e 2026 até julho, gravados como o pipeline grava, pela troca do
     conjunto do ano. Em 2026, faixa etária x sexo não passou no critério. Herval d'Oeste (SC) não tem hospital."""
     for ano, ultimo in ((2025, 202607), (2026, 202607)):
         prelim = [str(m) for m in range(ano * 100 + 1, min(ano * 100 + 12, ultimo) + 1) if m > 202503]
-        fora = {} if ano == 2025 else {"sih_res_ano_faixa12_sexo": {"motivo": "6,3% das internações ficariam ocultas (limite: 5%)"}}
+        fora = dict(fora_2025 or {}) if ano == 2025 else {"sih_res_ano_faixa12_sexo": {"motivo": "6,3% das internações ficariam ocultas (limite: 5%)"}}
         publicados = ["sih_res_ano", "sih_hosp_ano", "sih_res_mes", "sih_res_ano_capitulo", "sih_res_ano_faixa12_sexo"]
         situacao = {"ano": ano, "coletado_em": "2026-11-08T12:00:00Z", "versao_dos_arquivos": "2026-10-16T17:30",
                     "ultimo_mes": ultimo, "ultimo_mes_fechado": 202503, "preliminares": prelim, "arredondar_multiplo": 5,
                     "publicados": [p for p in publicados if p not in fora], "nao_publicados": fora,
                     "deducao": {"rodou": True, "passou": True, "pequenas_reveladas": 0, "obitos_passou": True}}
 
-        def gravar(p, ano=ano, prelim=prelim):
+        def gravar(p, ano=ano, prelim=prelim, fora=fora):
+            arquivos = {}
+            gravar_se = lambda cid, uf, linhas: {} if cid in fora else _gravar(p, cid, uf, linhas)
             anual = dict(dias=9000, valor=1.5e6, obitos=55, obitos_oculto=False, obitos_arredondado=True)
-            arquivos = _gravar(p, "sih_res_ano", "35", [{"mun_res": "3548500"} | _celula(1235, **anual)])
-            arquivos |= _gravar(p, "sih_res_ano", "42", [{"mun_res": "4206504"} | _celula(
+            arquivos |= gravar_se("sih_res_ano", "35", [{"mun_res": "3548500"} | _celula(1235, **anual)])
+            arquivos |= gravar_se("sih_res_ano", "42", [{"mun_res": "4206504"} | _celula(
                 0, oculto=True, dias=None, valor=None, obitos=None, obitos_oculto=True, obitos_arredondado=False)])
-            arquivos |= _gravar(p, "sih_hosp_ano", "35", [{"mun_hosp": "3548500"} | _celula(2410, **anual)])
+            arquivos |= gravar_se("sih_hosp_ano", "35", [{"mun_hosp": "3548500"} | _celula(2410, **anual)])
             meses = [{"mun_res": "3548500", "mes": str(m)} | _celula(100 + m % 100, oculto=(m % 100 == 2), prelim=str(m) in prelim,
                                                                        dias=1, valor=1.0)
                      for m in range(ano * 100 + 1, min(ano * 100 + 12, ultimo) + 1)]
-            arquivos |= _gravar(p, "sih_res_mes", "35", meses)
+            arquivos |= gravar_se("sih_res_mes", "35", meses)
             arquivos |= _gravar(p, "sih_res_ano_capitulo", "35", [{"mun_res": "3548500", "capitulo": "10"} | _celula(300),
                                                                   {"mun_res": "3548500", "capitulo": "15"} | _celula(0, oculto=True)])
             if ano == 2025:
@@ -139,6 +141,31 @@ def test_cruzamento_reprovado_no_ano_diz_por_que(com_sih):
     html = ler(com_sih, "municipio/3548500/index.html")
     assert "não publicado em 2026, porque 6,3% das internações ficariam ocultas (limite: 5%)." in html
     assert "<li>2026, moradores por faixa etária e sexo: 6,3% das internações ficariam ocultas (limite: 5%).</li>" in html
+
+
+def test_cruzamento_retirado_do_ano_mostra_o_motivo_e_nunca_zero(tmp_path, monkeypatch):
+    monkeypatch.delenv("GITHUB_ACTIONS", raising=False)
+    monkeypatch.delenv("CI", raising=False)
+    motivo = {"motivo": "o teste de dedução revelou contagens com ele no ano"}
+    fora = {"sih_res_ano": motivo, "sih_hosp_ano": motivo, "sih_res_mes": motivo}
+    saida = tmp_path / "site"
+    site.construir(_coleta_estimativa("2025"), catalogo.carregar(), saida, sih_local=particoes(tmp_path / "p", fora))
+    html = ler(saida, "municipio/3548500/index.html")
+    linha = re.search(r'<tr><th scope="row" data-v="2025">2025</th>(.*?)</tr>', html).group(1)
+    nao = '<td data-v="" data-s="não publicado" class="oculto">não publicado</td>'
+    # Internações, taxa, óbitos e hospital: o motivo, em vez de zero ou de uma taxa.
+    assert linha.count(nao) == 4 and 'data-v="0"' not in linha
+    for nome in ("Moradores por ano", "Hospitais do município por ano", "Moradores por mês"):
+        assert f"<strong>{nome}:</strong> não publicado em 2025, porque o teste de dedução revelou contagens com ele no ano." in html
+    # A série mensal de 2025 também: nenhum mês como zero; 2026, publicado, segue normal.
+    meses = re.findall(r'data-v="2025(\d\d)">[a-z]+/2025</th>(<td[^>]*>[^<]*</td>)', html)
+    assert len(meses) == 12 and all(td == nao for _, td in meses)
+    assert 'data-v="202601">jan/2026</th><td data-v="101"' in html
+    # O município sem linha em 2026 continua com zero onde o cruzamento foi publicado, e sem a frase de "sem hospital",
+    # porque em 2025 não dá para saber.
+    herval = ler(saida, "municipio/4206504/index.html")
+    assert "Nenhuma internação pelo SUS em hospital de" not in herval
+    assert re.search(r'data-v="2026">2026 \(até jul/2026\)</th>.*?<td data-v="0" data-s="">0</td><td class="situacao">', herval)
 
 
 def test_particao_ausente_para_o_build_e_linha_ausente_e_zero(tmp_path, monkeypatch):
