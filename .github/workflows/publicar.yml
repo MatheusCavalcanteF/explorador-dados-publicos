@@ -38,14 +38,13 @@ jobs:
       - name: Testes (sem rede)
         run: python -m pytest
 
-      - name: Partição fechada do Censo 2022, se já estiver na Release
+      # Uma consulta à lista de Releases. O que não está na lista não existe, e a execução segue: primeira
+      # coleta do Censo, primeira publicação do SIH. Se a consulta ou um download falhar, o passo para: seguir
+      # sem a partição congelada do Censo, ou sem a versão no ar do SIH, trocaria o publicado sem aviso.
+      - name: Releases (partição fechada do Censo 2022 e versão no ar do SIH, se existirem)
         env:
           GH_TOKEN: ${{ github.token }}
-        run: |
-          mkdir -p build/release
-          if gh release view ibge-censo-2022 > /dev/null 2>&1; then
-            gh release download ibge-censo-2022 --pattern censo-2022.json --dir build/release
-          fi
+        run: python -m pipeline releases --destino build/release
 
       # Lista pela DTB do geoftp e população pela SIDRA. O manifesto da coleta anterior, no git,
       # serve para dizer o que mudou, pelo hash dos valores. Se a estimativa mudar no mesmo período,
@@ -58,6 +57,25 @@ jobs:
 
       - name: Alcance das outras fontes
         run: python -m pipeline alcance --saida build/coleta
+
+      # O SIH só roda aqui quando o catálogo mandar publicar (bases.sih.publicacao); hoje não manda, e os
+      # dois passos seguintes são pulados. Quando rodar, a versão anterior é a que está no ar, baixada e
+      # conferida no passo das Releases: a nova herda o padrão dela e cada ano passa pelo ataque conjunto.
+      # Um ano reprovado para o job antes do site, e o site anterior continua no ar. As partições aprovadas
+      # ficam em build/sih, que não é artefato: levá-las ao site e às Releases é outra etapa, ainda não feita.
+      - name: O catálogo manda publicar o SIH?
+        id: sih
+        run: python -m pipeline publicacao --base sih >> "$GITHUB_OUTPUT"
+
+      - name: Dependências do SIH
+        if: steps.sih.outputs.publicar == 'true'
+        run: pip install -r requirements-sih.txt
+
+      - name: SIH, com a versão no ar como anterior
+        if: steps.sih.outputs.publicar == 'true'
+        run: >
+          python -m pipeline sih --coleta build/coleta --trabalho build/sih --saida build/sih-medicao
+          --no-ar build/release
 
       - name: Site
         run: |

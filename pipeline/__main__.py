@@ -1,5 +1,6 @@
 """Linha de comando do pipeline. Cada etapa grava em build/coleta, que o workflow passa adiante.
 
+    python -m pipeline releases   --destino build/release   (Censo e versão no ar do SIH; falha ao consultar para)
     python -m pipeline coletar    --saida build/coleta [--censo-release arquivo] [--anterior manifesto/ibge.json]
     python -m pipeline alcance    --saida build/coleta
     python -m pipeline diagnostico --saida build/diagnostico [--resumo arquivo.md] [--pular inep ...]
@@ -12,7 +13,9 @@
     python -m pipeline exigir     --coleta build/coleta
     python -m pipeline sih        --coleta build/coleta --trabalho build/sih --saida build/sih-medicao
                                   [--ufs RR SP] [--anos 2025 2026] [--processos 4] [--origem-local pasta]
-                                  [--anterior particoes_publicadas]  (herda o padrão dos períodos fechados)
+                                  [--anterior particoes_publicadas | --no-ar build/release]
+                                  (herda o padrão dos períodos fechados e roda o ataque conjunto com ela)
+    python -m pipeline publicacao --base sih   (publicar=true ou false, pelo catálogo)
 
 O SIH precisa de requirements-sih.txt e só é importado no próprio comando: o Publicar não depende dele.
 """
@@ -20,11 +23,12 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-from . import alcance, catalogo, diagnostico, hospedagem, ibge, links, manifesto, projeto, rede, site
+from . import alcance, catalogo, diagnostico, hospedagem, ibge, links, manifesto, projeto, rede, release, site
 
 
 def _estimativa_no_site():
@@ -60,6 +64,8 @@ def _gravar(caminho: Path, valor) -> None:
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(prog="python -m pipeline")
     sub = parser.add_subparsers(dest="comando", required=True)
+    sub.add_parser("releases").add_argument("--destino", type=Path, required=True)
+    sub.add_parser("publicacao").add_argument("--base", required=True)
     p = sub.add_parser("coletar")
     p.add_argument("--saida", type=Path, required=True)
     p.add_argument("--censo-release", type=Path)
@@ -102,15 +108,28 @@ def main(argv=None) -> int:
     p.add_argument("--origem-local", type=Path)
     p.add_argument("--manter-dbc", action="store_true")
     p.add_argument("--sem-deducao", action="store_true")
-    # Partições da versão publicada antes: nos períodos fechados, a nova herda o padrão de células ocultas.
-    p.add_argument("--anterior", type=Path)
+    # Partições da versão publicada antes: nos períodos fechados, a nova herda o padrão de células ocultas, e
+    # cada ano passa pelo ataque conjunto com ela. --anterior é uma pasta escolhida à mão, para uso local;
+    # --no-ar é a pasta de `releases`, com a consulta: sem versão no ar, é a primeira publicação.
+    origem = p.add_mutually_exclusive_group()
+    origem.add_argument("--anterior", type=Path)
+    origem.add_argument("--no-ar", type=Path)
     args = parser.parse_args(argv)
 
     cat = catalogo.carregar()
-    if args.comando == "coletar":
-        release = args.censo_release if args.censo_release and args.censo_release.exists() else None
+    if args.comando == "releases":
+        consulta = release.consultar(args.destino, token=os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN"))
+        print(f"Releases: {len(consulta['releases'])} publicadas. Censo 2022: "
+              f"{'baixado da Release' if consulta['censo'] else 'ainda sem Release; a coleta vai à fonte'}. SIH no ar: "
+              f"{'anos ' + ', '.join(map(str, consulta['sih']['anos'])) if consulta['sih']['anos'] else 'nenhuma versão; primeira publicação'}")
+    elif args.comando == "publicacao":
+        regra = cat["bases"][args.base].get("publicacao") or {}
+        # Para o $GITHUB_OUTPUT: os passos do SIH no Publicar só rodam quando o catálogo manda publicar.
+        print(f"publicar={'true' if regra.get('site') or regra.get('releases') else 'false'}")
+    elif args.comando == "coletar":
+        censo = args.censo_release if args.censo_release and args.censo_release.exists() else None
         anterior = _ler(args.anterior)["fontes"] if args.anterior and args.anterior.exists() else None
-        resultado = ibge.coletar(args.saida, release, anterior, publicados=_estimativa_no_site)
+        resultado = ibge.coletar(args.saida, censo, anterior, publicados=_estimativa_no_site)
         fontes = resultado["fontes"]
         print(f"IBGE: {len(resultado['municipios'])} municípios da DTB {fontes['dtb']['periodo']} "
               f"(data-base {fontes['dtb']['data_base']}); estimativa {fontes['estimativa']['periodo']}; "
@@ -158,10 +177,16 @@ def main(argv=None) -> int:
         print("Manifesto:", ", ".join(manifesto.gravar(args.coleta, args.saida)))
     elif args.comando == "sih":
         from . import sih
+        anterior = release.versao_no_ar(args.no_ar) if args.no_ar else args.anterior
         medicao = sih.executar(_ler(args.coleta / "ibge.json"), cat, args.trabalho, args.saida, args.ufs, args.anos,
                                args.processos, args.origem_local, args.manter_dbc, not args.sem_deducao,
-                               anterior=args.anterior)
+                               anterior=anterior, no_ar_consultada=bool(args.no_ar))
         print(f"SIH: {medicao['etapas']['total_s']} s no total; medição em {args.saida / 'medicao.json'}")
+        # Um ano reprovado deixa a execução vermelha: nada dele foi gravado, e a versão não pode ser publicada.
+        for ano, motivo in medicao["reprovados"].items():
+            print(f"::error title=SIH {ano} sem partição::{motivo}")
+        if medicao["reprovados"]:
+            return 1
     elif args.comando == "exigir":
         problemas = manifesto.falhas(args.coleta)
         for problema in problemas:

@@ -105,17 +105,49 @@ def test_censo_da_release_diz_de_onde_veio(tmp_path):
     assert "conferida de novo em 07/11/2026, 20:23 (Brasília), sem mudança" in html
 
 
+def conferido(codigo, publicado, ok=True, metrica="6579/n6/{}/v/9324/p/2026"):
+    """Um item da amostra como links.conferir grava: o link exato pedido e o valor publicado naquele dia."""
+    return {"codigo": codigo, "url": "https://apisidra.ibge.gov.br/values/t/" + metrica.format(codigo),
+            "publicado": publicado, "ok": ok}
+
+
+def links_conferidos(estimativa, censo=None):
+    censo = censo or [conferido("3548500", 418608, False, "4714/n6/{}/v/93/p/2022")]
+    return {"conferido_em": "2026-11-07T23:40:00Z", "metricas": {
+        "populacao_estimada": {"tabela": {"ok": True}, "amostra": estimativa},
+        "populacao_censo": {"tabela": {"ok": False}, "amostra": censo}}}
+
+
 def test_painel_mostra_a_ultima_conferencia_dos_links(tmp_path):
-    amostra_ok = [{"codigo": "3548500", "ok": True}, {"codigo": "1100015", "ok": True}]
-    links = {"conferido_em": "2026-11-07T23:40:00Z", "metricas": {
-        "populacao_estimada": {"tabela": {"ok": True}, "amostra": amostra_ok},
-        "populacao_censo": {"tabela": {"ok": False}, "amostra": [{"codigo": "3548500", "ok": False}]}}}
+    links = links_conferidos([conferido("3548500", 429528), conferido("4206504", 22000)])
     saida = tmp_path / "site"
     site.construir(coleta(), catalogo.carregar(), saida, links)
     html = ler(saida, "municipio/3548500/index.html")
     assert "o link exato devolveu o valor publicado em 2 de 2 municípios sorteados" in html
     assert "Este município estava na amostra e conferiu." in html
     assert 'estado estado--falhou' in html and "a tabela não respondeu" in html
+
+
+@pytest.mark.parametrize("amostra, motivo", [
+    # A conferência usou a estimativa de 2025, e a página mostra a de 2026.
+    ([conferido("3548500", 429528, metrica="6579/n6/{}/v/9324/p/2025")], "foi feita com outro link ou outro período"),
+    # O valor conferido não é o que a página mostra: o IBGE revisou depois.
+    ([conferido("3548500", 429000), conferido("4206504", 22000)], "foi feita com valores diferentes"),
+    # Formato antigo, sem o link nem o valor: não dá para saber o que foi conferido.
+    ([{"codigo": "3548500", "ok": True}], "foi feita com outro link ou outro período"),
+    # Mesmo link, mas sem o valor conferido.
+    ([{k: v for k, v in conferido("3548500", 429528).items() if k != "publicado"}], "foi feita com valores diferentes"),
+])
+def test_conferencia_de_outro_periodo_ou_valor_fica_pendente(tmp_path, amostra, motivo):
+    saida = tmp_path / "site"
+    site.construir(coleta(), catalogo.carregar(), saida, links_conferidos(amostra))
+    for codigo in ("3548500", "4206504"):                 # na amostra ou fora dela, o selo é o mesmo
+        html = ler(saida, f"municipio/{codigo}/index.html")
+        bloco = html.split('id="f-populacao_estimada"')[1].split("</section>")[0]
+        assert f"Conferência pendente: a de 07/11/2026 {motivo}" in bloco
+        assert "estado--ok" not in bloco and "devolveu o valor publicado" not in bloco and "conferiu" not in bloco
+        # A outra métrica, conferida com o período e o valor mostrados, segue com o próprio resultado.
+        assert "a tabela não respondeu" in html.split('id="f-populacao_censo"')[1]
 
 
 def test_sem_conferencia_registrada_diz_isso(construido):

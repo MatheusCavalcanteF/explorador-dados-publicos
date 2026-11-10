@@ -193,5 +193,13 @@ def test_sih_continua_fora_da_publicacao():
     assert cat["bases"]["sih"]["publicacao"] == {"site": False, "releases": False}
     for workflow in (RAIZ / ".github" / "workflows").glob("*.yml"):
         assert "--sih-local" not in workflow.read_text(encoding="utf-8"), workflow.name
-    publicar = (RAIZ / ".github" / "workflows" / "publicar.yml").read_text(encoding="utf-8")
-    assert "pipeline sih" not in publicar and "particoes" not in publicar
+    # No Publicar, o SIH só roda se o catálogo mandar publicar, e com a versão no ar como anterior. O que
+    # ele grava não vira artefato nem entra no site. Os detalhes estão em test_release.py.
+    import yaml
+    passos = yaml.safe_load((RAIZ / ".github" / "workflows" / "publicar.yml").read_text(encoding="utf-8"))["jobs"]
+    for job in passos.values():
+        for passo in job["steps"]:
+            texto = json.dumps(passo, ensure_ascii=False)
+            if "pipeline sih " in texto or "requirements-sih" in texto:
+                assert passo.get("if") == "steps.sih.outputs.publicar == 'true'", passo.get("name")
+            assert "particoes" not in texto and "build/sih" not in texto.replace("--trabalho build/sih --saida build/sih-medicao", "")

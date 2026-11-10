@@ -1,6 +1,43 @@
 // Busca por nome de município, sem acento e sem diferença de maiúsculas.
 // "Santos SP" filtra pela UF. A lista só é baixada quando a pessoa começa a usar o campo.
+
+// A parte sem tela, que os testes rodam fora do navegador.
+const BuscaMunicipios = (() => {
+  const UFS = new Set(['AC', 'AL', 'AM', 'AP', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MG', 'MS', 'MT', 'PA',
+    'PB', 'PE', 'PI', 'PR', 'RJ', 'RN', 'RO', 'RR', 'RS', 'SC', 'SE', 'SP', 'TO']);
+
+  const normalizar = (texto) => texto.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().trim();
+
+  const indexar = (dados) => dados.map(([codigo, nome, uf]) => ({ codigo, nome, uf, chave: normalizar(nome) }));
+
+  const ordenar = (lista, consulta) => lista.sort((a, b) =>
+    (b.chave.startsWith(consulta) - a.chave.startsWith(consulta)) || a.chave.localeCompare(b.chave));
+
+  // Devolve null quando ainda há poucas letras para procurar.
+  // As duas últimas letras só são UF se forem uma sigla que existe, e mesmo assim podem ser parte do
+  // nome: "Sento Sé" fica na Bahia, e SE é Sergipe. Por isso a busca pelo texto inteiro sempre roda, e a
+  // busca com a UF separada só acrescenta resultados, depois dos que casam com o nome inteiro.
+  const procurar = (municipios, texto) => {
+    const inteira = normalizar(texto);
+    if (inteira.length < 2) return null;
+    const achados = ordenar(municipios.filter((m) => m.chave.includes(inteira)), inteira);
+    const final = inteira.match(/^(.+?)[\s,/-]+([a-z]{2})$/);
+    const uf = final ? final[2].toUpperCase() : null;
+    if (final && UFS.has(uf) && final[1].length >= 2) {
+      const nome = final[1];
+      const vistos = new Set(achados.map((m) => m.codigo));
+      achados.push(...ordenar(municipios.filter((m) => m.uf === uf && m.chave.includes(nome) && !vistos.has(m.codigo)), nome));
+    }
+    return achados;
+  };
+
+  return { normalizar, indexar, procurar };
+})();
+
+if (typeof module !== 'undefined') module.exports = BuscaMunicipios;
+
 (() => {
+  if (typeof document === 'undefined') return;
   const form = document.querySelector('.busca');
   const campo = document.getElementById('busca');
   const lista = document.getElementById('resultados');
@@ -13,7 +50,6 @@
     if (primeiro) primeiro.focus();
   });
 
-  const normalizar = (texto) => texto.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().trim();
   let municipios = null;
   let carregando = null;
 
@@ -24,7 +60,7 @@
         return r.json();
       })
       .then((dados) => {
-        municipios = dados.map(([codigo, nome, uf]) => ({ codigo, nome, uf, chave: normalizar(nome) }));
+        municipios = BuscaMunicipios.indexar(dados);
       })
       .catch(() => {
         aviso.textContent = 'Não foi possível carregar a lista de municípios. Use a lista por estado abaixo.';
@@ -34,20 +70,12 @@
 
   const mostrar = () => {
     if (!municipios) return;
-    let consulta = normalizar(campo.value);
-    let uf = null;
-    const final = consulta.match(/^(.+?)[\s,/-]+([a-z]{2})$/);
-    if (final) {
-      [, consulta, uf] = final;
-      uf = uf.toUpperCase();
-    }
+    const candidatos = BuscaMunicipios.procurar(municipios, campo.value);
     lista.replaceChildren();
-    if (consulta.length < 2) {
+    if (candidatos === null) {
       aviso.textContent = '';
       return;
     }
-    const candidatos = municipios.filter((m) => (!uf || m.uf === uf) && m.chave.includes(consulta));
-    candidatos.sort((a, b) => (b.chave.startsWith(consulta) - a.chave.startsWith(consulta)) || a.chave.localeCompare(b.chave));
     for (const m of candidatos.slice(0, 20)) {
       const item = document.createElement('li');
       const link = document.createElement('a');

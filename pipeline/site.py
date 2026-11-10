@@ -112,19 +112,50 @@ def pagina(titulo: str, descricao: str, raiz: str, corpo: str, nota: str, script
 """
 
 
-def _conferencia(links: dict | None, metrica: str, codigo: str) -> str:
-    """Resumo da última conferência dos links desta métrica, com marca e texto, não só cor."""
-    if not links or metrica not in links.get("metricas", {}):
+# Fonte da coleta de cada métrica com link exato conferido; o campo do município tem o nome da métrica.
+FONTE_DA_METRICA = {"populacao_estimada": "estimativa", "populacao_censo": "censo"}
+
+
+def conferencias(links: dict | None, coleta: dict, catalogo: dict) -> dict:
+    """Por métrica, a última conferência dos links e se ela vale para o que o site mostra agora.
+
+    A conferência roda depois da publicação, sobre a coleta daquele dia, e a página seguinte pode mostrar
+    outro período (a estimativa de um ano novo) ou outro valor (uma revisão). Ela só vale se cada link da
+    amostra for o que a página mostra hoje, com o mesmo período, e se o valor conferido for o publicado
+    hoje. Se não, fica pendente até a conferência seguinte, com o motivo.
+    """
+    saida = {}
+    for nome, item in ((links or {}).get("metricas") or {}).items():
+        if nome not in FONTE_DA_METRICA:
+            continue
+        periodo = coleta["fontes"][FONTE_DA_METRICA[nome]]["periodo"]
+        modelo = catalogo["metricas"][nome]["fonte"]["acesso"]["url"]
+        valores = {m["codigo"]: m[nome] for m in coleta["municipios"]}
+        amostra = item["amostra"]
+        pendente = None
+        if any(a.get("url") != modelo.format(municipio=a["codigo"], periodo=periodo) for a in amostra):
+            pendente = f"foi feita com outro link ou outro período, não com o de {periodo} que esta página mostra"
+        elif any("publicado" not in a or a["publicado"] != valores.get(a["codigo"]) for a in amostra):
+            pendente = "foi feita com valores diferentes dos que o site mostra hoje"
+        saida[nome] = {"quando": data(links["conferido_em"]), "pendente": pendente, "total": len(amostra),
+                       "certos": sum(1 for a in amostra if a["ok"]), "tabela": bool(item["tabela"]["ok"]),
+                       "por_codigo": {a["codigo"]: bool(a["ok"]) for a in amostra}}
+    return saida
+
+
+def _conferencia(conferidas: dict | None, metrica: str, codigo: str) -> str:
+    """Resumo da última conferência dos links desta métrica (conferencias), com marca e texto, não só cor."""
+    if not conferidas or metrica not in conferidas:
         return f'<p class="estado">{MARCAS["pendente"]}Link ainda sem conferência registrada.</p>'
-    item = links["metricas"][metrica]
-    quando = data(links["conferido_em"])
-    amostra = [a for a in item["amostra"] if a["codigo"] == codigo]
-    certos = sum(1 for a in item["amostra"] if a["ok"])
-    estado = "ok" if certos == len(item["amostra"]) and item["tabela"]["ok"] else "falhou"
-    texto = (f"Em {quando}, o link exato devolveu o valor publicado em {certos} de {len(item['amostra'])} "
-             f"municípios sorteados, e a tabela {'respondeu' if item['tabela']['ok'] else 'não respondeu'}.")
-    if amostra:
-        texto += " Este município estava na amostra" + (" e conferiu." if amostra[0]["ok"] else ", e o link falhou.")
+    item = conferidas[metrica]
+    if item["pendente"]:
+        texto = f"Conferência pendente: a de {item['quando']} {item['pendente']}."
+        return f'<p class="estado">{MARCAS["pendente"]}{escape(texto)}</p>'
+    estado = "ok" if item["certos"] == item["total"] and item["tabela"] else "falhou"
+    texto = (f"Em {item['quando']}, o link exato devolveu o valor publicado em {item['certos']} de {item['total']} "
+             f"municípios sorteados, e a tabela {'respondeu' if item['tabela'] else 'não respondeu'}.")
+    if codigo in item["por_codigo"]:
+        texto += " Este município estava na amostra" + (" e conferiu." if item["por_codigo"][codigo] else ", e o link falhou.")
     return f'<p class="estado estado--{estado}">{MARCAS[estado]}{escape(texto)}</p>'
 
 
@@ -244,7 +275,8 @@ def _dados_municipio(m: dict, coleta: dict, catalogo: dict, alterado_em: str) ->
 
 def pagina_municipio(m: dict, coleta: dict, catalogo: dict, links: dict | None,
                      revisao: dict | None = None, alterado_em: str | None = None, sih: dict | None = None) -> str:
-    """`sih` são os dados do build local com --sih-local (site_sih.carregar); sem eles, a página não tem SIH."""
+    """`links` é o resultado de conferencias(), já comparado com o que a página mostra. `sih` são os dados do
+    build local com --sih-local (site_sih.carregar); sem eles, a página não tem SIH."""
     fontes, metricas = coleta["fontes"], catalogo["metricas"]
     est, censo = fontes["estimativa"], fontes["censo"]
     linhas = [_linha(f"Estimativa {est['periodo']}", m["populacao_estimada"], " placa__linha--principal"),
@@ -460,6 +492,7 @@ def construir(coleta: dict, catalogo: dict, saida: Path, links: dict | None = No
     enderecos = [("", max(buscadores.desde(f) for f in fontes.values()))]
     por_uf: dict[str, list[dict]] = {}
     por_codigo, geral = revisoes(fontes["estimativa"])
+    links = conferencias(links, coleta, catalogo)
     paginas_municipio = []
     for m in municipios:
         por_uf.setdefault(m["uf"], []).append(m)

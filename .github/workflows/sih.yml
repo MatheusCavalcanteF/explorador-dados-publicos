@@ -2,6 +2,8 @@
 # Nada vai para o site nem para as Releases (o catálogo diz publicacao: {site: false, releases: false}).
 # O único artefato é a medição: tempos, tamanhos e contagens agregadas. Os .dbc, o Parquet mínimo (uma
 # linha por AIH) e as partições ficam na pasta de trabalho e somem com o runner.
+# O ano que não passa no teste de dedução não vira partição, e o passo do SIH fica vermelho. Numa UF sozinha
+# isso é esperado: o teste só vale com as 27. A medição é guardada do mesmo jeito.
 name: SIH (medição)
 
 on:

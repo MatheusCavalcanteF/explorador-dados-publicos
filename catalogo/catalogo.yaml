@@ -128,8 +128,8 @@ bases:
       herdar_padrao_fechado: true
       # Antes de toda publicação, o teste ataca a versão no ar e a candidata juntas. Se ele não rodar, se
       # revelar alguma contagem, ou se a versão no ar não puder ser lida ou não bater com a situação dela,
-      # nada é publicado e o site anterior fica no ar. A etapa no pipeline ainda não existe: até ela
-      # existir, o SIH não pode ser publicado.
+      # nada é publicado e o site anterior fica no ar. A etapa é pipeline/sih_versoes.py: roda em cada ano
+      # que a versão no ar tem, em internações e em óbitos, e o ano que não passa não vira partição.
       ataque_conjunto_obrigatorio: true
       # Em ano aberto, o que é publicado de cada cruzamento fica o da primeira publicação daquele ano até o
       # ano fechar, sem refazer o critério a cada mês. A única exceção é o teste de dedução revelar algo

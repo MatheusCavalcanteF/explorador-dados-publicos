@@ -16,8 +16,9 @@ import time
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
 
-from . import sih_coleta, sih_janela
+from . import sih_coleta, sih_janela, sih_particoes
 from .contrato import ErroDeContrato
+from .sih_particoes import ErroDeParticao, gravar_ano, ler_situacao  # noqa: F401  (usados por quem importa sih)
 
 
 def _tamanho(pasta: Path) -> int:
@@ -163,60 +164,49 @@ def gravar_particao(suprimidas: dict, ano: int, destino: Path, municipios7: dict
     return tamanhos
 
 
-class ErroDeParticao(ErroDeContrato):
-    """As partições de um ano não batem com a situação gravada junto delas."""
+def arquivo_da_margem(medida: str, n: tuple) -> str:
+    return f"margens/{medida}/{'-'.join(n) or 'brasil'}.parquet"
 
 
-def gravar_ano(particoes: Path, ano: int, gravar, situacao: dict) -> dict:
-    """Troca o conjunto inteiro de partições de um ano, de uma vez.
+def gravar_margens(nos: dict, catalogo: dict, ano: int, destino: Path, preliminares: set[str] | frozenset = frozenset(),
+                   multiplo: int = 0, k: int = 5, contagens: tuple = ("internacoes", "obitos")) -> dict:
+    """As margens publicadas de UF e do Brasil (catalogo.margens_publicadas), um Parquet por margem e medida.
 
-    `gravar(pasta)` escreve os arquivos do ano numa pasta nova e devolve o que gravar_particao devolve. A
-    situação do ano (o que foi publicado, o que não foi e por quê) vai junto, com a lista de arquivos, e só
-    então a pasta nova toma o lugar da antiga: um cruzamento que deixou de passar não deixa sobra, e quem
-    lê nunca vê metade de uma versão e metade de outra. A troca são duas renomeações de pasta.
+    O teste de dedução conta com elas como visíveis, e quem guarda uma versão as tem. Por isso vão para a
+    partição do jeito que a tela as mostra: `valor` nulo quando oculta, e em múltiplo de `multiplo` quando o
+    período tem mês preliminar, com `arredondado`. É delas que o ataque conjunto da versão seguinte parte.
     """
-    final = particoes / f"ano={ano}"
-    novo, antigo = particoes / f".ano={ano}.novo", particoes / f".ano={ano}.antigo"
-    for pasta in (novo, antigo):
-        if pasta.exists():
-            shutil.rmtree(pasta)
-    novo.mkdir(parents=True)
-    arquivos = gravar(novo)
-    situacao = situacao | {"arquivos": {nome: {c: v for c, v in info.items() if c != "gzip"}
-                                        for nome, info in sorted(arquivos.items())}}
-    (novo / "situacao.json").write_text(json.dumps(situacao, ensure_ascii=False, indent=1), encoding="utf-8")
-    if final.exists():
-        final.rename(antigo)
-    novo.rename(final)
-    if antigo.exists():
-        shutil.rmtree(antigo)
-    return arquivos
-
-
-def ler_situacao(particoes: Path, ano: int, conferir: bool = True) -> dict:
-    """A situação de um ano e a conferência dos arquivos que ela lista: cada um tem de existir, com o mesmo
-    tamanho e SHA-256. Arquivo ausente é erro; ausência de linha dentro de um arquivo (município sem
-    hospital, mês sem internação) não é. Arquivo a mais, que a situação não lista, não é lido."""
     import hashlib
-    pasta = Path(particoes) / f"ano={ano}"
-    caminho = pasta / "situacao.json"
-    if not caminho.exists():
-        raise ErroDeParticao(f"{pasta}: sem situacao.json; não dá para saber o que foi publicado em {ano}")
-    situacao = json.loads(caminho.read_text(encoding="utf-8"))
-    if "arquivos" not in situacao:
-        raise ErroDeParticao(f"{caminho}: sem a lista de arquivos do ano")
-    for cid in situacao["publicados"]:
-        if not any(nome.startswith(cid + "/") for nome in situacao["arquivos"]):
-            raise ErroDeParticao(f"{caminho}: {cid} consta como publicado, mas nenhum arquivo dele está na lista")
-    if conferir:
-        for nome, info in situacao["arquivos"].items():
-            arquivo = pasta / nome
-            if not arquivo.exists():
-                raise ErroDeParticao(f"{arquivo}: listado em situacao.json de {ano}, mas ausente")
-            bruto = arquivo.read_bytes()
-            if len(bruto) != info["bytes"] or hashlib.sha256(bruto).hexdigest() != info["sha256"]:
-                raise ErroDeParticao(f"{arquivo}: diferente do que situacao.json de {ano} registra")
-    return situacao
+
+    import numpy as np
+    import pyarrow as pa
+    import pyarrow.parquet as pq
+
+    from . import sih_deducao, sih_tabelas as tab, supressao
+    cruzamentos = {tab.colunas_de(c, catalogo) for c in catalogo["cruzamentos"]}
+    tamanhos = {}
+    for medida, margens in catalogo["margens_publicadas"].items():
+        for m in margens:
+            n = tab.no(m)
+            if n in cruzamentos:
+                continue
+            df = nos[n]
+            oculto = supressao.margem_publicada(df, k, medida) != 0
+            valores = df[medida].to_numpy(np.int64)
+            aberto = sih_deducao.periodo_aberto(df, n, ano, set(preliminares))
+            arredondado = (~oculto & aberto & (valores >= k)) if multiplo and medida in contagens else np.zeros(len(df), bool)
+            valores = np.where(arredondado, sih_deducao.arredondar(valores, multiplo or 1), valores)
+            colunas = {c: pa.array(df[c], pa.string()) for c in n}
+            colunas["valor"] = pa.array(valores, pa.int64(), mask=oculto)
+            colunas["oculto"] = pa.array(oculto, pa.bool_())
+            colunas["arredondado"] = pa.array(arredondado, pa.bool_())
+            nome = arquivo_da_margem(medida, n)
+            caminho = destino / nome
+            caminho.parent.mkdir(parents=True, exist_ok=True)
+            pq.write_table(pa.table(colunas), caminho, compression="NONE")
+            bruto = caminho.read_bytes()
+            tamanhos[nome] = {"bytes": len(bruto), "gzip": len(gzip.compress(bruto, 6)), "sha256": hashlib.sha256(bruto).hexdigest()}
+    return tamanhos
 
 
 def resumo_supressao(suprimidas: dict) -> dict:
@@ -454,7 +444,7 @@ def ler_anterior(pasta: Path, ano: int, catalogo: dict) -> tuple[dict, dict]:
     import pandas as pd
 
     from . import sih_tabelas as tab
-    situacao = ler_situacao(pasta, ano)
+    situacao = sih_particoes.ler_publicada(pasta, ano)
     saida = {}
     for c in catalogo["cruzamentos"]:
         if c["id"] not in situacao["publicados"]:
@@ -472,7 +462,7 @@ def ler_anterior(pasta: Path, ano: int, catalogo: dict) -> tuple[dict, dict]:
 def anterior_do_ano(anterior: Path, ano: int, catalogo: dict, fechado: bool) -> tuple[dict | None, dict | None]:
     """O padrão e a situação da versão publicada antes, para um ano. Ano que ela não tinha, e é mais novo
     que todos os dela, é a primeira publicação dele: nada a herdar. Ano que falta no meio é erro."""
-    anos = sorted(int(p.name[4:]) for p in Path(anterior).glob("ano=*") if p.is_dir())
+    anos = sih_particoes.anos_na_pasta(anterior)
     if ano not in anos:
         if anos and ano > anos[-1]:
             return None, None
@@ -483,14 +473,99 @@ def anterior_do_ano(anterior: Path, ano: int, catalogo: dict, fechado: bool) -> 
     return (padrao if versoes.get("herdar_padrao_fechado", True) else None), fixo
 
 
+MEDIDAS_DO_CONJUNTO = ("internacoes", "obitos")
+
+
+def processar_anos(con, tabela: str, jan: sih_janela.Janela, anos: list[int], catalogo: dict, trabalho: Path,
+                   municipios7: dict[str, str], coletado_em: str, versao_arquivos: str, deduzir: bool = True,
+                   anterior: Path | None = None, no_ar_consultada: bool = False, motor: str | None = None,
+                   avisar=print) -> dict:
+    """Cada ano: tabelas, supressão, teste de dedução, ataque conjunto com a versão anterior e a partição.
+
+    Só o ano que passa em tudo vira partição em `trabalho/particoes` (sih_particoes.nao_publicavel). O que
+    reprova, ou que não foi testado, não é gravado, e a partição que uma execução anterior tenha deixado
+    para ele na pasta de trabalho é apagada: ali só fica o que esta execução aprovou. Devolve a medição de
+    cada ano, o resumo das partições e os reprovados com o motivo; um reprovado basta para nada ser publicado.
+    """
+    from . import sih_versoes
+    base = catalogo["bases"]["sih"]
+    k = int(base["supressao"]["k"])
+    prelim_regra = base.get("preliminares") or {}
+    multiplo = int(prelim_regra.get("arredondar_multiplo", 0))
+    contagens = tuple(prelim_regra.get("contagens", ()))
+    obrigatorio = bool((base.get("versoes") or {}).get("ataque_conjunto_obrigatorio", True))
+    anos_anteriores = sih_particoes.anos_na_pasta(anterior) if anterior else []
+    saida = {"anos": {}, "particoes": {}, "reprovados": {}}
+    for ano in anos:
+        preliminares = {str(mes) for mes in jan.meses_preliminares(ano)}
+        antes, fixo = anterior_do_ano(anterior, ano, catalogo, jan.ano_fechado(ano)) if anterior else (None, None)
+        nos, sup, m = construir_ano(con, tabela, ano, catalogo, k, deduzir, jan.ultimo_mes, preliminares,
+                                    antes, jan.ultimo_mes_fechado, fixo)
+        t = time.perf_counter()
+        ded = m.get("deducao_internacoes", {})
+        passou = bool(deduzir and ded.get("passou") and m.get("deducao_obitos", {}).get("passou"))
+        # O ataque conjunto precisa de uma candidata que passou sozinha e de uma versão anterior daquele ano.
+        if ano not in anos_anteriores:
+            conjunto = {"obrigatorio": False, "rodou": False,
+                        "motivo": "primeira publicação do ano" if anterior else "nenhuma versão anterior informada"}
+        elif not passou:
+            conjunto = {"obrigatorio": obrigatorio, "rodou": False, "motivo": "a candidata não passou no teste dela"}
+        else:
+            arred = (multiplo, preliminares, ano) if multiplo and preliminares else None
+            conjunto = sih_versoes.conferir_com_a_no_ar(nos, sup, catalogo_sem(catalogo, m["nao_publicados"]), catalogo,
+                                                        anterior, ano, k, arred, jan.ultimo_mes, jan.ultimo_mes_fechado,
+                                                        motor) | {"obrigatorio": obrigatorio}
+        m["ataque_conjunto"] = conjunto
+        m["segundos"]["ataque_conjunto"] = round(time.perf_counter() - t, 1)
+        t = time.perf_counter()
+        # O que o site precisa saber do ano: o que foi publicado, o que não foi e por quê, os testes e os
+        # arquivos. Do ataque conjunto vai o resumo, sem o detalhe por tabela, que fica na medição.
+        resumo_conjunto = {c: ({x: y for x, y in v.items() if x != "por_no"} if c in MEDIDAS_DO_CONJUNTO else v)
+                           for c, v in conjunto.items()}
+        situacao = {"ano": ano, "coletado_em": coletado_em, "versao_dos_arquivos": versao_arquivos,
+                    "ultimo_mes": jan.ultimo_mes, "ultimo_mes_fechado": jan.ultimo_mes_fechado,
+                    "preliminares": sorted(preliminares), "arredondar_multiplo": prelim_regra.get("arredondar_multiplo"),
+                    "publicados": m["publicados"], "nao_publicados": m["nao_publicados"],
+                    "situacao_fixa": m["situacao_fixa"],
+                    "versao_no_ar": {"consultada": bool(no_ar_consultada), "tinha_o_ano": ano in anos_anteriores},
+                    "deducao": {"rodou": deduzir, "passou": bool(ded.get("passou", False)),
+                                "pequenas_reveladas": ded.get("pequenas_reveladas"),
+                                "obitos_passou": bool(m.get("deducao_obitos", {}).get("passou", False)),
+                                "conjunto": resumo_conjunto}}
+        motivo = sih_particoes.nao_publicavel(situacao)
+        if motivo:
+            sih_particoes.remover_ano(trabalho / "particoes", ano)
+            if deduzir:
+                saida["reprovados"][str(ano)] = motivo
+            saida["particoes"][str(ano)] = {"arquivos": 0, "bytes": 0, "gzip": 0, "maior": None, "nao_gravada": motivo}
+        else:
+            tamanhos = gravar_ano(trabalho / "particoes", ano, lambda pasta: gravar_particao(
+                sup, ano, pasta, municipios7, bool(base["supressao"]["motivo_por_celula"]),
+                {c["id"]: c["metricas"] for c in catalogo["cruzamentos"]}, preliminares, multiplo, k, contagens)
+                | gravar_margens(nos, catalogo, ano, pasta, preliminares, multiplo, k, contagens), situacao)
+            saida["particoes"][str(ano)] = {"arquivos": len(tamanhos), "bytes": sum(v["bytes"] for v in tamanhos.values()),
+                                            "gzip": sum(v["gzip"] for v in tamanhos.values()),
+                                            "maior": max(tamanhos.items(), key=lambda kv: kv[1]["bytes"]) if tamanhos else None}
+        m["particao_gravada"] = not motivo
+        m["segundos"]["gravar"] = round(time.perf_counter() - t, 1)
+        saida["anos"][str(ano)] = m
+        avisar(f"SIH {ano}: {m['internacoes']} internações; dedução: {ded.get('pequenas_reveladas', '-')} contagens "
+               f"pequenas reveladas; ataque conjunto: {'passou' if conjunto.get('passou') else conjunto.get('motivo')}; "
+               f"{'SEM PARTIÇÃO: ' + motivo if motivo else 'partição gravada'}; {m['segundos']}")
+    return saida
+
+
 def executar(coleta_ibge: dict, catalogo: dict, trabalho: Path, saida: Path, ufs: list[str] | None = None,
              anos: list[int] | None = None, processos: int = 4, origem_local: Path | None = None,
              manter_dbc: bool = False, deduzir: bool = True, listagem: dict | None = None, avisar=print,
-             anterior: Path | None = None) -> dict:
+             anterior: Path | None = None, no_ar_consultada: bool = False, motor: str | None = None) -> dict:
     """A execução inteira. Devolve a medição, que é o único arquivo gravado fora da pasta de trabalho.
 
     `anterior` é a pasta de partições da versão publicada antes: nos períodos já fechados, a nova herda o
-    padrão de células ocultas dela, para que quem guardou as duas não cruze um padrão com o outro.
+    padrão de células ocultas dela, para que quem guardou as duas não cruze um padrão com o outro, e cada
+    ano que ela tem passa pelo ataque conjunto (sih_versoes). `no_ar_consultada` diz que `anterior`, ou a
+    falta dela, veio da consulta às Releases (release.versao_no_ar), e não de uma pasta escolhida à mão.
+    Ano que não passa em todos os testes não vira partição, e a medição o lista em `reprovados`.
     """
     import duckdb
 
@@ -529,38 +604,11 @@ def executar(coleta_ibge: dict, catalogo: dict, trabalho: Path, saida: Path, ufs
     con.execute(f"SET threads = {max(1, processos)}")
     caminhos = [str(trabalho / "min" / (a[:-4] + ".parquet")).replace("\\", "/") for a in arquivos]
     con.execute(f"CREATE VIEW aih AS SELECT * FROM read_parquet({caminhos!r})")
-    medicao["anos"] = {}
-    medicao["particoes"] = {}
-    prelim_regra = base.get("preliminares") or {}
     versao_arquivos = max(r["modificado_no_ftp"] for r in coleta["arquivos"])
-    for ano in anos:
-        preliminares = {str(mes) for mes in jan.meses_preliminares(ano)}
-        antes, fixo = anterior_do_ano(anterior, ano, catalogo, jan.ano_fechado(ano)) if anterior else (None, None)
-        _, sup, m = construir_ano(con, "aih", ano, catalogo, k, deduzir, jan.ultimo_mes, preliminares,
-                                  antes, jan.ultimo_mes_fechado, fixo)
-        t = time.perf_counter()
-        ded = m.get("deducao_internacoes", {})
-        # O que o site precisa saber do ano: o que foi publicado, o que não foi e por quê, o teste e os arquivos.
-        situacao = {"ano": ano, "coletado_em": coletado_em, "versao_dos_arquivos": versao_arquivos,
-                    "ultimo_mes": jan.ultimo_mes, "ultimo_mes_fechado": jan.ultimo_mes_fechado,
-                    "preliminares": sorted(preliminares), "arredondar_multiplo": prelim_regra.get("arredondar_multiplo"),
-                    "publicados": m["publicados"], "nao_publicados": m["nao_publicados"],
-                    "situacao_fixa": m["situacao_fixa"],
-                    "deducao": {"rodou": deduzir, "passou": ded.get("passou", False),
-                                "pequenas_reveladas": ded.get("pequenas_reveladas"),
-                                "obitos_passou": m.get("deducao_obitos", {}).get("passou", False)}}
-        tamanhos = gravar_ano(trabalho / "particoes", ano, lambda pasta: gravar_particao(
-            sup, ano, pasta, municipios7, bool(base["supressao"]["motivo_por_celula"]),
-            {c["id"]: c["metricas"] for c in catalogo["cruzamentos"]}, preliminares,
-            int(prelim_regra.get("arredondar_multiplo", 0)), k, tuple(prelim_regra.get("contagens", ()))), situacao)
-        m["segundos"]["gravar"] = round(time.perf_counter() - t, 1)
-        medicao["anos"][str(ano)] = m
-        medicao["particoes"][str(ano)] = {"arquivos": len(tamanhos), "bytes": sum(v["bytes"] for v in tamanhos.values()),
-                                          "gzip": sum(v["gzip"] for v in tamanhos.values()),
-                                          "maior": max(tamanhos.items(), key=lambda kv: kv[1]["bytes"]) if tamanhos else None}
-        ded = m.get("deducao_internacoes", {})
-        avisar(f"SIH {ano}: {m['internacoes']} internações; dedução: {ded.get('pequenas_reveladas', '-')} contagens "
-               f"pequenas reveladas; {m['segundos']}")
+    medicao |= processar_anos(con, "aih", jan, anos, catalogo, trabalho, municipios7, coletado_em, versao_arquivos,
+                              deduzir, anterior, no_ar_consultada, motor, avisar)
+    # Um ano reprovado basta: a versão inteira não pode ser publicada, e o site anterior continua no ar.
+    medicao["publicavel"] = bool(deduzir) and not medicao["reprovados"]
     medicao["disco"] = {"trabalho_bytes": _tamanho(trabalho), "min_bytes": _tamanho(trabalho / "min"),
                         "dbc_bytes": _tamanho(trabalho / "dbc"), "particoes_bytes": _tamanho(trabalho / "particoes")}
     medicao["ambiente_fim"] = ambiente()
@@ -568,3 +616,5 @@ def executar(coleta_ibge: dict, catalogo: dict, trabalho: Path, saida: Path, ufs
     saida.mkdir(parents=True, exist_ok=True)
     (saida / "medicao.json").write_text(json.dumps(medicao, ensure_ascii=False, indent=1), encoding="utf-8")
     return medicao
+
+

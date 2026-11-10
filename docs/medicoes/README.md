@@ -40,6 +40,7 @@ Node: `@duckdb/duckdb-wasm@1.33.1-dev57.0`, `playwright-core@1.65.0`, `hyparquet
 | `scripts/medir_versoes_f1b.py` | F1b: dedução entre duas versões publicadas (o par real de SP e pares simulados de processamento tardio, nas 27 UFs) e o efeito de arredondar os meses preliminares |
 | `scripts/medir_trava_f1b.py` | F1b: a trava de queda do pipeline no par real de SP, por mês da alta, e o total por UF e competência |
 | `scripts/medir_versoes_transicao.py` | F1b, com a regra decidida: versões atacadas juntas, na transição em que um mês ou o ano fecha e em três versões seguidas, com e sem a herança do padrão dos períodos fechados |
+| `scripts/simular_ciclo_sih.py` | F1b: o ciclo de publicação pelo próprio pipeline, nas 27 UFs: primeira publicação, Release baixada e conferida, versão seguinte com a versão no ar, e versões com um ano reprovado (sem a herança, sem o reforço), conferindo que só o ano aprovado tem partição |
 | `scripts/medir_mudanca_tardia.py` | F1b: quanto um mês ainda muda depois de 6, 9 e 12 meses, por UF, depois do fechamento (listagem do FTP) e depois do próprio mês (processamento tardio e o par real de SP) |
 | `scripts/resumo.py`, `resumo_carga.py` | Tabelas-resumo dos agregados e do carregamento |
 | `scripts/derivar_numeros.py` | Números do plano que são contas sobre outros resultados, com origem e cálculo |
@@ -110,6 +111,7 @@ Os testes de tempo e de igualdade precisam dos dados no site. A partir dos Parqu
 | `versoes_f1b.json` | Saída de `medir_versoes_f1b.py`: diferenças exatas de 1 a 4 entre versões, por política, e o erro do arredondamento |
 | `trava_f1b.json` | Saída de `medir_trava_f1b.py` |
 | `versoes_transicao_f1b.json` | Saída de `medir_versoes_transicao.py`: teste de cada versão, das versões juntas e diferenças de 1 a 4 por par; os grupos sem herança em `sem_heranca` |
+| `ciclo_publicacao_f1b.json` | Saída de `simular_ciclo_sih.py`: por cenário e ano, o teste, o ataque conjunto por tabela, se a partição foi gravada e se confere com a situação |
 | `mudanca_tardia_f1b.json` | Saída de `medir_mudanca_tardia.py`. Percentuais com uma casa; resto ou variação de 1 a 4 sai nulo |
 | `sih_local_f1b.json` | Resumo da execução local do pipeline com as regras decididas (teste por ano, critério, o que não foi publicado e por quê) e o peso das páginas do build local com o SIH |
 | `particoes_f1b.json` | Tamanho das partições do SIH por ano, com só as métricas do catálogo em cada cruzamento e com dias e valor em todos |

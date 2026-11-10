@@ -1,0 +1,1085 @@
+{
+ "cenarios": {
+  "primeira": {
+   "cenario": "primeira",
+   "ultima_competencia": 202604,
+   "fechado_ate": 202411,
+   "anos_reprovados": {},
+   "anos_com_particao": [
+    2021,
+    2022,
+    2023,
+    2024,
+    2025,
+    2026
+   ],
+   "publicavel": true,
+   "segundos": 193,
+   "anos": {
+    "2021": {
+     "internacoes": 11559233,
+     "meses_preliminares": 0,
+     "publicados": 12,
+     "nao_publicados": [
+      "sih_hosp_mes_carater",
+      "sih_res_mes_urgencia"
+     ],
+     "herdou_da_anterior": 0,
+     "situacao_fixa": false,
+     "rodadas_de_reforco": 1,
+     "teste_sozinha": {
+      "internacoes": 0,
+      "passou": true,
+      "obitos_passou": true
+     },
+     "ataque_conjunto": {
+      "obrigatorio": false,
+      "rodou": false,
+      "motivo": "nenhuma versão anterior informada"
+     },
+     "reprovado": null,
+     "particao_gravada": true,
+     "particao_confere": true,
+     "arquivos": 333,
+     "bytes": 6714457,
+     "segundos": {
+      "base": 7.0,
+      "fechamento": 1.1,
+      "supressao": 23.6,
+      "deducao_obitos": 0.0,
+      "ataque_conjunto": 0.0,
+      "gravar": 2.2
+     }
+    },
+    "2022": {
+     "internacoes": 12363273,
+     "meses_preliminares": 0,
+     "publicados": 14,
+     "nao_publicados": [],
+     "herdou_da_anterior": 0,
+     "situacao_fixa": false,
+     "rodadas_de_reforco": 1,
+     "teste_sozinha": {
+      "internacoes": 0,
+      "passou": true,
+      "obitos_passou": true
+     },
+     "ataque_conjunto": {
+      "obrigatorio": false,
+      "rodou": false,
+      "motivo": "nenhuma versão anterior informada"
+     },
+     "reprovado": null,
+     "particao_gravada": true,
+     "particao_confere": true,
+     "arquivos": 387,
+     "bytes": 7655409,
+     "segundos": {
+      "base": 11.5,
+      "fechamento": 1.4,
+      "supressao": 15.3,
+      "deducao_obitos": 0.1,
+      "ataque_conjunto": 0.0,
+      "gravar": 2.5
+     }
+    },
+    "2023": {
+     "internacoes": 13229794,
+     "meses_preliminares": 0,
+     "publicados": 14,
+     "nao_publicados": [],
+     "herdou_da_anterior": 0,
+     "situacao_fixa": false,
+     "rodadas_de_reforco": 1,
+     "teste_sozinha": {
+      "internacoes": 0,
+      "passou": true,
+      "obitos_passou": true
+     },
+     "ataque_conjunto": {
+      "obrigatorio": false,
+      "rodou": false,
+      "motivo": "nenhuma versão anterior informada"
+     },
+     "reprovado": null,
+     "particao_gravada": true,
+     "particao_confere": true,
+     "arquivos": 387,
+     "bytes": 7761164,
+     "segundos": {
+      "base": 14.7,
+      "fechamento": 1.2,
+      "supressao": 17.0,
+      "deducao_obitos": 0.0,
+      "ataque_conjunto": 0.0,
+      "gravar": 2.5
+     }
+    },
+    "2024": {
+     "internacoes": 14029372,
+     "meses_preliminares": 1,
+     "publicados": 14,
+     "nao_publicados": [],
+     "herdou_da_anterior": 0,
+     "situacao_fixa": false,
+     "rodadas_de_reforco": 0,
+     "teste_sozinha": {
+      "internacoes": 0,
+      "passou": true,
+      "obitos_passou": true
+     },
+     "ataque_conjunto": {
+      "obrigatorio": false,
+      "rodou": false,
+      "motivo": "nenhuma versão anterior informada"
+     },
+     "reprovado": null,
+     "particao_gravada": true,
+     "particao_confere": true,
+     "arquivos": 387,
+     "bytes": 7603777,
+     "segundos": {
+      "base": 17.8,
+      "fechamento": 1.3,
+      "supressao": 10.7,
+      "deducao_obitos": 0.1,
+      "ataque_conjunto": 0.0,
+      "gravar": 2.7
+     }
+    },
+    "2025": {
+     "internacoes": 14545964,
+     "meses_preliminares": 12,
+     "publicados": 14,
+     "nao_publicados": [],
+     "herdou_da_anterior": 0,
+     "situacao_fixa": false,
+     "rodadas_de_reforco": 0,
+     "teste_sozinha": {
+      "internacoes": 0,
+      "passou": true,
+      "obitos_passou": true
+     },
+     "ataque_conjunto": {
+      "obrigatorio": false,
+      "rodou": false,
+      "motivo": "nenhuma versão anterior informada"
+     },
+     "reprovado": null,
+     "particao_gravada": true,
+     "particao_confere": true,
+     "arquivos": 387,
+     "bytes": 7056273,
+     "segundos": {
+      "base": 19.6,
+      "fechamento": 1.2,
+      "supressao": 10.8,
+      "deducao_obitos": 0.1,
+      "ataque_conjunto": 0.0,
+      "gravar": 2.7
+     }
+    },
+    "2026": {
+     "internacoes": 4136634,
+     "meses_preliminares": 4,
+     "publicados": 13,
+     "nao_publicados": [
+      "sih_res_tri_capitulo"
+     ],
+     "herdou_da_anterior": 0,
+     "situacao_fixa": false,
+     "rodadas_de_reforco": 0,
+     "teste_sozinha": {
+      "internacoes": 0,
+      "passou": true,
+      "obitos_passou": true
+     },
+     "ataque_conjunto": {
+      "obrigatorio": false,
+      "rodou": false,
+      "motivo": "nenhuma versão anterior informada"
+     },
+     "reprovado": null,
+     "particao_gravada": true,
+     "particao_confere": true,
+     "arquivos": 360,
+     "bytes": 3519613,
+     "segundos": {
+      "base": 12.3,
+      "fechamento": 0.7,
+      "supressao": 10.6,
+      "deducao_obitos": 0.0,
+      "ataque_conjunto": 0.0,
+      "gravar": 1.6
+     }
+    }
+   }
+  },
+  "release": {
+   "anos": [
+    2021,
+    2022,
+    2023,
+    2024,
+    2025,
+    2026
+   ],
+   "pacotes_bytes": 40959458,
+   "arquivos_conferidos_por_sha256": 2241
+  },
+  "seguinte": {
+   "cenario": "seguinte",
+   "ultima_competencia": 202605,
+   "fechado_ate": 202412,
+   "anos_reprovados": {},
+   "anos_com_particao": [
+    2021,
+    2022,
+    2023,
+    2024,
+    2025,
+    2026
+   ],
+   "publicavel": true,
+   "segundos": 362,
+   "anos": {
+    "2021": {
+     "internacoes": 11559233,
+     "meses_preliminares": 0,
+     "publicados": 12,
+     "nao_publicados": [
+      "sih_hosp_mes_carater",
+      "sih_res_mes_urgencia"
+     ],
+     "herdou_da_anterior": 12,
+     "situacao_fixa": false,
+     "rodadas_de_reforco": 0,
+     "teste_sozinha": {
+      "internacoes": 0,
+      "passou": true,
+      "obitos_passou": true
+     },
+     "ataque_conjunto": {
+      "obrigatorio": true,
+      "rodou": true,
+      "passou": true,
+      "motor": "intervalos",
+      "versao_no_ar_coletada_em": "simulado-202604",
+      "internacoes": {
+       "reveladas_na_versao_no_ar": 0,
+       "reveladas_na_candidata": 0,
+       "diferencas_de_1_a_k-1": 0,
+       "por_no": {
+        "no_ar": {},
+        "candidata": {},
+        "diferencas": {}
+       },
+       "motor": "intervalos",
+       "total": 0
+      },
+      "obitos": {
+       "reveladas_na_versao_no_ar": 0,
+       "reveladas_na_candidata": 0,
+       "diferencas_de_1_a_k-1": 0,
+       "por_no": {
+        "no_ar": {},
+        "candidata": {},
+        "diferencas": {}
+       },
+       "motor": "intervalos",
+       "total": 0
+      }
+     },
+     "reprovado": null,
+     "particao_gravada": true,
+     "particao_confere": true,
+     "arquivos": 333,
+     "bytes": 6714457,
+     "segundos": {
+      "base": 13.7,
+      "fechamento": 1.2,
+      "supressao": 17.8,
+      "deducao_obitos": 0.1,
+      "ataque_conjunto": 18.2,
+      "gravar": 2.2
+     }
+    },
+    "2022": {
+     "internacoes": 12363273,
+     "meses_preliminares": 0,
+     "publicados": 14,
+     "nao_publicados": [],
+     "herdou_da_anterior": 14,
+     "situacao_fixa": false,
+     "rodadas_de_reforco": 0,
+     "teste_sozinha": {
+      "internacoes": 0,
+      "passou": true,
+      "obitos_passou": true
+     },
+     "ataque_conjunto": {
+      "obrigatorio": true,
+      "rodou": true,
+      "passou": true,
+      "motor": "intervalos",
+      "versao_no_ar_coletada_em": "simulado-202604",
+      "internacoes": {
+       "reveladas_na_versao_no_ar": 0,
+       "reveladas_na_candidata": 0,
+       "diferencas_de_1_a_k-1": 0,
+       "por_no": {
+        "no_ar": {},
+        "candidata": {},
+        "diferencas": {}
+       },
+       "motor": "intervalos",
+       "total": 0
+      },
+      "obitos": {
+       "reveladas_na_versao_no_ar": 0,
+       "reveladas_na_candidata": 0,
+       "diferencas_de_1_a_k-1": 0,
+       "por_no": {
+        "no_ar": {},
+        "candidata": {},
+        "diferencas": {}
+       },
+       "motor": "intervalos",
+       "total": 0
+      }
+     },
+     "reprovado": null,
+     "particao_gravada": true,
+     "particao_confere": true,
+     "arquivos": 387,
+     "bytes": 7655409,
+     "segundos": {
+      "base": 21.1,
+      "fechamento": 1.1,
+      "supressao": 11.4,
+      "deducao_obitos": 0.1,
+      "ataque_conjunto": 20.9,
+      "gravar": 2.6
+     }
+    },
+    "2023": {
+     "internacoes": 13229794,
+     "meses_preliminares": 0,
+     "publicados": 14,
+     "nao_publicados": [],
+     "herdou_da_anterior": 14,
+     "situacao_fixa": false,
+     "rodadas_de_reforco": 0,
+     "teste_sozinha": {
+      "internacoes": 0,
+      "passou": true,
+      "obitos_passou": true
+     },
+     "ataque_conjunto": {
+      "obrigatorio": true,
+      "rodou": true,
+      "passou": true,
+      "motor": "intervalos",
+      "versao_no_ar_coletada_em": "simulado-202604",
+      "internacoes": {
+       "reveladas_na_versao_no_ar": 0,
+       "reveladas_na_candidata": 0,
+       "diferencas_de_1_a_k-1": 0,
+       "por_no": {
+        "no_ar": {},
+        "candidata": {},
+        "diferencas": {}
+       },
+       "motor": "intervalos",
+       "total": 0
+      },
+      "obitos": {
+       "reveladas_na_versao_no_ar": 0,
+       "reveladas_na_candidata": 0,
+       "diferencas_de_1_a_k-1": 0,
+       "por_no": {
+        "no_ar": {},
+        "candidata": {},
+        "diferencas": {}
+       },
+       "motor": "intervalos",
+       "total": 0
+      }
+     },
+     "reprovado": null,
+     "particao_gravada": true,
+     "particao_confere": true,
+     "arquivos": 387,
+     "bytes": 7761164,
+     "segundos": {
+      "base": 20.5,
+      "fechamento": 1.4,
+      "supressao": 11.6,
+      "deducao_obitos": 0.1,
+      "ataque_conjunto": 20.8,
+      "gravar": 2.7
+     }
+    },
+    "2024": {
+     "internacoes": 14029372,
+     "meses_preliminares": 0,
+     "publicados": 14,
+     "nao_publicados": [],
+     "herdou_da_anterior": 14,
+     "situacao_fixa": false,
+     "rodadas_de_reforco": 2,
+     "teste_sozinha": {
+      "internacoes": 0,
+      "passou": true,
+      "obitos_passou": true
+     },
+     "ataque_conjunto": {
+      "obrigatorio": true,
+      "rodou": true,
+      "passou": true,
+      "motor": "intervalos",
+      "versao_no_ar_coletada_em": "simulado-202604",
+      "internacoes": {
+       "reveladas_na_versao_no_ar": 0,
+       "reveladas_na_candidata": 0,
+       "diferencas_de_1_a_k-1": 0,
+       "por_no": {
+        "no_ar": {},
+        "candidata": {},
+        "diferencas": {}
+       },
+       "motor": "intervalos",
+       "total": 0
+      },
+      "obitos": {
+       "reveladas_na_versao_no_ar": 0,
+       "reveladas_na_candidata": 0,
+       "diferencas_de_1_a_k-1": 0,
+       "por_no": {
+        "no_ar": {},
+        "candidata": {},
+        "diferencas": {}
+       },
+       "motor": "intervalos",
+       "total": 0
+      }
+     },
+     "reprovado": null,
+     "particao_gravada": true,
+     "particao_confere": true,
+     "arquivos": 387,
+     "bytes": 7841829,
+     "segundos": {
+      "base": 25.0,
+      "fechamento": 1.3,
+      "supressao": 27.7,
+      "deducao_obitos": 0.1,
+      "ataque_conjunto": 30.3,
+      "gravar": 2.9
+     }
+    },
+    "2025": {
+     "internacoes": 14546743,
+     "meses_preliminares": 12,
+     "publicados": 14,
+     "nao_publicados": [],
+     "herdou_da_anterior": 14,
+     "situacao_fixa": true,
+     "rodadas_de_reforco": 0,
+     "teste_sozinha": {
+      "internacoes": 0,
+      "passou": true,
+      "obitos_passou": true
+     },
+     "ataque_conjunto": {
+      "obrigatorio": true,
+      "rodou": true,
+      "passou": true,
+      "motor": "intervalos",
+      "versao_no_ar_coletada_em": "simulado-202604",
+      "internacoes": {
+       "reveladas_na_versao_no_ar": 0,
+       "reveladas_na_candidata": 0,
+       "diferencas_de_1_a_k-1": 0,
+       "por_no": {
+        "no_ar": {},
+        "candidata": {},
+        "diferencas": {}
+       },
+       "motor": "intervalos",
+       "total": 0
+      },
+      "obitos": {
+       "reveladas_na_versao_no_ar": 0,
+       "reveladas_na_candidata": 0,
+       "diferencas_de_1_a_k-1": 0,
+       "por_no": {
+        "no_ar": {},
+        "candidata": {},
+        "diferencas": {}
+       },
+       "motor": "intervalos",
+       "total": 0
+      }
+     },
+     "reprovado": null,
+     "particao_gravada": true,
+     "particao_confere": true,
+     "arquivos": 387,
+     "bytes": 7057472,
+     "segundos": {
+      "base": 26.9,
+      "fechamento": 1.3,
+      "supressao": 12.1,
+      "deducao_obitos": 0.1,
+      "ataque_conjunto": 19.7,
+      "gravar": 2.7
+     }
+    },
+    "2026": {
+     "internacoes": 5399015,
+     "meses_preliminares": 5,
+     "publicados": 13,
+     "nao_publicados": [
+      "sih_res_tri_capitulo"
+     ],
+     "herdou_da_anterior": 13,
+     "situacao_fixa": true,
+     "rodadas_de_reforco": 0,
+     "teste_sozinha": {
+      "internacoes": 0,
+      "passou": true,
+      "obitos_passou": true
+     },
+     "ataque_conjunto": {
+      "obrigatorio": true,
+      "rodou": true,
+      "passou": true,
+      "motor": "intervalos",
+      "versao_no_ar_coletada_em": "simulado-202604",
+      "internacoes": {
+       "reveladas_na_versao_no_ar": 0,
+       "reveladas_na_candidata": 0,
+       "diferencas_de_1_a_k-1": 0,
+       "por_no": {
+        "no_ar": {},
+        "candidata": {},
+        "diferencas": {}
+       },
+       "motor": "intervalos",
+       "total": 0
+      },
+      "obitos": {
+       "reveladas_na_versao_no_ar": 0,
+       "reveladas_na_candidata": 0,
+       "diferencas_de_1_a_k-1": 0,
+       "por_no": {
+        "no_ar": {},
+        "candidata": {},
+        "diferencas": {}
+       },
+       "motor": "intervalos",
+       "total": 0
+      }
+     },
+     "reprovado": null,
+     "particao_gravada": true,
+     "particao_confere": true,
+     "arquivos": 360,
+     "bytes": 3832460,
+     "segundos": {
+      "base": 18.1,
+      "fechamento": 0.8,
+      "supressao": 6.0,
+      "deducao_obitos": 0.1,
+      "ataque_conjunto": 11.8,
+      "gravar": 1.6
+     }
+    }
+   }
+  },
+  "sem_heranca": {
+   "cenario": "sem_heranca",
+   "ultima_competencia": 202605,
+   "fechado_ate": 202412,
+   "anos_reprovados": {
+    "2024": "o ataque conjunto com a versão no ar não passou: 36 contagem(ns) de 1 a 4 revelada(s) com as duas versões juntas"
+   },
+   "anos_com_particao": [
+    2021,
+    2022,
+    2023,
+    2025,
+    2026
+   ],
+   "publicavel": false,
+   "segundos": 392,
+   "anos": {
+    "2021": {
+     "internacoes": 11559233,
+     "meses_preliminares": 0,
+     "publicados": 12,
+     "nao_publicados": [
+      "sih_hosp_mes_carater",
+      "sih_res_mes_urgencia"
+     ],
+     "herdou_da_anterior": 0,
+     "situacao_fixa": false,
+     "rodadas_de_reforco": 1,
+     "teste_sozinha": {
+      "internacoes": 0,
+      "passou": true,
+      "obitos_passou": true
+     },
+     "ataque_conjunto": {
+      "obrigatorio": true,
+      "rodou": true,
+      "passou": true,
+      "motor": "intervalos",
+      "versao_no_ar_coletada_em": "simulado-202604",
+      "internacoes": {
+       "reveladas_na_versao_no_ar": 0,
+       "reveladas_na_candidata": 0,
+       "diferencas_de_1_a_k-1": 0,
+       "por_no": {
+        "no_ar": {},
+        "candidata": {},
+        "diferencas": {}
+       },
+       "motor": "intervalos",
+       "total": 0
+      },
+      "obitos": {
+       "reveladas_na_versao_no_ar": 0,
+       "reveladas_na_candidata": 0,
+       "diferencas_de_1_a_k-1": 0,
+       "por_no": {
+        "no_ar": {},
+        "candidata": {},
+        "diferencas": {}
+       },
+       "motor": "intervalos",
+       "total": 0
+      }
+     },
+     "reprovado": null,
+     "particao_gravada": true,
+     "particao_confere": true,
+     "arquivos": 333,
+     "bytes": 6714457,
+     "segundos": {
+      "base": 12.8,
+      "fechamento": 1.1,
+      "supressao": 29.4,
+      "deducao_obitos": 0.1,
+      "ataque_conjunto": 17.4,
+      "gravar": 2.2
+     }
+    },
+    "2022": {
+     "internacoes": 12363273,
+     "meses_preliminares": 0,
+     "publicados": 14,
+     "nao_publicados": [],
+     "herdou_da_anterior": 0,
+     "situacao_fixa": false,
+     "rodadas_de_reforco": 1,
+     "teste_sozinha": {
+      "internacoes": 0,
+      "passou": true,
+      "obitos_passou": true
+     },
+     "ataque_conjunto": {
+      "obrigatorio": true,
+      "rodou": true,
+      "passou": true,
+      "motor": "intervalos",
+      "versao_no_ar_coletada_em": "simulado-202604",
+      "internacoes": {
+       "reveladas_na_versao_no_ar": 0,
+       "reveladas_na_candidata": 0,
+       "diferencas_de_1_a_k-1": 0,
+       "por_no": {
+        "no_ar": {},
+        "candidata": {},
+        "diferencas": {}
+       },
+       "motor": "intervalos",
+       "total": 0
+      },
+      "obitos": {
+       "reveladas_na_versao_no_ar": 0,
+       "reveladas_na_candidata": 0,
+       "diferencas_de_1_a_k-1": 0,
+       "por_no": {
+        "no_ar": {},
+        "candidata": {},
+        "diferencas": {}
+       },
+       "motor": "intervalos",
+       "total": 0
+      }
+     },
+     "reprovado": null,
+     "particao_gravada": true,
+     "particao_confere": true,
+     "arquivos": 387,
+     "bytes": 7655409,
+     "segundos": {
+      "base": 21.4,
+      "fechamento": 1.3,
+      "supressao": 20.0,
+      "deducao_obitos": 0.1,
+      "ataque_conjunto": 23.2,
+      "gravar": 2.7
+     }
+    },
+    "2023": {
+     "internacoes": 13229794,
+     "meses_preliminares": 0,
+     "publicados": 14,
+     "nao_publicados": [],
+     "herdou_da_anterior": 0,
+     "situacao_fixa": false,
+     "rodadas_de_reforco": 1,
+     "teste_sozinha": {
+      "internacoes": 0,
+      "passou": true,
+      "obitos_passou": true
+     },
+     "ataque_conjunto": {
+      "obrigatorio": true,
+      "rodou": true,
+      "passou": true,
+      "motor": "intervalos",
+      "versao_no_ar_coletada_em": "simulado-202604",
+      "internacoes": {
+       "reveladas_na_versao_no_ar": 0,
+       "reveladas_na_candidata": 0,
+       "diferencas_de_1_a_k-1": 0,
+       "por_no": {
+        "no_ar": {},
+        "candidata": {},
+        "diferencas": {}
+       },
+       "motor": "intervalos",
+       "total": 0
+      },
+      "obitos": {
+       "reveladas_na_versao_no_ar": 0,
+       "reveladas_na_candidata": 0,
+       "diferencas_de_1_a_k-1": 0,
+       "por_no": {
+        "no_ar": {},
+        "candidata": {},
+        "diferencas": {}
+       },
+       "motor": "intervalos",
+       "total": 0
+      }
+     },
+     "reprovado": null,
+     "particao_gravada": true,
+     "particao_confere": true,
+     "arquivos": 387,
+     "bytes": 7761164,
+     "segundos": {
+      "base": 24.9,
+      "fechamento": 1.2,
+      "supressao": 17.6,
+      "deducao_obitos": 0.1,
+      "ataque_conjunto": 21.4,
+      "gravar": 2.7
+     }
+    },
+    "2024": {
+     "internacoes": 14029372,
+     "meses_preliminares": 0,
+     "publicados": 14,
+     "nao_publicados": [],
+     "herdou_da_anterior": 0,
+     "situacao_fixa": false,
+     "rodadas_de_reforco": 1,
+     "teste_sozinha": {
+      "internacoes": 0,
+      "passou": true,
+      "obitos_passou": true
+     },
+     "ataque_conjunto": {
+      "obrigatorio": true,
+      "rodou": true,
+      "passou": false,
+      "motor": "intervalos",
+      "versao_no_ar_coletada_em": "simulado-202604",
+      "motivo": "36 contagem(ns) de 1 a 4 revelada(s) com as duas versões juntas",
+      "internacoes": {
+       "reveladas_na_versao_no_ar": 18,
+       "reveladas_na_candidata": 18,
+       "diferencas_de_1_a_k-1": 0,
+       "por_no": {
+        "no_ar": {
+         "mun_hosp+mes+carater": 1,
+         "mun_hosp+mes+urgencia": 1,
+         "mun_hosp+tri+carater": 1,
+         "mun_res+mes+faixa5": 11,
+         "mun_res+tri+capitulo": 1,
+         "mun_hosp+tri+urgencia": 1,
+         "mun_hosp+mes": 1,
+         "mun_hosp+tri": 1
+        },
+        "candidata": {
+         "mun_hosp+mes+carater": 1,
+         "mun_hosp+mes+urgencia": 1,
+         "mun_hosp+tri+carater": 1,
+         "mun_res+mes+faixa5": 11,
+         "mun_res+tri+capitulo": 1,
+         "mun_hosp+tri+urgencia": 1,
+         "mun_hosp+mes": 1,
+         "mun_hosp+tri": 1
+        },
+        "diferencas": {}
+       },
+       "motor": "intervalos",
+       "total": 36
+      },
+      "obitos": {
+       "reveladas_na_versao_no_ar": 0,
+       "reveladas_na_candidata": 0,
+       "diferencas_de_1_a_k-1": 0,
+       "por_no": {
+        "no_ar": {},
+        "candidata": {},
+        "diferencas": {}
+       },
+       "motor": "intervalos",
+       "total": 0
+      }
+     },
+     "reprovado": "o ataque conjunto com a versão no ar não passou: 36 contagem(ns) de 1 a 4 revelada(s) com as duas versões juntas",
+     "particao_gravada": false,
+     "particao_confere": null,
+     "arquivos": 0,
+     "bytes": 0,
+     "segundos": {
+      "base": 26.5,
+      "fechamento": 1.3,
+      "supressao": 20.8,
+      "deducao_obitos": 0.1,
+      "ataque_conjunto": 33.0,
+      "gravar": 0.0
+     }
+    },
+    "2025": {
+     "internacoes": 14546743,
+     "meses_preliminares": 12,
+     "publicados": 14,
+     "nao_publicados": [],
+     "herdou_da_anterior": 0,
+     "situacao_fixa": true,
+     "rodadas_de_reforco": 0,
+     "teste_sozinha": {
+      "internacoes": 0,
+      "passou": true,
+      "obitos_passou": true
+     },
+     "ataque_conjunto": {
+      "obrigatorio": true,
+      "rodou": true,
+      "passou": true,
+      "motor": "intervalos",
+      "versao_no_ar_coletada_em": "simulado-202604",
+      "internacoes": {
+       "reveladas_na_versao_no_ar": 0,
+       "reveladas_na_candidata": 0,
+       "diferencas_de_1_a_k-1": 0,
+       "por_no": {
+        "no_ar": {},
+        "candidata": {},
+        "diferencas": {}
+       },
+       "motor": "intervalos",
+       "total": 0
+      },
+      "obitos": {
+       "reveladas_na_versao_no_ar": 0,
+       "reveladas_na_candidata": 0,
+       "diferencas_de_1_a_k-1": 0,
+       "por_no": {
+        "no_ar": {},
+        "candidata": {},
+        "diferencas": {}
+       },
+       "motor": "intervalos",
+       "total": 0
+      }
+     },
+     "reprovado": null,
+     "particao_gravada": true,
+     "particao_confere": true,
+     "arquivos": 387,
+     "bytes": 7057472,
+     "segundos": {
+      "base": 30.4,
+      "fechamento": 1.3,
+      "supressao": 10.6,
+      "deducao_obitos": 0.1,
+      "ataque_conjunto": 20.0,
+      "gravar": 2.8
+     }
+    },
+    "2026": {
+     "internacoes": 5399015,
+     "meses_preliminares": 5,
+     "publicados": 13,
+     "nao_publicados": [
+      "sih_res_tri_capitulo"
+     ],
+     "herdou_da_anterior": 0,
+     "situacao_fixa": true,
+     "rodadas_de_reforco": 0,
+     "teste_sozinha": {
+      "internacoes": 0,
+      "passou": true,
+      "obitos_passou": true
+     },
+     "ataque_conjunto": {
+      "obrigatorio": true,
+      "rodou": true,
+      "passou": true,
+      "motor": "intervalos",
+      "versao_no_ar_coletada_em": "simulado-202604",
+      "internacoes": {
+       "reveladas_na_versao_no_ar": 0,
+       "reveladas_na_candidata": 0,
+       "diferencas_de_1_a_k-1": 0,
+       "por_no": {
+        "no_ar": {},
+        "candidata": {},
+        "diferencas": {}
+       },
+       "motor": "intervalos",
+       "total": 0
+      },
+      "obitos": {
+       "reveladas_na_versao_no_ar": 0,
+       "reveladas_na_candidata": 0,
+       "diferencas_de_1_a_k-1": 0,
+       "por_no": {
+        "no_ar": {},
+        "candidata": {},
+        "diferencas": {}
+       },
+       "motor": "intervalos",
+       "total": 0
+      }
+     },
+     "reprovado": null,
+     "particao_gravada": true,
+     "particao_confere": true,
+     "arquivos": 360,
+     "bytes": 3832460,
+     "segundos": {
+      "base": 18.5,
+      "fechamento": 0.9,
+      "supressao": 6.1,
+      "deducao_obitos": 0.1,
+      "ataque_conjunto": 12.8,
+      "gravar": 1.6
+     }
+    }
+   }
+  },
+  "sem_reforco": {
+   "cenario": "sem_reforco",
+   "ultima_competencia": 202604,
+   "fechado_ate": 202411,
+   "anos_reprovados": {
+    "2021": "o teste de dedução revelou 106 contagem(ns) de internações"
+   },
+   "anos_com_particao": [
+    2025
+   ],
+   "publicavel": false,
+   "segundos": 77,
+   "anos": {
+    "2021": {
+     "internacoes": 11559233,
+     "meses_preliminares": 0,
+     "publicados": 12,
+     "nao_publicados": [
+      "sih_hosp_mes_carater",
+      "sih_res_mes_urgencia"
+     ],
+     "herdou_da_anterior": 0,
+     "situacao_fixa": false,
+     "rodadas_de_reforco": 0,
+     "teste_sozinha": {
+      "internacoes": 106,
+      "passou": false,
+      "obitos_passou": true
+     },
+     "ataque_conjunto": {
+      "obrigatorio": false,
+      "rodou": false,
+      "motivo": "nenhuma versão anterior informada"
+     },
+     "reprovado": "o teste de dedução revelou 106 contagem(ns) de internações",
+     "particao_gravada": false,
+     "particao_confere": null,
+     "arquivos": 0,
+     "bytes": 0,
+     "segundos": {
+      "base": 13.5,
+      "fechamento": 1.3,
+      "supressao": 19.3,
+      "deducao_obitos": 0.1,
+      "ataque_conjunto": 0.0,
+      "gravar": 0.0
+     }
+    },
+    "2025": {
+     "internacoes": 14545964,
+     "meses_preliminares": 12,
+     "publicados": 14,
+     "nao_publicados": [],
+     "herdou_da_anterior": 0,
+     "situacao_fixa": false,
+     "rodadas_de_reforco": 0,
+     "teste_sozinha": {
+      "internacoes": 0,
+      "passou": true,
+      "obitos_passou": true
+     },
+     "ataque_conjunto": {
+      "obrigatorio": false,
+      "rodou": false,
+      "motivo": "nenhuma versão anterior informada"
+     },
+     "reprovado": null,
+     "particao_gravada": true,
+     "particao_confere": true,
+     "arquivos": 387,
+     "bytes": 7056273,
+     "segundos": {
+      "base": 26.5,
+      "fechamento": 1.4,
+      "supressao": 11.5,
+      "deducao_obitos": 0.1,
+      "ataque_conjunto": 0.0,
+      "gravar": 2.8
+     }
+    }
+   }
+  },
+  "adulterada": {
+   "ano": 2026,
+   "parou": true,
+   "erro": "ErroDeParticao",
+   "motivo": "arquivo diferente do que situacao.json registra"
+  }
+ },
+ "medido_em": "2026-11-10T03:32:01Z",
+ "ufs": 27,
+ "k": 5,
+ "arredondar_multiplo": 5
+}
