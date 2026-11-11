@@ -342,8 +342,8 @@ a:hover { text-decoration-thickness: 2px; }
   .fonte[open] .fonte__bloco { animation: none; }
 }
 
-/* Internações no SUS (build local com --sih-local). Uma série só, no verde da placa; o tom claro é o
-   preliminar arredondado, e o anel na linha de base é a célula oculta, sempre igual. */
+/* Internações no SUS (build local com --sih-local). Preliminares têm listras e contorno na cor cheia
+   da série; o anel na linha de base é a célula oculta, sempre igual. */
 :root {
   --serie: #2b8a5c;
   --serie-1: #2a78d6;
@@ -381,16 +381,16 @@ a:hover { text-decoration-thickness: 2px; }
 .grafico .serie-2 { fill: var(--serie-2); }
 /* Preliminar: a cor cheia da série com listras na cor do fundo por cima (web/sih.js). */
 .grafico .listra { fill: var(--chao); }
-.grafico .hachura { stroke: none; }
+.grafico .hachura { stroke-width: 1; }
 .grafico .oculta { fill: none; stroke: var(--tinta-suave); stroke-width: 1.5; }
 .grafico .faixa { fill: var(--faixa); }
-.grafico [data-tip]:hover { fill-opacity: 0.8; }
 .legenda-sih { display: flex; flex-wrap: wrap; align-items: center; gap: 0.3rem 1rem; margin-top: 0.4rem; font-size: 0.9rem; color: var(--tinta-suave); }
 .legenda-sih .item { display: inline-flex; align-items: center; gap: 0.4rem; }
 .chave { flex: none; display: inline-block; width: 0.9rem; height: 0.9rem; border-radius: 3px; background: var(--serie); }
 .legenda-sih--piramide .chave { background: linear-gradient(90deg, var(--serie-1) 50%, var(--serie-2) 50%); }
-.legenda-sih .chave--prelim { background: repeating-linear-gradient(45deg, var(--serie) 0 3px, var(--chao) 3px 5px); }
+.legenda-sih .chave--prelim { border: 1px solid var(--serie); background: repeating-linear-gradient(45deg, var(--serie) 0 3px, var(--chao) 3px 5px); }
 .legenda-sih--piramide .chave--prelim {
+  border-color: var(--tinta-suave);
   background: repeating-linear-gradient(45deg, transparent 0 3px, var(--chao) 3px 5px),
     linear-gradient(90deg, var(--serie-1) 50%, var(--serie-2) 50%);
 }
@@ -412,4 +412,5 @@ a:hover { text-decoration-thickness: 2px; }
 @media (forced-colors: active) {
   .grafico .barra, .grafico .serie-1, .grafico .serie-2 { fill: CanvasText; }
   .grafico .listra { fill: Canvas; }
+  .grafico .hachura { stroke: CanvasText; }
 }

@@ -152,20 +152,66 @@ def test_cruzamento_retirado_do_ano_mostra_o_motivo_e_nunca_zero(tmp_path, monke
     site.construir(_coleta_estimativa("2025"), catalogo.carregar(), saida, sih_local=particoes(tmp_path / "p", fora))
     html = ler(saida, "municipio/3548500/index.html")
     linha = re.search(r'<tr><th scope="row" data-v="2025">2025</th>(.*?)</tr>', html).group(1)
-    nao = '<td data-v="" data-s="não publicado" class="oculto">não publicado</td>'
+    nao = ('<td data-v="" data-s="não publicado" data-motivo="o teste de dedução revelou contagens com ele no ano" '
+           'class="oculto">não publicado</td>')
     # Internações, taxa, óbitos e hospital: o motivo, em vez de zero ou de uma taxa.
     assert linha.count(nao) == 4 and 'data-v="0"' not in linha
+    assert 'class="situacao">Moradores por ano: não publicado, o teste de dedução revelou contagens com ele no ano' in linha
     for nome in ("Moradores por ano", "Hospitais do município por ano", "Moradores por mês"):
         assert f"<strong>{nome}:</strong> não publicado em 2025, porque o teste de dedução revelou contagens com ele no ano." in html
     # A série mensal de 2025 também: nenhum mês como zero; 2026, publicado, segue normal.
     meses = re.findall(r'data-v="2025(\d\d)">[a-z]+/2025</th>(<td[^>]*>[^<]*</td>)', html)
     assert len(meses) == 12 and all(td == nao for _, td in meses)
+    assert 'class="situacao">não publicado: o teste de dedução revelou contagens com ele no ano</td>' in html
     assert 'data-v="202601">jan/2026</th><td data-v="101"' in html
     # O município sem linha em 2026 continua com zero onde o cruzamento foi publicado, e sem a frase de "sem hospital",
     # porque em 2025 não dá para saber.
     herval = ler(saida, "municipio/4206504/index.html")
     assert "Nenhuma internação pelo SUS em hospital de" not in herval
     assert re.search(r'data-v="2026">2026 \(até jul/2026\)</th>.*?<td data-v="0" data-s="">0</td><td class="situacao">', herval)
+
+
+@pytest.mark.parametrize("cid,celulas_anuais,meses_fora", [("sih_res_ano", 3, 0), ("sih_hosp_ano", 1, 0), ("sih_res_mes", 0, 12)])
+def test_retirada_isolada_preserva_os_outros_cruzamentos(tmp_path, monkeypatch, cid, celulas_anuais, meses_fora):
+    monkeypatch.delenv("GITHUB_ACTIONS", raising=False)
+    monkeypatch.delenv("CI", raising=False)
+    motivo = 'critério do ano: "indisponível" <verificação>'
+    pasta = particoes(tmp_path / "p", {cid: {"motivo": motivo}})
+    saida = tmp_path / "site"
+    site.construir(_coleta_estimativa("2025"), catalogo.carregar(), saida, sih_local=pasta)
+    html = ler(saida, "municipio/3548500/index.html")
+    linha = re.search(r'<tr><th scope="row" data-v="2025">2025</th>(.*?)</tr>', html).group(1)
+    assert linha.count('data-s="não publicado"') == celulas_anuais
+    assert 'data-v="0"' not in linha
+    if celulas_anuais:
+        assert 'critério do ano: &quot;indisponível&quot; &lt;verificação&gt;' in linha
+    if cid != "sih_res_ano":
+        assert 'data-v="1235"' in linha and 'data-v="55"' in linha
+    if cid != "sih_hosp_ano":
+        assert 'data-v="2410"' in linha
+    meses = re.findall(r'data-v="2025\d\d">[a-z]+/2025</th>(<td[^>]*>[^<]*</td>)', html)
+    assert len(meses) == 12 and sum('data-s="não publicado"' in td for td in meses) == meses_fora
+    assert 'data-v="202601">jan/2026</th><td data-v="101"' in html
+
+
+@pytest.mark.parametrize("motivo", [None, "", "ausente"])
+def test_cruzamento_ausente_dos_publicados_sem_motivo_nao_vira_zero(tmp_path, monkeypatch, motivo):
+    monkeypatch.delenv("GITHUB_ACTIONS", raising=False)
+    monkeypatch.delenv("CI", raising=False)
+    pasta = particoes(tmp_path / "p", {"sih_res_ano": {"motivo": "reprovado"}})
+    arquivo = pasta / "ano=2025" / "situacao.json"
+    situacao = json.loads(arquivo.read_text(encoding="utf-8"))
+    if motivo == "ausente":
+        situacao["nao_publicados"].pop("sih_res_ano")
+    else:
+        situacao["nao_publicados"]["sih_res_ano"]["motivo"] = motivo
+    arquivo.write_text(json.dumps(situacao), encoding="utf-8")
+    saida = tmp_path / "site"
+    site.construir(_coleta_estimativa("2025"), catalogo.carregar(), saida, sih_local=pasta)
+    html = ler(saida, "municipio/3548500/index.html")
+    linha = re.search(r'<tr><th scope="row" data-v="2025">2025</th>(.*?)</tr>', html).group(1)
+    assert linha.count('data-s="não publicado"') == 3
+    assert "motivo não informado" in linha and 'data-v="0"' not in linha
 
 
 def test_particao_ausente_para_o_build_e_linha_ausente_e_zero(tmp_path, monkeypatch):

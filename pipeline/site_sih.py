@@ -137,11 +137,13 @@ def td(c: dict) -> str:
     não foi publicado no ano aparece como "não publicado", com o motivo na nota da tabela, e nunca como zero."""
     valor = "" if c["v"] is None else str(c["v"])
     classe = ' class="oculto"' if c["v"] is None else ""
-    return f'<td data-v="{valor}" data-s="{escape(c["s"])}"{classe}>{escape(texto(c))}</td>'
+    motivo = f' data-motivo="{escape(c["motivo"])}"' if c.get("motivo") else ""
+    return f'<td data-v="{valor}" data-s="{escape(c["s"])}"{motivo}{classe}>{escape(texto(c))}</td>'
 
 
 def situacao_td(c: dict) -> str:
-    return f'<td class="situacao">{escape(c["s"])}</td>'
+    situacao = c["s"] + (f': {c["motivo"]}' if c.get("motivo") else "")
+    return f'<td class="situacao">{escape(situacao)}</td>'
 
 
 def figura(id_: str, tipo: str, titulo: str, tabela: str) -> str:
@@ -168,8 +170,9 @@ def _nao_publicado(dados: dict, cid: str, ano: int) -> str | None:
     s = dados["situacoes"].get(ano)
     if s is None or ano not in dados["anos"]:
         return "o ano não passou no teste de dedução"
-    if cid in s["nao_publicados"]:
-        return s["nao_publicados"][cid]["motivo"]
+    if cid not in s["publicados"]:
+        return (s["nao_publicados"].get(cid, {}).get("motivo")
+                or "os dados desse cruzamento não estão disponíveis neste ano (motivo não informado)")
     return None
 
 
@@ -204,11 +207,11 @@ def secao(m: dict, dados: dict, coleta: dict) -> str:
     for ano in anos:
         r, h = res.get((str(ano),)), hosp.get((str(ano),))
         res_fora = ("sih_res_ano", ano) in fora
-        c_int = FORA if res_fora else celula(r)
-        c_ob = FORA if res_fora else (celula(r, "obitos") if r is not None else {"v": 0, "s": ""})
+        c_int = FORA | {"motivo": fora["sih_res_ano", ano]} if res_fora else celula(r)
+        c_ob = c_int if res_fora else celula(r, "obitos")
         taxa = "<td>—</td>"
         if res_fora:
-            taxa = td(FORA)
+            taxa = td(c_int)
         elif completo(dados, ano) and ano in populacao and populacao[ano][0]:
             pop, fonte_pop = populacao[ano]
             if c_int["v"] is None:
@@ -217,7 +220,12 @@ def secao(m: dict, dados: dict, coleta: dict) -> str:
                 t = 1000 * c_int["v"] / pop
                 taxa = f'<td data-v="{t:.1f}" data-s="{escape(c_int["s"])}" title="{escape(fonte_pop)}">{decimal(t)}</td>'
         situacao = c_int["s"] or ("fechado" if not dados["situacoes"][ano]["preliminares"] else "")
-        coluna_hosp = (td(FORA if ("sih_hosp_ano", ano) in fora else celula(h))) if tem_hospital else ""
+        motivos_ano = [f'{NOMES_CRUZAMENTO[cid]}: não publicado, {fora[cid, ano]}'
+                       for cid in ("sih_res_ano", "sih_hosp_ano") if (cid, ano) in fora]
+        if motivos_ano:
+            situacao = "; ".join(([situacao] if not res_fora and situacao else []) + motivos_ano)
+        c_hosp = FORA | {"motivo": fora["sih_hosp_ano", ano]} if ("sih_hosp_ano", ano) in fora else celula(h)
+        coluna_hosp = td(c_hosp) if tem_hospital else ""
         linhas_ano.append(f'<tr><th scope="row" data-v="{ano}">{escape(rotulo_ano(dados, ano))}</th>{td(c_int)}{taxa}'
                           f'{td(c_ob)}{coluna_hosp}<td class="situacao">{escape(situacao)}</td></tr>')
     primeiro, ultimo = anos[0] * 100 + 1, s_ultimo["ultimo_mes"]
@@ -240,7 +248,7 @@ def secao(m: dict, dados: dict, coleta: dict) -> str:
     pontos = []
     for ano in anos:
         for mes in range(ano * 100 + 1, ultimo_do_ano(dados, ano) + 1):
-            c = dict(FORA) if ("sih_res_mes", ano) in fora else celula(mensal.get((str(mes),)))
+            c = FORA | {"motivo": fora["sih_res_mes", ano]} if ("sih_res_mes", ano) in fora else celula(mensal.get((str(mes),)))
             if c["s"] == "" and str(mes) in prelim:
                 c["s"] = "preliminar"
             pontos.append(c | {"rotulo": mes, "prelim": str(mes) in prelim})
@@ -343,7 +351,7 @@ def fonte(dados: dict, coleta: dict) -> str:
             fora.append(f"<li>{ano}: o ano inteiro, porque não passou no teste de dedução.</li>")
             continue
         for cid, motivo in sit["nao_publicados"].items():
-            fora.append(f"<li>{ano}, {escape(NOMES_CRUZAMENTO.get(cid, cid).lower())}: {escape(motivo['motivo'])}.</li>")
+            fora.append(f"<li>{ano}, {escape(NOMES_CRUZAMENTO.get(cid, cid).lower())}: {escape(motivo.get('motivo') or 'motivo não informado')}.</li>")
     ressalvas = "".join(f"<li>{escape(r)}</li>" for r in [*base["ressalvas"], *met["ressalvas"]])
     sexo4 = cat["dimensoes"]["sexo"]["fora_do_dicionario"]["4"]
     return f"""<section class="fonte__bloco" aria-labelledby="f-sih">

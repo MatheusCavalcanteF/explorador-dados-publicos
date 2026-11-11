@@ -59,8 +59,9 @@
   }
 
   // Marca de preliminar: o mesmo desenho da barra, coberto pelas listras.
-  function marcar(svg, forma, atributos) {
-    el(forma, Object.assign({}, atributos, { class: "hachura", fill: "url(#" + svg.dataset.listras + ")" }), svg);
+  function marcar(svg, forma, atributos, serie) {
+    el(forma, Object.assign({}, atributos, { class: "hachura", fill: "url(#" + svg.dataset.listras + ")",
+      stroke: "var(--" + (serie || "serie") + ")" }), svg);
   }
 
   // Coluna com o canto de cima arredondado, crescendo da linha de base.
@@ -175,7 +176,7 @@
         if (!w) return;
         var caixa = { x: sentido > 0 ? inicio : inicio - w, y: y + 3, width: w, height: 15, rx: 3, "data-tip": texto };
         el("rect", Object.assign({ class: lado[2] }, caixa), svg);
-        if (c.s === ARREDONDADO) marcar(svg, "rect", caixa);
+        if (c.s === ARREDONDADO) marcar(svg, "rect", caixa, lado[2]);
       });
     });
     return svg;
@@ -257,8 +258,10 @@
       var rotulo = celulas[0].getAttribute("data-v") || celulas[0].textContent.trim();
       for (var k = 1; k < celulas.length; k++) {
         if (!celulas[k].hasAttribute("data-v")) continue;
+        var situacao = celulas[k].getAttribute("data-s") || "exato", motivo = celulas[k].getAttribute("data-motivo");
+        if (motivo) situacao += ": " + motivo;
         linhas.push([secao.dataset.municipio, secao.dataset.codigo, tabela.dataset.csvNome, rotulo, cabecalho[k],
-          celulas[k].getAttribute("data-v"), celulas[k].getAttribute("data-s") || "exato",
+          celulas[k].getAttribute("data-v"), situacao,
           secao.dataset.fonte, secao.dataset.acesso, secao.dataset.coleta, secao.dataset.ressalva]);
       }
     }
