@@ -137,6 +137,12 @@ def _linhas_ods(ods: bytes, onde: str) -> tuple[tuple[str, ...], ...]:
 
 def ler(zip_dtb: bytes, onde: str) -> tuple[str, str, list[dict]]:
     """Devolve (nome da planilha, data-base em ISO, municípios ordenados por código)."""
+    planilha, linhas = abrir(zip_dtb, onde)
+    return (planilha, *validar(linhas, onde))
+
+
+def abrir(zip_dtb: bytes, onde: str) -> tuple[str, list[list[str]]]:
+    """O nome da planilha de municípios dentro do .zip e as linhas dela, como texto."""
     try:
         externo = zipfile.ZipFile(io.BytesIO(zip_dtb))
     except zipfile.BadZipFile:
@@ -154,8 +160,12 @@ def ler(zip_dtb: bytes, onde: str) -> tuple[str, str, list[dict]]:
             ods = externo.read(info)
         except (zipfile.BadZipFile, RuntimeError, ValueError) as e:
             raise ErroDeContrato(f"{onde}: {info.filename} não abre ({type(e).__name__}: {e})") from None
-        linhas = linhas_ods(ods, f"{onde}, {info.filename}")
+        return info.filename, linhas_ods(ods, f"{onde}, {info.filename}")
 
+
+def validar(linhas: list[list[str]], onde: str) -> tuple[str, list[dict]]:
+    """O contrato da planilha: cabeçalho, data-base, UF, código e nome de cada município. Devolve (data-base
+    em ISO, municípios ordenados por código)."""
     inicio = next((i for i, l in enumerate(linhas) if set(COLUNAS.values()) <= set(l)), None)
     if inicio is None:
         raise ErroDeContrato(f"{onde}: nenhuma linha com as colunas {sorted(COLUNAS.values())}. A estrutura mudou.")
@@ -190,7 +200,7 @@ def ler(zip_dtb: bytes, onde: str) -> tuple[str, str, list[dict]]:
     ufs = {m["uf"] for m in municipios.values()}
     if len(ufs) != 27 or not 5_500 <= len(municipios) <= 5_700:
         raise ErroDeContrato(f"{onde}: {len(municipios)} municípios em {len(ufs)} UFs, fora do esperado")
-    return info.filename, data_base, [municipios[c] for c in sorted(municipios)]
+    return data_base, [municipios[c] for c in sorted(municipios)]
 
 
 def coletar(pedir, coletado_em: str) -> tuple[dict, list[dict]]:

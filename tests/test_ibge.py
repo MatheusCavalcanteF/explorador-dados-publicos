@@ -1,4 +1,7 @@
+import copy
+import functools
 import json
+import shutil
 from datetime import datetime, timezone
 
 import pytest
@@ -10,15 +13,49 @@ from conftest import FonteFalsa, codigos, fonte_dtb, resposta, sidra
 AGORA = datetime(2026, 11, 7, 23, 30, tzinfo=timezone.utc)
 
 
+@functools.lru_cache(maxsize=4)
+def _sidra_padrao(variavel, periodo):
+    """As respostas padrão da SIDRA, montadas uma vez por sessão: 5.571 linhas em JSON a cada teste pesam."""
+    lista = codigos()
+    valores = {c: 1000 + i for i, c in enumerate(lista)} if variavel == 9324 else {c: 900 + i for i, c in enumerate(lista[1:])}
+    return resposta(sidra(valores, variavel, periodo))
+
+
 def fonte(estimativa=None, censo=None, censo_fora=False, lista=None, periodo="2026"):
+    padrao = lista is None
     lista = lista or codigos()
-    estimativa = {c: 1000 + i for i, c in enumerate(lista)} if estimativa is None else estimativa
-    censo = {c: 900 + i for i, c in enumerate(lista[1:])} if censo is None else censo
     urls = fonte_dtb(lista)
-    urls[ibge.URL_SIDRA.format(**ibge.ESTIMATIVA)] = resposta(sidra(estimativa, 9324, periodo))
-    if not censo_fora:
+    if padrao and estimativa is None:
+        urls[ibge.URL_SIDRA.format(**ibge.ESTIMATIVA)] = _sidra_padrao(9324, periodo)
+    else:
+        estimativa = {c: 1000 + i for i, c in enumerate(lista)} if estimativa is None else estimativa
+        urls[ibge.URL_SIDRA.format(**ibge.ESTIMATIVA)] = resposta(sidra(estimativa, 9324, periodo))
+    if censo_fora:
+        return FonteFalsa(urls)
+    if padrao and censo is None:
+        urls[ibge.URL_SIDRA.format(**ibge.CENSO)] = _sidra_padrao(93, "2022")
+    else:
+        censo = {c: 900 + i for i, c in enumerate(lista[1:])} if censo is None else censo
         urls[ibge.URL_SIDRA.format(**ibge.CENSO)] = resposta(sidra(censo, 93, "2022"))
     return FonteFalsa(urls)
+
+
+@pytest.fixture(scope="session")
+def _primeira_coleta(tmp_path_factory):
+    """A primeira coleta, sem Release nem manifesto anterior, feita uma vez por sessão de testes: a pasta, o
+    resultado, os pedidos feitos e as leituras do site anterior. Quem usa só lê; o resultado vem copiado em
+    `primeira`."""
+    pasta = tmp_path_factory.mktemp("ibge") / "a"
+    falsa, lidos = fonte(), []
+    resultado = ibge.coletar(pasta, pedir=falsa, agora=AGORA, publicados=lambda: lidos.append(1))
+    return pasta, resultado, falsa.pedidos, lidos
+
+
+@pytest.fixture
+def primeira(_primeira_coleta):
+    """(pasta da primeira coleta, resultado copiado). A pasta é de todos os testes: copie antes de alterar."""
+    pasta, resultado, _, _ = _primeira_coleta
+    return pasta, copy.deepcopy(resultado)
 
 
 def corpo(valor):
@@ -77,8 +114,8 @@ def test_comparacao_com_a_coleta_anterior():
     assert ibge.comparar(anterior, "estimativa", "2027", "def") == "periodo_novo"
 
 
-def test_primeira_coleta_grava_arquivo_para_a_release(tmp_path):
-    resultado = ibge.coletar(tmp_path, pedir=fonte(), agora=AGORA)
+def test_primeira_coleta_grava_arquivo_para_a_release(primeira):
+    tmp_path, resultado = primeira
     assert resultado["coletado_em"] == "2026-11-07T23:30:00Z"
     censo = resultado["fontes"]["censo"]
     assert censo["origem"] == "fonte" and censo["ausentes"] == [sorted(codigos())[0]]
@@ -92,27 +129,24 @@ def test_primeira_coleta_grava_arquivo_para_a_release(tmp_path):
     assert "valores" not in json.loads((tmp_path / "ibge.json").read_text(encoding="utf-8"))["fontes"]["censo"]
 
 
-def test_censo_vem_da_release_e_e_conferido_com_a_fonte(tmp_path):
-    ibge.coletar(tmp_path / "primeira", pedir=fonte(), agora=AGORA)
-    release = tmp_path / "primeira" / "censo-2022.json"
+def test_censo_vem_da_release_e_e_conferido_com_a_fonte(tmp_path, primeira):
+    release = primeira[0] / "censo-2022.json"
     resultado = ibge.coletar(tmp_path / "segunda", release, pedir=fonte(), agora=AGORA)
     censo = resultado["fontes"]["censo"]
     assert censo["origem"] == "release" and censo["conferido_com_a_fonte_em"] == "2026-11-07T23:30:00Z"
     assert not (tmp_path / "segunda" / "censo-2022.json").exists()
 
 
-def test_particao_fechada_que_muda_na_origem_para_o_pipeline(tmp_path):
-    ibge.coletar(tmp_path / "primeira", pedir=fonte(), agora=AGORA)
+def test_particao_fechada_que_muda_na_origem_para_o_pipeline(tmp_path, primeira):
     lista = codigos()
     alterado = {c: 900 + i for i, c in enumerate(lista[1:])}
     alterado[lista[7]] += 1
     with pytest.raises(ibge.ErroDeContrato, match="partição fechada mudou"):
-        ibge.coletar(tmp_path / "segunda", tmp_path / "primeira" / "censo-2022.json", pedir=fonte(censo=alterado))
+        ibge.coletar(tmp_path / "segunda", primeira[0] / "censo-2022.json", pedir=fonte(censo=alterado))
 
 
-def test_censo_fora_do_ar_usa_a_release_sem_dizer_que_conferiu(tmp_path):
-    ibge.coletar(tmp_path / "primeira", pedir=fonte(), agora=AGORA)
-    resultado = ibge.coletar(tmp_path / "segunda", tmp_path / "primeira" / "censo-2022.json", pedir=fonte(censo_fora=True))
+def test_censo_fora_do_ar_usa_a_release_sem_dizer_que_conferiu(tmp_path, primeira):
+    resultado = ibge.coletar(tmp_path / "segunda", primeira[0] / "censo-2022.json", pedir=fonte(censo_fora=True))
     assert resultado["fontes"]["censo"]["conferido_com_a_fonte_em"] is None
     segundo = next(m for m in resultado["municipios"] if m["codigo"] == codigos()[1])
     assert segundo["populacao_censo"] == 900
@@ -130,29 +164,29 @@ def test_http_de_erro_na_estimativa_para_o_pipeline(tmp_path):
         ibge.coletar(tmp_path, pedir=falsa)
 
 
-def test_coleta_nao_usa_a_api_de_servicos_do_ibge(tmp_path):
-    falsa = fonte()
-    ibge.coletar(tmp_path, pedir=falsa, agora=AGORA)
-    assert falsa.pedidos and not [url for url, _ in falsa.pedidos if "servicodados" in url]
+def test_coleta_nao_usa_a_api_de_servicos_do_ibge(_primeira_coleta):
+    pedidos = _primeira_coleta[2]
+    assert pedidos and not [url for url, _ in pedidos if "servicodados" in url]
 
 
-def test_mudanca_detectada_pelo_hash_em_relacao_a_coleta_anterior(tmp_path):
-    primeira = ibge.coletar(tmp_path / "a", pedir=fonte(), agora=AGORA)
+def test_mudanca_detectada_pelo_hash_em_relacao_a_coleta_anterior(tmp_path, primeira):
+    a, primeira = primeira
     anterior = json.loads(json.dumps(primeira["fontes"]))
-    igual = ibge.coletar(tmp_path / "b", tmp_path / "a" / "censo-2022.json", anterior, pedir=fonte(), agora=AGORA)
+    igual = ibge.coletar(tmp_path / "b", a / "censo-2022.json", anterior, pedir=fonte(), agora=AGORA)
     assert {k: f["em_relacao_a_coleta_anterior"] for k, f in igual["fontes"].items()} == {
         "dtb": "igual", "estimativa": "igual", "censo": "igual"}
     revisada = {c: 1000 + i for i, c in enumerate(codigos())}
     revisada[codigos()[3]] += 7
-    mudou = ibge.coletar(tmp_path / "c", tmp_path / "a" / "censo-2022.json", anterior, pedir=fonte(estimativa=revisada))
+    mudou = ibge.coletar(tmp_path / "c", a / "censo-2022.json", anterior, pedir=fonte(estimativa=revisada))
     assert mudou["fontes"]["estimativa"]["em_relacao_a_coleta_anterior"] == "valores_mudaram"
-    nova = ibge.coletar(tmp_path / "d", tmp_path / "a" / "censo-2022.json", anterior, pedir=fonte(periodo="2027"))
+    nova = ibge.coletar(tmp_path / "d", a / "censo-2022.json", anterior, pedir=fonte(periodo="2027"))
     assert nova["fontes"]["estimativa"]["em_relacao_a_coleta_anterior"] == "periodo_novo"
 
 
-def test_release_com_valores_que_nao_batem_com_o_proprio_hash_para(tmp_path):
-    ibge.coletar(tmp_path / "primeira", pedir=fonte(), agora=AGORA)
-    release = tmp_path / "primeira" / "censo-2022.json"
+def test_release_com_valores_que_nao_batem_com_o_proprio_hash_para(tmp_path, primeira):
+    # A pasta da primeira coleta é de todos os testes: a Release adulterada é uma cópia.
+    release = tmp_path / "censo-2022.json"
+    shutil.copy(primeira[0] / "censo-2022.json", release)
     guardado = json.loads(release.read_text(encoding="utf-8"))
     guardado["valores"][codigos()[2]] += 1
     release.write_text(json.dumps(guardado), encoding="utf-8")
@@ -183,31 +217,31 @@ def revisada():
     return valores
 
 
-def test_valores_desde_atravessa_coletas_iguais(tmp_path):
-    primeira = ibge.coletar(tmp_path / "a", pedir=fonte(), agora=AGORA)
+def test_valores_desde_atravessa_coletas_iguais(tmp_path, primeira):
+    a, primeira = primeira
     est = primeira["fontes"]["estimativa"]
     assert est["valores_desde"] == est["periodo_desde"] == "2026-11-07T23:30:00Z" and est["revisoes"] == []
-    segunda = ibge.coletar(tmp_path / "b", tmp_path / "a" / "censo-2022.json", primeira["fontes"], pedir=fonte(), agora=DEPOIS)
+    segunda = ibge.coletar(tmp_path / "b", a / "censo-2022.json", primeira["fontes"], pedir=fonte(), agora=DEPOIS)
     assert {k: f["valores_desde"] for k, f in segunda["fontes"].items()} == {
         "dtb": "2026-11-07T23:30:00Z", "estimativa": "2026-11-07T23:30:00Z", "censo": "2026-11-07T23:30:00Z"}
 
 
-def test_manifesto_sem_historico_usa_a_data_da_coleta_anterior(tmp_path):
+def test_manifesto_sem_historico_usa_a_data_da_coleta_anterior(tmp_path, primeira):
     # O manifesto de 08/11/2026 não tem valores_desde: a primeira coleta registrada vale como início.
-    primeira = ibge.coletar(tmp_path / "a", pedir=fonte(), agora=AGORA)
+    a, primeira = primeira
     antigo = json.loads(json.dumps(primeira["fontes"]))
     for f in antigo.values():
         f.pop("valores_desde")
     antigo["estimativa"].pop("periodo_desde")
     antigo["estimativa"].pop("revisoes")
-    segunda = ibge.coletar(tmp_path / "b", tmp_path / "a" / "censo-2022.json", antigo, pedir=fonte(), agora=DEPOIS)
+    segunda = ibge.coletar(tmp_path / "b", a / "censo-2022.json", antigo, pedir=fonte(), agora=DEPOIS)
     assert segunda["fontes"]["estimativa"]["periodo_desde"] == "2026-11-07T23:30:00Z"
     assert segunda["fontes"]["dtb"]["valores_desde"] == "2026-11-07T23:30:00Z"
 
 
-def test_revisao_no_mesmo_periodo_guarda_antes_e_depois_sem_bloquear(tmp_path):
-    release = tmp_path / "a" / "censo-2022.json"
-    primeira = ibge.coletar(tmp_path / "a", pedir=fonte(), agora=AGORA)
+def test_revisao_no_mesmo_periodo_guarda_antes_e_depois_sem_bloquear(tmp_path, primeira):
+    a, primeira = primeira
+    release = a / "censo-2022.json"
     segunda = ibge.coletar(tmp_path / "b", release, primeira["fontes"], pedir=fonte(estimativa=revisada()),
                            agora=DEPOIS, publicados=lambda: dict(ORIGINAL))
     est = segunda["fontes"]["estimativa"]
@@ -234,9 +268,9 @@ def test_revisao_no_mesmo_periodo_guarda_antes_e_depois_sem_bloquear(tmp_path):
     (lambda: (_ for _ in ()).throw(rede.ErroDeRede("fora do ar")), "o site anterior não respondeu (ErroDeRede: fora do ar)"),
     (lambda: {**ORIGINAL, codigos()[0]: 1}, "não tem o hash da coleta anterior"),
 ])
-def test_revisao_sem_o_site_anterior_fica_registrada_sem_detalhe(tmp_path, publicados, motivo):
-    primeira = ibge.coletar(tmp_path / "a", pedir=fonte(), agora=AGORA)
-    segunda = ibge.coletar(tmp_path / "b", tmp_path / "a" / "censo-2022.json", primeira["fontes"],
+def test_revisao_sem_o_site_anterior_fica_registrada_sem_detalhe(tmp_path, primeira, publicados, motivo):
+    a, primeira = primeira
+    segunda = ibge.coletar(tmp_path / "b", a / "censo-2022.json", primeira["fontes"],
                            pedir=fonte(estimativa=revisada()), agora=DEPOIS, publicados=publicados)
     (evento,) = segunda["fontes"]["estimativa"]["revisoes"]
     assert evento["municipios"] is None and motivo in evento["sem_detalhe_porque"]
@@ -249,12 +283,13 @@ def test_revisao_registra_municipio_que_saiu_ou_entrou_na_estimativa():
                                     {"codigo": "3", "antes": None, "depois": 300, "variacao_pct": None}]
 
 
-def test_site_anterior_so_e_lido_quando_a_estimativa_muda(tmp_path):
-    lidos = []
-    primeira = ibge.coletar(tmp_path / "a", pedir=fonte(), agora=AGORA, publicados=lambda: lidos.append(1))
-    ibge.coletar(tmp_path / "b", tmp_path / "a" / "censo-2022.json", primeira["fontes"], pedir=fonte(), agora=DEPOIS,
-                 publicados=lambda: lidos.append(1))
-    assert lidos == []
+def test_site_anterior_so_e_lido_quando_a_estimativa_muda(tmp_path, _primeira_coleta):
+    a, primeira, _, lidos = _primeira_coleta
+    # Nem a primeira coleta (a da sessão) nem a seguinte, com a estimativa igual, leem o site anterior.
+    novos = []
+    ibge.coletar(tmp_path / "b", a / "censo-2022.json", copy.deepcopy(primeira["fontes"]), pedir=fonte(), agora=DEPOIS,
+                 publicados=lambda: novos.append(1))
+    assert lidos == [] and novos == []
 
 
 def test_aviso_no_workflow_so_acima_do_limite():

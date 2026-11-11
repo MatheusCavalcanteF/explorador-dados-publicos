@@ -11,12 +11,14 @@ from conftest import (CABECALHO_DTB, FonteFalsa, codigos, dtb_zip, fonte_dtb, in
 AGORA = "2026-11-08T12:00:00Z"
 
 
-def ler(linhas, membro="RELATORIO_DTB_BRASIL_2025_MUNICIPIOS.ods"):
-    return dtb.ler(dtb_zip(linhas, membro), "DTB teste")
+def validar(linhas):
+    """O contrato sobre as linhas, sem montar e ler uma planilha de 5.571 linhas a cada caso."""
+    return dtb.validar(linhas, "DTB teste")
 
 
-def test_le_codigo_nome_uf_e_data_base():
-    planilha, data_base, municipios = ler(linhas_dtb())
+def test_le_codigo_nome_uf_e_data_base(dtb_lida):
+    # A planilha padrão, montada e lida de ponta a ponta uma vez por sessão (conftest.dtb_lida).
+    planilha, data_base, municipios = dtb_lida
     assert planilha == "RELATORIO_DTB_BRASIL_2025_MUNICIPIOS.ods" and data_base == "2025-12-31"
     assert len(municipios) == 5571 and [m["codigo"] for m in municipios] == sorted(codigos())
     sp = next(m for m in municipios if m["codigo"].startswith("35"))
@@ -25,17 +27,16 @@ def test_le_codigo_nome_uf_e_data_base():
 
 
 def test_colunas_achadas_pelo_cabecalho_e_planilha_em_subpasta():
-    # Em 2023 a planilha veio dentro de uma pasta e sem o ano no nome.
     invertido = list(reversed(CABECALHO_DTB))
-    _, _, municipios = ler(linhas_dtb(cabecalho=invertido), "DTB_2023/RELATORIO_DTB_BRASIL_MUNICIPIO.ods")
+    _, municipios = validar(linhas_dtb(cabecalho=invertido))
     assert municipios[0]["nome"] == f"Município {sorted(codigos())[0]}"
+    # Em 2023 a planilha veio dentro de uma pasta e sem o ano no nome.
+    planilha, linhas = dtb.abrir(dtb_zip([["x"]], "DTB_2023/RELATORIO_DTB_BRASIL_MUNICIPIO.ods"), "DTB teste")
+    assert (planilha, linhas) == ("DTB_2023/RELATORIO_DTB_BRASIL_MUNICIPIO.ods", [["x"]])
 
 
 def test_espacos_e_celulas_repetidas_do_ods():
-    linhas = linhas_dtb()
-    linhas[5][-1] = "Nome  com dois espaços"
-    _, _, municipios = ler(linhas)
-    assert "Nome  com dois espaços" in {m["nome"] for m in municipios}
+    assert dtb.linhas_ods(ods([["Município", "Nome  com dois espaços"]]), "t") == [["Município", "Nome  com dois espaços"]]
     # Célula vazia repetida no meio da linha mantém a posição das seguintes.
     xml_linha = ('<table:table-row><table:table-cell office:value-type="string"><text:p>a</text:p></table:table-cell>'
                  '<table:table-cell table:number-columns-repeated="2"/>'
@@ -86,26 +87,27 @@ def test_recusa_estrutura_ou_dado_errado(estrago, mensagem):
     elif estrago == "rodape":
         linhas.append(["Fonte: IBGE, Diretoria de Geociências"])
     with pytest.raises(ErroDeContrato, match=mensagem):
-        ler(linhas)
+        validar(linhas)
 
 
 @pytest.mark.parametrize("data_base", ["31/02/2025", "00/12/2025", "31/13/2025", "29/02/2025"])
 def test_recusa_data_base_que_nao_existe_no_calendario(data_base):
     with pytest.raises(ErroDeContrato, match="não existe no calendário"):
-        ler(linhas_dtb(data_base=data_base))
+        validar(linhas_dtb(data_base=data_base))
 
 
 def test_aceita_29_de_fevereiro_em_ano_bissexto():
-    assert ler(linhas_dtb(data_base="29/02/2024"))[1] == "2024-02-29"
+    assert validar(linhas_dtb(data_base="29/02/2024"))[0] == "2024-02-29"
 
 
 def test_recusa_zip_sem_planilha_ou_com_duas_e_planilha_que_nao_e_ods():
+    # O .zip é recusado antes de ler a planilha, então uma planilha mínima basta.
     with pytest.raises(ErroDeContrato, match="achei 0"):
-        dtb.ler(dtb_zip(linhas_dtb(), "RELATORIO_DTB_BRASIL_2025_DISTRITOS.ods", extras=()), "t")
+        dtb.ler(dtb_zip([["x"]], "RELATORIO_DTB_BRASIL_2025_DISTRITOS.ods", extras=()), "t")
     buffer = io.BytesIO()
     with zipfile.ZipFile(buffer, "w") as z:
-        z.writestr("RELATORIO_DTB_BRASIL_MUNICIPIO.ods", ods(linhas_dtb()))
-        z.writestr("antigo/RELATORIO_DTB_BRASIL_MUNICIPIO.ods", ods(linhas_dtb()))
+        z.writestr("RELATORIO_DTB_BRASIL_MUNICIPIO.ods", ods([["x"]]))
+        z.writestr("antigo/RELATORIO_DTB_BRASIL_MUNICIPIO.ods", ods([["x"]]))
     with pytest.raises(ErroDeContrato, match="achei 2"):
         dtb.ler(buffer.getvalue(), "t")
     # Em 2022, o arquivo .ods da DTB era um .xls com outra extensão.

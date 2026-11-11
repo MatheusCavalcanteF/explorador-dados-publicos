@@ -125,6 +125,14 @@ def _dtb_zip_de(lista):
     return dtb_zip(linhas_dtb(list(lista) if lista else None))
 
 
+@pytest.fixture(scope="session")
+def dtb_lida():
+    """A DTB padrão montada e lida de ponta a ponta (zip, planilha, contrato) uma vez por sessão de testes.
+    Quem usa só lê: (nome da planilha, data-base, municípios)."""
+    from pipeline import dtb
+    return dtb.ler(_dtb_zip_de(None), "DTB teste")
+
+
 def fonte_dtb(lista=None, pastas=None, corpo=None):
     """Respostas do geoftp: raiz com as pastas de ano e o .zip da mais recente."""
     from pipeline import dtb
