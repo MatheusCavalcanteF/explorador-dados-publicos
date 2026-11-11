@@ -1,20 +1,17 @@
-"""Partições publicáveis do SIH: a pasta de um ano, a situação gravada com ela e o pacote que vai para a Release.
+"""Partições do SIH: a pasta de um ano e a situação gravada com ela. Ficam no runner; nada daqui é publicado.
 
-Cada ano fica em `ano=AAAA/`, com um Parquet por cruzamento e UF, as margens publicadas e um
-`situacao.json`: o que foi publicado, o que não foi e por quê, os testes e cada arquivo com tamanho e
-SHA-256. Quem lê confere arquivo por arquivo com essa lista.
+Cada ano fica em `ano=AAAA/`, com um Parquet por cruzamento e UF e um `situacao.json`: o que foi publicado,
+o que não foi e por quê, os testes e cada arquivo com tamanho e SHA-256. Quem lê confere arquivo por arquivo
+com essa lista. O que vai para o site é a superfície que sai delas (sih_superficie).
 
-Só existe partição de ano que passou em todos os testes (nao_publicavel). O pacote de um ano é um .zip
-sem compressão, e a leitura dele só extrai o que a situação lista. Este módulo não depende de
-requirements-sih.txt: o Publicar o usa para baixar a versão no ar.
+Só existe partição de ano que passou em todos os testes (nao_publicavel). Este módulo não depende de
+requirements-sih.txt: a conferência da versão no ar usa nao_publicavel.
 """
 from __future__ import annotations
 
 import hashlib
-import io
 import json
 import shutil
-import zipfile
 from pathlib import Path
 
 from .contrato import ErroDeContrato
@@ -122,53 +119,3 @@ def ler_publicada(particoes: Path, ano: int) -> dict:
 
 def anos_na_pasta(particoes: Path) -> list[int]:
     return sorted(int(p.name[4:]) for p in Path(particoes).glob("ano=*") if p.is_dir())
-
-
-def empacotar(particoes: Path, ano: int) -> bytes:
-    """O .zip de um ano para a Release: a situação e os arquivos que ela lista, conferidos antes, em ordem
-    fixa e sem data, para o mesmo ano dar sempre os mesmos bytes."""
-    situacao = ler_publicada(particoes, ano)
-    pasta = Path(particoes) / f"ano={ano}"
-    saida = io.BytesIO()
-    with zipfile.ZipFile(saida, "w", zipfile.ZIP_STORED) as z:
-        for nome in [SITUACAO, *sorted(situacao["arquivos"])]:
-            z.writestr(zipfile.ZipInfo(nome, date_time=(1980, 1, 1, 0, 0, 0)), (pasta / nome).read_bytes())
-    return saida.getvalue()
-
-
-def desempacotar(pacote: bytes, particoes: Path, ano: int) -> dict:
-    """Abre o pacote de um ano em `particoes/ano=AAAA` e confere tudo com a situação que veio nele.
-
-    O pacote vem de fora: só os nomes que a situação lista são extraídos, cada um tem de ficar dentro da
-    pasta do ano, e nada além deles pode estar no .zip. Qualquer diferença para, sem deixar a pasta.
-    """
-    try:
-        z = zipfile.ZipFile(io.BytesIO(pacote))
-    except zipfile.BadZipFile as erro:
-        raise ErroDeParticao(f"Pacote do SIH de {ano}: não é um .zip ({erro})") from None
-    with z:
-        nomes = z.namelist()
-        if SITUACAO not in nomes:
-            raise ErroDeParticao(f"Pacote do SIH de {ano}: sem situacao.json")
-        try:
-            situacao = json.loads(z.read(SITUACAO).decode("utf-8"))
-        except (ValueError, UnicodeDecodeError) as erro:
-            raise ErroDeParticao(f"Pacote do SIH de {ano}: situacao.json ilegível ({erro})") from None
-        if not isinstance(situacao, dict) or situacao.get("ano") != ano or not isinstance(situacao.get("arquivos"), dict):
-            raise ErroDeParticao(f"Pacote do SIH de {ano}: situacao.json é de outro ano ou não lista os arquivos")
-        esperados = set(situacao["arquivos"]) | {SITUACAO}
-        if set(nomes) != esperados or len(nomes) != len(esperados):
-            raise ErroDeParticao(f"Pacote do SIH de {ano}: os arquivos do .zip não são os que a situação lista")
-        remover_ano(particoes, ano)
-        pasta = (Path(particoes) / f"ano={ano}").resolve()
-        try:
-            for nome in sorted(esperados):
-                destino = (pasta / nome).resolve()
-                if pasta not in destino.parents or "\\" in nome or nome.startswith("/"):
-                    raise ErroDeParticao(f"Pacote do SIH de {ano}: caminho fora da pasta do ano ({nome!r})")
-                destino.parent.mkdir(parents=True, exist_ok=True)
-                destino.write_bytes(z.read(nome))
-            return ler_publicada(particoes, ano)
-        except Exception:
-            remover_ano(particoes, ano)
-            raise

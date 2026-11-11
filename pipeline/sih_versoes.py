@@ -3,33 +3,39 @@
 É uma etapa do pipeline, entre a supressão do ano e a gravação da partição. Se revelar alguma contagem, o
 ano não é gravado e nada é publicado (bases.sih.versoes.ataque_conjunto_obrigatorio).
 
+As duas versões entram como a superfície as mostra (bases.sih.superficie, decidido em 10/11/2026): a versão no
+ar, lida do arquivo publicado com o site; a candidata, montada das mesmas tabelas que vão para a página. Nada
+além da superfície é público, então nada além dela entra no ataque.
+
 A etapa tem duas metades, para que o motor possa ser trocado sem mexer no resto:
 
 1. `montar` descreve o problema sem dizer como resolvê-lo (Problema): as células de cada tabela, alinhadas
    nas mesmas chaves nas duas versões; o intervalo que cada versão deixa ver em cada célula; as somas que
-   ligam as tabelas (arestas); e as células que quem lê sabe serem iguais nas duas versões, porque o período
-   já tinha fechado. A versão no ar entra só com o que foi publicado, lido das partições dela; a candidata
-   entra com o que a tela mostraria.
+   ligam as tabelas (arestas), inclusive as que ninguém publica e qualquer um pode montar; e as células que
+   quem lê sabe serem iguais nas duas versões, porque o período já tinha fechado.
 2. Um motor (Motor) recebe o Problema e devolve um Resultado: quantas contagens de 1 a k-1 ficam exatas em
-   cada versão, e quantas diferenças exatas de 1 a k-1 aparecem entre elas. O motor de hoje aperta intervalos
-   pelas somas, em cadeia (deducao.atacar_juntos e deducao.diferencas). Outro motor entra em MOTORES com o
-   mesmo contrato.
+   cada versão, e quantas diferenças exatas de 1 a k-1 aparecem entre elas. Há dois em MOTORES, e o catálogo
+   manda rodar os dois (versoes.motores); todos precisam dar zero. "intervalos" aperta intervalos pelas
+   somas, em cadeia (deducao.atacar_juntos e deducao.diferencas); "programacao_linear" acha o mínimo e o
+   máximo de cada célula com todas as somas juntas (deducao_lp).
 """
 from __future__ import annotations
 
+import time
 from dataclasses import dataclass, field
-from pathlib import Path
 from typing import Callable
 
 import numpy as np
 import pandas as pd
 
-from . import deducao, sih_deducao, sih_particoes, sih_tabelas as tab
+from . import deducao, sih_deducao, sih_superficie, sih_tabelas as tab
 from .contrato import ErroDeContrato
 
-# Por medida: a coluna do valor, a da célula oculta e a do arredondamento, nos arquivos dos cruzamentos.
-COLUNAS = {"internacoes": ("internacoes", "oculto", "arredondado"), "obitos": ("obitos", "obitos_oculto", "obitos_arredondado")}
+# Por medida: a coluna do valor, a da célula oculta e a do arredondamento, nas tabelas da superfície.
+COLUNAS = sih_superficie.COLUNAS
 MOTOR_PADRAO = "intervalos"
+# Quem mede pode ligar aqui o registro do progresso do motor por programação linear (uma linha por etapa).
+REGISTRAR = None
 
 
 class ErroDeVersoes(ErroDeContrato):
@@ -70,10 +76,12 @@ class Resultado:
     reveladas: list[dict[str, int]]            # por versão: nó -> contagens de 1 a k-1 que ficaram exatas
     diferencas: dict[str, dict[str, int]]      # por par "i-j": nó -> diferenças exatas de 1 a k-1, em módulo
     detalhe: dict = field(default_factory=dict)
+    inconclusivas: int = 0                     # células que o motor não conseguiu decidir: contam contra
 
     @property
     def total(self) -> int:
-        return (sum(sum(v.values()) for v in self.reveladas) + sum(sum(v.values()) for v in self.diferencas.values()))
+        return (sum(sum(v.values()) for v in self.reveladas) + sum(sum(v.values()) for v in self.diferencas.values())
+                + self.inconclusivas)
 
 
 Motor = Callable[[Problema], Resultado]
@@ -107,54 +115,57 @@ def por_intervalos(p: Problema) -> Resultado:
     return Resultado("intervalos", reveladas, diferencas, {"voltas": voltas})
 
 
-MOTORES: dict[str, Motor] = {"intervalos": por_intervalos}
+def conferir_valores(p: Problema) -> None:
+    """O valor verdadeiro, onde o pipeline o tem, satisfaz o que o Problema diz: fica no intervalo da tela e
+    fecha cada soma. Se não satisfizer, o Problema está errado, e nenhum motor deve rodar sobre ele."""
+    for v in p.versoes:
+        if v.valor is None:
+            continue
+        for nome, valor in v.valor.items():
+            fora = (valor < v.lo[nome]) | ((valor > v.hi[nome]) & (v.hi[nome] < deducao.INF // 2))
+            if fora.any():
+                raise AssertionError(f"{v.rotulo}, {nome}: {int(fora.sum())} célula(s) com o valor fora do intervalo da tela")
+        for fino, grosso, indice in p.arestas:
+            soma = np.bincount(indice, weights=v.valor[fino], minlength=v.valor[grosso].size)
+            if not np.array_equal(np.rint(soma).astype(np.int64), v.valor[grosso]):
+                raise AssertionError(f"{v.rotulo}: {grosso} não é a soma de {fino}")
+
+
+def por_programacao_linear(p: Problema) -> Resultado:
+    """Mínimo e máximo de cada célula escondida, e de cada diferença entre versões, com todas as somas juntas."""
+    from . import deducao_lp
+    conferir_valores(p)
+    try:
+        r = deducao_lp.atacar([(v.lo, v.hi) for v in p.versoes], p.arestas, p.iguais,
+                              [v.escondida for v in p.versoes], p.k, [(i, i + 1) for i in range(len(p.versoes) - 1)],
+                              registrar=REGISTRAR)
+    except deducao_lp.SemSolucao as erro:
+        raise ErroDeVersoes(f"As versões não fecham entre si ({p.medida}): {erro}") from None
+    return Resultado("programacao_linear", r["reveladas"], r["diferencas"], r["detalhe"], r["detalhe"]["inconclusivas"])
+
+
+MOTORES: dict[str, Motor] = {"intervalos": por_intervalos, "programacao_linear": por_programacao_linear}
 
 
 def atacar(problema: Problema, motor: str | None = None) -> Resultado:
     nome = motor or MOTOR_PADRAO
     if nome not in MOTORES:
         raise ErroDeVersoes(f"Motor do ataque conjunto desconhecido: {nome!r}; existem {sorted(MOTORES)}")
-    return MOTORES[nome](problema)
+    try:
+        return MOTORES[nome](problema)
+    except ImportError as erro:
+        # Sem a dependência do motor (scipy), o ataque não rodou: isso nunca conta como aprovado.
+        raise ErroDeVersoes(f"O motor {nome} não pôde rodar: {erro}") from None
 
 
-# A versão no ar, lida das partições dela.
-
-def ler_no_ar(pasta: Path, ano: int, catalogo: dict) -> dict:
-    """Tudo o que a versão no ar mostrou de um ano: a situação, cada cruzamento publicado e as margens.
-
-    Confere cada arquivo com a situação e recusa a versão que não poderia ter ido ao ar
-    (sih_particoes.ler_publicada). O município volta aos 6 dígitos do pipeline.
-    """
-    situacao = sih_particoes.ler_publicada(pasta, ano)
-    raiz = Path(pasta) / f"ano={ano}"
-    cruzamentos = {}
-    for c in catalogo["cruzamentos"]:
-        if c["id"] not in situacao["publicados"]:
-            continue
-        nomes = sorted(n for n in situacao["arquivos"] if n.startswith(c["id"] + "/"))
-        df = pd.concat([pd.read_parquet(raiz / n) for n in nomes], ignore_index=True)
-        geo = "mun_res" if "mun_res" in df else "mun_hosp"
-        df[geo] = df[geo].str[:6]
-        cruzamentos[c["id"]] = df
-    margens = {}
-    nos_dos_cruzamentos = {tab.colunas_de(c, catalogo) for c in catalogo["cruzamentos"]}
-    for medida, lista in catalogo["margens_publicadas"].items():
-        for m in lista:
-            n = tab.no(m)
-            if n in nos_dos_cruzamentos:
-                continue
-            nome = f"margens/{medida}/{'-'.join(n) or 'brasil'}.parquet"
-            if nome not in situacao["arquivos"]:
-                raise ErroDeVersoes(f"{raiz}: a versão no ar não traz a margem publicada {nome}; sem ela não dá "
-                                    "para refazer o que essa versão mostrava")
-            margens[medida, n] = pd.read_parquet(raiz / nome)
-    return {"situacao": situacao, "cruzamentos": cruzamentos, "margens": margens}
+def motores_do_catalogo(catalogo: dict) -> list[str]:
+    return list((catalogo["bases"]["sih"].get("versoes") or {}).get("motores") or [MOTOR_PADRAO])
 
 
 def _intervalos_publicados(df: pd.DataFrame, valor: str, oculto: str, arredondado: str, k: int, base: int, onde: str):
-    """lo, hi e escondida de cada linha de um arquivo publicado."""
+    """lo, hi e escondida de cada linha de uma tabela da superfície."""
     if valor not in df or oculto not in df:
-        raise ErroDeVersoes(f"{onde}: arquivo publicado sem as colunas {valor} e {oculto}")
+        raise ErroDeVersoes(f"{onde}: tabela publicada sem as colunas {valor} e {oculto}")
     escondida = df[oculto].to_numpy(bool)
     v = df[valor].fillna(0).to_numpy(np.int64)
     if (df[valor].isna().to_numpy() != escondida).any():
@@ -169,14 +180,6 @@ def _intervalos_publicados(df: pd.DataFrame, valor: str, oculto: str, arredondad
     return lo, hi, escondida
 
 
-def _incompleto(df: pd.DataFrame, n: tuple, ultimo_mes: int | None) -> np.ndarray:
-    """Trimestre que ainda não tinha os três meses na base: fica fora do arquivo, e quem lê não vê nem a chave."""
-    if "tri" not in n or ultimo_mes is None:
-        return np.zeros(len(df), dtype=bool)
-    fim = df["tri"].str[:4].astype(int) * 100 + df["tri"].str[5:].astype(int) * 3
-    return (fim > int(ultimo_mes)).to_numpy()
-
-
 def _posicoes(uniao: pd.DataFrame, df: pd.DataFrame, n: tuple) -> tuple[np.ndarray, np.ndarray]:
     """Para cada chave da união, se a tabela a tem e em que linha."""
     chaves = df[list(n)].reset_index(drop=True).reset_index(names="_o")
@@ -187,119 +190,119 @@ def _posicoes(uniao: pd.DataFrame, df: pd.DataFrame, n: tuple) -> tuple[np.ndarr
     return tem, np.where(tem, pos, 0).astype(np.int64)
 
 
-def montar(nos: dict, sup: dict, cat_ano: dict, catalogo: dict, no_ar: dict, ano: int, k: int, medida: str = "internacoes",
-           arredondamento: tuple | None = None, ultimo_mes: int | None = None, fechado_ate: int | None = None) -> Problema:
-    """O Problema de um ano e uma medida: a versão no ar (ler_no_ar) e a candidata.
+def _visivel(versao: tuple[dict, dict], catalogo: dict, k: int, medida: str, ano: int) -> dict[tuple, pd.DataFrame]:
+    """O que uma versão mostra de uma medida, por nó: as chaves (município com 6 dígitos, como no pipeline) e o
+    intervalo de cada célula. `versao` é (situação do ano, {cruzamento: tabela da superfície})."""
+    meta, tabelas = versao
+    base = int(meta.get("arredondar_multiplo") or 0)
+    col_valor, col_oculto, col_arred = COLUNAS[medida]
+    cruzamentos = {c["id"]: c for c in catalogo["cruzamentos"]}
+    saida = {}
+    for cid, medidas in meta["superficie"].items():
+        if medida not in medidas:
+            continue
+        n = tab.colunas_de(cruzamentos[cid], catalogo)
+        df = tabelas[cid]
+        df = df.to_pandas() if not isinstance(df, pd.DataFrame) else df.copy()
+        geo = "mun_res" if "mun_res" in df else "mun_hosp"
+        df[geo] = df[geo].astype(str).str[:6]
+        lo, hi, esc = _intervalos_publicados(df, col_valor, col_oculto, col_arred, k, base, f"{cid} de {ano}")
+        saida[n] = df[list(n)].assign(_lo=lo, _hi=hi, _esc=esc)
+    return saida
 
-    `nos` e `sup` são os de sih.construir_ano, e `cat_ano`, o catálogo só com o que a candidata publica no
-    ano. `arredondamento` é (base, meses preliminares, ano), como no teste de cada versão. As células de
-    período fechado até `fechado_ate` valem o mesmo nas duas versões: nenhum arquivo com altas daquele
-    período foi republicado entre elas.
+
+def montar(no_ar: tuple[dict, dict], candidata: tuple[dict, dict], nos: dict | None, catalogo: dict, ano: int, k: int,
+           medida: str = "internacoes", fechado_ate: int | None = None) -> Problema:
+    """O Problema de um ano e uma medida, com as duas versões como a superfície as mostra.
+
+    `no_ar` e `candidata` são (situação do ano, {cruzamento: tabela da superfície}). `nos` são os da candidata
+    (sih.construir_ano), com os valores verdadeiros: só servem para conferir a solidez do ataque. As células de
+    período fechado até `fechado_ate` valem o mesmo nas duas versões: nenhum arquivo com altas daquele período
+    foi republicado entre elas.
     """
     if catalogo["bases"]["sih"]["supressao"].get("motivo_por_celula"):
         raise ErroDeVersoes("O ataque conjunto supõe que o motivo da célula oculta não é publicado")
-    col_valor, col_oculto, col_arred = COLUNAS[medida]
-    situacao = no_ar["situacao"]
-    base_antiga = int(situacao.get("arredondar_multiplo") or 0)
-    publicados = sih_deducao.nos_publicados(catalogo, medida)
-    fecho = tab.fechamento(publicados)
+    vistas = [_visivel(v, catalogo, k, medida, ano) for v in (no_ar, candidata)]
+    visiveis = list(dict.fromkeys(n for v in vistas for n in v))
+    fecho = tab.fechamento(visiveis)
+    alcance = {p: set(tab.fechamento([p])) for p in visiveis}
 
-    # O que a versão no ar publicou, por nó: chaves e intervalo de cada linha.
-    antigos: dict[tuple, pd.DataFrame] = {}
-    for c in catalogo["cruzamentos"]:
-        if c["id"] in no_ar["cruzamentos"] and (medida != "obitos" or "obitos" in c["metricas"]):
-            n = tab.colunas_de(c, catalogo)
-            df = no_ar["cruzamentos"][c["id"]]
-            lo, hi, esc = _intervalos_publicados(df, col_valor, col_oculto, col_arred, k, base_antiga, f"{c['id']} de {ano}")
-            antigos[n] = df[list(n)].assign(_lo=lo, _hi=hi, _esc=esc)
-    for (med, n), df in no_ar["margens"].items():
-        if med == medida and n not in antigos:
-            lo, hi, esc = _intervalos_publicados(df, "valor", "oculto", "arredondado", k, base_antiga, f"margem {tab.nome(n)} de {ano}")
-            antigos[n] = df[list(n)].assign(_lo=lo, _hi=hi, _esc=esc)
-
-    # As mesmas chaves nas duas versões: as da candidata e as que saem de cada tabela publicada antes.
-    alcance = {p: set(tab.fechamento([p])) for p in antigos}
+    # As mesmas chaves nas duas versões: as que cada uma mostra e as que saem delas, nível a nível.
     uniao: dict[tuple, pd.DataFrame] = {}
     for n in fecho:
         if not n:
             uniao[n] = pd.DataFrame(index=[0])
             continue
-        partes = [nos[n][list(n)]] + [tab.chaves_acima(antigos[p], p, n) for p in antigos if n in alcance[p]]
+        partes = [tab.chaves_acima(v[p], p, n) if p != n else v[p][list(n)] for v in vistas for p in v if n in alcance[p]]
+        if nos is not None and n in nos:
+            partes.append(nos[n][list(n)])
         uniao[n] = pd.concat(partes).drop_duplicates().sort_values(list(n)).reset_index(drop=True)
     arestas = tab.arestas(uniao)
 
-    # A candidata, como a tela a mostraria: o mesmo sistema do teste dela, nas chaves da união.
-    estados = sih_deducao.sem_motivo(sih_deducao.estados_publicados(nos, sup, cat_ano, k, medida))
-    nos_al, est_al = {}, {}
-    for n in fecho:
-        if not n:
-            nos_al[n] = nos[n][[medida]].reset_index(drop=True)
-            if n in estados:
-                est_al[n] = estados[n]
-            continue
-        tem, idx = _posicoes(uniao[n], nos[n], n)
-        nos_al[n] = uniao[n].assign(**{medida: np.where(tem, nos[n][medida].to_numpy(np.int64)[idx], 0)})
-        if n in estados:
-            # Chave que a candidata não tem vale zero, menos no trimestre que ainda não saiu.
-            estado = np.where(tem, estados[n][idx], deducao.VISIVEL).astype(np.int8)
-            estado[~tem & _incompleto(uniao[n], n, ultimo_mes)] = deducao.LIVRE
-            est_al[n] = estado
-    s = sih_deducao.sistema(nos_al, est_al, publicados, k, medida=medida, aresta_cache=arestas, arredondamento=arredondamento)
-    candidata = Versao("candidata", {x: no.lo for x, no in s.nos.items()}, {x: no.hi for x, no in s.nos.items()},
-                       {x: no.estado != deducao.VISIVEL for x, no in s.nos.items()},
-                       frozenset(tab.nome(n) for n in est_al), {x: no.valor for x, no in s.nos.items()})
-
-    # A versão no ar: só o que foi publicado. O resto é incógnita.
-    lo, hi, esc = {}, {}, {}
-    for n in fecho:
-        tamanho = len(uniao[n])
-        nome = tab.nome(n)
-        if n not in antigos:
-            lo[nome], hi[nome] = np.zeros(tamanho, np.int64), np.full(tamanho, deducao.INF, np.int64)
-            esc[nome] = np.ones(tamanho, bool)
-            continue
-        antigo = antigos[n]
-        if not n:
-            tem, idx = np.ones(1, bool), np.zeros(1, np.int64)
-        else:
-            tem, idx = _posicoes(uniao[n], antigo, n)
-        # Chave que a versão no ar não tinha valia zero lá, menos no trimestre que ela ainda não mostrava.
-        fora = ~tem & _incompleto(uniao[n], n, situacao.get("ultimo_mes")) if n else np.zeros(1, bool)
-        lo[nome] = np.where(tem, antigo["_lo"].to_numpy(np.int64)[idx], 0)
-        hi[nome] = np.where(fora, deducao.INF, np.where(tem, antigo["_hi"].to_numpy(np.int64)[idx], 0))
-        esc[nome] = np.where(tem, antigo["_esc"].to_numpy(bool)[idx], fora)
-    no_ar_v = Versao("no ar", lo, hi, esc, frozenset(tab.nome(n) for n in antigos))
+    versoes = []
+    for rotulo, vista in zip(("no ar", "candidata"), vistas):
+        lo, hi, esc = {}, {}, {}
+        for n in fecho:
+            nome, tamanho = tab.nome(n), len(uniao[n])
+            if n not in vista:
+                # Ninguém publica: incógnita, de 0 ao infinito.
+                lo[nome], hi[nome], esc[nome] = np.zeros(tamanho, np.int64), np.full(tamanho, deducao.INF, np.int64), np.ones(tamanho, bool)
+                continue
+            # Chave que a versão não mostra numa tabela que ela publica vale zero nela.
+            tem, idx = _posicoes(uniao[n], vista[n], n)
+            lo[nome] = np.where(tem, vista[n]["_lo"].to_numpy(np.int64)[idx], 0)
+            hi[nome] = np.where(tem, vista[n]["_hi"].to_numpy(np.int64)[idx], 0)
+            esc[nome] = np.where(tem, vista[n]["_esc"].to_numpy(bool)[idx], False)
+        versoes.append(Versao(rotulo, lo, hi, esc, frozenset(tab.nome(n) for n in vista)))
+    if nos is not None:
+        valor = {}
+        for n in fecho:
+            if not n:
+                valor[tab.nome(n)] = nos[n][medida].to_numpy(np.int64)[:1]
+                continue
+            tem, idx = _posicoes(uniao[n], nos[n], n)
+            valor[tab.nome(n)] = np.where(tem, nos[n][medida].to_numpy(np.int64)[idx], 0)
+        versoes[1].valor = valor
 
     iguais = []
     if fechado_ate:
         for n in fecho:
             iguais.append((0, 1, tab.nome(n), sih_deducao.periodo_fechado(uniao[n], n, ano, int(fechado_ate))))
-    return Problema(k, medida, [no_ar_v, candidata], [(tab.nome(f), tab.nome(g), i) for f, g, i in arestas], iguais)
+    return Problema(k, medida, versoes, [(tab.nome(f), tab.nome(g), i) for f, g, i in arestas], iguais)
 
 
-def conferir_com_a_no_ar(nos: dict, sup: dict, cat_ano: dict, catalogo: dict, pasta: Path, ano: int, k: int,
-                         arredondamento: tuple | None, ultimo_mes: int | None, fechado_ate: int | None,
-                         motor: str | None = None) -> dict:
-    """A etapa: ataca a versão no ar e a candidata juntas, em internações e em óbitos, e resume.
+def conferir_com_a_no_ar(nos: dict, candidata: tuple[dict, dict], no_ar: sih_superficie.Superficie, catalogo: dict,
+                         ano: int, k: int, fechado_ate: int | None, motores: list[str] | None = None) -> dict:
+    """A etapa: ataca a versão no ar e a candidata juntas, em internações e em óbitos, com cada motor, e resume.
 
-    O resumo vai para a situação do ano (deducao.conjunto). Só contagens de células, nunca valores.
-    Versão no ar ilegível, incoerente ou incompatível com a candidata vira `passou` falso, com o motivo.
+    O resumo vai para a situação do ano (deducao.conjunto). Só contagens de células, nunca valores. Versão no ar
+    ilegível, incoerente ou incompatível com a candidata, ou motor que não roda, vira `passou` falso, com o motivo.
     """
-    resumo = {"obrigatorio": True, "rodou": False, "passou": False, "motor": motor or MOTOR_PADRAO}
+    nomes = list(motores or motores_do_catalogo(catalogo))
+    resumo = {"obrigatorio": True, "rodou": False, "passou": False, "motores": nomes}
     try:
-        no_ar = ler_no_ar(pasta, ano, catalogo)
+        if ano not in no_ar.anos:
+            raise ErroDeVersoes(f"A versão no ar não tem o ano {ano}")
+        meta = no_ar.anos[ano]
+        no_ar_ano = (meta, {cid: no_ar.tabelas[ano, cid] for cid in meta["superficie"]})
         medidas = {}
         for medida in COLUNAS:
-            r = atacar(montar(nos, sup, cat_ano, catalogo, no_ar, ano, k, medida, arredondamento, ultimo_mes, fechado_ate), motor)
-            medidas[medida] = {"reveladas_na_versao_no_ar": sum(r.reveladas[0].values()),
-                               "reveladas_na_candidata": sum(r.reveladas[1].values()),
-                               "diferencas_de_1_a_k-1": sum(r.diferencas["0-1"].values()),
-                               "por_no": {"no_ar": r.reveladas[0], "candidata": r.reveladas[1], "diferencas": r.diferencas["0-1"]},
-                               "motor": r.motor, "detalhe": r.detalhe, "total": r.total}
+            p = montar(no_ar_ano, candidata, nos, catalogo, ano, k, medida, fechado_ate)
+            por_motor = {}
+            for nome in nomes:
+                inicio = time.perf_counter()
+                r = atacar(p, nome)
+                por_motor[nome] = {"reveladas_na_versao_no_ar": sum(r.reveladas[0].values()),
+                                   "reveladas_na_candidata": sum(r.reveladas[1].values()),
+                                   "diferencas_de_1_a_k-1": sum(r.diferencas["0-1"].values()),
+                                   "inconclusivas": r.inconclusivas, "total": r.total,
+                                   "por_no": {"no_ar": r.reveladas[0], "candidata": r.reveladas[1], "diferencas": r.diferencas["0-1"]},
+                                   "detalhe": r.detalhe, "segundos": round(time.perf_counter() - inicio, 2)}
+            medidas[medida] = {"motores": por_motor, "total": sum(m["total"] for m in por_motor.values())}
     except ErroDeContrato as erro:
         return resumo | {"motivo": str(erro)}
     total = sum(m["total"] for m in medidas.values())
-    resumo |= {"rodou": True, "passou": total == 0, "versao_no_ar_coletada_em": no_ar["situacao"].get("coletado_em"), **medidas}
+    resumo |= {"rodou": True, "passou": total == 0, "versao_no_ar_coletada_em": no_ar.anos[ano].get("coletado_em"), **medidas}
     if total:
         resumo["motivo"] = f"{total} contagem(ns) de 1 a {k - 1} revelada(s) com as duas versões juntas"
     return resumo

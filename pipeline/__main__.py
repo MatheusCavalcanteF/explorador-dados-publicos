@@ -1,6 +1,7 @@
 """Linha de comando do pipeline. Cada etapa grava em build/coleta, que o workflow passa adiante.
 
-    python -m pipeline releases   --destino build/release   (Censo e versão no ar do SIH; falha ao consultar para)
+    python -m pipeline releases   --destino build/release   (partição fechada do Censo; falha ao consultar para)
+    python -m pipeline no-ar      --destino build/no-ar     (versão no ar do SIH, a superfície no site; idem)
     python -m pipeline coletar    --saida build/coleta [--censo-release arquivo] [--anterior manifesto/ibge.json]
     python -m pipeline alcance    --saida build/coleta
     python -m pipeline diagnostico --saida build/diagnostico [--resumo arquivo.md] [--pular inep ...]
@@ -13,7 +14,7 @@
     python -m pipeline exigir     --coleta build/coleta
     python -m pipeline sih        --coleta build/coleta --trabalho build/sih --saida build/sih-medicao
                                   [--ufs RR SP] [--anos 2025 2026] [--processos 4] [--origem-local pasta]
-                                  [--anterior particoes_publicadas | --no-ar build/release]
+                                  [--anterior superficie.parquet|particoes | --no-ar build/no-ar]
                                   (herda o padrão dos períodos fechados e roda o ataque conjunto com ela)
     python -m pipeline publicacao --base sih   (publicar=true ou false, pelo catálogo)
 
@@ -65,6 +66,7 @@ def main(argv=None) -> int:
     parser = argparse.ArgumentParser(prog="python -m pipeline")
     sub = parser.add_subparsers(dest="comando", required=True)
     sub.add_parser("releases").add_argument("--destino", type=Path, required=True)
+    sub.add_parser("no-ar").add_argument("--destino", type=Path, required=True)
     sub.add_parser("publicacao").add_argument("--base", required=True)
     p = sub.add_parser("coletar")
     p.add_argument("--saida", type=Path, required=True)
@@ -108,9 +110,10 @@ def main(argv=None) -> int:
     p.add_argument("--origem-local", type=Path)
     p.add_argument("--manter-dbc", action="store_true")
     p.add_argument("--sem-deducao", action="store_true")
-    # Partições da versão publicada antes: nos períodos fechados, a nova herda o padrão de células ocultas, e
-    # cada ano passa pelo ataque conjunto com ela. --anterior é uma pasta escolhida à mão, para uso local;
-    # --no-ar é a pasta de `releases`, com a consulta: sem versão no ar, é a primeira publicação.
+    # A versão publicada antes, como o site a mostrou (a superfície): nos períodos fechados, a nova herda o
+    # padrão de células ocultas, e cada ano passa pelo ataque conjunto com ela. --anterior é um arquivo de
+    # superfície ou uma pasta de partições escolhidos à mão, para uso local; --no-ar é a pasta de `no-ar`, com
+    # a consulta ao site: sem versão no ar, é a primeira publicação.
     origem = p.add_mutually_exclusive_group()
     origem.add_argument("--anterior", type=Path)
     origem.add_argument("--no-ar", type=Path)
@@ -120,12 +123,15 @@ def main(argv=None) -> int:
     if args.comando == "releases":
         consulta = release.consultar(args.destino, token=os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN"))
         print(f"Releases: {len(consulta['releases'])} publicadas. Censo 2022: "
-              f"{'baixado da Release' if consulta['censo'] else 'ainda sem Release; a coleta vai à fonte'}. SIH no ar: "
-              f"{'anos ' + ', '.join(map(str, consulta['sih']['anos'])) if consulta['sih']['anos'] else 'nenhuma versão; primeira publicação'}")
+              f"{'baixado da Release' if consulta['censo'] else 'ainda sem Release; a coleta vai à fonte'}")
+    elif args.comando == "no-ar":
+        from . import sih_superficie
+        consulta = sih_superficie.consultar(args.destino, cat)
+        print(f"SIH no ar: {'anos ' + ', '.join(map(str, consulta['anos'])) if consulta['existe'] else 'nenhuma versão; primeira publicação'}")
     elif args.comando == "publicacao":
         regra = cat["bases"][args.base].get("publicacao") or {}
         # Para o $GITHUB_OUTPUT: os passos do SIH no Publicar só rodam quando o catálogo manda publicar.
-        print(f"publicar={'true' if regra.get('site') or regra.get('releases') else 'false'}")
+        print(f"publicar={'true' if regra.get('site') else 'false'}")
     elif args.comando == "coletar":
         censo = args.censo_release if args.censo_release and args.censo_release.exists() else None
         anterior = _ler(args.anterior)["fontes"] if args.anterior and args.anterior.exists() else None
@@ -176,8 +182,11 @@ def main(argv=None) -> int:
     elif args.comando == "manifesto":
         print("Manifesto:", ", ".join(manifesto.gravar(args.coleta, args.saida)))
     elif args.comando == "sih":
-        from . import sih
-        anterior = release.versao_no_ar(args.no_ar) if args.no_ar else args.anterior
+        from . import sih, sih_superficie
+        if args.no_ar:
+            anterior = sih_superficie.versao_no_ar(args.no_ar, cat)
+        else:
+            anterior = sih_superficie.carregar(args.anterior, cat) if args.anterior else None
         medicao = sih.executar(_ler(args.coleta / "ibge.json"), cat, args.trabalho, args.saida, args.ufs, args.anos,
                                args.processos, args.origem_local, args.manter_dbc, not args.sem_deducao,
                                anterior=anterior, no_ar_consultada=bool(args.no_ar))

@@ -62,9 +62,22 @@ bases:
     # O FTP não declara licença. O site do ministério declara CC BY-ND 3.0 para o próprio conteúdo e
     # "licença aberta" para dados abertos, sem dizer qual vale para estes arquivos.
     licenca: { id: nao-declarada-na-origem, atribuicao: "Ministério da Saúde/DATASUS, SIH/SUS" }
-    # Até o OK do dono do projeto, nada do SIH vai para o site nem para as Releases: o pipeline roda,
-    # mede e testa, e os agregados ficam no runner.
-    publicacao: { site: false, releases: false }
+    # Até o OK do dono do projeto, nada do SIH vai para o site: o pipeline roda, mede e testa, e os
+    # agregados ficam no runner. Nada do SIH vai para Releases, nem depois (decidido em 10/11/2026).
+    publicacao: { site: false }
+    # Superfície pública (decidido em 10/11/2026): o SIH publicado é só o que o site mostra, nas páginas
+    # de município e no CSV que sai delas. As partições em Parquet ficam no runner. A versão no ar é um
+    # arquivo com exatamente essa superfície, publicado com o site em `arquivo`: é dele que --no-ar, a
+    # herança do padrão e o ataque conjunto leem. Por cruzamento, as medidas que a página mostra; os de
+    # detalhe aparecem só nos `anos_recentes` mais novos publicados, como na página.
+    superficie:
+      arquivo: dados/sih/superficie.parquet
+      cruzamentos:
+        sih_res_ano: { medidas: [internacoes, obitos] }
+        sih_hosp_ano: { medidas: [internacoes] }
+        sih_res_mes: { medidas: [internacoes] }
+        sih_res_ano_capitulo: { medidas: [internacoes], anos_recentes: 2 }
+        sih_res_ano_faixa12_sexo: { medidas: [internacoes], anos_recentes: 2 }
     coleta:
       origem: "ftp://ftp.datasus.gov.br/dissemin/publicos/SIHSUS/200801_/Dados"
       padrao: "RD{uf}{aamm}.dbc"
@@ -126,11 +139,17 @@ bases:
       # Nas células de período fechado, a versão nova herda o padrão da publicada: a oculta continua
       # oculta, e a visível e exata não vira complementar (sih.fixas_da_anterior).
       herdar_padrao_fechado: true
-      # Antes de toda publicação, o teste ataca a versão no ar e a candidata juntas. Se ele não rodar, se
-      # revelar alguma contagem, ou se a versão no ar não puder ser lida ou não bater com a situação dela,
-      # nada é publicado e o site anterior fica no ar. A etapa é pipeline/sih_versoes.py: roda em cada ano
-      # que a versão no ar tem, em internações e em óbitos, e o ano que não passa não vira partição.
+      # Antes de toda publicação, o teste ataca a versão no ar e a candidata juntas, as duas como a
+      # superfície as mostra. Se ele não rodar, se revelar alguma contagem, ou se a versão no ar não puder
+      # ser lida ou não bater com a situação dela, nada é publicado e o site anterior fica no ar. A etapa é
+      # pipeline/sih_versoes.py: roda em cada ano que a versão no ar tem, em internações e em óbitos, e o
+      # ano que não passa não vira partição.
       ataque_conjunto_obrigatorio: true
+      # Motores do ataque conjunto (decidido em 10/11/2026): todos rodam, e todos precisam dar zero.
+      # "intervalos" aperta intervalos pelas somas, em cadeia; "programacao_linear" acha o mínimo e o
+      # máximo de cada célula escondida por programação linear (HiGHS, pelo scipy), e pega deduções que
+      # dependem de várias somas ao mesmo tempo, que o primeiro não alcança.
+      motores: [intervalos, programacao_linear]
       # Em ano aberto, o que é publicado de cada cruzamento fica o da primeira publicação daquele ano até o
       # ano fechar, sem refazer o critério a cada mês. A única exceção é o teste de dedução revelar algo
       # com o cruzamento, que sempre o tira.
@@ -349,8 +368,10 @@ cruzamentos:
   - { id: sih_hosp_tri_capitulo, herda_trimestre_de: sih_hosp_mes, dimensoes: [municipio_hospital, capitulo_cid], tempo: tri, metricas: [internacoes] }
   - { id: sih_hosp_mes_carater, mae: sih_hosp_mes, dimensoes: [municipio_hospital, carater], tempo: mes, metricas: [internacoes] }
 
-# Somas publicadas fora dos cruzamentos: as páginas de UF e do Brasil. Cada uma é uma lista de colunas;
-# a vazia é o total do Brasil no ano. Margem nova só entra depois de passar no teste de dedução.
+# Somas que a supressão e o teste de dedução de cada versão tratam como publicadas, além dos cruzamentos:
+# UF e Brasil. Cada uma é uma lista de colunas; a vazia é o total do Brasil no ano. A superfície de hoje
+# não as mostra (bases.sih.superficie), e protegê-las deixa a supressão do lado seguro. Margem nova só
+# entra na tela depois de passar no teste de dedução.
 margens_publicadas:
   internacoes: [[uf_res, mes], [uf_res], [uf_hosp, mes], [uf_hosp], [mes], []]
   obitos: [[uf_res], [uf_hosp], []]

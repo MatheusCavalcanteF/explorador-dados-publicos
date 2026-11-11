@@ -15,12 +15,12 @@ from pipeline import rede
 # Os testes do SIH precisam de requirements-sih.txt. O Publicar instala só requirements.txt e não roda
 # o SIH, então neles esses módulos ficam de fora. O CI define EXIGIR_SIH=1: lá, faltar dependência é erro,
 # para que nenhum teste do SIH seja pulado sem aviso.
-_SIH = ("numpy", "pandas", "duckdb", "dbfread", "hypothesis")
+_SIH = ("numpy", "pandas", "duckdb", "dbfread", "hypothesis", "scipy")
 _FALTAM = [m for m in _SIH if importlib.util.find_spec(m) is None]
 if _FALTAM and os.environ.get("EXIGIR_SIH") == "1":
     raise RuntimeError(f"EXIGIR_SIH=1, mas faltam {_FALTAM}: instale requirements-sih.txt")
-collect_ignore = (["test_dbf_reader.py", "test_deducao.py", "test_medicoes.py", "test_sih_coleta.py", "test_sih_tabelas.py",
-                   "test_sih_trava.py", "test_sih_versoes.py", "test_site_sih.py"]
+collect_ignore = (["test_dbf_reader.py", "test_deducao.py", "test_medicoes.py", "test_sih_coleta.py", "test_sih_superficie.py",
+                   "test_sih_tabelas.py", "test_sih_trava.py", "test_sih_versoes.py", "test_site_sih.py"]
                   if _FALTAM else [])
 
 # Códigos reais das 27 UFs; os municípios são inventados.
@@ -167,6 +167,23 @@ def sidra(valores, variavel, periodo, ordem=("municipio", "variavel", "periodo")
 def resposta(valor, status=200, cabecalhos=None):
     corpo = valor if isinstance(valor, bytes) else json.dumps(valor, ensure_ascii=False).encode()
     return rede.Resposta(status, cabecalhos or {}, corpo, 0.01)
+
+
+def site_falso(endereco_da_superficie, arquivo=None, raiz=200):
+    """O site no ar: a superfície do SIH em `endereco_da_superficie` (404 sem `arquivo`) e a página inicial, com
+    qualquer marca de consulta no fim do endereço. Outro endereço é falha de rede. Registra os pedidos."""
+    from pipeline import projeto
+
+    def pedir(url, **opcoes):
+        pedir.pedidos.append((url, opcoes))
+        base = url.split("?")[0]
+        if base == endereco_da_superficie:
+            return resposta(arquivo.read_bytes()) if arquivo is not None else resposta(b"Not Found", status=404)
+        if base == projeto.SITE and raiz is not None:
+            return resposta(b"<html></html>", status=raiz)
+        raise rede.ErroDeRede(f"{url} fora do ar no teste")
+    pedir.pedidos = []
+    return pedir
 
 
 class FonteFalsa:

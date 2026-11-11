@@ -80,35 +80,30 @@ def dia(iso: str) -> str:
 
 
 def carregar(pasta: Path, catalogo: dict) -> dict:
-    """Partições e situação de cada ano, agrupadas por município.
+    """A superfície do SIH (sih_superficie), agrupada por município: a página mostra exatamente ela.
 
-    Lê `ano=<AAAA>/situacao.json` de cada ano e só os arquivos que ela lista, conferidos um a um
-    (sih.ler_situacao): cruzamento dado como publicado sem os arquivos dele para o build com erro claro.
-    Ano que não passou no teste de dedução fica de fora.
+    `pasta` é uma pasta de partições de uma execução local (`trabalho/particoes`) ou o arquivo da superfície.
+    Das partições, só se lê o que a situação de cada ano lista, conferido arquivo por arquivo: cruzamento dado
+    como publicado sem os arquivos dele para o build com erro claro. Ano que não passou nos testes fica de fora.
     """
-    from . import sih
-    anos_na_pasta = sorted(int(p.name[4:]) for p in Path(pasta).glob("ano=*") if p.is_dir())
-    if not anos_na_pasta:
+    from . import sih_superficie
+    from .contrato import ErroDeContrato
+    pasta = Path(pasta)
+    if not pasta.is_file() and not any(p.is_dir() for p in pasta.glob("ano=*")):
         raise ErroSIH(f"{pasta}: nenhuma pasta ano=<AAAA>; rode antes `python -m pipeline sih`")
     try:
-        situacoes = {ano: sih.ler_situacao(pasta, ano) for ano in anos_na_pasta}
-    except sih.ErroDeParticao as erro:
+        sup = sih_superficie.carregar(pasta, catalogo)
+    except ErroDeContrato as erro:
         raise ErroSIH(f"Partições locais incompletas: {erro}") from None
-    anos = [a for a, s in situacoes.items() if s["deducao"]["rodou"] and s["deducao"]["passou"]
-            and s["deducao"]["obitos_passou"]]
+    anos = sorted(sup.anos)
     if not anos:
         raise ErroSIH("Nenhum ano das partições locais passou no teste de dedução")
     por_mun = {}
     for cid, geo in TABELAS.items():
-        partes = []
-        for ano in anos:
-            if cid not in situacoes[ano]["publicados"]:
-                continue
-            for nome in sorted(n for n in situacoes[ano]["arquivos"] if n.startswith(cid + "/")):
-                partes.append(pd.read_parquet(Path(pasta) / f"ano={ano}" / nome).assign(ano=ano))
+        partes = [sup.tabela(ano, cid).assign(ano=ano) for ano in anos if (ano, cid) in sup.tabelas]
         df = pd.concat(partes, ignore_index=True) if partes else pd.DataFrame(columns=[geo, "ano"])
         por_mun[cid] = {codigo: grupo for codigo, grupo in df.groupby(geo, sort=False)}
-    return {"situacoes": situacoes, "anos": anos, "por_mun": por_mun, "catalogo": catalogo}
+    return {"situacoes": {**sup.reprovados, **sup.anos}, "anos": anos, "por_mun": por_mun, "catalogo": catalogo}
 
 
 # Uma célula da tela: valor publicado (None quando oculto) e situação.

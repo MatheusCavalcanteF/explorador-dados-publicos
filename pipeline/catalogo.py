@@ -67,11 +67,18 @@ def validar(catalogo: dict) -> None:
                 raise ErroDeCatalogo(f"Base {nome}: preliminares.arredondar_multiplo deve ser um inteiro de 2 para cima")
             if not set(preliminares.get("contagens") or []) <= {"internacoes", "obitos"}:
                 raise ErroDeCatalogo(f"Base {nome}: preliminares.contagens só aceita internacoes e obitos")
-        versoes = base.get("versoes")
-        if versoes is not None and (set(versoes) - {"herdar_padrao_fechado", "ataque_conjunto_obrigatorio",
-                                                    "situacao_fixa_no_ano_aberto"}
-                                    or not all(isinstance(v, bool) for v in versoes.values())):
-            raise ErroDeCatalogo(f"Base {nome}: versoes só aceita as três regras, como true ou false")
+        versoes = dict(base.get("versoes") or {})
+        motores = versoes.pop("motores", None)
+        if (set(versoes) - {"herdar_padrao_fechado", "ataque_conjunto_obrigatorio", "situacao_fixa_no_ano_aberto"}
+                or not all(isinstance(v, bool) for v in versoes.values())):
+            raise ErroDeCatalogo(f"Base {nome}: versoes só aceita as três regras, como true ou false, e os motores")
+        if motores is not None and (not isinstance(motores, list) or not motores or len(set(motores)) != len(motores)
+                                    or not set(motores) <= MOTORES_DO_ATAQUE):
+            raise ErroDeCatalogo(f"Base {nome}: versoes.motores é uma lista sem repetição de {sorted(MOTORES_DO_ATAQUE)}")
+        publicacao = base.get("publicacao")
+        if publicacao is not None and (set(publicacao) != {"site"} or not isinstance(publicacao["site"], bool)):
+            # Nada de Release com dados do SIH (decidido em 10/11/2026): a publicação é só o site.
+            raise ErroDeCatalogo(f"Base {nome}: publicacao só aceita site, como true ou false")
     for nome, metrica in metricas.items():
         onde = f"Métrica {nome}"
         if metrica.get("tema") not in temas:
@@ -103,9 +110,38 @@ def validar(catalogo: dict) -> None:
             raise ErroDeCatalogo(f"{onde}: toda métrica publicada diz suas ressalvas")
     if "cruzamentos" in catalogo:
         _validar_cruzamentos(catalogo)
+        for nome, base in bases.items():
+            if "superficie" in base:
+                _validar_superficie(nome, base["superficie"], catalogo)
 
 
 TEMPOS = ("mes", "tri", "ano")
+# Os motores do ataque conjunto (sih_versoes.MOTORES). Ficam aqui também para o catálogo ser validado sem
+# as dependências do SIH; um teste confere que as duas listas são iguais.
+MOTORES_DO_ATAQUE = frozenset({"intervalos", "programacao_linear"})
+
+
+def _validar_superficie(nome: str, superficie: dict, catalogo: dict) -> None:
+    """O que o site mostra: um arquivo dentro do site e, por cruzamento, as contagens que a página exibe."""
+    arquivo = str(superficie.get("arquivo") or "")
+    if not arquivo.endswith(".parquet") or arquivo.startswith("/") or ".." in arquivo.split("/") or "\\" in arquivo:
+        raise ErroDeCatalogo(f"Base {nome}: superficie.arquivo é um caminho .parquet relativo, dentro do site")
+    cruzamentos = {c["id"]: c for c in catalogo["cruzamentos"]}
+    lista = superficie.get("cruzamentos") or {}
+    if not isinstance(lista, dict) or not lista:
+        raise ErroDeCatalogo(f"Base {nome}: superficie.cruzamentos precisa listar os cruzamentos da página")
+    for cid, regra in lista.items():
+        medidas = (regra or {}).get("medidas")
+        if cid not in cruzamentos:
+            raise ErroDeCatalogo(f"Base {nome}: superfície com cruzamento fora do catálogo: {cid}")
+        if (not isinstance(medidas, list) or not medidas or len(set(medidas)) != len(medidas)
+                or not set(medidas) <= {"internacoes", "obitos"} & set(cruzamentos[cid]["metricas"])):
+            raise ErroDeCatalogo(f"Base {nome}: {cid} na superfície só mostra contagens que o cruzamento tem")
+        if set(regra) - {"medidas", "anos_recentes"}:
+            raise ErroDeCatalogo(f"Base {nome}: {cid} na superfície só aceita medidas e anos_recentes")
+        recentes = regra.get("anos_recentes")
+        if recentes is not None and (isinstance(recentes, bool) or not isinstance(recentes, int) or recentes < 1):
+            raise ErroDeCatalogo(f"Base {nome}: {cid}.anos_recentes deve ser um inteiro de 1 para cima")
 
 
 def _numero(valor) -> bool:

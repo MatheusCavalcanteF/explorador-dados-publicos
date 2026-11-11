@@ -48,8 +48,9 @@ def particoes(pasta: Path, fora_2025: dict | None = None) -> Path:
             arquivos |= gravar_se("sih_res_ano", "42", [{"mun_res": "4206504"} | _celula(
                 0, oculto=True, dias=None, valor=None, obitos=None, obitos_oculto=True, obitos_arredondado=False)])
             arquivos |= gravar_se("sih_hosp_ano", "35", [{"mun_hosp": "3548500"} | _celula(2410, **anual)])
-            meses = [{"mun_res": "3548500", "mes": str(m)} | _celula(100 + m % 100, oculto=(m % 100 == 2), prelim=str(m) in prelim,
-                                                                       dias=1, valor=1.0)
+            # Mês preliminar visível sai em múltiplo de 5, como o pipeline grava (101 vira 100).
+            meses = [{"mun_res": "3548500", "mes": str(m)} | _celula((100 + m % 100 + 2) // 5 * 5 if str(m) in prelim else 100 + m % 100,
+                                                                       oculto=(m % 100 == 2), prelim=str(m) in prelim, dias=1, valor=1.0)
                      for m in range(ano * 100 + 1, min(ano * 100 + 12, ultimo) + 1)]
             arquivos |= gravar_se("sih_res_mes", "35", meses)
             arquivos |= _gravar(p, "sih_res_ano_capitulo", "35", [{"mun_res": "3548500", "capitulo": "10"} | _celula(300),
@@ -69,14 +70,16 @@ def _coleta_estimativa(periodo):
     return c
 
 
-@pytest.fixture
-def com_sih(tmp_path, monkeypatch):
-    monkeypatch.delenv("GITHUB_ACTIONS", raising=False)
-    monkeypatch.delenv("CI", raising=False)
-    saida = tmp_path / "site"
-    site.construir(_coleta_estimativa("2025"), catalogo.carregar(), saida, execucao="local",
-                   sih_local=particoes(tmp_path / "particoes"))
-    return saida
+@pytest.fixture(scope="module")
+def com_sih(tmp_path_factory):
+    """O site com o SIH, montado uma vez para os testes que só leem as páginas."""
+    pasta = tmp_path_factory.mktemp("com_sih")
+    with pytest.MonkeyPatch.context() as mp:
+        mp.delenv("GITHUB_ACTIONS", raising=False)
+        mp.delenv("CI", raising=False)
+        site.construir(_coleta_estimativa("2025"), catalogo.carregar(), pasta / "site", execucao="local",
+                       sih_local=particoes(pasta / "particoes"))
+    return pasta / "site"
 
 
 def test_sem_a_opcao_local_nao_ha_sih_no_site(tmp_path):
@@ -163,7 +166,7 @@ def test_cruzamento_retirado_do_ano_mostra_o_motivo_e_nunca_zero(tmp_path, monke
     meses = re.findall(r'data-v="2025(\d\d)">[a-z]+/2025</th>(<td[^>]*>[^<]*</td>)', html)
     assert len(meses) == 12 and all(td == nao for _, td in meses)
     assert 'class="situacao">não publicado: o teste de dedução revelou contagens com ele no ano</td>' in html
-    assert 'data-v="202601">jan/2026</th><td data-v="101"' in html
+    assert 'data-v="202601">jan/2026</th><td data-v="100"' in html
     # O município sem linha em 2026 continua com zero onde o cruzamento foi publicado, e sem a frase de "sem hospital",
     # porque em 2025 não dá para saber.
     herval = ler(saida, "municipio/4206504/index.html")
@@ -191,7 +194,7 @@ def test_retirada_isolada_preserva_os_outros_cruzamentos(tmp_path, monkeypatch, 
         assert 'data-v="2410"' in linha
     meses = re.findall(r'data-v="2025\d\d">[a-z]+/2025</th>(<td[^>]*>[^<]*</td>)', html)
     assert len(meses) == 12 and sum('data-s="não publicado"' in td for td in meses) == meses_fora
-    assert 'data-v="202601">jan/2026</th><td data-v="101"' in html
+    assert 'data-v="202601">jan/2026</th><td data-v="100"' in html
 
 
 @pytest.mark.parametrize("motivo", [None, "", "ausente"])
@@ -236,7 +239,7 @@ def test_opcao_local_para_no_ci_e_nao_toca_no_catalogo(tmp_path, monkeypatch):
 
 def test_sih_continua_fora_da_publicacao():
     cat = catalogo.carregar()
-    assert cat["bases"]["sih"]["publicacao"] == {"site": False, "releases": False}
+    assert cat["bases"]["sih"]["publicacao"] == {"site": False}
     for workflow in (RAIZ / ".github" / "workflows").glob("*.yml"):
         assert "--sih-local" not in workflow.read_text(encoding="utf-8"), workflow.name
     # No Publicar, o SIH só roda se o catálogo mandar publicar, e com a versão no ar como anterior. O que
@@ -246,6 +249,29 @@ def test_sih_continua_fora_da_publicacao():
     for job in passos.values():
         for passo in job["steps"]:
             texto = json.dumps(passo, ensure_ascii=False)
-            if "pipeline sih " in texto or "requirements-sih" in texto:
+            if "pipeline sih " in texto or "pipeline no-ar" in texto or "requirements-sih" in texto:
                 assert passo.get("if") == "steps.sih.outputs.publicar == 'true'", passo.get("name")
             assert "particoes" not in texto and "build/sih" not in texto.replace("--trabalho build/sih --saida build/sih-medicao", "")
+
+
+def test_a_pagina_mostra_exatamente_a_superficie(tmp_path, monkeypatch):
+    """A página desenhada das partições e a desenhada do arquivo da superfície são a mesma: a superfície é tudo o
+    que a página mostra do SIH, e o arquivo guarda exatamente isso."""
+    from pipeline import sih_superficie
+    monkeypatch.delenv("GITHUB_ACTIONS", raising=False)
+    monkeypatch.delenv("CI", raising=False)
+    cat = catalogo.carregar()
+    assert set(site_sih.TABELAS) == set(cat["bases"]["sih"]["superficie"]["cruzamentos"])
+    pasta = particoes(tmp_path / "particoes")
+    sup = sih_superficie.extrair(pasta, cat)
+    arquivo = tmp_path / "superficie.parquet"
+    sih_superficie.gravar(sup, arquivo, cat)
+    paginas = {}
+    for nome, origem in (("particoes", pasta), ("arquivo", arquivo)):
+        site.construir(_coleta_estimativa("2025"), cat, tmp_path / nome, execucao="local", sih_local=origem)
+        paginas[nome] = {m: ler(tmp_path / nome, f"municipio/{m}/index.html") for m in ("3548500", "4206504")}
+    assert paginas["particoes"] == paginas["arquivo"]
+    # Óbitos só por residência no ano; dias e valor pago, que a página não mostra, não estão na superfície.
+    assert set(sup.tabelas[2025, "sih_hosp_ano"].column_names) == {"mun_hosp", "internacoes", "oculto", "arredondado", "preliminar"}
+    assert "obitos" in sup.tabelas[2025, "sih_res_ano"].column_names
+    assert not any({"dias", "valor"} & set(t.column_names) for t in sup.tabelas.values())

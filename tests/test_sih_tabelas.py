@@ -4,7 +4,7 @@ import pytest
 pd = pytest.importorskip("pandas")
 duckdb = pytest.importorskip("duckdb")
 
-from pipeline import catalogo, deducao, sih_deducao, sih_tabelas as tab, supressao  # noqa: E402
+from pipeline import catalogo, deducao, sih_deducao, sih_superficie, sih_tabelas as tab, supressao  # noqa: E402
 
 
 @pytest.fixture(scope="module")
@@ -301,6 +301,7 @@ def _gravar_versao(sih, nos, cat, particoes, publicados, nao_publicados):
     """Uma versão do ano 2025 com só os cruzamentos de `publicados`, gravada pela troca do conjunto."""
     cat = cat | {"cruzamentos": [c for c in cat["cruzamentos"] if c["id"] in PEQUENO]}
     sup = supressao.suprimir(nos, sih.catalogo_sem(cat, set(nao_publicados)), 5)
+    sup["sih_res_ano"]["estado_obitos"] = supressao.suprimir_obitos(nos[("mun_res",)], ("mun_res",), 5)
     municipios7 = {m: m + "0" for m in set(nos[("mun_res",)]["mun_res"]) | set(nos[("mun_hosp",)]["mun_hosp"])}
     situacao = {"ano": 2025, "publicados": publicados, "nao_publicados": nao_publicados,
                 "deducao": {"rodou": True, "passou": True, "obitos_passou": True}}
@@ -320,12 +321,15 @@ def test_ano_trocado_de_uma_vez_sem_sobra_do_cruzamento_que_deixou_de_passar(cat
     assert sorted(p.name for p in tmp_path.iterdir()) == ["ano=2025"]      # nem a pasta nova, nem a antiga sobram
     situacao = sih.ler_situacao(tmp_path, 2025)
     assert "sih_res_tri_capitulo" not in situacao["publicados"] and situacao["nao_publicados"] == fora
-    # ler_anterior só lê o que a situação daquela versão diz que foi publicado, mesmo com um arquivo a mais.
+    # A superfície só lê o que a situação daquela versão diz que foi publicado, mesmo com um arquivo a mais, e a
+    # herança sai dela: só o que a página mostrou, nunca o trimestre por capítulo, que ela não mostra.
     sobra = tmp_path / "ano=2025" / "sih_res_tri_capitulo" / "uf=35.parquet"
     sobra.parent.mkdir(parents=True)
     sobra.write_bytes(b"sobra de outra versao")
-    padrao, lida = sih.ler_anterior(tmp_path, 2025, cat | {"cruzamentos": [c for c in cat["cruzamentos"] if c["id"] in PEQUENO]})
-    assert "sih_res_tri_capitulo" not in padrao and set(padrao) == set(lida["publicados"])
+    pequeno = cat | {"cruzamentos": [c for c in cat["cruzamentos"] if c["id"] in PEQUENO]}
+    padrao, lida = sih.ler_anterior(sih_superficie.extrair(tmp_path, pequeno), 2025, pequeno)
+    assert set(padrao) == set(lida["superficie"]) == {"sih_res_ano", "sih_res_mes", "sih_res_ano_capitulo"}
+    assert lida["publicados"] == [c for c in todos if c not in fora]
     assert {"oculto", "arredondado"} <= set(padrao["sih_res_mes"].columns) and padrao["sih_res_mes"]["mun_res"].str.len().eq(6).all()
 
 
@@ -336,14 +340,15 @@ def test_versao_anterior_que_nao_bate_com_a_situacao_para_o_pipeline(cat, ano_mo
     arquivo = next((tmp_path / "ano=2025" / "sih_res_mes").glob("uf=*.parquet"))
     arquivo.write_bytes(arquivo.read_bytes() + b"x")
     with pytest.raises(sih.ErroDeParticao, match="diferente do que situacao.json"):
-        sih.ler_anterior(tmp_path, 2025, cat)
+        sih_superficie.extrair(tmp_path, cat)
     arquivo.unlink()
     with pytest.raises(sih.ErroDeParticao, match="ausente"):
         sih.ler_situacao(tmp_path, 2025)
     # Ano que a versão anterior não tem: se for o mais novo, é a primeira publicação dele; no meio, é erro.
-    assert sih.anterior_do_ano(tmp_path, 2026, cat, fechado=False) == (None, None)
+    anterior = sih_superficie.Superficie(anos={2025: {"ano": 2025}})
+    assert sih.anterior_do_ano(anterior, 2026, cat, fechado=False) == (None, None)
     with pytest.raises(sih.ErroDeParticao, match="não tem o ano 2024"):
-        sih.anterior_do_ano(tmp_path, 2024, cat, fechado=False)
+        sih.anterior_do_ano(anterior, 2024, cat, fechado=False)
 
 
 def test_ano_aberto_mantem_a_situacao_da_primeira_publicacao(cat, ano_montado, monkeypatch):
@@ -373,4 +378,5 @@ def test_ano_aberto_mantem_a_situacao_da_primeira_publicacao(cat, ano_montado, m
     assert r["nao_publicados"]["sih_res_tri_capitulo"] == fixo["nao_publicados"]["sih_res_tri_capitulo"]
     assert r["passou"] and set(respostas[-1]) == set(fixo["publicados"]) - {"sih_res_mes_sexo"}
     assert cat["bases"]["sih"]["versoes"] == {"herdar_padrao_fechado": True, "ataque_conjunto_obrigatorio": True,
-                                              "situacao_fixa_no_ano_aberto": True}
+                                              "situacao_fixa_no_ano_aberto": True,
+                                              "motores": ["intervalos", "programacao_linear"]}

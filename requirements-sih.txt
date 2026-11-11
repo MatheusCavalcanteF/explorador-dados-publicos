@@ -3,6 +3,9 @@
 numpy==2.5.4
 pandas==3.0.6
 duckdb==2.0.0
+# Motor do ataque conjunto por programação linear (HiGHS, em scipy.optimize.linprog). Só o pipeline do SIH
+# e os testes o usam: o site não depende dele.
+scipy==1.18.1
 # Descompressão .dbc -> .dbf. Sem wheel para o Python 3.14: o pip compila do código-fonte, em Rust.
 datasus-dbc==0.1.3
 # Referência e teste de propriedade do leitor DBF, como no projeto de origem.

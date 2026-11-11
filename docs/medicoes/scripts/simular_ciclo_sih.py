@@ -1,5 +1,10 @@
 """Ciclo completo de publicação do SIH, simulado no build local, com as 27 UFs. Nada é publicado.
 
+Registro da medição de 10/11/2026 (ciclo_publicacao_f1b.json), feita com o pipeline do commit 6f90077. Depois
+dela, a versão no ar deixou de ser uma Release de partições e passou a ser a superfície publicada com o site
+(sih_superficie, decidido em 10/11/2026), e este script não roda com o pipeline atual: release.versao_no_ar e
+sih_particoes.empacotar não existem mais. O ciclo com a superfície é o de medir_motor_lp.py.
+
 Cada versão é uma execução do pipeline (sih.processar_anos) sobre o Parquet mínimo de uma coleta local, só
 com as competências que já teriam saído até a última competência da versão. Cenários:
 

@@ -39,9 +39,9 @@ jobs:
         run: python -m pytest
 
       # Uma consulta à lista de Releases. O que não está na lista não existe, e a execução segue: primeira
-      # coleta do Censo, primeira publicação do SIH. Se a consulta ou um download falhar, o passo para: seguir
-      # sem a partição congelada do Censo, ou sem a versão no ar do SIH, trocaria o publicado sem aviso.
-      - name: Releases (partição fechada do Censo 2022 e versão no ar do SIH, se existirem)
+      # coleta do Censo. Se a consulta ou o download falhar, o passo para: seguir sem a partição congelada do
+      # Censo trocaria o publicado sem aviso. Nada do SIH vai para Releases.
+      - name: Release do Censo 2022 (partição fechada, se existir)
         env:
           GH_TOKEN: ${{ github.token }}
         run: python -m pipeline releases --destino build/release
@@ -59,13 +59,19 @@ jobs:
         run: python -m pipeline alcance --saida build/coleta
 
       # O SIH só roda aqui quando o catálogo mandar publicar (bases.sih.publicacao); hoje não manda, e os
-      # dois passos seguintes são pulados. Quando rodar, a versão anterior é a que está no ar, baixada e
-      # conferida no passo das Releases: a nova herda o padrão dela e cada ano passa pelo ataque conjunto.
-      # Um ano reprovado para o job antes do site, e o site anterior continua no ar. As partições aprovadas
-      # ficam em build/sih, que não é artefato: levá-las ao site e às Releases é outra etapa, ainda não feita.
+      # três passos seguintes são pulados. Quando rodar, a versão anterior é a que está no ar: a superfície
+      # publicada com o site, baixada e conferida no passo "no-ar" (404 com o site respondendo é a primeira
+      # publicação; qualquer outra falha para). A nova herda o padrão dela e cada ano passa pelo ataque
+      # conjunto, com os dois motores. Um ano reprovado para o job antes do site, e o site anterior continua no
+      # ar. A superfície aprovada fica em build/sih, que não é artefato: levá-la ao site é outra etapa, ainda
+      # não feita.
       - name: O catálogo manda publicar o SIH?
         id: sih
         run: python -m pipeline publicacao --base sih >> "$GITHUB_OUTPUT"
+
+      - name: Versão no ar do SIH (a superfície publicada no site)
+        if: steps.sih.outputs.publicar == 'true'
+        run: python -m pipeline no-ar --destino build/no-ar
 
       - name: Dependências do SIH
         if: steps.sih.outputs.publicar == 'true'
@@ -75,7 +81,7 @@ jobs:
         if: steps.sih.outputs.publicar == 'true'
         run: >
           python -m pipeline sih --coleta build/coleta --trabalho build/sih --saida build/sih-medicao
-          --no-ar build/release
+          --no-ar build/no-ar
 
       - name: Site
         run: |

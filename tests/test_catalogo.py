@@ -5,9 +5,15 @@ import pytest
 from pipeline import catalogo
 
 
-@pytest.fixture
-def cat():
+@pytest.fixture(scope="module")
+def _lido():
     return catalogo.carregar()
+
+
+@pytest.fixture
+def cat(_lido):
+    """O catálogo do repositório, lido e validado uma vez; cada teste recebe uma cópia que pode alterar."""
+    return copy.deepcopy(_lido)
 
 
 def test_catalogo_do_repositorio_e_valido(cat):
@@ -102,8 +108,47 @@ def test_limite_de_pagina_e_100_kb(cat):
     assert cat["limites"] == {"pagina_html_kb": 100, "arquivo_mib": 25}
 
 
-def test_sih_fica_fora_do_site_e_das_releases_ate_o_ok(cat):
-    assert cat["bases"]["sih"]["publicacao"] == {"site": False, "releases": False}
+def test_sih_fica_fora_do_site_ate_o_ok_e_nunca_vai_para_releases(cat):
+    assert cat["bases"]["sih"]["publicacao"] == {"site": False}
+    novo = copy.deepcopy(cat)
+    novo["bases"]["sih"]["publicacao"]["releases"] = False
+    with pytest.raises(catalogo.ErroDeCatalogo, match="publicacao só aceita site"):
+        catalogo.validar(novo)
+
+
+def test_superficie_e_o_que_a_pagina_mostra(cat):
+    sup = cat["bases"]["sih"]["superficie"]
+    assert sup["arquivo"] == "dados/sih/superficie.parquet"
+    assert sup["cruzamentos"] == {
+        "sih_res_ano": {"medidas": ["internacoes", "obitos"]}, "sih_hosp_ano": {"medidas": ["internacoes"]},
+        "sih_res_mes": {"medidas": ["internacoes"]},
+        "sih_res_ano_capitulo": {"medidas": ["internacoes"], "anos_recentes": 2},
+        "sih_res_ano_faixa12_sexo": {"medidas": ["internacoes"], "anos_recentes": 2}}
+    assert cat["bases"]["sih"]["versoes"]["motores"] == ["intervalos", "programacao_linear"]
+
+
+@pytest.mark.parametrize("mudanca, mensagem", [
+    (lambda s: s.update(arquivo="/dados/sih.parquet"), "caminho .parquet relativo"),
+    (lambda s: s.update(arquivo="../fora.parquet"), "caminho .parquet relativo"),
+    (lambda s: s["cruzamentos"].update(sih_inventado={"medidas": ["internacoes"]}), "fora do catálogo"),
+    (lambda s: s["cruzamentos"]["sih_res_mes"].update(medidas=["obitos"]), "só mostra contagens"),
+    (lambda s: s["cruzamentos"]["sih_res_ano"].update(medidas=["dias_permanencia"]), "só mostra contagens"),
+    (lambda s: s["cruzamentos"]["sih_res_ano_capitulo"].update(anos_recentes=0), "anos_recentes"),
+    (lambda s: s["cruzamentos"]["sih_res_ano"].update(cor="verde"), "só aceita medidas"),
+])
+def test_superficie_quebrada_e_recusada(cat, mudanca, mensagem):
+    novo = copy.deepcopy(cat)
+    mudanca(novo["bases"]["sih"]["superficie"])
+    with pytest.raises(catalogo.ErroDeCatalogo, match=mensagem):
+        catalogo.validar(novo)
+
+
+@pytest.mark.parametrize("motores", [[], ["intervalos", "intervalos"], ["outro"], "intervalos"])
+def test_motor_do_ataque_conjunto_fora_da_lista_e_recusado(cat, motores):
+    novo = copy.deepcopy(cat)
+    novo["bases"]["sih"]["versoes"]["motores"] = motores
+    with pytest.raises(catalogo.ErroDeCatalogo, match="versoes.motores"):
+        catalogo.validar(novo)
 
 
 def test_capitulos_da_cid_cobrem_as_categorias_sem_sobrepor(cat):

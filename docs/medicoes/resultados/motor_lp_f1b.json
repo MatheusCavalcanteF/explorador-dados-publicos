@@ -1,0 +1,296 @@
+{
+ "medido_em": "2026-11-11T00:14:06-0300",
+ "ano": 2025,
+ "maquina": {
+  "sistema": "Windows-11-10.0.26300-SP0",
+  "python": "3.14.8",
+  "observacao": "Ryzen 7 5700X3D, 32 GB, Windows 11; um núcleo por resolução do HiGHS"
+ },
+ "versoes": [
+  {
+   "versao": "a",
+   "ultima_competencia": 202607,
+   "arquivos_rd": 459,
+   "fechado_ate": 202502,
+   "meses_preliminares": 10,
+   "internacoes": 14546762,
+   "segundos": 18.2,
+   "etapas_s": {
+    "base": 6.3,
+    "fechamento": 1.1,
+    "supressao": 7.8,
+    "deducao_obitos": 0.0,
+    "ataque_conjunto": 0.5,
+    "gravar": 2.1
+   },
+   "reprovados": {},
+   "superficie": {
+    "bytes": 530447,
+    "sha256": "42926cfc0c1e6a799164c53acf92a97c0b60fb2dbd22aaa81a5ca6f96e28cc40",
+    "linhas": 314881
+   },
+   "ataque_conjunto": {
+    "obrigatorio": false,
+    "rodou": false,
+    "motivo": "nenhuma versão anterior informada"
+   }
+  },
+  {
+   "versao": "b",
+   "ultima_competencia": 202608,
+   "arquivos_rd": 459,
+   "fechado_ate": 202503,
+   "meses_preliminares": 9,
+   "internacoes": 14546762,
+   "segundos": 765.5,
+   "etapas_s": {
+    "base": 7.8,
+    "fechamento": 1.3,
+    "supressao": 8.8,
+    "deducao_obitos": 0.0,
+    "ataque_conjunto": 745.5,
+    "gravar": 1.8
+   },
+   "reprovados": {},
+   "superficie": {
+    "bytes": 536629,
+    "sha256": "bd51a188ea31bc6fb85dc268313c2a1e3ce009d1071fbb5e6c27c76bbd48fbba",
+    "linhas": 314881
+   },
+   "ataque_conjunto": {
+    "obrigatorio": true,
+    "rodou": true,
+    "passou": true,
+    "motores": [
+     "intervalos",
+     "programacao_linear"
+    ],
+    "versao_no_ar_coletada_em": "medicao-202607",
+    "internacoes": {
+     "motores": {
+      "intervalos": {
+       "reveladas_na_versao_no_ar": 0,
+       "reveladas_na_candidata": 0,
+       "diferencas_de_1_a_k-1": 0,
+       "inconclusivas": 0,
+       "total": 0,
+       "por_no": {
+        "no_ar": {},
+        "candidata": {},
+        "diferencas": {}
+       },
+       "detalhe": {
+        "voltas": 2
+       },
+       "segundos": 1.23
+      },
+      "programacao_linear": {
+       "reveladas_na_versao_no_ar": 0,
+       "reveladas_na_candidata": 0,
+       "diferencas_de_1_a_k-1": 0,
+       "inconclusivas": 0,
+       "total": 0,
+       "por_no": {
+        "no_ar": {},
+        "candidata": {},
+        "diferencas": {}
+       },
+       "detalhe": {
+        "variaveis": 1002232,
+        "variaveis_livres": 963201,
+        "igualdades": 475102,
+        "alvos": 935048,
+        "amostras": 6,
+        "conferidas_uma_a_uma": 0,
+        "conferidas_nas_versoes": 0,
+        "conferidas_no_programa_inteiro": 0,
+        "inconclusivas": 0,
+        "blocos": 2,
+        "resolucoes": 12,
+        "segundos": 741.57
+       },
+       "segundos": 741.59
+      }
+     },
+     "total": 0
+    },
+    "obitos": {
+     "motores": {
+      "intervalos": {
+       "reveladas_na_versao_no_ar": 0,
+       "reveladas_na_candidata": 0,
+       "diferencas_de_1_a_k-1": 0,
+       "inconclusivas": 0,
+       "total": 0,
+       "por_no": {
+        "no_ar": {},
+        "candidata": {},
+        "diferencas": {}
+       },
+       "detalhe": {
+        "voltas": 1
+       },
+       "segundos": 0.0
+      },
+      "programacao_linear": {
+       "reveladas_na_versao_no_ar": 0,
+       "reveladas_na_candidata": 0,
+       "diferencas_de_1_a_k-1": 0,
+       "inconclusivas": 0,
+       "total": 0,
+       "por_no": {
+        "no_ar": {},
+        "candidata": {},
+        "diferencas": {}
+       },
+       "detalhe": {
+        "variaveis": 11196,
+        "variaveis_livres": 11190,
+        "igualdades": 56,
+        "alvos": 5904,
+        "amostras": 2,
+        "conferidas_uma_a_uma": 0,
+        "conferidas_nas_versoes": 0,
+        "conferidas_no_programa_inteiro": 0,
+        "inconclusivas": 0,
+        "blocos": 2,
+        "resolucoes": 4,
+        "segundos": 0.09
+       },
+       "segundos": 0.09
+      }
+     },
+     "total": 0
+    }
+   }
+  }
+ ],
+ "ataque_fora_do_pipeline": {
+  "internacoes": {
+   "montagem_s": 1.9,
+   "uma_versao": {
+    "tamanho": {
+     "nos": 29,
+     "celulas_por_versao": 501116,
+     "arestas": 50,
+     "escondidas": [
+      216966
+     ]
+    },
+    "motores": {
+     "intervalos": {
+      "segundos": 0.4,
+      "total": 0,
+      "reveladas": [
+       0
+      ],
+      "diferencas": {},
+      "inconclusivas": 0,
+      "detalhe": {
+       "voltas": 1
+      }
+     },
+     "programacao_linear": {
+      "segundos": 67.9,
+      "total": 0,
+      "reveladas": [
+       0
+      ],
+      "diferencas": {},
+      "inconclusivas": 0,
+      "detalhe": {
+       "variaveis": 501116,
+       "variaveis_livres": 484478,
+       "igualdades": 237551,
+       "alvos": 216966,
+       "amostras": 2,
+       "conferidas_uma_a_uma": 0,
+       "conferidas_nas_versoes": 0,
+       "conferidas_no_programa_inteiro": 0,
+       "inconclusivas": 0,
+       "blocos": 1,
+       "resolucoes": 2,
+       "segundos": 67.86
+      }
+     }
+    }
+   },
+   "duas_versoes": {
+    "tamanho": {
+     "nos": 29,
+     "celulas_por_versao": 501116,
+     "arestas": 50,
+     "escondidas": [
+      216966,
+      216966
+     ]
+    },
+    "celulas_iguais": 22391,
+    "motores": "no ataque conjunto do pipeline, em versoes[1]"
+   }
+  },
+  "obitos": {
+   "montagem_s": 0.0,
+   "uma_versao": {
+    "tamanho": {
+     "nos": 3,
+     "celulas_por_versao": 5598,
+     "arestas": 2,
+     "escondidas": [
+      153
+     ]
+    },
+    "motores": {
+     "intervalos": {
+      "segundos": 0.0,
+      "total": 0,
+      "reveladas": [
+       0
+      ],
+      "diferencas": {},
+      "inconclusivas": 0,
+      "detalhe": {
+       "voltas": 1
+      }
+     },
+     "programacao_linear": {
+      "segundos": 0.0,
+      "total": 0,
+      "reveladas": [
+       0
+      ],
+      "diferencas": {},
+      "inconclusivas": 0,
+      "detalhe": {
+       "variaveis": 5598,
+       "variaveis_livres": 5595,
+       "igualdades": 28,
+       "alvos": 153,
+       "amostras": 1,
+       "conferidas_uma_a_uma": 0,
+       "conferidas_nas_versoes": 0,
+       "conferidas_no_programa_inteiro": 0,
+       "inconclusivas": 0,
+       "blocos": 1,
+       "resolucoes": 1,
+       "segundos": 0.02
+      }
+     }
+    }
+   },
+   "duas_versoes": {
+    "tamanho": {
+     "nos": 3,
+     "celulas_por_versao": 5598,
+     "arestas": 2,
+     "escondidas": [
+      153,
+      153
+     ]
+    },
+    "celulas_iguais": 0,
+    "motores": "no ataque conjunto do pipeline, em versoes[1]"
+   }
+  }
+ }
+}

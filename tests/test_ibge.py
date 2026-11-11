@@ -53,9 +53,10 @@ def _primeira_coleta(tmp_path_factory):
 
 @pytest.fixture
 def primeira(_primeira_coleta):
-    """(pasta da primeira coleta, resultado copiado). A pasta é de todos os testes: copie antes de alterar."""
+    """(pasta da primeira coleta, resultado). A pasta e a lista de municípios são de todos os testes: copie antes
+    de alterar. As fontes, que os testes passam adiante como manifesto anterior, vêm copiadas."""
     pasta, resultado, _, _ = _primeira_coleta
-    return pasta, copy.deepcopy(resultado)
+    return pasta, resultado | {"fontes": copy.deepcopy(resultado["fontes"])}
 
 
 def corpo(valor):

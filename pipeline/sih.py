@@ -1,8 +1,10 @@
-"""SIH de ponta a ponta: coleta, tabelas por ano da alta, supressão, teste de dedução e partições.
+"""SIH de ponta a ponta: coleta, tabelas por ano da alta, supressão, teste de dedução, partições e superfície.
 
-Nada desta etapa vai para o site nem para as Releases: o catálogo diz `publicacao: {site: false,
-releases: false}` até o OK do dono do projeto. As partições ficam na pasta de trabalho do runner, e o
-que sai dele é só a medição: tempos, disco, tamanhos e contagens agregadas por cruzamento.
+Nada desta etapa vai para o site: o catálogo diz `publicacao: {site: false}` até o OK do dono do projeto, e
+nada do SIH vai para Releases. As partições ficam na pasta de trabalho do runner. Quando todos os anos passam,
+a etapa grava também `trabalho/superficie.parquet`, com exatamente o que o site mostraria (sih_superficie):
+é o arquivo que um dia vai para o site como versão no ar. O que sai do runner hoje é só a medição: tempos,
+disco, tamanhos e contagens agregadas por cruzamento.
 
 O Parquet mínimo, com uma linha por AIH, fica em `trabalho/min` e nunca é artefato.
 """
@@ -95,11 +97,11 @@ COLUNA_DA_METRICA = {"internacoes": "internacoes", "dias_permanencia": "dias", "
 NAO_SAEM = ("aihs", "internacoes", "dias", "valor", "obitos", "oculto", "estado", "estado_obitos", "publicado")
 
 
-def gravar_particao(suprimidas: dict, ano: int, destino: Path, municipios7: dict[str, str],
-                    motivo_por_celula: bool = False, metricas: dict[str, list[str]] | None = None,
-                    preliminares: set[str] | frozenset = frozenset(), multiplo: int = 0, k: int = 5,
-                    contagens: tuple = ("internacoes", "obitos")) -> dict:
-    """Um Parquet sem compressão por cruzamento e UF, em `destino` (a pasta do ano), e o tamanho com gzip.
+def tabelas_publicaveis(suprimidas: dict, ano: int, municipios7: dict[str, str],
+                        motivo_por_celula: bool = False, metricas: dict[str, list[str]] | None = None,
+                        preliminares: set[str] | frozenset = frozenset(), multiplo: int = 0, k: int = 5,
+                        contagens: tuple = ("internacoes", "obitos")) -> dict:
+    """Cada cruzamento do ano como vai para a partição e para a tela: uma tabela Arrow por cruzamento.
 
     O município sai com o código de 7 dígitos do IBGE. As AIHs não saem; os valores ocultos saem nulos,
     com o motivo ao lado quando o catálogo manda publicá-lo, ou só a marca de oculta. Óbitos têm máscara
@@ -108,16 +110,12 @@ def gravar_particao(suprimidas: dict, ano: int, destino: Path, municipios7: dict
     O trimestre sem os três meses na base não sai. Nas linhas cujo período inclui um mês de
     `preliminares` (AAAAMM), `preliminar` é verdadeiro, e cada contagem visível de k para cima sai
     arredondada para múltiplo de `multiplo`, com `arredondado` (internações) e `obitos_arredondado`.
-    Devolve, por arquivo ("<cruzamento>/uf=<UF>.parquet"), bytes, bytes com gzip e SHA-256.
     """
-    import hashlib
-
     import numpy as np
     import pyarrow as pa
-    import pyarrow.parquet as pq
 
     from . import sih_deducao, supressao
-    tamanhos = {}
+    tabelas = {}
     for cid, df in suprimidas.items():
         geo = "mun_res" if "mun_res" in df else "mun_hosp"
         df = df.loc[df["publicado"]] if "publicado" in df else df
@@ -151,61 +149,39 @@ def gravar_particao(suprimidas: dict, ano: int, destino: Path, municipios7: dict
             else:
                 colunas["obitos_oculto"] = pa.array(oculto_ob, pa.bool_())
             colunas["obitos_arredondado"] = pa.array(ob_arred, pa.bool_())
-        tabela = pa.table(colunas)
-        uf_col = df[geo].str[:2]
-        for uf in sorted(uf_col.unique()):
-            parte = tabela.filter(pa.array((uf_col == uf).to_numpy()))
+        tabelas[cid] = pa.table(colunas)
+    return tabelas
+
+
+def gravar_particao(suprimidas: dict, ano: int, destino: Path, municipios7: dict[str, str],
+                    motivo_por_celula: bool = False, metricas: dict[str, list[str]] | None = None,
+                    preliminares: set[str] | frozenset = frozenset(), multiplo: int = 0, k: int = 5,
+                    contagens: tuple = ("internacoes", "obitos"), tabelas: dict | None = None) -> dict:
+    """Um Parquet sem compressão por cruzamento e UF, em `destino` (a pasta do ano), e o tamanho com gzip.
+
+    As tabelas são as de tabelas_publicaveis (ou `tabelas`, já montadas com os mesmos argumentos). Devolve, por
+    arquivo ("<cruzamento>/uf=<UF>.parquet"), bytes, bytes com gzip e SHA-256.
+    """
+    import hashlib
+
+    import pyarrow.compute as pc
+    import pyarrow.parquet as pq
+
+    if tabelas is None:
+        tabelas = tabelas_publicaveis(suprimidas, ano, municipios7, motivo_por_celula, metricas, preliminares,
+                                      multiplo, k, contagens)
+    tamanhos = {}
+    for cid, tabela in tabelas.items():
+        geo = "mun_res" if "mun_res" in tabela.column_names else "mun_hosp"
+        uf_col = pc.utf8_slice_codeunits(tabela[geo], 0, 2)
+        for uf in sorted(set(uf_col.to_pylist())):
+            parte = tabela.filter(pc.equal(uf_col, uf))
             caminho = destino / cid / f"uf={uf}.parquet"
             caminho.parent.mkdir(parents=True, exist_ok=True)
             pq.write_table(parte, caminho, compression="NONE")
             bruto = caminho.read_bytes()
             tamanhos[f"{cid}/uf={uf}.parquet"] = {"bytes": len(bruto), "gzip": len(gzip.compress(bruto, 6)),
                                                   "sha256": hashlib.sha256(bruto).hexdigest()}
-    return tamanhos
-
-
-def arquivo_da_margem(medida: str, n: tuple) -> str:
-    return f"margens/{medida}/{'-'.join(n) or 'brasil'}.parquet"
-
-
-def gravar_margens(nos: dict, catalogo: dict, ano: int, destino: Path, preliminares: set[str] | frozenset = frozenset(),
-                   multiplo: int = 0, k: int = 5, contagens: tuple = ("internacoes", "obitos")) -> dict:
-    """As margens publicadas de UF e do Brasil (catalogo.margens_publicadas), um Parquet por margem e medida.
-
-    O teste de dedução conta com elas como visíveis, e quem guarda uma versão as tem. Por isso vão para a
-    partição do jeito que a tela as mostra: `valor` nulo quando oculta, e em múltiplo de `multiplo` quando o
-    período tem mês preliminar, com `arredondado`. É delas que o ataque conjunto da versão seguinte parte.
-    """
-    import hashlib
-
-    import numpy as np
-    import pyarrow as pa
-    import pyarrow.parquet as pq
-
-    from . import sih_deducao, sih_tabelas as tab, supressao
-    cruzamentos = {tab.colunas_de(c, catalogo) for c in catalogo["cruzamentos"]}
-    tamanhos = {}
-    for medida, margens in catalogo["margens_publicadas"].items():
-        for m in margens:
-            n = tab.no(m)
-            if n in cruzamentos:
-                continue
-            df = nos[n]
-            oculto = supressao.margem_publicada(df, k, medida) != 0
-            valores = df[medida].to_numpy(np.int64)
-            aberto = sih_deducao.periodo_aberto(df, n, ano, set(preliminares))
-            arredondado = (~oculto & aberto & (valores >= k)) if multiplo and medida in contagens else np.zeros(len(df), bool)
-            valores = np.where(arredondado, sih_deducao.arredondar(valores, multiplo or 1), valores)
-            colunas = {c: pa.array(df[c], pa.string()) for c in n}
-            colunas["valor"] = pa.array(valores, pa.int64(), mask=oculto)
-            colunas["oculto"] = pa.array(oculto, pa.bool_())
-            colunas["arredondado"] = pa.array(arredondado, pa.bool_())
-            nome = arquivo_da_margem(medida, n)
-            caminho = destino / nome
-            caminho.parent.mkdir(parents=True, exist_ok=True)
-            pq.write_table(pa.table(colunas), caminho, compression="NONE")
-            bruto = caminho.read_bytes()
-            tamanhos[nome] = {"bytes": len(bruto), "gzip": len(gzip.compress(bruto, 6)), "sha256": hashlib.sha256(bruto).hexdigest()}
     return tamanhos
 
 
@@ -434,39 +410,33 @@ def construir_ano(con, tabela: str, ano: int, catalogo: dict, k: int, deduzir: b
     return nos, sup, medicao
 
 
-def ler_anterior(pasta: Path, ano: int, catalogo: dict) -> tuple[dict, dict]:
+def ler_anterior(anterior, ano: int, catalogo: dict) -> tuple[dict, dict]:
     """O que a versão publicada antes mostrou de um ano, e a situação dela.
 
-    Só lê o que a situação daquela versão diz que foi publicado, e confere cada arquivo com ela: versão
-    anterior que não pode ser lida, ou que não bate com o que foi publicado, para o pipeline, e o site
-    anterior continua no ar. Por cruzamento, devolve as chaves (município com 6 dígitos, como no pipeline)
-    e as colunas oculto e arredondado. Partição sem `arredondado` conta como exata."""
-    import pandas as pd
-
+    `anterior` é a superfície daquela versão (sih_superficie.Superficie), já conferida na leitura: só o que o
+    site mostrou. Por cruzamento mostrado no ano, devolve as chaves (município com 6 dígitos, como no
+    pipeline) e as colunas oculto e arredondado das internações."""
     from . import sih_tabelas as tab
-    situacao = sih_particoes.ler_publicada(pasta, ano)
+    situacao = anterior.anos[ano]
+    cruzamentos = {c["id"]: c for c in catalogo["cruzamentos"]}
     saida = {}
-    for c in catalogo["cruzamentos"]:
-        if c["id"] not in situacao["publicados"]:
-            continue
-        nomes = sorted(n for n in situacao["arquivos"] if n.startswith(c["id"] + "/"))
-        df = pd.concat([pd.read_parquet(Path(pasta) / f"ano={ano}" / n) for n in nomes], ignore_index=True)
+    for cid in situacao["superficie"]:
+        df = anterior.tabela(ano, cid)
         geo = "mun_res" if "mun_res" in df else "mun_hosp"
-        df[geo] = df[geo].str[:6]
-        if "arredondado" not in df:
-            df["arredondado"] = False
-        saida[c["id"]] = df[list(tab.colunas_de(c, catalogo)) + ["oculto", "arredondado"]]
+        df[geo] = df[geo].astype(str).str[:6]
+        saida[cid] = df[list(tab.colunas_de(cruzamentos[cid], catalogo)) + ["oculto", "arredondado"]]
     return saida, situacao
 
 
-def anterior_do_ano(anterior: Path, ano: int, catalogo: dict, fechado: bool) -> tuple[dict | None, dict | None]:
-    """O padrão e a situação da versão publicada antes, para um ano. Ano que ela não tinha, e é mais novo
-    que todos os dela, é a primeira publicação dele: nada a herdar. Ano que falta no meio é erro."""
-    anos = sih_particoes.anos_na_pasta(anterior)
+def anterior_do_ano(anterior, ano: int, catalogo: dict, fechado: bool) -> tuple[dict | None, dict | None]:
+    """O padrão e a situação da versão publicada antes (a superfície dela), para um ano. Ano que ela não
+    tinha, e é mais novo que todos os dela, é a primeira publicação dele: nada a herdar. Ano que falta no
+    meio é erro."""
+    anos = sorted(anterior.anos)
     if ano not in anos:
         if anos and ano > anos[-1]:
             return None, None
-        raise ErroDeParticao(f"{anterior}: a versão anterior não tem o ano {ano}, que não é o mais novo")
+        raise ErroDeParticao(f"A versão anterior não tem o ano {ano}, que não é o mais novo")
     padrao, situacao = ler_anterior(anterior, ano, catalogo)
     versoes = catalogo["bases"]["sih"].get("versoes") or {}
     fixo = situacao if versoes.get("situacao_fixa_no_ano_aberto") and not fechado else None
@@ -476,26 +446,39 @@ def anterior_do_ano(anterior: Path, ano: int, catalogo: dict, fechado: bool) -> 
 MEDIDAS_DO_CONJUNTO = ("internacoes", "obitos")
 
 
+def resumo_do_conjunto(conjunto: dict) -> dict:
+    """O ataque conjunto para a situação do ano: sem o detalhe por tabela, que fica na medição."""
+    saida = {}
+    for c, v in conjunto.items():
+        if c in MEDIDAS_DO_CONJUNTO:
+            v = v | {"motores": {nome: {a: b for a, b in r.items() if a != "por_no"} for nome, r in v["motores"].items()}}
+        saida[c] = v
+    return saida
+
+
 def processar_anos(con, tabela: str, jan: sih_janela.Janela, anos: list[int], catalogo: dict, trabalho: Path,
                    municipios7: dict[str, str], coletado_em: str, versao_arquivos: str, deduzir: bool = True,
-                   anterior: Path | None = None, no_ar_consultada: bool = False, motor: str | None = None,
+                   anterior=None, no_ar_consultada: bool = False, motores: list[str] | None = None,
                    avisar=print) -> dict:
     """Cada ano: tabelas, supressão, teste de dedução, ataque conjunto com a versão anterior e a partição.
 
-    Só o ano que passa em tudo vira partição em `trabalho/particoes` (sih_particoes.nao_publicavel). O que
-    reprova, ou que não foi testado, não é gravado, e a partição que uma execução anterior tenha deixado
-    para ele na pasta de trabalho é apagada: ali só fica o que esta execução aprovou. Devolve a medição de
-    cada ano, o resumo das partições e os reprovados com o motivo; um reprovado basta para nada ser publicado.
+    `anterior` é a superfície da versão publicada antes (sih_superficie.Superficie), ou None. Só o ano que passa
+    em tudo vira partição em `trabalho/particoes` (sih_particoes.nao_publicavel). O que reprova, ou que não foi
+    testado, não é gravado, e a partição que uma execução anterior tenha deixado para ele na pasta de trabalho
+    é apagada: ali só fica o que esta execução aprovou. Quando todos os anos passam, grava a superfície da versão
+    em `trabalho/superficie.parquet`; senão, apaga a que houver ali. Devolve a medição de cada ano, o resumo das
+    partições, a superfície e os reprovados com o motivo; um reprovado basta para nada ser publicado.
     """
-    from . import sih_versoes
+    from . import sih_superficie, sih_versoes
     base = catalogo["bases"]["sih"]
     k = int(base["supressao"]["k"])
     prelim_regra = base.get("preliminares") or {}
     multiplo = int(prelim_regra.get("arredondar_multiplo", 0))
     contagens = tuple(prelim_regra.get("contagens", ()))
     obrigatorio = bool((base.get("versoes") or {}).get("ataque_conjunto_obrigatorio", True))
-    anos_anteriores = sih_particoes.anos_na_pasta(anterior) if anterior else []
+    anos_anteriores = sorted(anterior.anos) if anterior else []
     saida = {"anos": {}, "particoes": {}, "reprovados": {}}
+    superficie = sih_superficie.Superficie()
     for ano in anos:
         preliminares = {str(mes) for mes in jan.meses_preliminares(ano)}
         antes, fixo = anterior_do_ano(anterior, ano, catalogo, jan.ano_fechado(ano)) if anterior else (None, None)
@@ -504,24 +487,7 @@ def processar_anos(con, tabela: str, jan: sih_janela.Janela, anos: list[int], ca
         t = time.perf_counter()
         ded = m.get("deducao_internacoes", {})
         passou = bool(deduzir and ded.get("passou") and m.get("deducao_obitos", {}).get("passou"))
-        # O ataque conjunto precisa de uma candidata que passou sozinha e de uma versão anterior daquele ano.
-        if ano not in anos_anteriores:
-            conjunto = {"obrigatorio": False, "rodou": False,
-                        "motivo": "primeira publicação do ano" if anterior else "nenhuma versão anterior informada"}
-        elif not passou:
-            conjunto = {"obrigatorio": obrigatorio, "rodou": False, "motivo": "a candidata não passou no teste dela"}
-        else:
-            arred = (multiplo, preliminares, ano) if multiplo and preliminares else None
-            conjunto = sih_versoes.conferir_com_a_no_ar(nos, sup, catalogo_sem(catalogo, m["nao_publicados"]), catalogo,
-                                                        anterior, ano, k, arred, jan.ultimo_mes, jan.ultimo_mes_fechado,
-                                                        motor) | {"obrigatorio": obrigatorio}
-        m["ataque_conjunto"] = conjunto
-        m["segundos"]["ataque_conjunto"] = round(time.perf_counter() - t, 1)
-        t = time.perf_counter()
-        # O que o site precisa saber do ano: o que foi publicado, o que não foi e por quê, os testes e os
-        # arquivos. Do ataque conjunto vai o resumo, sem o detalhe por tabela, que fica na medição.
-        resumo_conjunto = {c: ({x: y for x, y in v.items() if x != "por_no"} if c in MEDIDAS_DO_CONJUNTO else v)
-                           for c, v in conjunto.items()}
+        # O que o site precisa saber do ano: o que foi publicado, o que não foi e por quê, e os testes.
         situacao = {"ano": ano, "coletado_em": coletado_em, "versao_dos_arquivos": versao_arquivos,
                     "ultimo_mes": jan.ultimo_mes, "ultimo_mes_fechado": jan.ultimo_mes_fechado,
                     "preliminares": sorted(preliminares), "arredondar_multiplo": prelim_regra.get("arredondar_multiplo"),
@@ -530,8 +496,27 @@ def processar_anos(con, tabela: str, jan: sih_janela.Janela, anos: list[int], ca
                     "versao_no_ar": {"consultada": bool(no_ar_consultada), "tinha_o_ano": ano in anos_anteriores},
                     "deducao": {"rodou": deduzir, "passou": bool(ded.get("passou", False)),
                                 "pequenas_reveladas": ded.get("pequenas_reveladas"),
-                                "obitos_passou": bool(m.get("deducao_obitos", {}).get("passou", False)),
-                                "conjunto": resumo_conjunto}}
+                                "obitos_passou": bool(m.get("deducao_obitos", {}).get("passou", False))}}
+        # A candidata como a tela a mostraria: as mesmas tabelas que vão para a partição, recortadas na superfície.
+        tabelas = candidata = None
+        if passou:
+            tabelas = tabelas_publicaveis(sup, ano, municipios7, bool(base["supressao"]["motivo_por_celula"]),
+                                          {c["id"]: c["metricas"] for c in catalogo["cruzamentos"]}, preliminares,
+                                          multiplo, k, contagens)
+            candidata = sih_superficie.do_ano(tabelas, situacao, catalogo, anos)
+        # O ataque conjunto precisa de uma candidata que passou sozinha e de uma versão anterior daquele ano.
+        if ano not in anos_anteriores:
+            conjunto = {"obrigatorio": False, "rodou": False,
+                        "motivo": "primeira publicação do ano" if anterior else "nenhuma versão anterior informada"}
+        elif not passou:
+            conjunto = {"obrigatorio": obrigatorio, "rodou": False, "motivo": "a candidata não passou no teste dela"}
+        else:
+            conjunto = sih_versoes.conferir_com_a_no_ar(nos, candidata, anterior, catalogo, ano, k,
+                                                        jan.ultimo_mes_fechado, motores) | {"obrigatorio": obrigatorio}
+        m["ataque_conjunto"] = conjunto
+        m["segundos"]["ataque_conjunto"] = round(time.perf_counter() - t, 1)
+        t = time.perf_counter()
+        situacao["deducao"]["conjunto"] = resumo_do_conjunto(conjunto)
         motivo = sih_particoes.nao_publicavel(situacao)
         if motivo:
             sih_particoes.remover_ano(trabalho / "particoes", ano)
@@ -540,31 +525,40 @@ def processar_anos(con, tabela: str, jan: sih_janela.Janela, anos: list[int], ca
             saida["particoes"][str(ano)] = {"arquivos": 0, "bytes": 0, "gzip": 0, "maior": None, "nao_gravada": motivo}
         else:
             tamanhos = gravar_ano(trabalho / "particoes", ano, lambda pasta: gravar_particao(
-                sup, ano, pasta, municipios7, bool(base["supressao"]["motivo_por_celula"]),
-                {c["id"]: c["metricas"] for c in catalogo["cruzamentos"]}, preliminares, multiplo, k, contagens)
-                | gravar_margens(nos, catalogo, ano, pasta, preliminares, multiplo, k, contagens), situacao)
+                sup, ano, pasta, municipios7, tabelas=tabelas), situacao)
             saida["particoes"][str(ano)] = {"arquivos": len(tamanhos), "bytes": sum(v["bytes"] for v in tamanhos.values()),
                                             "gzip": sum(v["gzip"] for v in tamanhos.values()),
                                             "maior": max(tamanhos.items(), key=lambda kv: kv[1]["bytes"]) if tamanhos else None}
+            meta, tabs = candidata
+            superficie.anos[ano] = meta | {"deducao": situacao["deducao"]}
+            superficie.tabelas.update({(ano, cid): t_cid for cid, t_cid in tabs.items()})
         m["particao_gravada"] = not motivo
         m["segundos"]["gravar"] = round(time.perf_counter() - t, 1)
         saida["anos"][str(ano)] = m
         avisar(f"SIH {ano}: {m['internacoes']} internações; dedução: {ded.get('pequenas_reveladas', '-')} contagens "
                f"pequenas reveladas; ataque conjunto: {'passou' if conjunto.get('passou') else conjunto.get('motivo')}; "
                f"{'SEM PARTIÇÃO: ' + motivo if motivo else 'partição gravada'}; {m['segundos']}")
+    # A superfície só existe para uma versão que passou inteira: é ela que pode ir para o site.
+    arquivo = trabalho / sih_superficie.ARQUIVO
+    if deduzir and not saida["reprovados"] and len(superficie.anos) == len(anos):
+        saida["superficie"] = sih_superficie.gravar(superficie, arquivo, catalogo)
+    else:
+        arquivo.unlink(missing_ok=True)
+        saida["superficie"] = None
     return saida
 
 
 def executar(coleta_ibge: dict, catalogo: dict, trabalho: Path, saida: Path, ufs: list[str] | None = None,
              anos: list[int] | None = None, processos: int = 4, origem_local: Path | None = None,
              manter_dbc: bool = False, deduzir: bool = True, listagem: dict | None = None, avisar=print,
-             anterior: Path | None = None, no_ar_consultada: bool = False, motor: str | None = None) -> dict:
+             anterior=None, no_ar_consultada: bool = False, motores: list[str] | None = None) -> dict:
     """A execução inteira. Devolve a medição, que é o único arquivo gravado fora da pasta de trabalho.
 
-    `anterior` é a pasta de partições da versão publicada antes: nos períodos já fechados, a nova herda o
-    padrão de células ocultas dela, para que quem guardou as duas não cruze um padrão com o outro, e cada
-    ano que ela tem passa pelo ataque conjunto (sih_versoes). `no_ar_consultada` diz que `anterior`, ou a
-    falta dela, veio da consulta às Releases (release.versao_no_ar), e não de uma pasta escolhida à mão.
+    `anterior` é a superfície da versão publicada antes (sih_superficie.Superficie): nos períodos já fechados,
+    a nova herda o padrão de células ocultas dela, para que quem guardou as duas não cruze um padrão com o
+    outro, e cada ano que ela tem passa pelo ataque conjunto (sih_versoes). `no_ar_consultada` diz que
+    `anterior`, ou a falta dela, veio da consulta ao site (sih_superficie.versao_no_ar), e não de uma pasta
+    escolhida à mão.
     Ano que não passa em todos os testes não vira partição, e a medição o lista em `reprovados`.
     """
     import duckdb
@@ -606,7 +600,7 @@ def executar(coleta_ibge: dict, catalogo: dict, trabalho: Path, saida: Path, ufs
     con.execute(f"CREATE VIEW aih AS SELECT * FROM read_parquet({caminhos!r})")
     versao_arquivos = max(r["modificado_no_ftp"] for r in coleta["arquivos"])
     medicao |= processar_anos(con, "aih", jan, anos, catalogo, trabalho, municipios7, coletado_em, versao_arquivos,
-                              deduzir, anterior, no_ar_consultada, motor, avisar)
+                              deduzir, anterior, no_ar_consultada, motores, avisar)
     # Um ano reprovado basta: a versão inteira não pode ser publicada, e o site anterior continua no ar.
     medicao["publicavel"] = bool(deduzir) and not medicao["reprovados"]
     medicao["disco"] = {"trabalho_bytes": _tamanho(trabalho), "min_bytes": _tamanho(trabalho / "min"),
