@@ -220,9 +220,18 @@ def montar(no_ar: tuple[dict, dict], candidata: tuple[dict, dict], nos: dict | N
     período fechado até `fechado_ate` valem o mesmo nas duas versões: nenhum arquivo com altas daquele período
     foi republicado entre elas.
     """
+    return montar_versoes([("no ar", no_ar), ("candidata", candidata)], nos, catalogo, ano, k, medida, fechado_ate)
+
+
+def montar_versoes(versoes: list[tuple[str, tuple[dict, dict]]], nos: dict | None, catalogo: dict, ano: int, k: int,
+                   medida: str = "internacoes", fechado_ate: int | None = None) -> Problema:
+    """O Problema de uma ou mais versões, cada uma (rótulo, (situação do ano, {cruzamento: tabela da superfície})),
+    da mais antiga para a mais nova. `nos` são os valores verdadeiros da última; com `fechado_ate`, as células de
+    período fechado valem o mesmo em cada par de versões seguidas. Com uma versão só, é o que ela sozinha deixa
+    deduzir: serve para conferir que uma versão publicada fecha com as próprias somas (sih_reaproveitamento)."""
     if catalogo["bases"]["sih"]["supressao"].get("motivo_por_celula"):
         raise ErroDeVersoes("O ataque conjunto supõe que o motivo da célula oculta não é publicado")
-    vistas = [_visivel(v, catalogo, k, medida, ano) for v in (no_ar, candidata)]
+    vistas = [_visivel(v, catalogo, k, medida, ano) for _, v in versoes]
     visiveis = list(dict.fromkeys(n for v in vistas for n in v))
     fecho = tab.fechamento(visiveis)
     alcance = {p: set(tab.fechamento([p])) for p in visiveis}
@@ -239,8 +248,8 @@ def montar(no_ar: tuple[dict, dict], candidata: tuple[dict, dict], nos: dict | N
         uniao[n] = pd.concat(partes).drop_duplicates().sort_values(list(n)).reset_index(drop=True)
     arestas = tab.arestas(uniao)
 
-    versoes = []
-    for rotulo, vista in zip(("no ar", "candidata"), vistas):
+    saida = []
+    for (rotulo, _), vista in zip(versoes, vistas):
         lo, hi, esc = {}, {}, {}
         for n in fecho:
             nome, tamanho = tab.nome(n), len(uniao[n])
@@ -253,7 +262,7 @@ def montar(no_ar: tuple[dict, dict], candidata: tuple[dict, dict], nos: dict | N
             lo[nome] = np.where(tem, vista[n]["_lo"].to_numpy(np.int64)[idx], 0)
             hi[nome] = np.where(tem, vista[n]["_hi"].to_numpy(np.int64)[idx], 0)
             esc[nome] = np.where(tem, vista[n]["_esc"].to_numpy(bool)[idx], False)
-        versoes.append(Versao(rotulo, lo, hi, esc, frozenset(tab.nome(n) for n in vista)))
+        saida.append(Versao(rotulo, lo, hi, esc, frozenset(tab.nome(n) for n in vista)))
     if nos is not None:
         valor = {}
         for n in fecho:
@@ -262,13 +271,14 @@ def montar(no_ar: tuple[dict, dict], candidata: tuple[dict, dict], nos: dict | N
                 continue
             tem, idx = _posicoes(uniao[n], nos[n], n)
             valor[tab.nome(n)] = np.where(tem, nos[n][medida].to_numpy(np.int64)[idx], 0)
-        versoes[1].valor = valor
+        saida[-1].valor = valor
 
     iguais = []
     if fechado_ate:
         for n in fecho:
-            iguais.append((0, 1, tab.nome(n), sih_deducao.periodo_fechado(uniao[n], n, ano, int(fechado_ate))))
-    return Problema(k, medida, versoes, [(tab.nome(f), tab.nome(g), i) for f, g, i in arestas], iguais)
+            fechada = sih_deducao.periodo_fechado(uniao[n], n, ano, int(fechado_ate))
+            iguais += [(i, i + 1, tab.nome(n), fechada) for i in range(len(saida) - 1)]
+    return Problema(k, medida, saida, [(tab.nome(f), tab.nome(g), i) for f, g, i in arestas], iguais)
 
 
 def conferir_com_a_no_ar(nos: dict, candidata: tuple[dict, dict], no_ar: sih_superficie.Superficie, catalogo: dict,

@@ -14,8 +14,9 @@
     python -m pipeline exigir     --coleta build/coleta
     python -m pipeline sih        --coleta build/coleta --trabalho build/sih --saida build/sih-medicao
                                   [--ufs RR SP] [--anos 2025 2026] [--processos 4] [--origem-local pasta]
-                                  [--anterior superficie.parquet|particoes | --no-ar build/no-ar]
-                                  (herda o padrão dos períodos fechados e roda o ataque conjunto com ela)
+                                  [--anterior superficie.parquet|particoes | --no-ar build/no-ar] [--sem-reaproveitar]
+                                  (herda o padrão dos períodos fechados e roda o ataque conjunto com ela; com as
+                                  mesmas regras, copia dela os anos fechados, a menos que --sem-reaproveitar)
     python -m pipeline publicacao --base sih   (publicar=true ou false, pelo catálogo)
 
 O SIH precisa de requirements-sih.txt e só é importado no próprio comando: o Publicar não depende dele.
@@ -117,6 +118,8 @@ def main(argv=None) -> int:
     origem = p.add_mutually_exclusive_group()
     origem.add_argument("--anterior", type=Path)
     origem.add_argument("--no-ar", type=Path)
+    # Recalcula das fontes também os anos fechados que poderiam ser copiados da versão anterior (sih_reaproveitamento).
+    p.add_argument("--sem-reaproveitar", action="store_true")
     args = parser.parse_args(argv)
 
     cat = catalogo.carregar()
@@ -189,8 +192,14 @@ def main(argv=None) -> int:
             anterior = sih_superficie.carregar(args.anterior, cat) if args.anterior else None
         medicao = sih.executar(_ler(args.coleta / "ibge.json"), cat, args.trabalho, args.saida, args.ufs, args.anos,
                                args.processos, args.origem_local, args.manter_dbc, not args.sem_deducao,
-                               anterior=anterior, no_ar_consultada=bool(args.no_ar))
+                               anterior=anterior, no_ar_consultada=bool(args.no_ar), reaproveitar=not args.sem_reaproveitar)
         print(f"SIH: {medicao['etapas']['total_s']} s no total; medição em {args.saida / 'medicao.json'}")
+        plano = medicao.get("reaproveitamento") or {}
+        for aviso in plano.get("avisos", []):
+            print(f"::warning title=SIH, ano fechado regravado::{aviso}")
+        if plano:
+            print(f"SIH: anos copiados da versão no ar: {plano['reaproveitados'] or 'nenhum'}"
+                  + (f" ({plano['motivo']})" if plano.get("motivo") else ""))
         # Um ano reprovado deixa a execução vermelha: nada dele foi gravado, e a versão não pode ser publicada.
         for ano, motivo in medicao["reprovados"].items():
             print(f"::error title=SIH {ano} sem partição::{motivo}")

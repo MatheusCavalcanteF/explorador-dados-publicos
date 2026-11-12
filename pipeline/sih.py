@@ -459,17 +459,21 @@ def resumo_do_conjunto(conjunto: dict) -> dict:
 def processar_anos(con, tabela: str, jan: sih_janela.Janela, anos: list[int], catalogo: dict, trabalho: Path,
                    municipios7: dict[str, str], coletado_em: str, versao_arquivos: str, deduzir: bool = True,
                    anterior=None, no_ar_consultada: bool = False, motores: list[str] | None = None,
-                   avisar=print) -> dict:
+                   avisar=print, reaproveitados=()) -> dict:
     """Cada ano: tabelas, supressão, teste de dedução, ataque conjunto com a versão anterior e a partição.
 
     `anterior` é a superfície da versão publicada antes (sih_superficie.Superficie), ou None. Só o ano que passa
     em tudo vira partição em `trabalho/particoes` (sih_particoes.nao_publicavel). O que reprova, ou que não foi
     testado, não é gravado, e a partição que uma execução anterior tenha deixado para ele na pasta de trabalho
     é apagada: ali só fica o que esta execução aprovou. Quando todos os anos passam, grava a superfície da versão
-    em `trabalho/superficie.parquet`; senão, apaga a que houver ali. Devolve a medição de cada ano, o resumo das
-    partições, a superfície e os reprovados com o motivo; um reprovado basta para nada ser publicado.
+    em `trabalho/superficie.parquet`, com o registro das regras do cálculo; senão, apaga a que houver ali. Devolve
+    a medição de cada ano, o resumo das partições, a superfície e os reprovados com o motivo; um reprovado basta
+    para nada ser publicado.
+
+    Os anos de `reaproveitados` (sih_reaproveitamento.planejar) não são calculados: a superfície deles é copiada
+    de `anterior` como está, e eles ficam sem partição, porque a versão no ar só tem a superfície.
     """
-    from . import sih_superficie, sih_versoes
+    from . import sih_reaproveitamento, sih_superficie, sih_versoes
     base = catalogo["bases"]["sih"]
     k = int(base["supressao"]["k"])
     prelim_regra = base.get("preliminares") or {}
@@ -478,8 +482,17 @@ def processar_anos(con, tabela: str, jan: sih_janela.Janela, anos: list[int], ca
     obrigatorio = bool((base.get("versoes") or {}).get("ataque_conjunto_obrigatorio", True))
     anos_anteriores = sorted(anterior.anos) if anterior else []
     saida = {"anos": {}, "particoes": {}, "reprovados": {}}
-    superficie = sih_superficie.Superficie()
+    superficie = sih_superficie.Superficie(calculo=sih_reaproveitamento.calculo(catalogo))
     for ano in anos:
+        if ano in reaproveitados:
+            sih_particoes.remover_ano(trabalho / "particoes", ano)
+            superficie.anos[ano] = anterior.anos[ano]
+            superficie.tabelas.update({(ano, cid): anterior.tabelas[ano, cid] for cid in anterior.anos[ano]["superficie"]})
+            saida["anos"][str(ano)] = {"ano": ano, "reaproveitado_da_versao_no_ar": True, "particao_gravada": False}
+            saida["particoes"][str(ano)] = {"arquivos": 0, "bytes": 0, "gzip": 0, "maior": None,
+                                            "nao_gravada": "reaproveitado da versão no ar, que só tem a superfície"}
+            avisar(f"SIH {ano}: fechado, copiado da versão no ar de {anterior.anos[ano].get('coletado_em')}, sem recalcular")
+            continue
         preliminares = {str(mes) for mes in jan.meses_preliminares(ano)}
         antes, fixo = anterior_do_ano(anterior, ano, catalogo, jan.ano_fechado(ano)) if anterior else (None, None)
         nos, sup, m = construir_ano(con, tabela, ano, catalogo, k, deduzir, jan.ultimo_mes, preliminares,
@@ -554,7 +567,8 @@ def processar_anos(con, tabela: str, jan: sih_janela.Janela, anos: list[int], ca
 def executar(coleta_ibge: dict, catalogo: dict, trabalho: Path, saida: Path, ufs: list[str] | None = None,
              anos: list[int] | None = None, processos: int = 4, origem_local: Path | None = None,
              manter_dbc: bool = False, deduzir: bool = True, listagem: dict | None = None, avisar=print,
-             anterior=None, no_ar_consultada: bool = False, motores: list[str] | None = None) -> dict:
+             anterior=None, no_ar_consultada: bool = False, motores: list[str] | None = None,
+             reaproveitar: bool = True) -> dict:
     """A execução inteira. Devolve a medição, que é o único arquivo gravado fora da pasta de trabalho.
 
     `anterior` é a superfície da versão publicada antes (sih_superficie.Superficie): nos períodos já fechados,
@@ -562,11 +576,15 @@ def executar(coleta_ibge: dict, catalogo: dict, trabalho: Path, saida: Path, ufs
     outro, e cada ano que ela tem passa pelo ataque conjunto (sih_versoes). `no_ar_consultada` diz que
     `anterior`, ou a falta dela, veio da consulta ao site (sih_superficie.versao_no_ar), e não de uma pasta
     escolhida à mão.
+    Com as mesmas regras e o mesmo algoritmo de supressão da versão anterior, os anos fechados nas duas são
+    copiados dela, sem baixar as competências deles (sih_reaproveitamento); `reaproveitar` falso recalcula todos.
     Ano que não passa em todos os testes não vira partição, e a medição o lista em `reprovados`.
     """
     import duckdb
 
     from datetime import datetime, timezone
+
+    from . import sih_reaproveitamento
 
     base = catalogo["bases"]["sih"]
     k = int(base["supressao"]["k"])
@@ -582,11 +600,22 @@ def executar(coleta_ibge: dict, catalogo: dict, trabalho: Path, saida: Path, ufs
                          "anos": anos, "anos_abertos": [a for a in anos if a in jan.anos_abertos()],
                          "aguardando": sorted(n for n, a in listagem.items() if a["competencia"] > jan.ultima_completa)}
     medicao["etapas"]["listagem_s"] = round(time.perf_counter() - inicio, 1)
-    arquivos = arquivos_necessarios(jan, anos, ufs)
+    plano = sih_reaproveitamento.planejar(anterior, catalogo, jan, anos, listagem, set(ufs) == set(sih_janela.UFS),
+                                          reaproveitar and deduzir)
+    medicao["reaproveitamento"] = plano
+    calcular = [a for a in anos if a not in plano["reaproveitados"]]
+    for aviso in plano["avisos"]:
+        avisar(aviso)
+    arquivos = arquivos_necessarios(jan, calcular, ufs)
     municipios7 = {m["codigo"][:6]: m["codigo"] for m in coleta_ibge["municipios"]}
-    avisar(f"SIH: {len(arquivos)} arquivos de {len(ufs)} UF(s), competências para os anos {anos}; "
-           f"última completa {jan.ultima_completa}, fechado até {jan.ultimo_mes_fechado}")
-    coleta = coletar(listagem, arquivos, trabalho, set(municipios7), catalogo, processos, manter_dbc, origem_local, avisar)
+    da_no_ar = f"{plano['reaproveitados'] or 'nenhum ano'}" + (f" ({plano['motivo']})" if plano["motivo"] else "")
+    avisar(f"SIH: {len(arquivos)} arquivos de {len(ufs)} UF(s), competências para os anos {calcular}; "
+           f"última completa {jan.ultima_completa}, fechado até {jan.ultimo_mes_fechado}; da versão no ar: {da_no_ar}")
+    if arquivos:
+        coleta = coletar(listagem, arquivos, trabalho, set(municipios7), catalogo, processos, manter_dbc, origem_local, avisar)
+    else:
+        coleta = {"arquivos": [], "segundos": 0.0, "bytes_dbc": 0, "bytes_min": 0, "maior_disco_bytes": 0,
+                  "processos": processos}
     medicao["coleta"] = {c: v for c, v in coleta.items() if c != "arquivos"}
     medicao["coleta"]["arquivos"] = len(coleta["arquivos"])
     medicao["coleta"]["sexo_ignorado"] = mascarar(sum(r["sexo_ignorado"] for r in coleta["arquivos"]), k)
@@ -599,11 +628,12 @@ def executar(coleta_ibge: dict, catalogo: dict, trabalho: Path, saida: Path, ufs
                                         "modificado_no_ftp": r["modificado_no_ftp"]} for r in coleta["arquivos"]}
     con = duckdb.connect()
     con.execute(f"SET threads = {max(1, processos)}")
-    caminhos = [str(trabalho / "min" / (a[:-4] + ".parquet")).replace("\\", "/") for a in arquivos]
-    con.execute(f"CREATE VIEW aih AS SELECT * FROM read_parquet({caminhos!r})")
-    versao_arquivos = max(r["modificado_no_ftp"] for r in coleta["arquivos"])
+    if arquivos:
+        caminhos = [str(trabalho / "min" / (a[:-4] + ".parquet")).replace("\\", "/") for a in arquivos]
+        con.execute(f"CREATE VIEW aih AS SELECT * FROM read_parquet({caminhos!r})")
+    versao_arquivos = max((r["modificado_no_ftp"] for r in coleta["arquivos"]), default=None)
     medicao |= processar_anos(con, "aih", jan, anos, catalogo, trabalho, municipios7, coletado_em, versao_arquivos,
-                              deduzir, anterior, no_ar_consultada, motores, avisar)
+                              deduzir, anterior, no_ar_consultada, motores, avisar, plano["reaproveitados"])
     # Um ano reprovado basta: a versão inteira não pode ser publicada, e o site anterior continua no ar.
     medicao["publicavel"] = bool(deduzir) and not medicao["reprovados"]
     medicao["disco"] = {"trabalho_bytes": _tamanho(trabalho), "min_bytes": _tamanho(trabalho / "min"),

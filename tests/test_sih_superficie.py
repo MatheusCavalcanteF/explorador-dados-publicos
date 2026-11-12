@@ -100,11 +100,25 @@ def test_arquivo_guarda_a_superficie_e_a_situacao_sem_a_lista_de_arquivos(cat, p
     (lambda t: pa.concat_tables([t, t.slice(0, 1)]), None, True, "chave repetida"),
     # Outro formato.
     (None, lambda m: m | {"formato": 2}, True, "sem os metadados da superfície no formato 1"),
+    # Registro das regras do cálculo fora do formato: hash curto, número que não é inteiro, chave faltando ou a mais.
+    *[(None, lambda m, c=c: m | {"calculo": c}, True, "registro das regras do cálculo não está no formato")
+      for c in ({"regras_sha256": "ab", "algoritmo_de_supressao": 1}, {"regras_sha256": "A" * 64, "algoritmo_de_supressao": 1},
+                {"regras_sha256": "a" * 64, "algoritmo_de_supressao": True}, {"regras_sha256": "a" * 64},
+                {"regras_sha256": "a" * 64, "algoritmo_de_supressao": 1, "outro": 1}, "a" * 64)],
 ])
 def test_arquivo_que_nao_confere_para(cat, publicado, tabela, meta, hash_novo, motivo):
     regravar(publicado, tabela, meta, hash_novo)
     with pytest.raises(sih_superficie.ErroDeSuperficie, match=motivo):
         sih_superficie.ler(publicado, cat)
+
+
+def test_registro_do_calculo_vai_e_volta(cat, publicado):
+    sup = sih_superficie.ler(publicado, cat)
+    # Sem o registro (uma pasta de partições não o tem), a leitura segue, e nada pode ser reaproveitado dela.
+    assert sup.calculo is None
+    sup.calculo = {"regras_sha256": "0123456789abcdef" * 4, "algoritmo_de_supressao": 3}
+    sih_superficie.gravar(sup, publicado, cat)
+    assert sih_superficie.ler(publicado, cat).calculo == sup.calculo
 
 
 def test_bytes_que_nao_sao_parquet_param(cat, publicado):

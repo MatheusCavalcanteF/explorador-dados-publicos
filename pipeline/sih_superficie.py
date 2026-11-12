@@ -13,7 +13,9 @@ padrão, a situação de cada ano e o que entra no ataque conjunto.
 
 O arquivo é um Parquet só, com uma linha por célula da tela e a situação de cada ano nos metadados (o que foi
 publicado, o que não foi e por quê, os testes, os meses preliminares e o múltiplo do arredondamento). Os
-metadados também guardam o SHA-256 do conteúdo: quem lê confere célula por célula com eles.
+metadados também guardam o SHA-256 do conteúdo, que quem lê confere célula por célula, e com que regras a versão
+foi calculada (`calculo`: o SHA-256 das regras do SIH no catálogo e o número do algoritmo de supressão), que
+decide se a versão seguinte pode reaproveitar dela os anos fechados (sih_reaproveitamento).
 
 Baixar e conferir o arquivo só precisa do pyarrow (requirements.txt): o Publicar faz isso antes de instalar as
 dependências do SIH.
@@ -44,6 +46,8 @@ CONSULTA = "consulta.json"
 COLUNAS = {"internacoes": ("internacoes", "oculto", "arredondado"),
            "obitos": ("obitos", "obitos_oculto", "obitos_arredondado")}
 TEMPO = {"mes": ["mes"], "tri": ["tri"], "ano": []}
+# O que `calculo` registra: o SHA-256 das regras do SIH no catálogo e o número do algoritmo de supressão.
+CALCULO = ("regras_sha256", "algoritmo_de_supressao")
 
 
 class ErroDeSuperficie(ErroDeContrato):
@@ -55,10 +59,12 @@ class Superficie:
     """`anos`: a situação de cada ano publicado, com `superficie` ({cruzamento: medidas mostradas}).
     `tabelas`: por (ano, cruzamento), as chaves (município com 7 dígitos), as contagens mostradas e as marcas
     de cada uma, com os nomes das partições. `reprovados`: anos de uma pasta de partições que não passaram nos
-    testes; nunca vão para o arquivo."""
+    testes; nunca vão para o arquivo. `calculo`: com que regras a versão foi calculada (CALCULO), ou None quando
+    a origem não registra, como uma pasta de partições."""
     anos: dict[int, dict] = field(default_factory=dict)
     tabelas: dict[tuple[int, str], pa.Table] = field(default_factory=dict)
     reprovados: dict[int, dict] = field(default_factory=dict)
+    calculo: dict | None = None
 
     def tabela(self, ano: int, cid: str):
         """A tabela de um cruzamento num ano, em pandas, ou None se ele não está na superfície daquele ano."""
@@ -209,6 +215,8 @@ def gravar(sup: Superficie, caminho: Path, catalogo: dict) -> dict:
         partes.append(pa.table(colunas, schema=esquema))
     tabela = pa.concat_tables(partes) if partes else esquema.empty_table()
     meta = {"formato": FORMATO, "anos": {str(a): m for a, m in sorted(sup.anos.items())}, "conteudo_sha256": _conteudo(tabela)}
+    if sup.calculo is not None:
+        meta["calculo"] = _calculo(sup.calculo, caminho)
     tabela = tabela.replace_schema_metadata({METADADOS: json.dumps(meta, ensure_ascii=False, sort_keys=True)})
     caminho = Path(caminho)
     caminho.parent.mkdir(parents=True, exist_ok=True)
@@ -217,6 +225,16 @@ def gravar(sup: Superficie, caminho: Path, catalogo: dict) -> dict:
     os.replace(parcial, caminho)
     bruto = caminho.read_bytes()
     return {"bytes": len(bruto), "sha256": hashlib.sha256(bruto).hexdigest(), "linhas": tabela.num_rows}
+
+
+def _calculo(calculo, onde) -> dict:
+    """`calculo` só com as chaves de CALCULO: o SHA-256 em hexadecimal e o número do algoritmo, inteiro positivo."""
+    regras, algoritmo = (calculo.get(c) for c in CALCULO) if isinstance(calculo, dict) else (None, None)
+    if (not isinstance(calculo, dict) or set(calculo) != set(CALCULO) or not isinstance(regras, str)
+            or len(regras) != 64 or set(regras) - set("0123456789abcdef")
+            or not isinstance(algoritmo, int) or isinstance(algoritmo, bool) or algoritmo < 1):
+        raise ErroDeSuperficie(f"{onde}: o registro das regras do cálculo não está no formato esperado")
+    return dict(calculo)
 
 
 def _conferir_tabela(t: pa.Table, cid: str, medidas, meta: dict, catalogo: dict, onde: str) -> None:
@@ -264,7 +282,7 @@ def ler(caminho: Path, catalogo: dict) -> Superficie:
     tabela = tabela.replace_schema_metadata(None)
     if _conteudo(tabela) != meta.get("conteudo_sha256"):
         raise ErroDeSuperficie(f"{caminho}: o conteúdo não confere com o SHA-256 que o próprio arquivo registra")
-    sup = Superficie()
+    sup = Superficie(calculo=_calculo(meta["calculo"], caminho) if "calculo" in meta else None)
     declarados = set()
     for chave, m in meta["anos"].items():
         ano = int(chave)

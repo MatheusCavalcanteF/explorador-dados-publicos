@@ -25,6 +25,14 @@ from .deducao import COMPLEMENTAR, PEQUENA, VISIVEL
 FAMILIA = 4
 MOTIVOS = {VISIVEL: "", PEQUENA: "contagem_pequena", COMPLEMENTAR: "complementar", FAMILIA: "familia"}
 
+# Versão do código que decide as células publicadas do SIH: conversão dos arquivos, montagem das tabelas,
+# supressão, reforço, testes de dedução, arredondamento e herança. Vai para a superfície publicada, e uma versão
+# no ar calculada com outro número não tem nenhum ano fechado reaproveitado: todos são recalculados das fontes
+# (sih_reaproveitamento). Suba o número sempre que uma mudança nesse código puder mudar uma célula publicada ou o
+# veredito de um teste. O teste test_algoritmo_de_supressao_acompanha_o_codigo falha quando o código muda sem
+# que o número, ou a impressão registrada para ele, mude junto.
+ALGORITMO_DE_SUPRESSAO = 1
+
 
 def pequena(valores: np.ndarray, k: int) -> np.ndarray:
     """De 1 a k-1. Zero não é oculto."""

@@ -13,11 +13,13 @@ duckdb = pytest.importorskip("duckdb")
 pytest.importorskip("scipy")
 
 import pyarrow as pa  # noqa: E402
+import pyarrow.compute as pc  # noqa: E402
 from conftest import site_falso  # noqa: E402
 from test_sih_tabelas import aihs_sinteticas  # noqa: E402
 
 from pipeline import __main__ as cli  # noqa: E402
-from pipeline import catalogo, deducao, projeto, sih, sih_janela, sih_superficie, sih_versoes  # noqa: E402
+from pipeline import (catalogo, deducao, projeto, sih, sih_coleta, sih_janela, sih_reaproveitamento,  # noqa: E402
+                      sih_superficie, sih_versoes, supressao)
 
 INF = deducao.INF
 CRUZAMENTOS = ("sih_res_ano", "sih_res_mes", "sih_res_mes_sexo")
@@ -353,12 +355,14 @@ def test_comando_sih_fica_vermelho_com_ano_reprovado(tmp_path, monkeypatch, caps
     assert cli.main(comando) == 1
     assert "::error title=SIH 2024 sem partição::o ataque conjunto com a versão no ar não passou" in capsys.readouterr().out
     reprovados = {}
-    assert cli.main(comando) == 0 and chamadas[-1] == {"anterior": None, "no_ar_consultada": False}
+    assert cli.main(comando) == 0 and chamadas[-1] == {"anterior": None, "no_ar_consultada": False, "reaproveitar": True}
     # Com a consulta feita e nenhuma versão no ar, é a primeira publicação: sem anterior, e isso fica registrado.
     (tmp_path / "no-ar").mkdir()
     (tmp_path / "no-ar" / "consulta.json").write_text('{"existe": false, "anos": []}', encoding="utf-8")
     assert cli.main(comando + ["--no-ar", str(tmp_path / "no-ar")]) == 0
-    assert chamadas[-1] == {"anterior": None, "no_ar_consultada": True}
+    assert chamadas[-1] == {"anterior": None, "no_ar_consultada": True, "reaproveitar": True}
+    # --sem-reaproveitar recalcula das fontes também os anos fechados.
+    assert cli.main(comando + ["--sem-reaproveitar"]) == 0 and chamadas[-1]["reaproveitar"] is False
 
 
 # O detalhe que sai dos dois anos mais novos (decidido em 11/11/2026): o que foi publicado continua publicado.
@@ -397,7 +401,8 @@ def ciclo_detalhe(cat, tmp_path_factory):
             assert r["reprovados"] == {}, (ultima, r["reprovados"])
             anterior = sih_superficie.ler(raiz / str(ultima) / sih_superficie.ARQUIVO, com_detalhe)
             versoes[ultima] = {"r": r, "sup": anterior, "pasta": raiz / str(ultima)}
-    return {"cat": com_detalhe, "versoes": versoes, "ataques": ataques}
+    return {"cat": com_detalhe, "versoes": versoes, "ataques": ataques, "con": con, "aihs": aihs, "raiz": raiz,
+            "municipios7": municipios7}
 
 
 def test_ano_que_sai_dos_dois_mais_novos_ainda_preliminar_mantem_o_detalhe(ciclo_detalhe):
@@ -452,3 +457,220 @@ def test_pagina_oferece_no_seletor_o_ano_que_saiu_do_padrao(ciclo_detalhe):
     assert re.search(r'value="2027" checked', html) and not re.search(r'value="2025" checked', html)
     painel = html[html.index('data-ano="2025"'):]
     assert "internacoes-por-capitulo-2025" in painel
+
+
+# Anos fechados copiados da versão no ar (decidido em 11/11/2026): o reaproveitamento vale enquanto as regras do SIH
+# no catálogo e o algoritmo de supressão forem os da versão no ar.
+
+def listagem_do_ftp(ate, de=202501, regravados=()):
+    """A listagem do FTP com as 27 UFs, da competência `de` até `ate`, gravada antes da versão de 2705 (2027-05-20);
+    os `regravados`, depois dela."""
+    return {nome: {"uf": uf, "competencia": c, "bytes": 1,
+                   "modificado_no_ftp": "2027-06-03T10:00" if nome in regravados else "2027-05-01T00:00"}
+            for uf in sih_janela.UFS for c in sih_janela.intervalo(de, ate) for nome in [sih_coleta.nome_do_arquivo(uf, c)]}
+
+
+JANELA_2706 = sih_janela.Janela(202706, 202706, 12, 5, 2025)
+
+
+class Parar(Exception):
+    pass
+
+
+def primeiro_ano_calculado(ciclo_detalhe, cat, no_ar, reaproveitados, monkeypatch, tmp_path):
+    """O primeiro ano que processar_anos manda calcular, e o padrão herdado que ele recebe, sem calcular nada."""
+    chamadas = []
+
+    def construir(*args, **opcoes):
+        chamadas.append(args)
+        raise Parar
+    monkeypatch.setattr(sih, "construir_ano", construir)
+    with pytest.raises(Parar):
+        sih.processar_anos(ciclo_detalhe["con"], "aih", JANELA_2706, JANELA_2706.anos(), cat, tmp_path,
+                           ciclo_detalhe["municipios7"], "2027-07-28T00:00:00Z", "2027-06-20", anterior=no_ar,
+                           no_ar_consultada=True, avisar=lambda texto: None, reaproveitados=reaproveitados)
+    return chamadas[0][2], chamadas[0][8]
+
+
+@pytest.fixture(scope="module")
+def ciclo_reaproveitado(ciclo_detalhe):
+    """A quarta versão, 2706, com a de 2705 no ar: 2025 estava fechado nela e continua, e é copiado dela."""
+    cat, no_ar = ciclo_detalhe["cat"], ciclo_detalhe["versoes"][202705]["sup"]
+    con, pasta = ciclo_detalhe["con"], ciclo_detalhe["raiz"] / "202706"
+    plano = sih_reaproveitamento.planejar(no_ar, cat, JANELA_2706, JANELA_2706.anos(), listagem_do_ftp(202706))
+    con.execute("CREATE OR REPLACE TABLE aih AS SELECT * FROM todas WHERE dt_saida // 100 <= 202706")
+    calculados, original = [], sih.construir_ano
+
+    def construir(*args, **opcoes):
+        calculados.append(args[2])
+        return original(*args, **opcoes)
+    with pytest.MonkeyPatch.context() as mp:
+        mp.setattr(sih, "construir_ano", construir)
+        r = sih.processar_anos(con, "aih", JANELA_2706, JANELA_2706.anos(), cat, pasta, ciclo_detalhe["municipios7"],
+                               "2027-07-28T00:00:00Z", "2027-06-20", anterior=no_ar, no_ar_consultada=True,
+                               avisar=lambda texto: None, reaproveitados=plano["reaproveitados"])
+    return {"plano": plano, "r": r, "calculados": calculados, "pasta": pasta, "no_ar": no_ar, "cat": cat,
+            "sup": sih_superficie.ler(pasta / sih_superficie.ARQUIVO, cat)}
+
+
+def test_regra_igual_reaproveita_o_ano_fechado(ciclo_reaproveitado):
+    c = ciclo_reaproveitado
+    plano, r, no_ar, sup = c["plano"], c["r"], c["no_ar"], c["sup"]
+    assert plano["valido"] and plano["motivo"] is None and plano["calculo"] == no_ar.calculo
+    assert plano["reaproveitados"] == [2025] and plano["anos"] == {
+        "2025": "fechado na versão no ar e nesta: copiado dela", "2026": "ano aberto", "2027": "ano aberto"}
+    # 2025 não é calculado nem atacado de novo; os anos abertos passam por tudo, com a versão no ar.
+    assert c["calculados"] == [2026, 2027] and r["reprovados"] == {}
+    assert r["anos"]["2025"] == {"ano": 2025, "reaproveitado_da_versao_no_ar": True, "particao_gravada": False}
+    for ano in (2026, 2027):
+        assert sih.ler_situacao(c["pasta"] / "particoes", ano)["deducao"]["conjunto"]["passou"], ano
+    # Sem partição: a versão no ar só tem a superfície, e a pasta só guarda o que esta execução calculou.
+    assert sih_superficie.sih_particoes.anos_na_pasta(c["pasta"] / "particoes") == [2026, 2027]
+    # A superfície nova leva 2025 exatamente como estava no ar, com a situação dele, e registra o cálculo.
+    assert sup.calculo == no_ar.calculo and sup.anos[2025] == no_ar.anos[2025]
+    assert set(sup.anos[2025]["superficie"]) == {*NA_TELA, DETALHE}
+    for cid in sup.anos[2025]["superficie"]:
+        assert sup.tabelas[2025, cid].equals(no_ar.tabelas[2025, cid]), cid
+
+
+def test_execucao_nao_baixa_as_competencias_do_ano_reaproveitado(ciclo_detalhe, monkeypatch, tmp_path):
+    cat, no_ar = ciclo_detalhe["cat"], ciclo_detalhe["versoes"][202705]["sup"]
+    pedidos = []
+
+    def coletar(listagem, arquivos, *args, **opcoes):
+        pedidos.append(arquivos)
+        raise Parar
+    monkeypatch.setattr(sih, "coletar", coletar)
+    for reaproveitar in (True, False):
+        with pytest.raises(Parar):
+            sih.executar({"municipios": []}, cat, tmp_path / "t", tmp_path / "s", anos=[2025, 2026, 2027],
+                         listagem=listagem_do_ftp(202706, de=202101), anterior=no_ar, no_ar_consultada=True,
+                         avisar=lambda texto: None, reaproveitar=reaproveitar)
+    competencias = [sorted({sih_janela.de_nome(n[4:8]) for n in arquivos}) for arquivos in pedidos]
+    # 2026 começa em 2601; de 2601 a 2605 também há altas de 2025, mas elas entram pelas de 2026.
+    assert competencias[0] == sih_janela.intervalo(202601, 202706)
+    assert competencias[1] == sih_janela.intervalo(202501, 202706)
+    assert all(len(a) == 27 * len(c) for a, c in zip(pedidos, competencias))
+
+
+@pytest.mark.parametrize("mudanca, motivo", [
+    ("k", "as regras do SIH no catálogo mudaram desde a versão no ar"),
+    ("cruzamento", "as regras do SIH no catálogo mudaram desde a versão no ar"),
+    ("algoritmo", "o algoritmo de supressão mudou desde a versão no ar (de 1 para 2)"),
+])
+def test_mudanca_de_regra_ou_de_algoritmo_recalcula_todos_os_anos(ciclo_detalhe, monkeypatch, tmp_path, mudanca, motivo):
+    cat, no_ar = ciclo_detalhe["cat"], ciclo_detalhe["versoes"][202705]["sup"]
+    if mudanca == "k":
+        regras = cat["bases"]["sih"]
+        cat = cat | {"bases": cat["bases"] | {"sih": regras | {"supressao": regras["supressao"] | {"k": 6}}}}
+    elif mudanca == "cruzamento":
+        cat = cat | {"cruzamentos": cat["cruzamentos"] + [c for c in catalogo.carregar()["cruzamentos"]
+                                                          if c["id"] == "sih_res_mes_sexo"]}
+    else:
+        monkeypatch.setattr(supressao, "ALGORITMO_DE_SUPRESSAO", 2)
+    plano = sih_reaproveitamento.planejar(no_ar, cat, JANELA_2706, JANELA_2706.anos(), listagem_do_ftp(202706))
+    assert not plano["valido"] and plano["motivo"] == motivo and plano["reaproveitados"] == [] and plano["anos"] == {}
+    assert plano["calculo_no_ar"] == no_ar.calculo != plano["calculo"]
+    # Todos os anos voltam a ser calculados, a partir de 2025, com a herança do padrão da versão no ar.
+    ano, herdado = primeiro_ano_calculado(ciclo_detalhe, cat, no_ar, plano["reaproveitados"], monkeypatch, tmp_path)
+    assert ano == 2025 and set(herdado) == {*NA_TELA, DETALHE}
+
+
+@pytest.mark.parametrize("caso, motivo", [
+    ("sem versão no ar", "nenhuma versão no ar"),
+    ("desligado", "reaproveitamento desligado nesta execução"),
+    ("parte das UFs", "execução com parte das UFs"),
+    ("sem registro", "a versão no ar não registra as regras com que foi calculada"),
+])
+def test_sem_como_conferir_as_regras_nada_e_reaproveitado(ciclo_detalhe, caso, motivo):
+    cat, no_ar = ciclo_detalhe["cat"], ciclo_detalhe["versoes"][202705]["sup"]
+    opcoes = {"desligado": {"ativo": False}, "parte das UFs": {"todas_as_ufs": False}}.get(caso, {})
+    if caso == "sem versão no ar":
+        no_ar = None
+    elif caso == "sem registro":
+        no_ar = copy.copy(no_ar)
+        no_ar.calculo = None
+    plano = sih_reaproveitamento.planejar(no_ar, cat, JANELA_2706, JANELA_2706.anos(), listagem_do_ftp(202706), **opcoes)
+    assert plano["motivo"] == motivo and plano["reaproveitados"] == []
+
+
+def test_arquivo_do_ano_fechado_regravado_no_ftp_recalcula_o_ano(ciclo_detalhe):
+    cat, no_ar = ciclo_detalhe["cat"], ciclo_detalhe["versoes"][202705]["sup"]
+    listagem = listagem_do_ftp(202706, regravados={"RDRR2503.dbc"})
+    plano = sih_reaproveitamento.planejar(no_ar, cat, JANELA_2706, JANELA_2706.anos(), listagem)
+    assert plano["valido"] and plano["reaproveitados"] == []
+    assert plano["anos"]["2025"].startswith("o FTP regravou 1 arquivo(s) do ano depois da versão no ar, de 2027-05-20")
+    assert "RDRR2503.dbc" in plano["anos"]["2025"] and "SIH 2025, fechado" in plano["avisos"][0]
+
+
+def adulterar(no_ar, cid, mudar, situacao=None):
+    """Uma cópia da versão no ar com a tabela de 2025 de `cid` trocada por mudar(DataFrame)."""
+    outra = copy.copy(no_ar)
+    outra.tabelas, outra.anos = dict(no_ar.tabelas), dict(no_ar.anos)
+    df = no_ar.tabela(2025, cid)
+    mudar(df)
+    outra.tabelas[2025, cid] = pa.Table.from_pandas(df, schema=no_ar.tabelas[2025, cid].schema, preserve_index=False)
+    if situacao:
+        outra.anos[2025] = no_ar.anos[2025] | situacao
+    return outra
+
+
+def primeira_visivel(df):
+    return df.index[~df["oculto"] & (df["internacoes"] >= 10)][0]
+
+
+def trocar(coluna, valor):
+    """Troca `coluna` na primeira célula visível com 10 internações ou mais."""
+    def mudar(df):
+        df.loc[primeira_visivel(df), coluna] = valor
+    return mudar
+
+
+@pytest.mark.parametrize("caso, cid, mudar, situacao, erro", [
+    ("pequena visível", "sih_res_ano", trocar("internacoes", 3), None, "sih_res_ano mostra 1 contagem"),
+    ("preliminar", "sih_res_mes", trocar("preliminar", True), None, "sih_res_mes tem célula preliminar num ano fechado"),
+    ("arredondada", "sih_res_mes", trocar("arredondado", True), None, "sih_res_mes tem internacoes arredondada"),
+    ("situação contraditória", "sih_res_mes", lambda df: None, {"preliminares": ["202512"]}, "a situação do ano se contradiz"),
+])
+def test_versao_no_ar_incoerente_no_ano_fechado_para_antes_da_coleta(ciclo_detalhe, caso, cid, mudar, situacao, erro):
+    cat, no_ar = ciclo_detalhe["cat"], ciclo_detalhe["versoes"][202705]["sup"]
+    outra = adulterar(no_ar, cid, mudar, situacao)
+    with pytest.raises(sih_superficie.ErroDeSuperficie, match=erro):
+        sih_reaproveitamento.planejar(outra, cat, JANELA_2706, JANELA_2706.anos(), listagem_do_ftp(202706))
+
+
+def test_versao_no_ar_adulterada_para_o_pipeline(ciclo_detalhe, monkeypatch, tmp_path):
+    from test_sih_superficie import regravar
+    cat, original = ciclo_detalhe["cat"], ciclo_detalhe["versoes"][202705]["pasta"] / sih_superficie.ARQUIVO
+    publicado = tmp_path / sih_superficie.ARQUIVO
+    lido = sih_superficie.ler(original, cat)
+    mes, ano = lido.tabela(2025, "sih_res_mes"), lido.tabela(2025, "sih_res_ano")
+    # Um mês visível sobe até os meses visíveis do município somarem 7 a mais que o total do ano, que fica como
+    # estava: nenhuma célula oculta, que vale de zero para cima, desfaz a diferença.
+    visiveis = mes[~mes["oculto"]]
+    total = ano.loc[~ano["oculto"]].set_index("mun_res")["internacoes"]
+    alvo = visiveis[visiveis["mun_res"].isin(total.index)].iloc[0]
+    acrescimo = int(total[alvo["mun_res"]] - visiveis.loc[visiveis["mun_res"] == alvo["mun_res"], "internacoes"].sum() + 7)
+
+    def acrescentar(t):
+        """O mês escolhido de 2025 com o acréscimo, e o ano como estava."""
+        linha = pc.and_(pc.and_(pc.equal(t["cruzamento"], "sih_res_mes"), pc.equal(t["ano"], 2025)),
+                        pc.and_(pc.equal(t["mun_res"], alvo["mun_res"]), pc.equal(t["mes"], alvo["mes"])))
+        linha = pc.fill_null(linha, False)
+        return t.set_column(t.column_names.index("internacoes"), "internacoes",
+                            pc.if_else(linha, pc.add(t["internacoes"], acrescimo), t["internacoes"]))
+    # Sem refazer o SHA-256 do conteúdo, a leitura já para.
+    shutil.copy(original, publicado)
+    regravar(publicado, acrescentar, hash_novo=False)
+    with pytest.raises(sih_superficie.ErroDeSuperficie, match="não confere com o SHA-256"):
+        sih_superficie.ler(publicado, cat)
+    # Com o SHA-256 refeito, o arquivo se lê, mas o ano não fecha com as próprias somas, e a execução para antes
+    # de baixar qualquer arquivo.
+    shutil.copy(original, publicado)
+    regravar(publicado, acrescentar)
+    adulterada = sih_superficie.ler(publicado, cat)
+    monkeypatch.setattr(sih, "coletar", lambda *a, **k: pytest.fail("baixou com a versão no ar adulterada"))
+    with pytest.raises(sih_superficie.ErroDeSuperficie, match="2025: o ano não fecha com as próprias somas"):
+        sih.executar({"municipios": []}, cat, tmp_path / "t", tmp_path / "s", anos=[2025, 2026, 2027],
+                     listagem=listagem_do_ftp(202706, de=202101), anterior=adulterada, no_ar_consultada=True,
+                     avisar=lambda texto: None)
