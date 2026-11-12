@@ -117,6 +117,36 @@ def test_programacao_linear_confere_que_o_valor_verdadeiro_cabe_no_problema():
         sih_versoes.atacar(p, "programacao_linear")
 
 
+def test_amostra_fracionaria_nao_descarta_o_que_os_extremos_revelam():
+    """Regressão do apontamento da revisão de 11/11/2026: x+y=2, x+z=2 e y+z+w=3, com 0<=w<=1 e o resto >= 0.
+
+    Minimizar x+y+z+w dá a amostra (0,5; 1,5; 1,5; 0). No contínuo, x fica em [0,5; 1] e y e z em [1; 1,5]:
+    arredondados para dentro, os três ficam em 1, revelados. w fica em [0; 1] e não é revelado."""
+    from pipeline import deducao_lp
+    amostra = np.array([0.5, 1.5, 1.5, 0.0])
+    # A amostra só descarta quando não sobra inteiro de 1 a k-1 entre o abaixo do máximo e o acima do mínimo:
+    # x tem 1 entre 0 e 1, y e z têm 1 e 2 entre 1 e 2; w, entre 0 e 0, nenhum.
+    vivas = deducao_lp._possivel(deducao_lp._abaixo(amostra), deducao_lp._acima(amostra), 5, np.zeros(4, bool))
+    assert vivas.tolist() == [True, True, True, False]
+    # As três somas como partições das células x, y, z, w; a outra parte de cada partição fica escondida.
+    inf = deducao_lp.INF
+    lo = {"celulas": np.zeros(4, np.int64), "a": np.array([2, 0]), "b": np.array([2, 0]), "c": np.array([3, 0])}
+    hi = {"celulas": np.array([inf, inf, inf, 1]), "a": np.array([2, inf]), "b": np.array([2, inf]),
+          "c": np.array([3, inf])}
+    arestas = [("celulas", "a", np.array([0, 0, 1, 1])), ("celulas", "b", np.array([0, 1, 0, 1])),
+               ("celulas", "c", np.array([1, 0, 0, 0]))]
+    linhas = []
+    r = deducao_lp.atacar([(lo, hi)], arestas, [], [{"celulas": np.ones(4, bool)}], 5, [], registrar=linhas.append)
+    assert r["reveladas"] == [{"celulas": 3}] and r["detalhe"]["inconclusivas"] == 0
+    # O primeiro ponto minimiza a soma das quatro, a amostra do apontamento; depois dele sobram três candidatas.
+    assert linhas[0].startswith("ponto viável") and "3 candidata(s) de 4" in linhas[0]
+    # Célula a célula, com k = 2, em que só o 1 é revelação: x, y e z revelados em 1, w não.
+    for celula, esperado in zip("xyzw", (1, 1, 1, 0)):
+        alvo = np.array([c == celula for c in "xyzw"])
+        r = deducao_lp.atacar([(lo, hi)], arestas, [], [{"celulas": alvo}], 2, [])
+        assert r["reveladas"][0].get("celulas", 0) == esperado, celula
+
+
 # O ciclo: primeira publicação, a superfície no site, a versão seguinte com a versão no ar, e versões reprovadas.
 
 @pytest.fixture(scope="module")
