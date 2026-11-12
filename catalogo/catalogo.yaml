@@ -69,7 +69,8 @@ bases:
     # de município e no CSV que sai delas. As partições em Parquet ficam no runner. A versão no ar é um
     # arquivo com exatamente essa superfície, publicado com o site em `arquivo`: é dele que --no-ar, a
     # herança do padrão e o ataque conjunto leem. Por cruzamento, as medidas que a página mostra; os de
-    # detalhe aparecem só nos `anos_recentes` mais novos publicados, como na página.
+    # detalhe aparecem nos `anos_recentes` mais novos publicados, como na página. O que a versão no ar já
+    # mostrava de um ano que sai deles continua publicado (detalhe_mantido, decidido em 11/11/2026).
     superficie:
       arquivo: dados/sih/superficie.parquet
       cruzamentos:

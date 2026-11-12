@@ -51,6 +51,19 @@ def test_detalhe_so_nos_anos_mais_recentes(cat):
         "sih_res_ano": ["internacoes", "obitos"], "sih_hosp_ano": ["internacoes"], "sih_res_mes": ["internacoes"]}
 
 
+def test_detalhe_mantido_e_so_o_que_a_versao_no_ar_mostrava_fora_dos_mais_novos(cat):
+    anos = [2023, 2024, 2025, 2026]
+    no_ar = sih_superficie.Superficie(anos={
+        2024: {"superficie": {"sih_res_ano": ["internacoes", "obitos"], "sih_res_ano_capitulo": ["internacoes"]}},
+        2025: {"superficie": {"sih_res_ano_capitulo": ["internacoes"], "sih_res_ano_faixa12_sexo": ["internacoes"]}}})
+    assert sih_superficie.detalhe_mantido(cat, 2024, anos, no_ar) == ["sih_res_ano_capitulo"]
+    # 2025 ainda está entre os dois mais novos; 2023 a versão no ar não tinha; sem versão no ar, nada.
+    assert sih_superficie.detalhe_mantido(cat, 2025, anos, no_ar) == []
+    assert sih_superficie.detalhe_mantido(cat, 2023, anos, no_ar) == []
+    assert sih_superficie.detalhe_mantido(cat, 2024, anos, None) == []
+    assert set(sih_superficie.cruzamentos_do_ano(cat, 2024, anos, ["sih_res_ano_capitulo"])) == {
+        "sih_res_ano", "sih_hosp_ano", "sih_res_mes", "sih_res_ano_capitulo"}
+
 def test_arquivo_guarda_a_superficie_e_a_situacao_sem_a_lista_de_arquivos(cat, publicado):
     sup = sih_superficie.ler(publicado, cat)
     assert sorted(sup.anos) == [2025, 2026]

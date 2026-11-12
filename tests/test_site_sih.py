@@ -275,3 +275,14 @@ def test_a_pagina_mostra_exatamente_a_superficie(tmp_path, monkeypatch):
     assert set(sup.tabelas[2025, "sih_hosp_ano"].column_names) == {"mun_hosp", "internacoes", "oculto", "arredondado", "preliminar"}
     assert "obitos" in sup.tabelas[2025, "sih_res_ano"].column_names
     assert not any({"dias", "valor"} & set(t.column_names) for t in sup.tabelas.values())
+
+
+def test_detalhe_publicavel_fora_da_superficie_nao_vira_zero():
+    """Ano que saiu dos dois mais novos com um só dos detalhes no ar: o outro não aparece como zero."""
+    publicados = ["sih_res_ano", "sih_res_ano_capitulo", "sih_res_ano_faixa12_sexo"]
+    dados = {"anos": [2024, 2025, 2026], "situacoes": {2024: {
+        "publicados": publicados, "nao_publicados": {}, "detalhe_mantido": ["sih_res_ano_capitulo"],
+        "superficie": {"sih_res_ano": ["internacoes", "obitos"], "sih_res_ano_capitulo": ["internacoes"]}}}}
+    assert site_sih._nao_publicado(dados, "sih_res_ano_capitulo", 2024) is None
+    assert site_sih._nao_publicado(dados, "sih_res_ano_faixa12_sexo", 2024) == (
+        "esse detalhe não estava publicado quando o ano saiu dos dois mais novos")

@@ -3,7 +3,8 @@
 Decidido em 10/11/2026: o SIH publicado é só o que as páginas de município mostram, e o CSV que sai delas.
 Nenhum Parquet do SIH vai para o site nem para Releases; as partições ficam no runner. A superfície de um
 ano são os cruzamentos de `bases.sih.superficie`, nas medidas que a página mostra (óbitos só no total anual
-por residência), e os de detalhe só nos anos mais novos publicados (`anos_recentes`), como na página.
+por residência), e os de detalhe nos anos mais novos publicados (`anos_recentes`), como na página. O detalhe
+que a versão no ar já mostrava de um ano continua publicado quando o ano sai dos mais novos (detalhe_mantido).
 
 A página é desenhada a partir da superfície (site_sih.carregar), e a superfície sai das mesmas tabelas que
 vão para as partições (sih.tabelas_publicaveis): o que a tela mostra e o que o arquivo guarda não têm como
@@ -83,15 +84,31 @@ def chaves_de(cid: str, catalogo: dict) -> list[str]:
     return [catalogo["dimensoes"][d]["niveis"][0] for d in c["dimensoes"]] + TEMPO[c["tempo"]]
 
 
-def cruzamentos_do_ano(catalogo: dict, ano: int, anos) -> dict[str, list[str]]:
-    """O que a página mostra de um ano, quando os anos publicados são `anos`: {cruzamento: medidas}."""
+def cruzamentos_do_ano(catalogo: dict, ano: int, anos, mantidos=()) -> dict[str, list[str]]:
+    """O que a página mostra de um ano, quando os anos publicados são `anos`: {cruzamento: medidas}.
+
+    Os de detalhe (`anos_recentes`) entram nos anos mais novos e, fora deles, só os `mantidos` (detalhe_mantido).
+    """
     saida = {}
     for cid, regra in _mostrados(catalogo).items():
         recentes = regra.get("anos_recentes")
-        if recentes and ano not in sorted(anos)[-recentes:]:
+        if recentes and ano not in sorted(anos)[-recentes:] and cid not in mantidos:
             continue
         saida[cid] = list(regra["medidas"])
     return saida
+
+
+def detalhe_mantido(catalogo: dict, ano: int, anos, no_ar: Superficie | None) -> list[str]:
+    """O detalhe que a versão no ar mostrava de um ano que saiu dos mais novos: continua publicado.
+
+    Decidido em 11/11/2026: o que foi publicado continua publicado. O detalhe do ano sai do padrão da página,
+    mas fica no seletor de ano, na versão no ar e no ataque conjunto, aberto ou fechado o ano. A lista vai
+    para a situação do ano, de onde a superfície, a pasta de partições e a página a leem.
+    """
+    if no_ar is None or ano not in no_ar.anos:
+        return []
+    padrao, mostrados = cruzamentos_do_ano(catalogo, ano, anos), _mostrados(catalogo)
+    return sorted(cid for cid in no_ar.anos[ano]["superficie"] if cid in mostrados and cid not in padrao)
 
 
 def _esquema(catalogo: dict) -> pa.Schema:
@@ -122,11 +139,13 @@ def do_ano(tabelas: dict[str, pa.Table], situacao: dict, catalogo: dict, anos) -
     página mostra, e a tabela de cada cruzamento mostrado, só com as colunas que a página lê.
 
     `tabelas` são as do ano como vão para as partições (sih.tabelas_publicaveis, ou lidas delas), e `anos`, os
-    anos que a versão publica: os cruzamentos de detalhe só aparecem nos mais novos.
+    anos que a versão publica: os cruzamentos de detalhe só aparecem nos mais novos e nos que a situação
+    lista em `detalhe_mantido`.
     """
     ano = int(situacao["ano"])
     esquema = _esquema(catalogo)
-    mostra = {cid: m for cid, m in cruzamentos_do_ano(catalogo, ano, anos).items() if cid in situacao["publicados"]}
+    regra = cruzamentos_do_ano(catalogo, ano, anos, situacao.get("detalhe_mantido", ()))
+    mostra = {cid: m for cid, m in regra.items() if cid in situacao["publicados"]}
     saida = {}
     meta = {c: v for c, v in situacao.items() if c != "arquivos"} | {"superficie": mostra}
     for cid, medidas in mostra.items():
@@ -154,7 +173,7 @@ def extrair(particoes: Path, catalogo: dict, anos=None) -> Superficie:
     esquema = _esquema(catalogo)
     for ano, s in situacoes.items():
         tabelas = {}
-        for cid, medidas in cruzamentos_do_ano(catalogo, ano, situacoes).items():
+        for cid, medidas in cruzamentos_do_ano(catalogo, ano, situacoes, s.get("detalhe_mantido", ())).items():
             if cid not in s["publicados"]:
                 continue
             colunas = _colunas(cid, medidas, catalogo)

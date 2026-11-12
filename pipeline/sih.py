@@ -493,6 +493,9 @@ def processar_anos(con, tabela: str, jan: sih_janela.Janela, anos: list[int], ca
                     "preliminares": sorted(preliminares), "arredondar_multiplo": prelim_regra.get("arredondar_multiplo"),
                     "publicados": m["publicados"], "nao_publicados": m["nao_publicados"],
                     "situacao_fixa": m["situacao_fixa"],
+                    # O detalhe que a versão no ar mostrava do ano continua publicado depois que ele sai dos
+                    # mais novos (decidido em 11/11/2026), e por isso entra no ataque conjunto.
+                    "detalhe_mantido": sih_superficie.detalhe_mantido(catalogo, ano, anos, anterior),
                     "versao_no_ar": {"consultada": bool(no_ar_consultada), "tinha_o_ano": ano in anos_anteriores},
                     "deducao": {"rodou": deduzir, "passou": bool(ded.get("passou", False)),
                                 "pequenas_reveladas": ded.get("pequenas_reveladas"),

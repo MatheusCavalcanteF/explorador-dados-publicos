@@ -1,7 +1,7 @@
 // Internações na página do município. Os gráficos são desenhados aqui, a partir das tabelas da página, na
 // largura disponível e com texto de 12 px; a tabela continua sendo a forma acessível dos mesmos valores.
 // Também: troca de ano, dica nas marcas e exportação para CSV e PNG. Sem este script, a página tem as
-// tabelas completas e os dois anos um abaixo do outro.
+// tabelas completas e os anos do detalhe um abaixo do outro.
 (function () {
   "use strict";
   var secao = document.querySelector(".sih");

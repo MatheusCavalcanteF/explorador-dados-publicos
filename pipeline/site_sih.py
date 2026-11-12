@@ -168,6 +168,9 @@ def _nao_publicado(dados: dict, cid: str, ano: int) -> str | None:
     if cid not in s["publicados"]:
         return (s["nao_publicados"].get(cid, {}).get("motivo")
                 or "os dados desse cruzamento não estão disponíveis neste ano (motivo não informado)")
+    if cid not in s.get("superficie", {cid: None}):
+        # Publicável, mas fora do que a página mostra: detalhe de um ano que já saiu dos dois mais novos sem ele.
+        return "esse detalhe não estava publicado quando o ano saiu dos dois mais novos"
     return None
 
 
@@ -259,9 +262,11 @@ def secao(m: dict, dados: dict, coleta: dict) -> str:
                      f'abre no total do ano.</p>{fig_mes}</details>')
     else:
         bloco_mes = f'<h3>Por mês da alta</h3>{fig_mes}'
-    # Detalhe dos dois últimos anos: capítulo da CID e faixa etária por sexo.
+    # Detalhe dos dois últimos anos (o padrão da página) e dos anos que saíram deles com o detalhe já publicado,
+    # que continua no seletor (sih_superficie.detalhe_mantido): capítulo da CID e faixa etária por sexo.
     paineis, opcoes = [], []
-    for ano in anos[-2:][::-1]:
+    detalhe = sorted(set(anos[-2:]) | {a for a in anos if dados["situacoes"][a].get("detalhe_mantido")})
+    for ano in detalhe[::-1]:
         conteudo = [_painel_capitulo(dados, codigo, ano, m, cat), _painel_piramide(dados, codigo, ano, m, cat)]
         paineis.append(f'<div class="painel" data-ano="{ano}"><h4>{escape(rotulo_ano(dados, ano))}</h4>{"".join(conteudo)}</div>')
         opcoes.append(f'<label><input type="radio" name="sih-ano" value="{ano}"{" checked" if not opcoes else ""}> '

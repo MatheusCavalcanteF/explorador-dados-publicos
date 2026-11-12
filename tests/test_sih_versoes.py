@@ -1,6 +1,7 @@
 """Ataque conjunto com a versão no ar e o ciclo de publicação do SIH, com AIHs inventadas."""
 import copy
 import json
+import re
 import shutil
 import sys
 
@@ -328,3 +329,96 @@ def test_comando_sih_fica_vermelho_com_ano_reprovado(tmp_path, monkeypatch, caps
     (tmp_path / "no-ar" / "consulta.json").write_text('{"existe": false, "anos": []}', encoding="utf-8")
     assert cli.main(comando + ["--no-ar", str(tmp_path / "no-ar")]) == 0
     assert chamadas[-1] == {"anterior": None, "no_ar_consultada": True}
+
+
+# O detalhe que sai dos dois anos mais novos (decidido em 11/11/2026): o que foi publicado continua publicado.
+
+DETALHE = "sih_res_ano_capitulo"
+
+
+@pytest.fixture(scope="module")
+def ciclo_detalhe(cat, tmp_path_factory):
+    """Três versões, de 2025 a 2027, com o detalhe por capítulo da CID. Em 2612, 2025 e 2026 têm o detalhe, e
+    2025 está aberto. Em 2702, 2027 entra e 2025 sai dos dois mais novos ainda preliminar. Em 2705, 2025 fecha.
+    Cada versão lê a anterior do arquivo publicado com o site, conferido por sih_superficie.ler."""
+    # Só os da superfície: mês x sexo, que a página não mostra, só tornaria o ciclo mais lento.
+    com_detalhe = cat | {"cruzamentos": [c for c in cat["cruzamentos"] if c["id"] in NA_TELA]
+                         + [c for c in catalogo.carregar()["cruzamentos"] if c["id"] == DETALHE]}
+    raiz = tmp_path_factory.mktemp("detalhe")
+    aihs = pd.concat([aihs_sinteticas(600, semente, ano) for semente, ano in ((7, 2025), (8, 2026), (9, 2027))])
+    con = duckdb.connect()
+    con.register("todas", aihs)
+    municipios7 = {m: m + "0" for m in set(aihs["mun_res"]) | set(aihs["mun_hosp"])}
+    versoes, anterior, ataques = {}, None, []
+    original = sih_versoes.montar
+
+    def montar(*args, **opcoes):
+        p = original(*args, **opcoes)
+        ataques.append((ultima, args[4], args[6], p))
+        return p
+    with pytest.MonkeyPatch.context() as mp:
+        mp.setattr(sih_versoes, "montar", montar)
+        for ultima in (202612, 202702, 202705):
+            con.execute(f"CREATE OR REPLACE TABLE aih AS SELECT * FROM todas WHERE dt_saida // 100 <= {ultima}")
+            jan = sih_janela.Janela(ultima, ultima, 12, 5, 2025)
+            r = sih.processar_anos(con, "aih", jan, jan.anos(), com_detalhe, raiz / str(ultima), municipios7,
+                                   f"{ultima // 100}-{ultima % 100:02d}-28T00:00:00Z", "2027-05-20", anterior=anterior,
+                                   no_ar_consultada=anterior is not None, avisar=lambda texto: None)
+            assert r["reprovados"] == {}, (ultima, r["reprovados"])
+            anterior = sih_superficie.ler(raiz / str(ultima) / sih_superficie.ARQUIVO, com_detalhe)
+            versoes[ultima] = {"r": r, "sup": anterior, "pasta": raiz / str(ultima)}
+    return {"cat": com_detalhe, "versoes": versoes, "ataques": ataques}
+
+
+def test_ano_que_sai_dos_dois_mais_novos_ainda_preliminar_mantem_o_detalhe(ciclo_detalhe):
+    cat, v = ciclo_detalhe["cat"], ciclo_detalhe["versoes"]
+    primeira, segunda, terceira = (v[u]["sup"] for u in (202612, 202702, 202705))
+    assert sorted(primeira.anos) == [2025, 2026] and sorted(segunda.anos) == sorted(terceira.anos) == [2025, 2026, 2027]
+    # Na primeira, 2025 e 2026 são os dois mais novos: os dois com o detalhe, nenhum mantido.
+    assert all(DETALHE in primeira.anos[a]["superficie"] and primeira.anos[a]["detalhe_mantido"] == [] for a in (2025, 2026))
+    # Pelo padrão, 2025 ficaria sem o detalhe na segunda; ele já estava no ar, então continua.
+    assert DETALHE not in sih_superficie.cruzamentos_do_ano(cat, 2025, [2025, 2026, 2027])
+    s = segunda.anos[2025]
+    assert s["detalhe_mantido"] == [DETALHE] and DETALHE in s["superficie"] and s["preliminares"]
+    assert all(segunda.anos[a]["detalhe_mantido"] == [] and DETALHE in segunda.anos[a]["superficie"] for a in (2026, 2027))
+    # Ainda preliminar, o detalhe sai arredondado em múltiplo de 5; a partição registra o mesmo que o arquivo.
+    cap = segunda.tabela(2025, DETALHE)
+    visiveis = cap[~cap["oculto"] & (cap["internacoes"] >= 5)]
+    assert len(visiveis) and visiveis["arredondado"].all() and (visiveis["internacoes"] % 5 == 0).all()
+    assert sih.ler_situacao(v[202702]["pasta"] / "particoes", 2025)["detalhe_mantido"] == [DETALHE]
+    # Na terceira, 2025 fechou: o detalhe continua, exato, e o que estava oculto continua oculto.
+    s = terceira.anos[2025]
+    assert s["detalhe_mantido"] == [DETALHE] and DETALHE in s["superficie"] and s["preliminares"] == []
+    junto = cap.merge(terceira.tabela(2025, DETALHE), on=["mun_res", "capitulo"], suffixes=("_antes", "_depois"))
+    assert len(junto) == len(cap) and junto.loc[junto["oculto_antes"], "oculto_depois"].all()
+    assert not junto["arredondado_depois"].any()
+
+
+def test_detalhe_mantido_entra_no_ataque_conjunto(ciclo_detalhe):
+    v = ciclo_detalhe["versoes"]
+    no = "mun_res+capitulo"
+    for ultima in (202702, 202705):
+        problemas = [p for u, ano, medida, p in ciclo_detalhe["ataques"] if (u, ano, medida) == (ultima, 2025, "internacoes")]
+        assert len(problemas) == 1, ultima
+        # A versão no ar e a candidata publicam o detalhe de 2025, e o ataque o vê nas duas.
+        assert all(no in versao.publicados for versao in problemas[0].versoes), ultima
+        conjunto = sih.ler_situacao(v[ultima]["pasta"] / "particoes", 2025)["deducao"]["conjunto"]
+        assert conjunto["rodou"] and conjunto["passou"] and conjunto["motores"] == MOTORES
+
+
+def test_pagina_oferece_no_seletor_o_ano_que_saiu_do_padrao(ciclo_detalhe):
+    from test_site import coleta
+
+    from pipeline import site_sih
+    cat, segunda = ciclo_detalhe["cat"], ciclo_detalhe["versoes"][202702]
+    m = {"codigo": "3500000", "nome": "Teste", "uf": "SP", "populacao_censo": 100000}
+    paginas = {}
+    for origem in (segunda["pasta"] / sih_superficie.ARQUIVO, segunda["pasta"] / "particoes"):
+        paginas[origem.name] = site_sih.secao(m, site_sih.carregar(origem, cat), coleta())
+    # Das partições ou do arquivo, a mesma página: a situação de cada ano leva o detalhe mantido.
+    assert paginas[sih_superficie.ARQUIVO] == paginas["particoes"]
+    html = paginas["particoes"]
+    assert re.findall(r'name="sih-ano" value="(\d{4})"', html) == ["2027", "2026", "2025"]
+    assert re.search(r'value="2027" checked', html) and not re.search(r'value="2025" checked', html)
+    painel = html[html.index('data-ano="2025"'):]
+    assert "internacoes-por-capitulo-2025" in painel
