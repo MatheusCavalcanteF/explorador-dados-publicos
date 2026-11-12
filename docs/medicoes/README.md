@@ -42,6 +42,7 @@ Node: `@duckdb/duckdb-wasm@1.33.1-dev57.0`, `playwright-core@1.65.0`, `hyparquet
 | `scripts/medir_versoes_transicao.py` | F1b, com a regra decidida: versões atacadas juntas, na transição em que um mês ou o ano fecha e em três versões seguidas, com e sem a herança do padrão dos períodos fechados |
 | `scripts/simular_ciclo_sih.py` | F1b: o ciclo de publicação pelo próprio pipeline, nas 27 UFs: primeira publicação, Release baixada e conferida, versão seguinte com a versão no ar, e versões com um ano reprovado (sem a herança, sem o reforço), conferindo que só o ano aprovado tem partição. Registro de 10/11/2026, antes da superfície: não roda com o pipeline atual |
 | `scripts/medir_motor_lp.py` | F1b, com a superfície: duas versões do pipeline nas 27 UFs (a segunda com a superfície da primeira como versão no ar) e o tempo dos dois motores do ataque conjunto numa versão sozinha e nas duas juntas |
+| `scripts/reduzir_sih_runner_ciclo.py` | F1b: reduz o artefato do workflow `SIH (medição)` com `ciclo` (três versões no runner, com e sem reaproveitamento dos anos fechados) ao que o plano cita |
 | `scripts/medir_mudanca_tardia.py` | F1b: quanto um mês ainda muda depois de 6, 9 e 12 meses, por UF, depois do fechamento (listagem do FTP) e depois do próprio mês (processamento tardio e o par real de SP) |
 | `scripts/resumo.py`, `resumo_carga.py` | Tabelas-resumo dos agregados e do carregamento |
 | `scripts/derivar_numeros.py` | Números do plano que são contas sobre outros resultados, com origem e cálculo |
@@ -118,6 +119,7 @@ Os testes de tempo e de igualdade precisam dos dados no site. A partir dos Parqu
 | `sih_local_f1b.json` | Resumo da execução local do pipeline com as regras decididas (teste por ano, critério, o que não foi publicado e por quê) e o peso das páginas do build local com o SIH |
 | `particoes_f1b.json` | Tamanho das partições do SIH por ano, com só as métricas do catálogo em cada cruzamento e com dias e valor em todos |
 | `sih_runner_*.json` | Medições do workflow `SIH (medição)` no runner, reduzidas ao que o plano cita: tempos, disco, memória, tamanho das partições e, por ano, o teste de dedução (no Brasil, também a supressão por cruzamento) |
+| `sih_runner_ciclo.json` | Saída de `reduzir_sih_runner_ciclo.py` sobre o artefato do mesmo workflow com `ciclo`: por fase (primeira publicação, a seguinte com e sem reaproveitamento), tempo, memória, disco, coleta, o plano de reaproveitamento e, por ano, o ataque conjunto de cada motor e medida |
 | `derivados.json` | Somas e percentuais citados no plano, com origem e cálculo |
 | `range_hosts.json`, `motor_host_real.json`, `motor_host_real_consultas.json` | `Range` nos 3 navegadores, e o motor em host real, com e sem leitura parcial |
 
