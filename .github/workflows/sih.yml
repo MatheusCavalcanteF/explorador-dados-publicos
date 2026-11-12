@@ -12,6 +12,13 @@
 #      copiados dela, só as competências dos abertos são baixadas do FTP, e o ataque conjunto roda nos abertos;
 #   c. a mesma, com --sem-reaproveitar, como depois de uma mudança de regra: todos os anos recalculados, com o
 #      ataque conjunto em cada um. Os .dbc vêm da coleta de "a", então o tempo de "c" não inclui download.
+#
+# Com `regras`, mede também o pior caso: a versão seguinte depois de uma mudança de regra de verdade. Cada grupo
+# de regras (separados por ponto e vírgula) vira uma fase, d1, d2, ...: as regras são mudadas só no catálogo do
+# checkout deste runner (docs/medicoes/scripts/regra_na_medicao.py), que some com ele; o catálogo versionado não
+# muda, e `publicacao` não pode ser mudada. Com a superfície de "a" como versão no ar, o hash das regras deixa de
+# bater, e o próprio pipeline recalcula todos os anos: coleta do FTP de novo, supressão e ataque conjunto em cada
+# um. Um ano reprovado deixa o passo vermelho, e as fases seguintes rodam do mesmo jeito.
 # Cada fase tem o tempo que sobrar do limite de 6 h por job, menos 10 min para guardar a medição.
 name: SIH (medição)
 
@@ -34,6 +41,10 @@ on:
         description: "Medir também a versão seguinte, com e sem reaproveitamento (exige todas e a dedução)"
         type: boolean
         default: false
+      regras:
+        description: "Regras de bases.sih mudadas só na medição, como supressao.k=6; ponto e vírgula separa as fases, espaço separa as regras de uma fase (exige todas e a dedução)"
+        required: false
+        default: ""
 
 permissions:
   contents: read
@@ -51,6 +62,7 @@ jobs:
       ANOS: ${{ inputs.anos }}
       DEDUCAO: ${{ inputs.deducao }}
       CICLO: ${{ inputs.ciclo }}
+      REGRAS: ${{ inputs.regras }}
     steps:
       # O checkout limpa a pasta de trabalho: nada é gravado em build/ antes dele.
       - uses: actions/checkout@v7
@@ -60,6 +72,10 @@ jobs:
           date +%s > "$RUNNER_TEMP/inicio"
           if [ "$CICLO" = "true" ] && { [ "$UFS" != "todas" ] || [ "$DEDUCAO" != "true" ]; }; then
             echo "::error::O ciclo precisa das 27 UFs (ufs = todas) e do teste de dedução: sem eles não há superfície nem reaproveitamento"
+            exit 1
+          fi
+          if [ -n "$REGRAS" ] && { [ "$UFS" != "todas" ] || [ "$DEDUCAO" != "true" ]; }; then
+            echo "::error::A medição com mudança de regra precisa das 27 UFs (ufs = todas) e do teste de dedução"
             exit 1
           fi
           mkdir -p build/sih-medicao
@@ -97,6 +113,16 @@ jobs:
           pip install -r requirements-sih.txt
           echo "instalacao_s=$(( $(date +%s) - inicio ))" | tee build/sih-medicao/instalacao.txt
 
+      # Regra mal escrita para aqui, antes da coleta. Nada é gravado no catálogo do checkout neste passo.
+      - name: Regras da medição, conferidas antes da coleta
+        if: inputs.regras != ''
+        run: |
+          IFS=';' read -ra fases <<< "$REGRAS"
+          for regras in "${fases[@]}"; do
+            if [ -z "${regras// /}" ]; then continue; fi
+            python docs/medicoes/scripts/regra_na_medicao.py catalogo/catalogo.yaml "$RUNNER_TEMP/catalogo.yaml" $regras
+          done
+
       # A lista de municípios vem da DTB, como no Publicar. Nenhum dado do IBGE vira artefato aqui.
       - name: Lista de municípios
         run: python -m pipeline coletar --saida build/coleta --anterior manifesto/ibge.json
@@ -130,6 +156,27 @@ jobs:
                 --anterior build/sih-a/superficie.parquet --sem-reaproveitar --origem-local build/sih-a/dbc)
           if [ -n "$ANOS" ]; then args+=(--anos $ANOS); fi
           bash "$RUNNER_TEMP/fase.sh" c python -m pipeline sih "${args[@]}"
+
+      # O catálogo mudado vale só durante a fase: volta ao versionado logo depois dela.
+      - name: "SIH, versões d: a seguinte depois de uma mudança de regra, com tudo das fontes"
+        if: inputs.regras != ''
+        run: |
+          falhou=0; n=0
+          IFS=';' read -ra fases <<< "$REGRAS"
+          for regras in "${fases[@]}"; do
+            if [ -z "${regras// /}" ]; then continue; fi
+            n=$((n + 1)); nome="d$n"
+            mkdir -p "build/sih-medicao/$nome"
+            python docs/medicoes/scripts/regra_na_medicao.py catalogo/catalogo.yaml "$RUNNER_TEMP/catalogo.yaml" $regras               | tee "build/sih-medicao/$nome/regra.txt"
+            cp "$RUNNER_TEMP/catalogo.yaml" catalogo/catalogo.yaml
+            args=(--coleta build/coleta --trabalho "build/sih-$nome" --saida "build/sih-medicao/$nome" --processos 4
+                  --progresso-lp --anterior build/sih-a/superficie.parquet)
+            if [ -n "$ANOS" ]; then args+=(--anos $ANOS); fi
+            bash "$RUNNER_TEMP/fase.sh" "$nome" python -m pipeline sih "${args[@]}" || falhou=1
+            git checkout -- catalogo/catalogo.yaml
+            rm -rf "build/sih-$nome"
+          done
+          exit $falhou
 
       - name: Resumo da memória e das fases
         if: always()

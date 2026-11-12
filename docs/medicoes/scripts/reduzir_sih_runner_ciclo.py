@@ -1,4 +1,4 @@
-"""Reduz o artefato `sih-medicao` do workflow `SIH (medição)` com `ciclo` ao que o plano cita.
+"""Reduz o artefato `sih-medicao` do workflow `SIH (medição)` com `ciclo` ou com `regras` ao que o plano cita.
 
     gh run download <execução> -n sih-medicao -D <pasta>
     python docs/medicoes/scripts/reduzir_sih_runner_ciclo.py <pasta> <execução> docs/medicoes/resultados/sih_runner_ciclo.json
@@ -6,6 +6,8 @@
 Por fase (a: primeira publicação; b: a seguinte, com os anos fechados copiados de a; c: a mesma, sem reaproveitar,
 com os .dbc de a): tempo de relógio, memória, disco, coleta, o plano de reaproveitamento e, por ano, os tempos e o
 ataque conjunto de cada motor e medida (tempo, contagens reveladas e o tamanho do problema). Só contagens e tempos.
+Com `regras`, as fases d1, d2, ... são a versão seguinte depois de uma mudança de regra feita só na medição, com
+tudo das fontes; cada uma leva a regra mudada, e cada ano diz se passou e virou partição.
 """
 import json
 import re
@@ -29,12 +31,12 @@ def _ano(a: dict) -> dict:
              "deducao": {"pequenas_reveladas": a["deducao_internacoes"]["pequenas_reveladas"],
                          "rodadas": len(a["deducao_internacoes"].get("rodadas", [])),
                          "obitos_passou": a["deducao_obitos"]["passou"]},
-             "nao_publicados": sorted(a["nao_publicados"])}
+             "nao_publicados": sorted(a["nao_publicados"]), "particao_gravada": a.get("particao_gravada")}
     conjunto = a.get("ataque_conjunto", {})
     if not conjunto.get("rodou"):
         saida["ataque_conjunto"] = {"rodou": False, "motivo": conjunto.get("motivo")}
         return saida
-    saida["ataque_conjunto"] = {"rodou": True, "passou": conjunto["passou"]}
+    saida["ataque_conjunto"] = {"rodou": True, "passou": conjunto["passou"], "motivo": conjunto.get("motivo")}
     for medida in ("internacoes", "obitos"):
         saida["ataque_conjunto"][medida] = {
             motor: {"segundos": v["segundos"], "total": v["total"],
@@ -51,7 +53,9 @@ def reduzir(pasta: Path, execucao: str) -> dict:
     for fase, r in resumo["fases"].items():
         m = json.loads((pasta / fase / "medicao.json").read_text(encoding="utf-8"))
         plano = m.get("reaproveitamento") or {}
+        regra = pasta / fase / "regra.txt"
         saida["fases"][fase] = {
+            **({"regras_mudadas_so_na_medicao": regra.read_text(encoding="utf-8").splitlines()} if regra.exists() else {}),
             "segundos": r["segundos"], "limite_s": r["limite_s"], "codigo_de_saida": r["codigo_de_saida"],
             "pico_memoria_em_uso_na_maquina_mb": r["pico_memoria_em_uso_mb"],
             **_time((pasta / fase / "time.txt").read_text(encoding="utf-8")),

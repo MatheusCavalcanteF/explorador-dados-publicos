@@ -109,3 +109,52 @@ def test_mascara_aplicada_duas_vezes_da_o_mesmo_resultado():
     uma_vez = copy.deepcopy(resultado)
     conferir.mascarar_diferencas(resultado)
     assert resultado == uma_vez
+
+
+def test_regra_mudada_na_medicao_nao_toca_no_catalogo_versionado(tmp_path):
+    import hashlib
+
+    from pipeline import catalogo, sih_reaproveitamento
+
+    regra = carregar("regra_na_medicao")
+    versionado = RAIZ / "catalogo" / "catalogo.yaml"
+    antes = hashlib.sha256(versionado.read_bytes()).hexdigest()
+    destino = tmp_path / "catalogo.yaml"
+    mudou = regra.gravar(versionado, destino, ["supressao.k=6", "superficie.cruzamentos.sih_res_ano_capitulo.anos_recentes = 6"])
+    assert mudou == {"supressao.k": {"de": 5, "para": 6},
+                     "superficie.cruzamentos.sih_res_ano_capitulo.anos_recentes": {"de": 2, "para": 6}}
+    assert hashlib.sha256(versionado.read_bytes()).hexdigest() == antes
+    original, medido = catalogo.carregar(), catalogo.carregar(destino)
+    assert medido["bases"]["sih"]["supressao"]["k"] == 6 and medido["bases"]["sih"]["publicacao"] == {"site": False}
+    # Só as duas regras mudam, e é por elas que o reaproveitamento deixa de valer.
+    assert sih_reaproveitamento.regras_sha256(medido) != sih_reaproveitamento.regras_sha256(original)
+    medido["bases"]["sih"]["supressao"]["k"] = 5
+    medido["bases"]["sih"]["superficie"]["cruzamentos"]["sih_res_ano_capitulo"]["anos_recentes"] = 2
+    assert medido == original
+
+
+@pytest.mark.parametrize("regras, erro", [
+    (["publicacao.site=true"], "não muda o que o catálogo manda publicar"),
+    (["publicacao={site: true}"], "não muda o que o catálogo manda publicar"),
+    (["supressao.kk=6"], "não tem a chave 'supressao.kk'"),
+    (["supresao.k=6"], "não tem 'supresao' nesse caminho"),
+    (["supressao.k=5"], "já tem esse valor"),
+    (["supressao.k"], "o formato é caminho=valor"),
+    (["supressao.k=1"], "supressao.k deve ser um inteiro de 2 para cima"),
+])
+def test_regra_da_medicao_mal_escrita_ou_de_publicacao_nao_grava_nada(tmp_path, regras, erro):
+    regra = carregar("regra_na_medicao")
+    destino = tmp_path / "catalogo.yaml"
+    with pytest.raises(ValueError, match=erro):
+        regra.gravar(RAIZ / "catalogo" / "catalogo.yaml", destino, regras)
+    assert not destino.exists()
+
+
+def test_workflow_do_sih_devolve_o_catalogo_versionado_depois_de_cada_fase():
+    texto = (RAIZ / ".github" / "workflows" / "sih.yml").read_text(encoding="utf-8")
+    passo = texto[texto.index("SIH, versões d"):texto.index("Resumo da memória e das fases")]
+    assert passo.index("cp \"$RUNNER_TEMP/catalogo.yaml\" catalogo/catalogo.yaml") < passo.index("fase.sh") \
+        < passo.index("git checkout -- catalogo/catalogo.yaml")
+    # O catálogo só é trocado nesse passo, e nenhum outro workflow usa o script.
+    assert texto.count("catalogo/catalogo.yaml\n") == 2 and "regra_na_medicao" not in "".join(
+        w.read_text(encoding="utf-8") for w in (RAIZ / ".github" / "workflows").glob("*.yml") if w.name != "sih.yml")
