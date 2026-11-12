@@ -8,6 +8,10 @@ com os .dbc de a): tempo de relógio, memória, disco, coleta, o plano de reapro
 ataque conjunto de cada motor e medida (tempo, contagens reveladas e o tamanho do problema). Só contagens e tempos.
 Com `regras`, as fases d1, d2, ... são a versão seguinte depois de uma mudança de regra feita só na medição, com
 tudo das fontes; cada uma leva a regra mudada, e cada ano diz se passou e virou partição.
+Do teste de dedução ficam também as contagens reveladas e as células ocultas de cada rodada do reforço, em que
+tabela ficaram as reveladas, de que cruzamentos o ano herdou o padrão da versão no ar e por que cada cruzamento
+não foi publicado; do ataque conjunto, em que versão e em que tabela cada motor revelou. São contagens de
+células, sem chave nem valor.
 """
 import json
 import re
@@ -15,6 +19,7 @@ import sys
 from pathlib import Path
 
 PROBLEMA = ("livres", "igualdades", "alvos", "amostras", "resolucoes", "inconclusivas")
+REVELADO = ("reveladas_na_versao_no_ar", "reveladas_na_candidata", "diferencas_de_1_a_k-1")
 
 
 def _time(texto: str) -> dict:
@@ -27,11 +32,19 @@ def _time(texto: str) -> dict:
 def _ano(a: dict) -> dict:
     if a.get("reaproveitado_da_versao_no_ar"):
         return {"reaproveitado_da_versao_no_ar": True}
+    deducao = a["deducao_internacoes"]
     saida = {"internacoes": a["internacoes"], "segundos": a["segundos"],
-             "deducao": {"pequenas_reveladas": a["deducao_internacoes"]["pequenas_reveladas"],
-                         "rodadas": len(a["deducao_internacoes"].get("rodadas", [])),
+             "deducao": {"pequenas_reveladas": deducao["pequenas_reveladas"],
+                         "rodadas": len(deducao.get("rodadas", [])),
+                         "reveladas_e_ocultas_por_rodada": [f"{r['pequenas_reveladas']} e {r['celulas_ocultas']}"
+                                                            for r in deducao.get("rodadas", [])],
+                         "reveladas_por_tabela": {n: r["pequenas_reveladas"] for n, r in deducao.get("por_no", {}).items()
+                                                  if r["pequenas_reveladas"]},
                          "obitos_passou": a["deducao_obitos"]["passou"]},
-             "nao_publicados": sorted(a["nao_publicados"]), "particao_gravada": a.get("particao_gravada")}
+             "herdou_da_anterior": a.get("herdou_da_anterior", []), "situacao_fixa": a.get("situacao_fixa"),
+             "nao_publicados": sorted(a["nao_publicados"]),
+             "motivo_dos_nao_publicados": {c: v.get("motivo") for c, v in sorted(a["nao_publicados"].items())},
+             "particao_gravada": a.get("particao_gravada")}
     conjunto = a.get("ataque_conjunto", {})
     if not conjunto.get("rodou"):
         saida["ataque_conjunto"] = {"rodou": False, "motivo": conjunto.get("motivo")}
@@ -40,6 +53,7 @@ def _ano(a: dict) -> dict:
     for medida in ("internacoes", "obitos"):
         saida["ataque_conjunto"][medida] = {
             motor: {"segundos": v["segundos"], "total": v["total"],
+                    **{c: v[c] for c in REVELADO if c in v}, "por_tabela": v.get("por_no"),
                     **{c: v["detalhe"][c] for c in PROBLEMA if c in v.get("detalhe", {})}}
             for motor, v in conjunto[medida]["motores"].items()}
     return saida

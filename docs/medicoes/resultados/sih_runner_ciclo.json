@@ -70,12 +70,24 @@
      "deducao": {
       "pequenas_reveladas": 0,
       "rodadas": 2,
+      "reveladas_e_ocultas_por_rodada": [
+       "106 e 373519",
+       "0 e 374019"
+      ],
+      "reveladas_por_tabela": {},
       "obitos_passou": true
      },
+     "herdou_da_anterior": [],
+     "situacao_fixa": false,
      "nao_publicados": [
       "sih_hosp_mes_carater",
       "sih_res_mes_urgencia"
      ],
+     "motivo_dos_nao_publicados": {
+      "sih_hosp_mes_carater": "5,1% das internações ficariam ocultas (limite: 5%)",
+      "sih_res_mes_urgencia": "6,7% das internações ficariam ocultas (limite: 5%)"
+     },
+     "particao_gravada": true,
      "ataque_conjunto": {
       "rodou": false,
       "motivo": "nenhuma versão anterior informada"
@@ -94,9 +106,18 @@
      "deducao": {
       "pequenas_reveladas": 0,
       "rodadas": 2,
+      "reveladas_e_ocultas_por_rodada": [
+       "96 e 385604",
+       "0 e 386101"
+      ],
+      "reveladas_por_tabela": {},
       "obitos_passou": true
      },
+     "herdou_da_anterior": [],
+     "situacao_fixa": false,
      "nao_publicados": [],
+     "motivo_dos_nao_publicados": {},
+     "particao_gravada": true,
      "ataque_conjunto": {
       "rodou": false,
       "motivo": "nenhuma versão anterior informada"
@@ -115,9 +136,18 @@
      "deducao": {
       "pequenas_reveladas": 0,
       "rodadas": 2,
+      "reveladas_e_ocultas_por_rodada": [
+       "113 e 364118",
+       "0 e 364570"
+      ],
+      "reveladas_por_tabela": {},
       "obitos_passou": true
      },
+     "herdou_da_anterior": [],
+     "situacao_fixa": false,
      "nao_publicados": [],
+     "motivo_dos_nao_publicados": {},
+     "particao_gravada": true,
      "ataque_conjunto": {
       "rodou": false,
       "motivo": "nenhuma versão anterior informada"
@@ -136,9 +166,18 @@
      "deducao": {
       "pequenas_reveladas": 0,
       "rodadas": 2,
+      "reveladas_e_ocultas_por_rodada": [
+       "82 e 344171",
+       "0 e 344625"
+      ],
+      "reveladas_por_tabela": {},
       "obitos_passou": true
      },
+     "herdou_da_anterior": [],
+     "situacao_fixa": false,
      "nao_publicados": [],
+     "motivo_dos_nao_publicados": {},
+     "particao_gravada": true,
      "ataque_conjunto": {
       "rodou": false,
       "motivo": "nenhuma versão anterior informada"
@@ -157,9 +196,17 @@
      "deducao": {
       "pequenas_reveladas": 0,
       "rodadas": 1,
+      "reveladas_e_ocultas_por_rodada": [
+       "0 e 336456"
+      ],
+      "reveladas_por_tabela": {},
       "obitos_passou": true
      },
+     "herdou_da_anterior": [],
+     "situacao_fixa": false,
      "nao_publicados": [],
+     "motivo_dos_nao_publicados": {},
+     "particao_gravada": true,
      "ataque_conjunto": {
       "rodou": false,
       "motivo": "nenhuma versão anterior informada"
@@ -178,11 +225,21 @@
      "deducao": {
       "pequenas_reveladas": 0,
       "rodadas": 1,
+      "reveladas_e_ocultas_por_rodada": [
+       "0 e 166304"
+      ],
+      "reveladas_por_tabela": {},
       "obitos_passou": true
      },
+     "herdou_da_anterior": [],
+     "situacao_fixa": false,
      "nao_publicados": [
       "sih_res_tri_capitulo"
      ],
+     "motivo_dos_nao_publicados": {
+      "sih_res_tri_capitulo": "7,5% das internações ficariam ocultas (limite: 5%) e 50,4% das células ficariam ocultas (limite: 50%)"
+     },
+     "particao_gravada": true,
      "ataque_conjunto": {
       "rodou": false,
       "motivo": "nenhuma versão anterior informada"
@@ -283,20 +340,51 @@
      "deducao": {
       "pequenas_reveladas": 0,
       "rodadas": 1,
+      "reveladas_e_ocultas_por_rodada": [
+       "0 e 336456"
+      ],
+      "reveladas_por_tabela": {},
       "obitos_passou": true
      },
+     "herdou_da_anterior": [
+      "sih_hosp_ano",
+      "sih_res_ano",
+      "sih_res_ano_capitulo",
+      "sih_res_ano_faixa12_sexo",
+      "sih_res_mes"
+     ],
+     "situacao_fixa": true,
      "nao_publicados": [],
+     "motivo_dos_nao_publicados": {},
+     "particao_gravada": true,
      "ataque_conjunto": {
       "rodou": true,
       "passou": true,
+      "motivo": null,
       "internacoes": {
        "intervalos": {
         "segundos": 0.39,
-        "total": 0
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        }
        },
        "programacao_linear": {
         "segundos": 554.38,
         "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        },
         "igualdades": 475102,
         "alvos": 935048,
         "amostras": 8,
@@ -307,11 +395,27 @@
       "obitos": {
        "intervalos": {
         "segundos": 0.0,
-        "total": 0
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        }
        },
        "programacao_linear": {
         "segundos": 0.06,
         "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        },
         "igualdades": 56,
         "alvos": 5904,
         "amostras": 2,
@@ -334,22 +438,55 @@
      "deducao": {
       "pequenas_reveladas": 0,
       "rodadas": 1,
+      "reveladas_e_ocultas_por_rodada": [
+       "0 e 166304"
+      ],
+      "reveladas_por_tabela": {},
       "obitos_passou": true
      },
+     "herdou_da_anterior": [
+      "sih_hosp_ano",
+      "sih_res_ano",
+      "sih_res_ano_capitulo",
+      "sih_res_ano_faixa12_sexo",
+      "sih_res_mes"
+     ],
+     "situacao_fixa": true,
      "nao_publicados": [
       "sih_res_tri_capitulo"
      ],
+     "motivo_dos_nao_publicados": {
+      "sih_res_tri_capitulo": "7,5% das internações ficariam ocultas (limite: 5%) e 50,4% das células ficariam ocultas (limite: 50%)"
+     },
+     "particao_gravada": true,
      "ataque_conjunto": {
       "rodou": true,
       "passou": true,
+      "motivo": null,
       "internacoes": {
        "intervalos": {
         "segundos": 0.4,
-        "total": 0
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        }
        },
        "programacao_linear": {
         "segundos": 246.97,
         "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        },
         "igualdades": 463832,
         "alvos": 917795,
         "amostras": 6,
@@ -360,11 +497,27 @@
       "obitos": {
        "intervalos": {
         "segundos": 0.0,
-        "total": 0
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        }
        },
        "programacao_linear": {
         "segundos": 0.07,
         "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        },
         "igualdades": 56,
         "alvos": 6756,
         "amostras": 2,
@@ -445,23 +598,56 @@
      "deducao": {
       "pequenas_reveladas": 0,
       "rodadas": 2,
+      "reveladas_e_ocultas_por_rodada": [
+       "106 e 373519",
+       "0 e 374019"
+      ],
+      "reveladas_por_tabela": {},
       "obitos_passou": true
      },
+     "herdou_da_anterior": [
+      "sih_hosp_ano",
+      "sih_res_ano",
+      "sih_res_mes"
+     ],
+     "situacao_fixa": false,
      "nao_publicados": [
       "sih_hosp_mes_carater",
       "sih_res_mes_urgencia"
      ],
+     "motivo_dos_nao_publicados": {
+      "sih_hosp_mes_carater": "5,1% das internações ficariam ocultas (limite: 5%)",
+      "sih_res_mes_urgencia": "6,7% das internações ficariam ocultas (limite: 5%)"
+     },
+     "particao_gravada": true,
      "ataque_conjunto": {
       "rodou": true,
       "passou": true,
+      "motivo": null,
       "internacoes": {
        "intervalos": {
         "segundos": 0.05,
-        "total": 0
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        }
        },
        "programacao_linear": {
         "segundos": 0.39,
         "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        },
         "igualdades": 56988,
         "alvos": 145885,
         "amostras": 1,
@@ -472,11 +658,27 @@
       "obitos": {
        "intervalos": {
         "segundos": 0.0,
-        "total": 0
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        }
        },
        "programacao_linear": {
         "segundos": 0.01,
         "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        },
         "igualdades": 56,
         "alvos": 5876,
         "amostras": 1,
@@ -499,20 +701,50 @@
      "deducao": {
       "pequenas_reveladas": 0,
       "rodadas": 2,
+      "reveladas_e_ocultas_por_rodada": [
+       "95 e 385658",
+       "0 e 386091"
+      ],
+      "reveladas_por_tabela": {},
       "obitos_passou": true
      },
+     "herdou_da_anterior": [
+      "sih_hosp_ano",
+      "sih_res_ano",
+      "sih_res_mes"
+     ],
+     "situacao_fixa": false,
      "nao_publicados": [],
+     "motivo_dos_nao_publicados": {},
+     "particao_gravada": true,
      "ataque_conjunto": {
       "rodou": true,
       "passou": true,
+      "motivo": null,
       "internacoes": {
        "intervalos": {
         "segundos": 0.05,
-        "total": 0
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        }
        },
        "programacao_linear": {
         "segundos": 0.13,
         "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        },
         "igualdades": 56988,
         "alvos": 145180,
         "amostras": 1,
@@ -523,11 +755,27 @@
       "obitos": {
        "intervalos": {
         "segundos": 0.0,
-        "total": 0
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        }
        },
        "programacao_linear": {
         "segundos": 0.01,
         "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        },
         "igualdades": 56,
         "alvos": 6002,
         "amostras": 1,
@@ -550,20 +798,50 @@
      "deducao": {
       "pequenas_reveladas": 0,
       "rodadas": 2,
+      "reveladas_e_ocultas_por_rodada": [
+       "113 e 364122",
+       "0 e 364570"
+      ],
+      "reveladas_por_tabela": {},
       "obitos_passou": true
      },
+     "herdou_da_anterior": [
+      "sih_hosp_ano",
+      "sih_res_ano",
+      "sih_res_mes"
+     ],
+     "situacao_fixa": false,
      "nao_publicados": [],
+     "motivo_dos_nao_publicados": {},
+     "particao_gravada": true,
      "ataque_conjunto": {
       "rodou": true,
       "passou": true,
+      "motivo": null,
       "internacoes": {
        "intervalos": {
         "segundos": 0.05,
-        "total": 0
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        }
        },
        "programacao_linear": {
         "segundos": 0.13,
         "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        },
         "igualdades": 56988,
         "alvos": 144869,
         "amostras": 1,
@@ -574,11 +852,27 @@
       "obitos": {
        "intervalos": {
         "segundos": 0.0,
-        "total": 0
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        }
        },
        "programacao_linear": {
         "segundos": 0.01,
         "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        },
         "igualdades": 56,
         "alvos": 5960,
         "amostras": 1,
@@ -601,20 +895,50 @@
      "deducao": {
       "pequenas_reveladas": 0,
       "rodadas": 2,
+      "reveladas_e_ocultas_por_rodada": [
+       "71 e 344175",
+       "0 e 344588"
+      ],
+      "reveladas_por_tabela": {},
       "obitos_passou": true
      },
+     "herdou_da_anterior": [
+      "sih_hosp_ano",
+      "sih_res_ano",
+      "sih_res_mes"
+     ],
+     "situacao_fixa": false,
      "nao_publicados": [],
+     "motivo_dos_nao_publicados": {},
+     "particao_gravada": true,
      "ataque_conjunto": {
       "rodou": true,
       "passou": true,
+      "motivo": null,
       "internacoes": {
        "intervalos": {
         "segundos": 0.05,
-        "total": 0
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        }
        },
        "programacao_linear": {
         "segundos": 0.13,
         "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        },
         "igualdades": 56988,
         "alvos": 144571,
         "amostras": 1,
@@ -625,11 +949,27 @@
       "obitos": {
        "intervalos": {
         "segundos": 0.0,
-        "total": 0
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        }
        },
        "programacao_linear": {
         "segundos": 0.01,
         "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        },
         "igualdades": 56,
         "alvos": 5950,
         "amostras": 1,
@@ -652,20 +992,51 @@
      "deducao": {
       "pequenas_reveladas": 0,
       "rodadas": 1,
+      "reveladas_e_ocultas_por_rodada": [
+       "0 e 336456"
+      ],
+      "reveladas_por_tabela": {},
       "obitos_passou": true
      },
+     "herdou_da_anterior": [
+      "sih_hosp_ano",
+      "sih_res_ano",
+      "sih_res_ano_capitulo",
+      "sih_res_ano_faixa12_sexo",
+      "sih_res_mes"
+     ],
+     "situacao_fixa": true,
      "nao_publicados": [],
+     "motivo_dos_nao_publicados": {},
+     "particao_gravada": true,
      "ataque_conjunto": {
       "rodou": true,
       "passou": true,
+      "motivo": null,
       "internacoes": {
        "intervalos": {
         "segundos": 0.41,
-        "total": 0
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        }
        },
        "programacao_linear": {
         "segundos": 570.0,
         "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        },
         "igualdades": 475102,
         "alvos": 935048,
         "amostras": 8,
@@ -676,11 +1047,27 @@
       "obitos": {
        "intervalos": {
         "segundos": 0.0,
-        "total": 0
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        }
        },
        "programacao_linear": {
         "segundos": 0.1,
         "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        },
         "igualdades": 56,
         "alvos": 5904,
         "amostras": 2,
@@ -703,22 +1090,55 @@
      "deducao": {
       "pequenas_reveladas": 0,
       "rodadas": 1,
+      "reveladas_e_ocultas_por_rodada": [
+       "0 e 166304"
+      ],
+      "reveladas_por_tabela": {},
       "obitos_passou": true
      },
+     "herdou_da_anterior": [
+      "sih_hosp_ano",
+      "sih_res_ano",
+      "sih_res_ano_capitulo",
+      "sih_res_ano_faixa12_sexo",
+      "sih_res_mes"
+     ],
+     "situacao_fixa": true,
      "nao_publicados": [
       "sih_res_tri_capitulo"
      ],
+     "motivo_dos_nao_publicados": {
+      "sih_res_tri_capitulo": "7,5% das internações ficariam ocultas (limite: 5%) e 50,4% das células ficariam ocultas (limite: 50%)"
+     },
+     "particao_gravada": true,
      "ataque_conjunto": {
       "rodou": true,
       "passou": true,
+      "motivo": null,
       "internacoes": {
        "intervalos": {
         "segundos": 0.41,
-        "total": 0
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        }
        },
        "programacao_linear": {
         "segundos": 246.93,
         "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        },
         "igualdades": 463832,
         "alvos": 917795,
         "amostras": 6,
@@ -729,11 +1149,27 @@
       "obitos": {
        "intervalos": {
         "segundos": 0.0,
-        "total": 0
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        }
        },
        "programacao_linear": {
         "segundos": 0.08,
         "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        },
         "igualdades": 56,
         "alvos": 6756,
         "amostras": 2,

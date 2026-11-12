@@ -389,3 +389,84 @@ def test_ano_aberto_mantem_a_situacao_da_primeira_publicacao(cat, ano_montado, s
     assert cat["bases"]["sih"]["versoes"] == {"herdar_padrao_fechado": True, "ataque_conjunto_obrigatorio": True,
                                               "situacao_fixa_no_ano_aberto": True,
                                               "motores": ["intervalos", "programacao_linear"]}
+
+
+SUPERFICIE_DO_ANO_FECHADO = ("sih_res_ano", "sih_hosp_ano", "sih_res_mes")
+
+
+def _ano_com_municipio_pequeno(cat, janeiro):
+    """O ano sintético mais um município com `janeiro` internações em janeiro e 30 em cada outro mês."""
+    modelo = aihs_sinteticas(1).iloc[0].to_dict()
+    linhas = [modelo | {"competencia": 202500 + mes, "ident": 1, "mun_res": "359999", "mun_hosp": "350000", "morte": 0,
+                        "dt_inter": 20250010 + mes * 100, "dt_saida": 20250010 + mes * 100, "sexo": "13"[i % 2],
+                        "idade": 30 + i % 40, "cod_idade": "4"}
+              for mes in range(1, 13) for i in range(janeiro if mes == 1 else 30)]
+    con = duckdb.connect()
+    con.register("aih", pd.concat([aihs_sinteticas(1500), pd.DataFrame(linhas)], ignore_index=True))
+    publicados = sih_deducao.nos_publicados(cat)
+    return tab.montar(tab.calcular_base(con, "aih", 2025, publicados, cat), publicados)
+
+
+@pytest.fixture(scope="module")
+def no_ar_com_5_em_janeiro(cat):
+    """A versão no ar de um ano fechado, com k = 5: passou no teste, e o município pequeno mostra 5 em janeiro."""
+    nos = _ano_com_municipio_pequeno(cat, janeiro=5)
+    r = sih_deducao.suprimir_ate_passar(nos, cat, 5, False)
+    assert r["passou"]
+    por_id = {c["id"]: c for c in cat["cruzamentos"]}
+    # O que a página mostrou do ano: só esses três cruzamentos, tudo exato.
+    anterior = {cid: r["suprimidas"][cid][list(tab.colunas_de(por_id[cid], cat)) + ["oculto"]].assign(arredondado=False)
+                for cid in SUPERFICIE_DO_ANO_FECHADO}
+    return nos, r, anterior
+
+
+def _linha_do_pequeno(r):
+    mensal = r["suprimidas"]["sih_res_mes"]
+    return mensal.index[(mensal["mun_res"] == "359999").to_numpy()].to_numpy()
+
+
+def test_mesma_regra_no_ano_fechado_herda_e_repete_a_versao_no_ar(cat, no_ar_com_5_em_janeiro):
+    from pipeline import sih
+    nos, no_ar, anterior = no_ar_com_5_em_janeiro
+    fixas = sih.fixas_da_anterior(nos, cat, anterior, 2025, 202512)
+    r = sih_deducao.suprimir_ate_passar(nos, cat, 5, False, fixas=fixas)
+    assert r["passou"] and len(r["historico"]) == len(no_ar["historico"])
+    for cid, df in r["suprimidas"].items():
+        assert (df["oculto"] == no_ar["suprimidas"][cid]["oculto"]).all(), cid
+
+
+def test_subir_o_k_no_ano_fechado_deixa_sem_protecao_a_contagem_igual_ao_k_antigo(cat, no_ar_com_5_em_janeiro):
+    from pipeline import sih
+    nos, _, anterior = no_ar_com_5_em_janeiro
+    fixas = sih.fixas_da_anterior(nos, cat, anterior, 2025, 202512)
+    r = sih_deducao.suprimir_ate_passar(nos, cat, 6, False, max_rodadas=3, fixas=fixas)
+    linha = _linha_do_pequeno(r)
+    mensal = r["suprimidas"]["sih_res_mes"]
+    # Janeiro, que a versão no ar mostrou com 5, agora é contagem pequena e fica oculto. Os outros 11 meses e o
+    # total do ano estavam visíveis e exatos lá: travados, não servem de complementar, e o ano menos eles dá 5.
+    assert mensal.loc[linha, "internacoes"].tolist() == [5] + [30] * 11
+    assert mensal.loc[linha, "oculto"].tolist() == [True] + [False] * 11 and fixas["sih_res_mes"][1][linha].all()
+    no = r["sistema"].nos["mun_res+mes"]
+    assert (no.lo[linha[0]], no.hi[linha[0]]) == (5, 5)
+    assert not r["passou"] and r["auditoria"]["por_no"]["mun_res+mes"]["pequenas_reveladas"] >= 1
+    # O reforço oculta mais células a cada rodada, nas que não estão travadas, e depois da primeira não tira mais
+    # nenhuma revelada: para no limite de rodadas, como no runner (97 contagens em 2021, da 2ª à 16ª rodada).
+    reveladas = [h["pequenas_reveladas"] for h in r["historico"]]
+    ocultas = [h["celulas_ocultas"] for h in r["historico"]]
+    assert len(reveladas) == 4 and reveladas[0] >= reveladas[1] > 0 and len(set(reveladas[1:])) == 1
+    assert ocultas == sorted(set(ocultas))
+    # A causa é a herança, não o k: sem versão no ar, o mesmo ano passa com k = 6.
+    assert sih_deducao.suprimir_ate_passar(nos, cat, 6, False)["passou"]
+
+
+def test_valor_de_periodo_fechado_que_vira_contagem_pequena_reprova_sem_mudanca_de_regra(cat, no_ar_com_5_em_janeiro):
+    from pipeline import sih
+    _, _, anterior = no_ar_com_5_em_janeiro
+    # A fonte regrava janeiro, já fechado: de 5 para 3 internações. A regra é a mesma, k = 5.
+    nos = _ano_com_municipio_pequeno(cat, janeiro=3)
+    fixas = sih.fixas_da_anterior(nos, cat, anterior, 2025, 202512)
+    r = sih_deducao.suprimir_ate_passar(nos, cat, 5, False, max_rodadas=3, fixas=fixas)
+    linha = _linha_do_pequeno(r)
+    no = r["sistema"].nos["mun_res+mes"]
+    assert r["suprimidas"]["sih_res_mes"].loc[linha, "oculto"].tolist() == [True] + [False] * 11
+    assert (no.lo[linha[0]], no.hi[linha[0]]) == (3, 3) and not r["passou"]

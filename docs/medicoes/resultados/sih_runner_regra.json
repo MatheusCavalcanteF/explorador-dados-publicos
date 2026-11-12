@@ -1,0 +1,2072 @@
+{
+ "execucao": "43163359488",
+ "instalacao": "instalacao_s=20",
+ "maquina_antes": [
+  "4",
+  "               total        used        free      shared  buff/cache   available",
+  "Mem:           15982         899       14540          39         863       15082"
+ ],
+ "pico_memoria_em_uso_na_maquina_mb": 5645,
+ "fases": {
+  "a": {
+   "segundos": 2383,
+   "limite_s": 20970,
+   "codigo_de_saida": 0,
+   "pico_memoria_em_uso_na_maquina_mb": 5449,
+   "tempo_de_relogio": "39:42.83",
+   "maior_processo_kb": 4854548,
+   "disco_livre_antes": 93468651520,
+   "disco_livre_depois": 92678189056,
+   "total_s": 2381.5,
+   "janela": {
+    "ultima_no_ftp": 202609,
+    "ultima_completa": 202607,
+    "ultimo_mes_fechado": 202504,
+    "anos": [
+     2021,
+     2022,
+     2023,
+     2024,
+     2025,
+     2026
+    ],
+    "anos_abertos": [
+     2025,
+     2026
+    ]
+   },
+   "coleta": {
+    "arquivos": 1809,
+    "segundos": 2257.8,
+    "bytes_dbc": 5649496594,
+    "bytes_min": 737694358,
+    "maior_disco_bytes": 750404359,
+    "processos": 4
+   },
+   "disco": {
+    "trabalho_bytes": 781636064,
+    "min_bytes": 737694358,
+    "dbc_bytes": 0,
+    "particoes_bytes": 42211054
+   },
+   "reaproveitamento": {
+    "valido": false,
+    "motivo": "nenhuma versão no ar",
+    "reaproveitados": [],
+    "anos": {},
+    "avisos": []
+   },
+   "anos": {
+    "2021": {
+     "internacoes": 11559233,
+     "segundos": {
+      "base": 10.0,
+      "fechamento": 0.8,
+      "supressao": 13.0,
+      "deducao_obitos": 0.0,
+      "ataque_conjunto": 0.2,
+      "gravar": 0.9
+     },
+     "deducao": {
+      "pequenas_reveladas": 0,
+      "rodadas": 2,
+      "reveladas_e_ocultas_por_rodada": [
+       "106 e 373519",
+       "0 e 374019"
+      ],
+      "reveladas_por_tabela": {},
+      "obitos_passou": true
+     },
+     "herdou_da_anterior": [],
+     "situacao_fixa": false,
+     "nao_publicados": [
+      "sih_hosp_mes_carater",
+      "sih_res_mes_urgencia"
+     ],
+     "motivo_dos_nao_publicados": {
+      "sih_hosp_mes_carater": "5,1% das internações ficariam ocultas (limite: 5%)",
+      "sih_res_mes_urgencia": "6,7% das internações ficariam ocultas (limite: 5%)"
+     },
+     "particao_gravada": true,
+     "ataque_conjunto": {
+      "rodou": false,
+      "motivo": "nenhuma versão anterior informada"
+     }
+    },
+    "2022": {
+     "internacoes": 12363273,
+     "segundos": {
+      "base": 10.7,
+      "fechamento": 0.8,
+      "supressao": 7.3,
+      "deducao_obitos": 0.0,
+      "ataque_conjunto": 0.2,
+      "gravar": 1.0
+     },
+     "deducao": {
+      "pequenas_reveladas": 0,
+      "rodadas": 2,
+      "reveladas_e_ocultas_por_rodada": [
+       "96 e 385604",
+       "0 e 386101"
+      ],
+      "reveladas_por_tabela": {},
+      "obitos_passou": true
+     },
+     "herdou_da_anterior": [],
+     "situacao_fixa": false,
+     "nao_publicados": [],
+     "motivo_dos_nao_publicados": {},
+     "particao_gravada": true,
+     "ataque_conjunto": {
+      "rodou": false,
+      "motivo": "nenhuma versão anterior informada"
+     }
+    },
+    "2023": {
+     "internacoes": 13229794,
+     "segundos": {
+      "base": 11.2,
+      "fechamento": 0.9,
+      "supressao": 7.4,
+      "deducao_obitos": 0.0,
+      "ataque_conjunto": 0.2,
+      "gravar": 1.0
+     },
+     "deducao": {
+      "pequenas_reveladas": 0,
+      "rodadas": 2,
+      "reveladas_e_ocultas_por_rodada": [
+       "113 e 364118",
+       "0 e 364570"
+      ],
+      "reveladas_por_tabela": {},
+      "obitos_passou": true
+     },
+     "herdou_da_anterior": [],
+     "situacao_fixa": false,
+     "nao_publicados": [],
+     "motivo_dos_nao_publicados": {},
+     "particao_gravada": true,
+     "ataque_conjunto": {
+      "rodou": false,
+      "motivo": "nenhuma versão anterior informada"
+     }
+    },
+    "2024": {
+     "internacoes": 14029372,
+     "segundos": {
+      "base": 11.7,
+      "fechamento": 0.9,
+      "supressao": 7.5,
+      "deducao_obitos": 0.0,
+      "ataque_conjunto": 0.3,
+      "gravar": 1.0
+     },
+     "deducao": {
+      "pequenas_reveladas": 0,
+      "rodadas": 2,
+      "reveladas_e_ocultas_por_rodada": [
+       "82 e 344171",
+       "0 e 344625"
+      ],
+      "reveladas_por_tabela": {},
+      "obitos_passou": true
+     },
+     "herdou_da_anterior": [],
+     "situacao_fixa": false,
+     "nao_publicados": [],
+     "motivo_dos_nao_publicados": {},
+     "particao_gravada": true,
+     "ataque_conjunto": {
+      "rodou": false,
+      "motivo": "nenhuma versão anterior informada"
+     }
+    },
+    "2025": {
+     "internacoes": 14546762,
+     "segundos": {
+      "base": 12.1,
+      "fechamento": 0.9,
+      "supressao": 4.4,
+      "deducao_obitos": 0.0,
+      "ataque_conjunto": 0.3,
+      "gravar": 1.0
+     },
+     "deducao": {
+      "pequenas_reveladas": 0,
+      "rodadas": 1,
+      "reveladas_e_ocultas_por_rodada": [
+       "0 e 336456"
+      ],
+      "reveladas_por_tabela": {},
+      "obitos_passou": true
+     },
+     "herdou_da_anterior": [],
+     "situacao_fixa": false,
+     "nao_publicados": [],
+     "motivo_dos_nao_publicados": {},
+     "particao_gravada": true,
+     "ataque_conjunto": {
+      "rodou": false,
+      "motivo": "nenhuma versão anterior informada"
+     }
+    },
+    "2026": {
+     "internacoes": 7931806,
+     "segundos": {
+      "base": 7.4,
+      "fechamento": 0.7,
+      "supressao": 5.9,
+      "deducao_obitos": 0.0,
+      "ataque_conjunto": 0.2,
+      "gravar": 0.6
+     },
+     "deducao": {
+      "pequenas_reveladas": 0,
+      "rodadas": 1,
+      "reveladas_e_ocultas_por_rodada": [
+       "0 e 166304"
+      ],
+      "reveladas_por_tabela": {},
+      "obitos_passou": true
+     },
+     "herdou_da_anterior": [],
+     "situacao_fixa": false,
+     "nao_publicados": [
+      "sih_res_tri_capitulo"
+     ],
+     "motivo_dos_nao_publicados": {
+      "sih_res_tri_capitulo": "7,5% das internações ficariam ocultas (limite: 5%) e 50,4% das células ficariam ocultas (limite: 50%)"
+     },
+     "particao_gravada": true,
+     "ataque_conjunto": {
+      "rodou": false,
+      "motivo": "nenhuma versão anterior informada"
+     }
+    }
+   },
+   "superficie": {
+    "bytes": 1730652,
+    "sha256": "633719c15d4e302119e00503cdf187fa6594eac8ca5046003bace2eff6133125",
+    "linhas": 897734
+   },
+   "publicavel": true,
+   "reprovados": {}
+  },
+  "d1": {
+   "regras_mudadas_so_na_medicao": [
+    "bases.sih.supressao.k: de 5 para 6"
+   ],
+   "segundos": 3657,
+   "limite_s": 18586,
+   "codigo_de_saida": 1,
+   "pico_memoria_em_uso_na_maquina_mb": 5456,
+   "tempo_de_relogio": "1:00:57",
+   "maior_processo_kb": 4958268,
+   "disco_livre_antes": 93466554368,
+   "disco_livre_depois": 92719218688,
+   "total_s": 3656.1,
+   "janela": {
+    "ultima_no_ftp": 202609,
+    "ultima_completa": 202607,
+    "ultimo_mes_fechado": 202504,
+    "anos": [
+     2021,
+     2022,
+     2023,
+     2024,
+     2025,
+     2026
+    ],
+    "anos_abertos": [
+     2025,
+     2026
+    ]
+   },
+   "coleta": {
+    "arquivos": 1809,
+    "segundos": 2260.4,
+    "bytes_dbc": 5649496594,
+    "bytes_min": 737694358,
+    "maior_disco_bytes": 750404359,
+    "processos": 4
+   },
+   "disco": {
+    "trabalho_bytes": 742256028,
+    "min_bytes": 737694358,
+    "dbc_bytes": 0,
+    "particoes_bytes": 4561670
+   },
+   "reaproveitamento": {
+    "valido": false,
+    "motivo": "as regras do SIH no catálogo mudaram desde a versão no ar",
+    "reaproveitados": [],
+    "anos": {},
+    "avisos": []
+   },
+   "anos": {
+    "2021": {
+     "internacoes": 11559233,
+     "segundos": {
+      "base": 9.9,
+      "fechamento": 0.8,
+      "supressao": 80.7,
+      "deducao_obitos": 0.0,
+      "ataque_conjunto": 0.0,
+      "gravar": 0.0
+     },
+     "deducao": {
+      "pequenas_reveladas": 97,
+      "rodadas": 16,
+      "reveladas_e_ocultas_por_rodada": [
+       "217 e 425053",
+       "97 e 425611",
+       "97 e 425734",
+       "97 e 425835",
+       "97 e 425947",
+       "97 e 426065",
+       "97 e 426171",
+       "97 e 426256",
+       "97 e 426341",
+       "97 e 426431",
+       "97 e 426510",
+       "97 e 426585",
+       "97 e 426663",
+       "97 e 426740",
+       "97 e 426822",
+       "97 e 426903"
+      ],
+      "reveladas_por_tabela": {
+       "mun_res+mes+sexo": 4,
+       "mun_res+mes": 91,
+       "mun_hosp+tri": 1,
+       "mun_hosp": 1
+      },
+      "obitos_passou": true
+     },
+     "herdou_da_anterior": [
+      "sih_hosp_ano",
+      "sih_res_ano",
+      "sih_res_mes"
+     ],
+     "situacao_fixa": false,
+     "nao_publicados": [
+      "sih_hosp_mes_carater",
+      "sih_res_mes_urgencia"
+     ],
+     "motivo_dos_nao_publicados": {
+      "sih_hosp_mes_carater": "6,4% das internações ficariam ocultas (limite: 5%)",
+      "sih_res_mes_urgencia": "9,2% das internações ficariam ocultas (limite: 5%)"
+     },
+     "particao_gravada": false,
+     "ataque_conjunto": {
+      "rodou": false,
+      "motivo": "a candidata não passou no teste dela"
+     }
+    },
+    "2022": {
+     "internacoes": 12363273,
+     "segundos": {
+      "base": 10.6,
+      "fechamento": 0.9,
+      "supressao": 44.9,
+      "deducao_obitos": 0.0,
+      "ataque_conjunto": 0.0,
+      "gravar": 0.0
+     },
+     "deducao": {
+      "pequenas_reveladas": 100,
+      "rodadas": 16,
+      "reveladas_e_ocultas_por_rodada": [
+       "196 e 443430",
+       "100 e 443982",
+       "100 e 444208",
+       "100 e 444454",
+       "100 e 444722",
+       "100 e 444988",
+       "100 e 445331",
+       "100 e 445729",
+       "100 e 446183",
+       "100 e 446706",
+       "100 e 447331",
+       "100 e 448076",
+       "100 e 448905",
+       "100 e 449845",
+       "100 e 450812",
+       "100 e 451862"
+      ],
+      "reveladas_por_tabela": {
+       "mun_hosp+mes+carater": 2,
+       "mun_res+mes+sexo": 3,
+       "mun_hosp+mes+urgencia": 2,
+       "mun_hosp+tri+carater": 2,
+       "mun_res+mes+urgencia": 20,
+       "mun_hosp+tri+urgencia": 2,
+       "mun_hosp+carater": 2,
+       "mun_hosp+espec": 2,
+       "mun_hosp+mes": 2,
+       "mun_res+mes": 56,
+       "mun_hosp+tri": 2,
+       "mun_hosp+urgencia": 2,
+       "mun_hosp": 3
+      },
+      "obitos_passou": true
+     },
+     "herdou_da_anterior": [
+      "sih_hosp_ano",
+      "sih_res_ano",
+      "sih_res_mes"
+     ],
+     "situacao_fixa": false,
+     "nao_publicados": [],
+     "motivo_dos_nao_publicados": {},
+     "particao_gravada": false,
+     "ataque_conjunto": {
+      "rodou": false,
+      "motivo": "a candidata não passou no teste dela"
+     }
+    },
+    "2023": {
+     "internacoes": 13229794,
+     "segundos": {
+      "base": 11.1,
+      "fechamento": 0.9,
+      "supressao": 42.7,
+      "deducao_obitos": 0.0,
+      "ataque_conjunto": 0.0,
+      "gravar": 0.0
+     },
+     "deducao": {
+      "pequenas_reveladas": 50,
+      "rodadas": 16,
+      "reveladas_e_ocultas_por_rodada": [
+       "165 e 420133",
+       "50 e 420646",
+       "50 e 420841",
+       "50 e 421033",
+       "50 e 421235",
+       "50 e 421458",
+       "50 e 421768",
+       "50 e 422172",
+       "50 e 422691",
+       "50 e 423259",
+       "50 e 423891",
+       "50 e 424627",
+       "50 e 425411",
+       "50 e 426261",
+       "50 e 427189",
+       "50 e 428164"
+      ],
+      "reveladas_por_tabela": {
+       "mun_res+mes+sexo": 2,
+       "mun_res+mes+faixa5": 1,
+       "mun_res+mes+urgencia": 8,
+       "mun_res+mes": 39
+      },
+      "obitos_passou": true
+     },
+     "herdou_da_anterior": [
+      "sih_hosp_ano",
+      "sih_res_ano",
+      "sih_res_mes"
+     ],
+     "situacao_fixa": false,
+     "nao_publicados": [],
+     "motivo_dos_nao_publicados": {},
+     "particao_gravada": false,
+     "ataque_conjunto": {
+      "rodou": false,
+      "motivo": "a candidata não passou no teste dela"
+     }
+    },
+    "2024": {
+     "internacoes": 14029372,
+     "segundos": {
+      "base": 11.6,
+      "fechamento": 0.9,
+      "supressao": 45.3,
+      "deducao_obitos": 0.0,
+      "ataque_conjunto": 0.0,
+      "gravar": 0.0
+     },
+     "deducao": {
+      "pequenas_reveladas": 60,
+      "rodadas": 16,
+      "reveladas_e_ocultas_por_rodada": [
+       "132 e 398429",
+       "60 e 398892",
+       "60 e 399059",
+       "60 e 399182",
+       "60 e 399333",
+       "60 e 399513",
+       "60 e 399734",
+       "60 e 400016",
+       "60 e 400374",
+       "60 e 400812",
+       "60 e 401313",
+       "60 e 401893",
+       "60 e 402561",
+       "60 e 403267",
+       "60 e 404004",
+       "60 e 404799"
+      ],
+      "reveladas_por_tabela": {
+       "mun_res+mes+sexo": 3,
+       "mun_res+mes+faixa5": 1,
+       "mun_res+mes+urgencia": 11,
+       "mun_res+mes": 45
+      },
+      "obitos_passou": true
+     },
+     "herdou_da_anterior": [
+      "sih_hosp_ano",
+      "sih_res_ano",
+      "sih_res_mes"
+     ],
+     "situacao_fixa": false,
+     "nao_publicados": [],
+     "motivo_dos_nao_publicados": {},
+     "particao_gravada": false,
+     "ataque_conjunto": {
+      "rodou": false,
+      "motivo": "a candidata não passou no teste dela"
+     }
+    },
+    "2025": {
+     "internacoes": 14546762,
+     "segundos": {
+      "base": 11.9,
+      "fechamento": 0.9,
+      "supressao": 41.6,
+      "deducao_obitos": 0.0,
+      "ataque_conjunto": 713.8,
+      "gravar": 0.0
+     },
+     "deducao": {
+      "pequenas_reveladas": 0,
+      "rodadas": 1,
+      "reveladas_e_ocultas_por_rodada": [
+       "0 e 113118"
+      ],
+      "reveladas_por_tabela": {},
+      "obitos_passou": true
+     },
+     "herdou_da_anterior": [
+      "sih_hosp_ano",
+      "sih_res_ano",
+      "sih_res_ano_capitulo",
+      "sih_res_ano_faixa12_sexo",
+      "sih_res_mes"
+     ],
+     "situacao_fixa": true,
+     "nao_publicados": [
+      "sih_res_mes",
+      "sih_res_mes_faixa5",
+      "sih_res_mes_sexo",
+      "sih_res_mes_urgencia",
+      "sih_res_tri_capitulo"
+     ],
+     "motivo_dos_nao_publicados": {
+      "sih_res_mes": "o teste de dedução revelou contagens com ele no ano",
+      "sih_res_mes_faixa5": "depende de sih_res_mes, que saiu pelo teste de dedução",
+      "sih_res_mes_sexo": "o teste de dedução revelou contagens com ele no ano",
+      "sih_res_mes_urgencia": "o teste de dedução revelou contagens com ele no ano",
+      "sih_res_tri_capitulo": "depende de sih_res_ano_capitulo, que saiu pelo teste de dedução"
+     },
+     "particao_gravada": false,
+     "ataque_conjunto": {
+      "rodou": true,
+      "passou": false,
+      "motivo": "78 contagem(ns) de 1 a 5 revelada(s) com as duas versões juntas",
+      "internacoes": {
+       "intervalos": {
+        "segundos": 0.62,
+        "total": 39,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 39,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {
+          "mun_res+mes": 39
+         },
+         "diferencas": {}
+        }
+       },
+       "programacao_linear": {
+        "segundos": 711.9,
+        "total": 39,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 39,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {
+          "mun_res+mes": 39
+         },
+         "diferencas": {}
+        },
+        "igualdades": 475102,
+        "alvos": 1005882,
+        "amostras": 7,
+        "resolucoes": 20,
+        "inconclusivas": 0
+       }
+      },
+      "obitos": {
+       "intervalos": {
+        "segundos": 0.0,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        }
+       },
+       "programacao_linear": {
+        "segundos": 0.07,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        },
+        "igualdades": 56,
+        "alvos": 5967,
+        "amostras": 2,
+        "resolucoes": 4,
+        "inconclusivas": 0
+       }
+      }
+     }
+    },
+    "2026": {
+     "internacoes": 7931806,
+     "segundos": {
+      "base": 7.4,
+      "fechamento": 0.6,
+      "supressao": 2.6,
+      "deducao_obitos": 0.0,
+      "ataque_conjunto": 353.5,
+      "gravar": 0.6
+     },
+     "deducao": {
+      "pequenas_reveladas": 0,
+      "rodadas": 1,
+      "reveladas_e_ocultas_por_rodada": [
+       "0 e 194797"
+      ],
+      "reveladas_por_tabela": {},
+      "obitos_passou": true
+     },
+     "herdou_da_anterior": [
+      "sih_hosp_ano",
+      "sih_res_ano",
+      "sih_res_ano_capitulo",
+      "sih_res_ano_faixa12_sexo",
+      "sih_res_mes"
+     ],
+     "situacao_fixa": true,
+     "nao_publicados": [
+      "sih_res_tri_capitulo"
+     ],
+     "motivo_dos_nao_publicados": {
+      "sih_res_tri_capitulo": "7,5% das internações ficariam ocultas (limite: 5%) e 50,4% das células ficariam ocultas (limite: 50%)"
+     },
+     "particao_gravada": true,
+     "ataque_conjunto": {
+      "rodou": true,
+      "passou": true,
+      "motivo": null,
+      "internacoes": {
+       "intervalos": {
+        "segundos": 0.45,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        }
+       },
+       "programacao_linear": {
+        "segundos": 351.74,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        },
+        "igualdades": 463832,
+        "alvos": 926287,
+        "amostras": 7,
+        "resolucoes": 14,
+        "inconclusivas": 0
+       }
+      },
+      "obitos": {
+       "intervalos": {
+        "segundos": 0.0,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        }
+       },
+       "programacao_linear": {
+        "segundos": 0.08,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        },
+        "igualdades": 56,
+        "alvos": 6992,
+        "amostras": 2,
+        "resolucoes": 4,
+        "inconclusivas": 0
+       }
+      }
+     }
+    }
+   },
+   "superficie": null,
+   "publicavel": false,
+   "reprovados": {
+    "2021": "o teste de dedução revelou 97 contagem(ns) de internações",
+    "2022": "o teste de dedução revelou 100 contagem(ns) de internações",
+    "2023": "o teste de dedução revelou 50 contagem(ns) de internações",
+    "2024": "o teste de dedução revelou 60 contagem(ns) de internações",
+    "2025": "o ataque conjunto com a versão no ar não passou: 78 contagem(ns) de 1 a 5 revelada(s) com as duas versões juntas"
+   }
+  },
+  "d2": {
+   "regras_mudadas_so_na_medicao": [
+    "bases.sih.superficie.cruzamentos.sih_res_ano_capitulo.anos_recentes: de 2 para 6",
+    "bases.sih.superficie.cruzamentos.sih_res_ano_faixa12_sexo.anos_recentes: de 2 para 6"
+   ],
+   "segundos": 3207,
+   "limite_s": 14928,
+   "codigo_de_saida": 0,
+   "pico_memoria_em_uso_na_maquina_mb": 5597,
+   "tempo_de_relogio": "53:27.63",
+   "maior_processo_kb": 5191300,
+   "disco_livre_antes": 93466001408,
+   "disco_livre_depois": 92673753088,
+   "total_s": 3206.0,
+   "janela": {
+    "ultima_no_ftp": 202609,
+    "ultima_completa": 202607,
+    "ultimo_mes_fechado": 202504,
+    "anos": [
+     2021,
+     2022,
+     2023,
+     2024,
+     2025,
+     2026
+    ],
+    "anos_abertos": [
+     2025,
+     2026
+    ]
+   },
+   "coleta": {
+    "arquivos": 1809,
+    "segundos": 2266.1,
+    "bytes_dbc": 5649496594,
+    "bytes_min": 737694358,
+    "maior_disco_bytes": 750915282,
+    "processos": 4
+   },
+   "disco": {
+    "trabalho_bytes": 783221931,
+    "min_bytes": 737694358,
+    "dbc_bytes": 0,
+    "particoes_bytes": 42222391
+   },
+   "reaproveitamento": {
+    "valido": false,
+    "motivo": "as regras do SIH no catálogo mudaram desde a versão no ar",
+    "reaproveitados": [],
+    "anos": {},
+    "avisos": []
+   },
+   "anos": {
+    "2021": {
+     "internacoes": 11559233,
+     "segundos": {
+      "base": 10.0,
+      "fechamento": 0.8,
+      "supressao": 13.2,
+      "deducao_obitos": 0.0,
+      "ataque_conjunto": 5.2,
+      "gravar": 0.9
+     },
+     "deducao": {
+      "pequenas_reveladas": 0,
+      "rodadas": 2,
+      "reveladas_e_ocultas_por_rodada": [
+       "106 e 373519",
+       "0 e 374019"
+      ],
+      "reveladas_por_tabela": {},
+      "obitos_passou": true
+     },
+     "herdou_da_anterior": [
+      "sih_hosp_ano",
+      "sih_res_ano",
+      "sih_res_mes"
+     ],
+     "situacao_fixa": false,
+     "nao_publicados": [
+      "sih_hosp_mes_carater",
+      "sih_res_mes_urgencia"
+     ],
+     "motivo_dos_nao_publicados": {
+      "sih_hosp_mes_carater": "5,1% das internações ficariam ocultas (limite: 5%)",
+      "sih_res_mes_urgencia": "6,7% das internações ficariam ocultas (limite: 5%)"
+     },
+     "particao_gravada": true,
+     "ataque_conjunto": {
+      "rodou": true,
+      "passou": true,
+      "motivo": null,
+      "internacoes": {
+       "intervalos": {
+        "segundos": 0.49,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        }
+       },
+       "programacao_linear": {
+        "segundos": 3.46,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        },
+        "igualdades": 473384,
+        "alvos": 1143810,
+        "amostras": 1,
+        "resolucoes": 2,
+        "inconclusivas": 0
+       }
+      },
+      "obitos": {
+       "intervalos": {
+        "segundos": 0.0,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        }
+       },
+       "programacao_linear": {
+        "segundos": 0.01,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        },
+        "igualdades": 56,
+        "alvos": 5876,
+        "amostras": 1,
+        "resolucoes": 2,
+        "inconclusivas": 0
+       }
+      }
+     }
+    },
+    "2022": {
+     "internacoes": 12363273,
+     "segundos": {
+      "base": 10.8,
+      "fechamento": 0.8,
+      "supressao": 7.3,
+      "deducao_obitos": 0.0,
+      "ataque_conjunto": 4.5,
+      "gravar": 1.0
+     },
+     "deducao": {
+      "pequenas_reveladas": 0,
+      "rodadas": 2,
+      "reveladas_e_ocultas_por_rodada": [
+       "95 e 385658",
+       "0 e 386091"
+      ],
+      "reveladas_por_tabela": {},
+      "obitos_passou": true
+     },
+     "herdou_da_anterior": [
+      "sih_hosp_ano",
+      "sih_res_ano",
+      "sih_res_mes"
+     ],
+     "situacao_fixa": false,
+     "nao_publicados": [],
+     "motivo_dos_nao_publicados": {},
+     "particao_gravada": true,
+     "ataque_conjunto": {
+      "rodou": true,
+      "passou": true,
+      "motivo": null,
+      "internacoes": {
+       "intervalos": {
+        "segundos": 0.49,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        }
+       },
+       "programacao_linear": {
+        "segundos": 2.78,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        },
+        "igualdades": 473442,
+        "alvos": 1145844,
+        "amostras": 1,
+        "resolucoes": 2,
+        "inconclusivas": 0
+       }
+      },
+      "obitos": {
+       "intervalos": {
+        "segundos": 0.0,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        }
+       },
+       "programacao_linear": {
+        "segundos": 0.01,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        },
+        "igualdades": 56,
+        "alvos": 6002,
+        "amostras": 1,
+        "resolucoes": 2,
+        "inconclusivas": 0
+       }
+      }
+     }
+    },
+    "2023": {
+     "internacoes": 13229794,
+     "segundos": {
+      "base": 11.3,
+      "fechamento": 0.9,
+      "supressao": 7.4,
+      "deducao_obitos": 0.0,
+      "ataque_conjunto": 4.3,
+      "gravar": 1.0
+     },
+     "deducao": {
+      "pequenas_reveladas": 0,
+      "rodadas": 2,
+      "reveladas_e_ocultas_por_rodada": [
+       "113 e 364122",
+       "0 e 364570"
+      ],
+      "reveladas_por_tabela": {},
+      "obitos_passou": true
+     },
+     "herdou_da_anterior": [
+      "sih_hosp_ano",
+      "sih_res_ano",
+      "sih_res_mes"
+     ],
+     "situacao_fixa": false,
+     "nao_publicados": [],
+     "motivo_dos_nao_publicados": {},
+     "particao_gravada": true,
+     "ataque_conjunto": {
+      "rodou": true,
+      "passou": true,
+      "motivo": null,
+      "internacoes": {
+       "intervalos": {
+        "segundos": 0.49,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        }
+       },
+       "programacao_linear": {
+        "segundos": 2.51,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        },
+        "igualdades": 473318,
+        "alvos": 1145485,
+        "amostras": 1,
+        "resolucoes": 2,
+        "inconclusivas": 0
+       }
+      },
+      "obitos": {
+       "intervalos": {
+        "segundos": 0.0,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        }
+       },
+       "programacao_linear": {
+        "segundos": 0.01,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        },
+        "igualdades": 56,
+        "alvos": 5960,
+        "amostras": 1,
+        "resolucoes": 2,
+        "inconclusivas": 0
+       }
+      }
+     }
+    },
+    "2024": {
+     "internacoes": 14029372,
+     "segundos": {
+      "base": 11.7,
+      "fechamento": 0.9,
+      "supressao": 7.4,
+      "deducao_obitos": 0.0,
+      "ataque_conjunto": 4.2,
+      "gravar": 1.0
+     },
+     "deducao": {
+      "pequenas_reveladas": 0,
+      "rodadas": 2,
+      "reveladas_e_ocultas_por_rodada": [
+       "71 e 344175",
+       "0 e 344588"
+      ],
+      "reveladas_por_tabela": {},
+      "obitos_passou": true
+     },
+     "herdou_da_anterior": [
+      "sih_hosp_ano",
+      "sih_res_ano",
+      "sih_res_mes"
+     ],
+     "situacao_fixa": false,
+     "nao_publicados": [],
+     "motivo_dos_nao_publicados": {},
+     "particao_gravada": true,
+     "ataque_conjunto": {
+      "rodou": true,
+      "passou": true,
+      "motivo": null,
+      "internacoes": {
+       "intervalos": {
+        "segundos": 0.5,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        }
+       },
+       "programacao_linear": {
+        "segundos": 2.42,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        },
+        "igualdades": 473144,
+        "alvos": 1144872,
+        "amostras": 1,
+        "resolucoes": 2,
+        "inconclusivas": 0
+       }
+      },
+      "obitos": {
+       "intervalos": {
+        "segundos": 0.0,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        }
+       },
+       "programacao_linear": {
+        "segundos": 0.01,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        },
+        "igualdades": 56,
+        "alvos": 5950,
+        "amostras": 1,
+        "resolucoes": 2,
+        "inconclusivas": 0
+       }
+      }
+     }
+    },
+    "2025": {
+     "internacoes": 14546762,
+     "segundos": {
+      "base": 12.1,
+      "fechamento": 0.9,
+      "supressao": 4.4,
+      "deducao_obitos": 0.0,
+      "ataque_conjunto": 560.7,
+      "gravar": 1.0
+     },
+     "deducao": {
+      "pequenas_reveladas": 0,
+      "rodadas": 1,
+      "reveladas_e_ocultas_por_rodada": [
+       "0 e 336456"
+      ],
+      "reveladas_por_tabela": {},
+      "obitos_passou": true
+     },
+     "herdou_da_anterior": [
+      "sih_hosp_ano",
+      "sih_res_ano",
+      "sih_res_ano_capitulo",
+      "sih_res_ano_faixa12_sexo",
+      "sih_res_mes"
+     ],
+     "situacao_fixa": true,
+     "nao_publicados": [],
+     "motivo_dos_nao_publicados": {},
+     "particao_gravada": true,
+     "ataque_conjunto": {
+      "rodou": true,
+      "passou": true,
+      "motivo": null,
+      "internacoes": {
+       "intervalos": {
+        "segundos": 0.48,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        }
+       },
+       "programacao_linear": {
+        "segundos": 558.59,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        },
+        "igualdades": 475102,
+        "alvos": 935048,
+        "amostras": 8,
+        "resolucoes": 16,
+        "inconclusivas": 0
+       }
+      },
+      "obitos": {
+       "intervalos": {
+        "segundos": 0.0,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        }
+       },
+       "programacao_linear": {
+        "segundos": 0.08,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        },
+        "igualdades": 56,
+        "alvos": 5904,
+        "amostras": 2,
+        "resolucoes": 4,
+        "inconclusivas": 0
+       }
+      }
+     }
+    },
+    "2026": {
+     "internacoes": 7931806,
+     "segundos": {
+      "base": 7.4,
+      "fechamento": 0.6,
+      "supressao": 2.6,
+      "deducao_obitos": 0.0,
+      "ataque_conjunto": 241.5,
+      "gravar": 0.6
+     },
+     "deducao": {
+      "pequenas_reveladas": 0,
+      "rodadas": 1,
+      "reveladas_e_ocultas_por_rodada": [
+       "0 e 166304"
+      ],
+      "reveladas_por_tabela": {},
+      "obitos_passou": true
+     },
+     "herdou_da_anterior": [
+      "sih_hosp_ano",
+      "sih_res_ano",
+      "sih_res_ano_capitulo",
+      "sih_res_ano_faixa12_sexo",
+      "sih_res_mes"
+     ],
+     "situacao_fixa": true,
+     "nao_publicados": [
+      "sih_res_tri_capitulo"
+     ],
+     "motivo_dos_nao_publicados": {
+      "sih_res_tri_capitulo": "7,5% das internações ficariam ocultas (limite: 5%) e 50,4% das células ficariam ocultas (limite: 50%)"
+     },
+     "particao_gravada": true,
+     "ataque_conjunto": {
+      "rodou": true,
+      "passou": true,
+      "motivo": null,
+      "internacoes": {
+       "intervalos": {
+        "segundos": 0.46,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        }
+       },
+       "programacao_linear": {
+        "segundos": 239.69,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        },
+        "igualdades": 463832,
+        "alvos": 917795,
+        "amostras": 6,
+        "resolucoes": 12,
+        "inconclusivas": 0
+       }
+      },
+      "obitos": {
+       "intervalos": {
+        "segundos": 0.0,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        }
+       },
+       "programacao_linear": {
+        "segundos": 0.08,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        },
+        "igualdades": 56,
+        "alvos": 6756,
+        "amostras": 2,
+        "resolucoes": 4,
+        "inconclusivas": 0
+       }
+      }
+     }
+    }
+   },
+   "superficie": {
+    "bytes": 3305182,
+    "sha256": "f78ca2b25b4c789f5f48afbd588339a45b6a81c1a83ff68055a3cfc3da10b1b8",
+    "linhas": 1843954
+   },
+   "publicavel": true,
+   "reprovados": {}
+  },
+  "d3": {
+   "regras_mudadas_so_na_medicao": [
+    "bases.sih.supressao.k: de 5 para 4"
+   ],
+   "segundos": 2928,
+   "limite_s": 11720,
+   "codigo_de_saida": 0,
+   "pico_memoria_em_uso_na_maquina_mb": 5645,
+   "tempo_de_relogio": "48:47.29",
+   "maior_processo_kb": 5006560,
+   "disco_livre_antes": 93465464832,
+   "disco_livre_depois": 92673527808,
+   "total_s": 2925.7,
+   "janela": {
+    "ultima_no_ftp": 202609,
+    "ultima_completa": 202607,
+    "ultimo_mes_fechado": 202504,
+    "anos": [
+     2021,
+     2022,
+     2023,
+     2024,
+     2025,
+     2026
+    ],
+    "anos_abertos": [
+     2025,
+     2026
+    ]
+   },
+   "coleta": {
+    "arquivos": 1809,
+    "segundos": 2255.4,
+    "bytes_dbc": 5649496594,
+    "bytes_min": 737694358,
+    "maior_disco_bytes": 750938619,
+    "processos": 4
+   },
+   "disco": {
+    "trabalho_bytes": 782825885,
+    "min_bytes": 737694358,
+    "dbc_bytes": 0,
+    "particoes_bytes": 43384726
+   },
+   "reaproveitamento": {
+    "valido": false,
+    "motivo": "as regras do SIH no catálogo mudaram desde a versão no ar",
+    "reaproveitados": [],
+    "anos": {},
+    "avisos": []
+   },
+   "anos": {
+    "2021": {
+     "internacoes": 11559233,
+     "segundos": {
+      "base": 10.0,
+      "fechamento": 0.8,
+      "supressao": 6.8,
+      "deducao_obitos": 0.0,
+      "ataque_conjunto": 1.0,
+      "gravar": 1.0
+     },
+     "deducao": {
+      "pequenas_reveladas": 0,
+      "rodadas": 2,
+      "reveladas_e_ocultas_por_rodada": [
+       "104 e 358616",
+       "0 e 359227"
+      ],
+      "reveladas_por_tabela": {},
+      "obitos_passou": true
+     },
+     "herdou_da_anterior": [
+      "sih_hosp_ano",
+      "sih_res_ano",
+      "sih_res_mes"
+     ],
+     "situacao_fixa": false,
+     "nao_publicados": [],
+     "motivo_dos_nao_publicados": {},
+     "particao_gravada": true,
+     "ataque_conjunto": {
+      "rodou": true,
+      "passou": true,
+      "motivo": null,
+      "internacoes": {
+       "intervalos": {
+        "segundos": 0.05,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        }
+       },
+       "programacao_linear": {
+        "segundos": 0.35,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        },
+        "igualdades": 56988,
+        "alvos": 145885,
+        "amostras": 1,
+        "resolucoes": 2,
+        "inconclusivas": 0
+       }
+      },
+      "obitos": {
+       "intervalos": {
+        "segundos": 0.0,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        }
+       },
+       "programacao_linear": {
+        "segundos": 0.01,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        },
+        "igualdades": 56,
+        "alvos": 5836,
+        "amostras": 1,
+        "resolucoes": 2,
+        "inconclusivas": 0
+       }
+      }
+     }
+    },
+    "2022": {
+     "internacoes": 12363273,
+     "segundos": {
+      "base": 10.7,
+      "fechamento": 0.8,
+      "supressao": 10.1,
+      "deducao_obitos": 0.0,
+      "ataque_conjunto": 0.9,
+      "gravar": 1.0
+     },
+     "deducao": {
+      "pequenas_reveladas": 0,
+      "rodadas": 3,
+      "reveladas_e_ocultas_por_rodada": [
+       "94 e 321225",
+       "2 e 321755",
+       "0 e 321887"
+      ],
+      "reveladas_por_tabela": {},
+      "obitos_passou": true
+     },
+     "herdou_da_anterior": [
+      "sih_hosp_ano",
+      "sih_res_ano",
+      "sih_res_mes"
+     ],
+     "situacao_fixa": false,
+     "nao_publicados": [],
+     "motivo_dos_nao_publicados": {},
+     "particao_gravada": true,
+     "ataque_conjunto": {
+      "rodou": true,
+      "passou": true,
+      "motivo": null,
+      "internacoes": {
+       "intervalos": {
+        "segundos": 0.05,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        }
+       },
+       "programacao_linear": {
+        "segundos": 0.13,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        },
+        "igualdades": 56988,
+        "alvos": 145180,
+        "amostras": 1,
+        "resolucoes": 2,
+        "inconclusivas": 0
+       }
+      },
+      "obitos": {
+       "intervalos": {
+        "segundos": 0.0,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        }
+       },
+       "programacao_linear": {
+        "segundos": 0.01,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        },
+        "igualdades": 56,
+        "alvos": 5929,
+        "amostras": 1,
+        "resolucoes": 2,
+        "inconclusivas": 0
+       }
+      }
+     }
+    },
+    "2023": {
+     "internacoes": 13229794,
+     "segundos": {
+      "base": 11.2,
+      "fechamento": 0.8,
+      "supressao": 6.9,
+      "deducao_obitos": 0.0,
+      "ataque_conjunto": 0.8,
+      "gravar": 1.0
+     },
+     "deducao": {
+      "pequenas_reveladas": 0,
+      "rodadas": 2,
+      "reveladas_e_ocultas_por_rodada": [
+       "100 e 302255",
+       "0 e 302719"
+      ],
+      "reveladas_por_tabela": {},
+      "obitos_passou": true
+     },
+     "herdou_da_anterior": [
+      "sih_hosp_ano",
+      "sih_res_ano",
+      "sih_res_mes"
+     ],
+     "situacao_fixa": false,
+     "nao_publicados": [],
+     "motivo_dos_nao_publicados": {},
+     "particao_gravada": true,
+     "ataque_conjunto": {
+      "rodou": true,
+      "passou": true,
+      "motivo": null,
+      "internacoes": {
+       "intervalos": {
+        "segundos": 0.05,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        }
+       },
+       "programacao_linear": {
+        "segundos": 0.12,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        },
+        "igualdades": 56988,
+        "alvos": 144869,
+        "amostras": 1,
+        "resolucoes": 2,
+        "inconclusivas": 0
+       }
+      },
+      "obitos": {
+       "intervalos": {
+        "segundos": 0.0,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        }
+       },
+       "programacao_linear": {
+        "segundos": 0.01,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        },
+        "igualdades": 56,
+        "alvos": 5894,
+        "amostras": 1,
+        "resolucoes": 2,
+        "inconclusivas": 0
+       }
+      }
+     }
+    },
+    "2024": {
+     "internacoes": 14029372,
+     "segundos": {
+      "base": 11.6,
+      "fechamento": 0.8,
+      "supressao": 12.6,
+      "deducao_obitos": 0.0,
+      "ataque_conjunto": 0.8,
+      "gravar": 1.0
+     },
+     "deducao": {
+      "pequenas_reveladas": 0,
+      "rodadas": 4,
+      "reveladas_e_ocultas_por_rodada": [
+       "64 e 285013",
+       "2 e 285410",
+       "1 e 285531",
+       "0 e 285582"
+      ],
+      "reveladas_por_tabela": {},
+      "obitos_passou": true
+     },
+     "herdou_da_anterior": [
+      "sih_hosp_ano",
+      "sih_res_ano",
+      "sih_res_mes"
+     ],
+     "situacao_fixa": false,
+     "nao_publicados": [],
+     "motivo_dos_nao_publicados": {},
+     "particao_gravada": true,
+     "ataque_conjunto": {
+      "rodou": true,
+      "passou": true,
+      "motivo": null,
+      "internacoes": {
+       "intervalos": {
+        "segundos": 0.05,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        }
+       },
+       "programacao_linear": {
+        "segundos": 0.13,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        },
+        "igualdades": 56988,
+        "alvos": 144571,
+        "amostras": 1,
+        "resolucoes": 2,
+        "inconclusivas": 0
+       }
+      },
+      "obitos": {
+       "intervalos": {
+        "segundos": 0.0,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        }
+       },
+       "programacao_linear": {
+        "segundos": 0.01,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        },
+        "igualdades": 56,
+        "alvos": 5898,
+        "amostras": 1,
+        "resolucoes": 2,
+        "inconclusivas": 0
+       }
+      }
+     }
+    },
+    "2025": {
+     "internacoes": 14546762,
+     "segundos": {
+      "base": 12.0,
+      "fechamento": 0.9,
+      "supressao": 4.4,
+      "deducao_obitos": 0.0,
+      "ataque_conjunto": 399.5,
+      "gravar": 1.0
+     },
+     "deducao": {
+      "pequenas_reveladas": 0,
+      "rodadas": 1,
+      "reveladas_e_ocultas_por_rodada": [
+       "0 e 278277"
+      ],
+      "reveladas_por_tabela": {},
+      "obitos_passou": true
+     },
+     "herdou_da_anterior": [
+      "sih_hosp_ano",
+      "sih_res_ano",
+      "sih_res_ano_capitulo",
+      "sih_res_ano_faixa12_sexo",
+      "sih_res_mes"
+     ],
+     "situacao_fixa": true,
+     "nao_publicados": [],
+     "motivo_dos_nao_publicados": {},
+     "particao_gravada": true,
+     "ataque_conjunto": {
+      "rodou": true,
+      "passou": true,
+      "motivo": null,
+      "internacoes": {
+       "intervalos": {
+        "segundos": 0.54,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        }
+       },
+       "programacao_linear": {
+        "segundos": 397.39,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        },
+        "igualdades": 475102,
+        "alvos": 928728,
+        "amostras": 5,
+        "resolucoes": 14,
+        "inconclusivas": 0
+       }
+      },
+      "obitos": {
+       "intervalos": {
+        "segundos": 0.0,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        }
+       },
+       "programacao_linear": {
+        "segundos": 0.08,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        },
+        "igualdades": 56,
+        "alvos": 5864,
+        "amostras": 2,
+        "resolucoes": 4,
+        "inconclusivas": 0
+       }
+      }
+     }
+    },
+    "2026": {
+     "internacoes": 7931806,
+     "segundos": {
+      "base": 7.6,
+      "fechamento": 0.6,
+      "supressao": 2.6,
+      "deducao_obitos": 0.0,
+      "ataque_conjunto": 147.1,
+      "gravar": 0.6
+     },
+     "deducao": {
+      "pequenas_reveladas": 0,
+      "rodadas": 1,
+      "reveladas_e_ocultas_por_rodada": [
+       "0 e 135718"
+      ],
+      "reveladas_por_tabela": {},
+      "obitos_passou": true
+     },
+     "herdou_da_anterior": [
+      "sih_hosp_ano",
+      "sih_res_ano",
+      "sih_res_ano_capitulo",
+      "sih_res_ano_faixa12_sexo",
+      "sih_res_mes"
+     ],
+     "situacao_fixa": true,
+     "nao_publicados": [
+      "sih_res_tri_capitulo"
+     ],
+     "motivo_dos_nao_publicados": {
+      "sih_res_tri_capitulo": "7,5% das internações ficariam ocultas (limite: 5%) e 50,4% das células ficariam ocultas (limite: 50%)"
+     },
+     "particao_gravada": true,
+     "ataque_conjunto": {
+      "rodou": true,
+      "passou": true,
+      "motivo": null,
+      "internacoes": {
+       "intervalos": {
+        "segundos": 0.44,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        }
+       },
+       "programacao_linear": {
+        "segundos": 145.35,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        },
+        "igualdades": 463832,
+        "alvos": 908583,
+        "amostras": 4,
+        "resolucoes": 8,
+        "inconclusivas": 0
+       }
+      },
+      "obitos": {
+       "intervalos": {
+        "segundos": 0.0,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        }
+       },
+       "programacao_linear": {
+        "segundos": 0.07,
+        "total": 0,
+        "reveladas_na_versao_no_ar": 0,
+        "reveladas_na_candidata": 0,
+        "diferencas_de_1_a_k-1": 0,
+        "por_tabela": {
+         "no_ar": {},
+         "candidata": {},
+         "diferencas": {}
+        },
+        "igualdades": 56,
+        "alvos": 6575,
+        "amostras": 2,
+        "resolucoes": 4,
+        "inconclusivas": 0
+       }
+      }
+     }
+    }
+   },
+   "superficie": {
+    "bytes": 1746801,
+    "sha256": "437c526f7d492012956eb7b8abad6778147b2b93a1c28b46b98e259b6cfbc05c",
+    "linhas": 897734
+   },
+   "publicavel": true,
+   "reprovados": {}
+  }
+ }
+}
