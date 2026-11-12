@@ -363,6 +363,13 @@ def test_comando_sih_fica_vermelho_com_ano_reprovado(tmp_path, monkeypatch, caps
     assert chamadas[-1] == {"anterior": None, "no_ar_consultada": True, "reaproveitar": True}
     # --sem-reaproveitar recalcula das fontes também os anos fechados.
     assert cli.main(comando + ["--sem-reaproveitar"]) == 0 and chamadas[-1]["reaproveitar"] is False
+    # --progresso-lp põe no log cada etapa do motor por programação linear, sem as linhas de cada candidata.
+    monkeypatch.setattr(sih_versoes, "REGISTRAR", None)
+    assert cli.main(comando + ["--progresso-lp"]) == 0
+    capsys.readouterr()
+    sih_versoes.REGISTRAR("amostra 2: 3.0 s, 7 candidata(s) de 10")
+    sih_versoes.REGISTRAR("('v', 1, 'mun_res+mes'): descartada nas versões em 3.1 s")
+    assert capsys.readouterr().out == "LP: amostra 2: 3.0 s, 7 candidata(s) de 10\n"
 
 
 # O detalhe que sai dos dois anos mais novos (decidido em 11/11/2026): o que foi publicado continua publicado.

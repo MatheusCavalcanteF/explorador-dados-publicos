@@ -107,7 +107,7 @@ def main(argv=None) -> int:
     p.add_argument("--ufs", nargs="*")
     p.add_argument("--anos", nargs="*", type=int)
     p.add_argument("--processos", type=int, default=4)
-    # Pasta com os .dbc já baixados, para medir sem baixar de novo. Só para uso local.
+    # Pasta com os .dbc já baixados, para medir sem baixar de novo (a de outra execução com --manter-dbc).
     p.add_argument("--origem-local", type=Path)
     p.add_argument("--manter-dbc", action="store_true")
     p.add_argument("--sem-deducao", action="store_true")
@@ -120,6 +120,8 @@ def main(argv=None) -> int:
     origem.add_argument("--no-ar", type=Path)
     # Recalcula das fontes também os anos fechados que poderiam ser copiados da versão anterior (sih_reaproveitamento).
     p.add_argument("--sem-reaproveitar", action="store_true")
+    # Uma linha no log a cada etapa do motor por programação linear: tempo e quantas candidatas sobram, sem valores.
+    p.add_argument("--progresso-lp", action="store_true")
     args = parser.parse_args(argv)
 
     cat = catalogo.carregar()
@@ -186,6 +188,11 @@ def main(argv=None) -> int:
         print("Manifesto:", ", ".join(manifesto.gravar(args.coleta, args.saida)))
     elif args.comando == "sih":
         from . import sih, sih_superficie
+        if args.progresso_lp:
+            # Só aqui: sih_versoes precisa do numpy, e o Publicar roda este comando sem as dependências do SIH.
+            from . import sih_versoes
+            # As linhas de cada candidata seriam milhares; ficam as de cada etapa.
+            sih_versoes.REGISTRAR = lambda linha: None if "nas versões em" in linha else print(f"LP: {linha}", flush=True)
         if args.no_ar:
             anterior = sih_superficie.versao_no_ar(args.no_ar, cat)
         else:
