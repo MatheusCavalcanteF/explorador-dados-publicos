@@ -9,6 +9,7 @@ dos módulos abaixo, sem docstrings nem comentários. Se o código mudar e o tes
 - se não pode (refatoração sem efeito no resultado), troque só a impressão do número atual.
 """
 import ast
+import functools
 import hashlib
 from pathlib import Path
 
@@ -19,7 +20,7 @@ MODULOS = ("sih_coleta", "sih_janela", "sih_tabelas", "supressao", "deducao", "s
 DO_SIH = ("COLUNA_DA_METRICA", "NAO_SAEM", "tabelas_publicaveis", "resumo_supressao", "reprovados", "dependentes",
           "catalogo_sem", "fixas_da_anterior", "suprimir_publicaveis", "_suprimir_com_situacao_fixa", "d_de",
           "construir_ano", "ler_anterior", "anterior_do_ano")
-IMPRESSOES = {1: "15cd4608422d020dec15adc4f8eb5d96bffdcc1bbd0a7017e482c91a54596614"}
+IMPRESSOES = {1: "19313bbc127430eff403eb7a914077903eef53a6605f51dade7738bd47750516"}
 
 
 def _sem_docstrings(arvore: ast.AST) -> ast.AST:
@@ -40,12 +41,23 @@ def _nomes(no: ast.stmt) -> set[str]:
     return set()
 
 
+@functools.cache
+def _modulo(texto: str) -> str:
+    return ast.dump(_sem_docstrings(ast.parse(texto)))
+
+
+@functools.cache
+def _trechos(texto: str) -> tuple[tuple[str, str], ...]:
+    arvore = _sem_docstrings(ast.parse(texto))
+    return tuple((nome, ast.dump(no)) for no in arvore.body for nome in _nomes(no) if nome in DO_SIH)
+
+
 def impressao() -> str:
-    partes = [ast.dump(_sem_docstrings(ast.parse((PIPELINE / f"{m}.py").read_text(encoding="utf-8")))) for m in MODULOS]
-    sih = _sem_docstrings(ast.parse((PIPELINE / "sih.py").read_text(encoding="utf-8")))
-    trechos = {nome: no for no in sih.body for nome in _nomes(no) if nome in DO_SIH}
+    """Cada texto é analisado uma vez por sessão: o mesmo texto dá sempre a mesma árvore."""
+    partes = [_modulo((PIPELINE / f"{m}.py").read_text(encoding="utf-8")) for m in MODULOS]
+    trechos = dict(_trechos((PIPELINE / "sih.py").read_text(encoding="utf-8")))
     assert set(trechos) == set(DO_SIH), f"sem estes nomes em sih.py: {sorted(set(DO_SIH) - set(trechos))}"
-    partes += [ast.dump(trechos[nome]) for nome in DO_SIH]
+    partes += [trechos[nome] for nome in DO_SIH]
     return hashlib.sha256("\n".join(partes).encode("utf-8")).hexdigest()
 
 
@@ -70,7 +82,7 @@ def test_docstring_e_comentario_nao_mudam_a_impressao(tmp_path, monkeypatch):
     original = impressao()
     copia = tmp_path / "pipeline"
     copia.mkdir()
-    for arquivo in PIPELINE.glob("*.py"):
+    for arquivo in (PIPELINE / f"{m}.py" for m in (*MODULOS, "sih")):
         texto = arquivo.read_text(encoding="utf-8")
         if arquivo.stem == "supressao":
             texto = texto.replace('"""Supressão por família', '"""Outra frase. Supressão por família', 1)

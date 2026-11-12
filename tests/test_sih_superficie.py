@@ -1,5 +1,6 @@
 """Superfície do SIH: o que o site mostra, o arquivo da versão no ar e a consulta a ele. Sem rede."""
 import json
+import shutil
 
 import pyarrow as pa
 import pyarrow.compute as pc
@@ -19,12 +20,21 @@ def cat():
     return catalogo.carregar()
 
 
-@pytest.fixture
-def publicado(cat, tmp_path):
-    """O arquivo da superfície de 2025 e 2026, como o pipeline grava."""
-    sup = sih_superficie.extrair(particoes(tmp_path / "particoes"), cat)
-    arquivo = tmp_path / "superficie.parquet"
+@pytest.fixture(scope="module")
+def _publicado(cat, tmp_path_factory):
+    pasta = tmp_path_factory.mktemp("publicado")
+    sup = sih_superficie.extrair(particoes(pasta / "particoes"), cat)
+    arquivo = pasta / "superficie.parquet"
     sih_superficie.gravar(sup, arquivo, cat)
+    return arquivo
+
+
+@pytest.fixture
+def publicado(_publicado, tmp_path):
+    """O arquivo da superfície de 2025 e 2026, como o pipeline grava: montado uma vez, e cada teste recebe uma cópia
+    que pode alterar."""
+    arquivo = tmp_path / "superficie.parquet"
+    shutil.copyfile(_publicado, arquivo)
     return arquivo
 
 

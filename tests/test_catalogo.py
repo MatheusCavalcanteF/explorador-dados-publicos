@@ -22,6 +22,13 @@ def test_catalogo_do_repositorio_e_valido(cat):
     assert len(cat["temas"]) == 12
 
 
+def test_leitor_em_c_e_em_python_leem_o_mesmo_catalogo():
+    import yaml
+    texto = catalogo.CAMINHO.read_text(encoding="utf-8")
+    assert catalogo.LEITOR is yaml.CSafeLoader, "sem o leitor em C, o catálogo é lido em Python, mais devagar"
+    assert yaml.load(texto, Loader=yaml.CSafeLoader) == yaml.load(texto, Loader=yaml.SafeLoader)
+
+
 def test_catalogo_aponta_para_onde_o_pipeline_coleta(cat):
     from pipeline import dtb, ibge
     bases = cat["bases"]

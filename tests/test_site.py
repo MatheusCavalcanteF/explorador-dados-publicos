@@ -34,9 +34,10 @@ def coleta(censo_origem="fonte"):
             "fontes": {"dtb": dtb, "estimativa": {**comum, "periodo": "2026", "sha256": HASH_EST}, "censo": censo}}
 
 
-@pytest.fixture
-def construido(tmp_path):
-    saida = tmp_path / "site"
+@pytest.fixture(scope="module")
+def construido(tmp_path_factory):
+    """O site montado uma vez para o módulo. Os testes que o usam só leem; quem precisa alterar monta o próprio."""
+    saida = tmp_path_factory.mktemp("construido") / "site"
     site.construir(coleta(), catalogo.carregar(), saida, execucao="123")
     return saida
 

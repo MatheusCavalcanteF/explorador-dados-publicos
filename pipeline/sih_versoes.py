@@ -182,12 +182,12 @@ def _intervalos_publicados(df: pd.DataFrame, valor: str, oculto: str, arredondad
 
 def _posicoes(uniao: pd.DataFrame, df: pd.DataFrame, n: tuple) -> tuple[np.ndarray, np.ndarray]:
     """Para cada chave da união, se a tabela a tem e em que linha."""
-    chaves = df[list(n)].reset_index(drop=True).reset_index(names="_o")
-    if chaves.duplicated(list(n)).any():
-        raise ErroDeVersoes(f"Tabela {tab.nome(n)} com chave repetida")
-    pos = uniao.reset_index(names="_u").merge(chaves, on=list(n), how="left").sort_values("_u")["_o"].to_numpy()
-    tem = ~pd.isna(pos)
-    return tem, np.where(tem, pos, 0).astype(np.int64)
+    try:
+        pos = tab.posicoes(df, uniao, n)
+    except ValueError:
+        raise ErroDeVersoes(f"Tabela {tab.nome(n)} com chave repetida") from None
+    tem = pos >= 0
+    return tem, np.where(tem, pos, 0)
 
 
 def _visivel(versao: tuple[dict, dict], catalogo: dict, k: int, medida: str, ano: int) -> dict[tuple, pd.DataFrame]:

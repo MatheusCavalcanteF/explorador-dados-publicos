@@ -14,8 +14,14 @@ class ErroDeCatalogo(ValueError):
     """O catálogo contradiz as próprias regras."""
 
 
+# O leitor em C do PyYAML (libyaml, que vem na roda do pacote) lê o catálogo como o leitor seguro em Python, sete
+# vezes mais rápido; sem ele, fica o em Python. Um teste confere que os dois devolvem o mesmo catálogo, porque o
+# hash das regras do SIH sai do que é lido (sih_reaproveitamento).
+LEITOR = getattr(yaml, "CSafeLoader", yaml.SafeLoader)
+
+
 def carregar(caminho: Path = CAMINHO) -> dict:
-    catalogo = yaml.safe_load(caminho.read_text(encoding="utf-8"))
+    catalogo = yaml.load(caminho.read_text(encoding="utf-8"), Loader=LEITOR)
     validar(catalogo)
     return catalogo
 

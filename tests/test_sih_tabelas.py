@@ -43,6 +43,17 @@ def ano_montado(cat):
     return nos, publicados
 
 
+@pytest.fixture(scope="module")
+def _suprimido(cat, ano_montado):
+    return supressao.suprimir(ano_montado[0], cat, 5)
+
+
+@pytest.fixture
+def suprimido(_suprimido):
+    """supressao.suprimir(nos, cat, 5) do ano montado, feita uma vez; cada teste recebe uma cópia que pode alterar."""
+    return {cid: df.copy() for cid, df in _suprimido.items()}
+
+
 def test_fechamento_sobe_cada_nivel_e_junta_residencia_e_hospital_no_brasil():
     fecho = set(tab.fechamento([("mun_res", "mes", "sexo"), ("mun_hosp", "mes")]))
     for n in [("uf_res", "mes", "sexo"), ("mun_res", "tri", "sexo"), ("mun_res", "sexo"), ("mun_res", "mes"),
@@ -88,9 +99,8 @@ def test_capitulo_da_cid_sai_das_faixas_do_catalogo(cat):
     assert dict(zip(cap["capitulo"], cap["aihs"])) == {"00": 10, "01": 10, "20": 10, "21": 10, "22": 10}
 
 
-def test_familia_esconde_as_filhas_e_o_trimestre(cat, ano_montado):
-    nos, _ = ano_montado
-    sup = supressao.suprimir(nos, cat, 5)
+def test_familia_esconde_as_filhas_e_o_trimestre(suprimido):
+    sup = suprimido
     mae = sup["sih_res_mes"].set_index(["mun_res", "mes"])["oculto"]
     filha = sup["sih_res_mes_sexo"]
     herda = filha.join(mae.rename("mae_oculta"), on=["mun_res", "mes"])
@@ -105,9 +115,8 @@ def test_familia_esconde_as_filhas_e_o_trimestre(cat, ano_montado):
     assert tri.loc[marcado, "oculto"].all() and any(marcado)
 
 
-def test_nenhuma_contagem_pequena_fica_visivel(cat, ano_montado):
-    nos, _ = ano_montado
-    for nome, df in supressao.suprimir(nos, cat, 5).items():
+def test_nenhuma_contagem_pequena_fica_visivel(suprimido):
+    for nome, df in suprimido.items():
         pequena = supressao.pequena(df["internacoes"].to_numpy(), 5) | supressao.pequena(df["aihs"].to_numpy(), 5)
         assert df.loc[pequena, "oculto"].all(), nome
         assert set(df.loc[pequena, "estado"]) <= {deducao.PEQUENA}, nome
@@ -127,9 +136,9 @@ def test_complementar_esconde_a_menor_visivel_da_linha():
     assert list(oculto) == [True, False, True, False]
 
 
-def test_teste_de_deducao_do_ano_sintetico_e_solido(cat, ano_montado):
+def test_teste_de_deducao_do_ano_sintetico_e_solido(cat, ano_montado, suprimido):
     nos, publicados = ano_montado
-    sup = supressao.suprimir(nos, cat, 5)
+    sup = suprimido
     estados = sih_deducao.estados_publicados(nos, sup, cat, 5)
     r = sih_deducao.auditar(sih_deducao.sistema(nos, estados, publicados, 5))
     assert r["voltas"] >= 1 and set(r) >= {"pequenas_reveladas", "pequenas_estreitadas"}
@@ -171,12 +180,12 @@ def test_cada_aih_cai_no_mes_da_alta_e_os_tres_eixos_fecham(cat):
     assert dict(zip(por_mes["mes"].astype(int), por_mes["internacoes"])) != por_competencia
 
 
-def test_particao_leva_so_as_metricas_do_catalogo_e_oculta_como_nulo(cat, ano_montado, tmp_path):
+def test_particao_leva_so_as_metricas_do_catalogo_e_oculta_como_nulo(cat, ano_montado, suprimido, tmp_path):
     import pyarrow.parquet as pq
 
     from pipeline import sih
     nos, _ = ano_montado
-    sup = supressao.suprimir(nos, cat, 5)
+    sup = suprimido
     for c in cat["cruzamentos"]:
         if "obitos" in c["metricas"]:
             n = tab.colunas_de(c, cat)
@@ -267,10 +276,10 @@ def test_sexo_fora_do_dicionario_vai_para_ignorado_como_no_tabwin(cat):
     assert set(cat["dimensoes"]["sexo"]["fora_do_dicionario"]["4"]) == {"visto", "documentacao", "tratamento"}
 
 
-def test_periodo_fechado_herda_o_padrao_da_versao_anterior(cat, ano_montado):
+def test_periodo_fechado_herda_o_padrao_da_versao_anterior(cat, ano_montado, suprimido):
     from pipeline import sih
     nos, _ = ano_montado
-    antes = supressao.suprimir(nos, cat, 5)
+    antes = suprimido
     # A versão anterior mostrou janeiro a junho exatos e o resto arredondado. Fecha até junho.
     anterior = {}
     for c in cat["cruzamentos"]:
@@ -351,11 +360,11 @@ def test_versao_anterior_que_nao_bate_com_a_situacao_para_o_pipeline(cat, ano_mo
         sih.anterior_do_ano(anterior, 2024, cat, fechado=False)
 
 
-def test_ano_aberto_mantem_a_situacao_da_primeira_publicacao(cat, ano_montado, monkeypatch):
+def test_ano_aberto_mantem_a_situacao_da_primeira_publicacao(cat, ano_montado, suprimido, monkeypatch):
     from pipeline import sih
     nos, _ = ano_montado
     respostas = []
-    pronta = supressao.suprimir(nos, cat, 5)
+    pronta = suprimido
 
     def teste_falso(nos, catalogo, k, motivo, max_rodadas, arredondamento=None, ultimo_mes=None, fixas=None):
         ids = [c["id"] for c in catalogo["cruzamentos"]]

@@ -11,6 +11,7 @@ dois lados. Por isso o nó do Brasil não tem coluna de município, e as duas vi
 """
 from __future__ import annotations
 
+import functools
 from itertools import chain
 
 import numpy as np
@@ -84,7 +85,14 @@ def todos_acima(n: tuple[str, ...]) -> list[tuple[str, ...]]:
 
 def fechamento(nos) -> list[tuple[str, ...]]:
     """Todos os nós alcançáveis subindo níveis, dos mais finos para os mais grossos."""
-    vistos, fila = set(), [no(n) for n in nos]
+    return list(_fechamento(frozenset(no(n) for n in nos)))
+
+
+@functools.cache
+def _fechamento(nos: frozenset) -> tuple[tuple[str, ...], ...]:
+    """O mesmo conjunto de nós dá sempre o mesmo fechamento, na mesma ordem: a supressão e o teste pedem o mesmo
+    centenas de vezes por ano."""
+    vistos, fila = set(), list(nos)
     while fila:
         n = fila.pop()
         if n in vistos:
@@ -92,7 +100,7 @@ def fechamento(nos) -> list[tuple[str, ...]]:
         vistos.add(n)
         fila.extend(g for _, g in acima(n))
     # Mais colunas e níveis mais finos primeiro: cada nó é calculado a partir de um mais fino já pronto.
-    return sorted(vistos, key=lambda n: (-len(n), sum(NIVEIS[FAMILIA[c]].index(c) for c in n), n))
+    return tuple(sorted(vistos, key=lambda n: (-len(n), sum(NIVEIS[FAMILIA[c]].index(c) for c in n), n)))
 
 
 def converter_coluna(serie: pd.Series, de: str, para: str | None) -> pd.Series | None:
@@ -143,17 +151,30 @@ def agregar(fino_df: pd.DataFrame, fino: tuple[str, ...], grosso: tuple[str, ...
     return junto.groupby(list(grosso), sort=True, as_index=False).sum()
 
 
+def posicoes(alvo: pd.DataFrame, procura: pd.DataFrame, colunas) -> np.ndarray:
+    """Para cada linha de `procura`, a posição da linha de `alvo` com as mesmas `colunas`, ou -1 se não houver.
+
+    Busca por índice, e não junção: dá as mesmas posições, de 1,5 a 6 vezes mais rápido nos tamanhos do
+    Brasil e dos testes. As chaves de `alvo` têm de ser únicas, senão ValueError."""
+    colunas = list(colunas)
+    if len(colunas) == 1:
+        indice, busca = pd.Index(alvo[colunas[0]]), pd.Index(procura[colunas[0]])
+    else:
+        indice, busca = pd.MultiIndex.from_frame(alvo[colunas]), pd.MultiIndex.from_frame(procura[colunas])
+    if not indice.is_unique:
+        raise ValueError(f"{nome(no(colunas))}: chave repetida")
+    return indice.get_indexer(busca).astype(np.int64)
+
+
 def indice_acima(fino_df: pd.DataFrame, fino: tuple[str, ...], grosso_df: pd.DataFrame,
                  grosso: tuple[str, ...]) -> np.ndarray:
     """Para cada célula de `fino`, a posição da célula de `grosso` que a contém."""
     if not grosso:
         return np.zeros(len(fino_df), dtype=np.int64)
-    chaves = chaves_acima(fino_df, fino, grosso)
-    alvo = grosso_df[list(grosso)].reset_index(drop=True).reset_index(names="_pos")
-    junto = chaves.reset_index(drop=True).merge(alvo, on=list(grosso), how="left", validate="many_to_one")
-    if junto["_pos"].isna().any():
+    pos = posicoes(grosso_df, chaves_acima(fino_df, fino, grosso), grosso)
+    if (pos < 0).any():
         raise ValueError(f"{nome(fino)} -> {nome(grosso)}: célula fina sem célula grossa correspondente")
-    return junto["_pos"].to_numpy(dtype=np.int64)
+    return pos
 
 
 def montar(base: dict[tuple[str, ...], pd.DataFrame], nos_publicados) -> dict[tuple[str, ...], pd.DataFrame]:
