@@ -1,6 +1,6 @@
 # Levantamento das fontes do roteiro depois da v1
 
-`fontes_roteiro.csv` e `fontes_roteiro.md` são o levantamento citado em [Depois da v1](../../plano.md#depois-da-v1), copiados para cá em 08/11/2026. Antes, ficavam só numa pasta local, fora do repositório.
+`fontes_roteiro.csv` e `fontes_roteiro.md` são o levantamento citado em [Depois da v1](../../plano/fases.md#depois-da-v1), copiados para cá em 08/11/2026. Antes, ficavam só numa pasta local, fora do repositório.
 
 ## Data e método
 
